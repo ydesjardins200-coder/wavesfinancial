@@ -280,6 +280,22 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
 
+  .amount-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 24px;
+  }
+  .amount-btn {
+    padding: 10px 8px; border-radius: var(--r-sm);
+    border: 1px solid var(--border); background: rgba(13,11,31,0.5);
+    color: var(--text-muted); font-family: var(--font-body);
+    font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; letter-spacing: -0.01em;
+  }
+  .amount-btn:hover { border-color: var(--lavender); color: var(--white); }
+  .amount-btn.active {
+    border-color: var(--iris); background: rgba(91,82,216,0.25);
+    color: var(--white); box-shadow: 0 0 16px rgba(91,82,216,0.3);
+  }
   .slider-wrap { margin-bottom: 28px; }
   .slider-labels {
     display: flex; justify-content: space-between;
@@ -697,7 +713,8 @@
     .trust-sep { display: none; }
     .hero-proof { flex-wrap: wrap; }
     .proof-divider { display: none; }
-    .freq-grid { grid-template-columns: repeat(2, 1fr); }
+    .freq-grid { grid-template-columns: repeat(3, 1fr); }
+    .amount-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
   @media (max-width: 480px) {
@@ -826,11 +843,13 @@
             <div class="calc-amount" id="calc-display">$750</div>
           </div>
 
-          <div class="slider-wrap">
-            <div class="slider-labels">
-              <span>$500</span><span>$1,000</span>
-            </div>
-            <input type="range" id="loan-slider" min="500" max="1000" value="750" step="50">
+          <div class="amount-grid" id="amount-grid">
+            <button class="amount-btn" onclick="selectAmount(this,500)">$500</button>
+            <button class="amount-btn" onclick="selectAmount(this,600)">$600</button>
+            <button class="amount-btn" onclick="selectAmount(this,700)">$700</button>
+            <button class="amount-btn active" onclick="selectAmount(this,800)">$800</button>
+            <button class="amount-btn" onclick="selectAmount(this,900)">$900</button>
+            <button class="amount-btn" onclick="selectAmount(this,1000)">$1,000</button>
           </div>
 
           <div style="margin-bottom:14px;">
@@ -838,7 +857,6 @@
             <div class="freq-grid">
               <button class="freq-btn active" onclick="selectFreq(this,'Weekly')">Weekly</button>
               <button class="freq-btn" onclick="selectFreq(this,'Biweekly')">Every 2 Weeks</button>
-              <button class="freq-btn" onclick="selectFreq(this,'Semi-monthly')">Twice / Month</button>
               <button class="freq-btn" onclick="selectFreq(this,'Monthly')">Monthly</button>
             </div>
           </div>
@@ -862,7 +880,7 @@
             </div>
           </div>
 
-          <button class="calc-cta" onclick="window.location.href='apply.html?amount='+document.getElementById('loan-slider').value">
+          <button class="calc-cta" onclick="window.location.href='apply.html?amount='+selectedAmount">
             Get My Cash Now →
           </button>
           <p class="calc-note">
@@ -1212,23 +1230,25 @@
   });
 
   // Loan calculator
-  const slider = document.getElementById('loan-slider');
+  let selectedAmount = 800;
   const calcDisplay = document.getElementById('calc-display');
-  const sumAmount = document.getElementById('sum-amount');
-  const sumTotal = document.getElementById('sum-total');
+  const sumAmount   = document.getElementById('sum-amount');
+  const sumTotal    = document.getElementById('sum-total');
 
-  function updateCalc() {
-    const val = parseInt(slider.value);
-    const pct = (val - 500) / 500;
+  function selectAmount(btn, val) {
+    selectedAmount = val;
+    document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
     calcDisplay.textContent = '$' + val.toLocaleString();
-    sumAmount.textContent = '$' + val.toLocaleString();
+    sumAmount.textContent   = '$' + val.toLocaleString();
     const total = Math.round(val * 1.375 / 10) * 10;
     sumTotal.textContent = '~$' + total.toLocaleString();
-    slider.style.background = `linear-gradient(to right, var(--iris) 0%, var(--iris) ${pct * 100}%, rgba(160,154,245,0.2) ${pct * 100}%, rgba(160,154,245,0.2) 100%)`;
   }
 
-  slider.addEventListener('input', updateCalc);
-  updateCalc();
+  // Init display
+  calcDisplay.textContent = '$800';
+  sumAmount.textContent   = '$800';
+  sumTotal.textContent    = '~$1,100';
 
   function selectFreq(btn, freq) {
     document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
