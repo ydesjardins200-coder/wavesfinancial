@@ -147,16 +147,16 @@
   .elig-body.collapsed { display: none; }
   .elig-grid {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; padding-top: 16px; margin-bottom: 16px;
+    gap: 7px; padding-top: 14px; margin-bottom: 14px;
   }
   .elig-item {
-    display: flex; align-items: flex-start; gap: 8px;
-    font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;
+    display: flex; align-items: center; gap: 7px;
+    font-size: 0.74rem; color: var(--text-muted); line-height: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .elig-item strong { color: var(--white); font-weight: 600; }
   .elig-check {
-    color: var(--teal); font-size: 0.75rem; flex-shrink: 0;
-    margin-top: 2px; font-weight: 700;
+    color: var(--teal); font-size: 0.7rem; flex-shrink: 0; font-weight: 700;
   }
   .elig-footer {
     display: flex; align-items: center; gap: 8px;
