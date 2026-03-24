@@ -92,6 +92,139 @@
   }
   .nav-secure span { color: var(--teal); font-weight: 600; }
 
+  /* ─── ELIGIBILITY BOX ─── */
+  .eligibility-box {
+    width: 100%; max-width: 640px;
+    margin-bottom: 20px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid rgba(29,233,198,0.25);
+    background: rgba(13,11,31,0.7);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(13,11,31,0.4),
+                inset 0 1px 0 rgba(29,233,198,0.1);
+    position: relative;
+  }
+  .eligibility-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--iris), var(--teal), var(--cyan));
+  }
+  .elig-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px; cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+  .elig-header:hover { background: rgba(29,233,198,0.03); }
+  .elig-header-left { display: flex; align-items: center; gap: 14px; }
+  .elig-icon {
+    font-size: 1.4rem; flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(29,233,198,0.4));
+  }
+  .elig-title {
+    font-family: var(--font-display); font-size: 0.95rem;
+    font-weight: 700; color: var(--white);
+    margin-bottom: 2px;
+  }
+  .elig-subtitle {
+    font-size: 0.75rem; color: var(--text-muted);
+  }
+  .elig-toggle-btn {
+    background: rgba(29,233,198,0.1);
+    border: 1px solid rgba(29,233,198,0.2);
+    border-radius: 50%; width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--teal); flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .elig-toggle-btn:hover { background: rgba(29,233,198,0.2); }
+  .elig-body {
+    padding: 0 22px 20px;
+    border-top: 1px solid rgba(160,154,245,0.1);
+    animation: fadeSlide 0.3s ease;
+  }
+  .elig-body.collapsed { display: none; }
+  .elig-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; padding-top: 16px; margin-bottom: 16px;
+  }
+  .elig-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;
+  }
+  .elig-item strong { color: var(--white); font-weight: 600; }
+  .elig-check {
+    color: var(--teal); font-size: 0.75rem; flex-shrink: 0;
+    margin-top: 2px; font-weight: 700;
+  }
+  .elig-footer {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 14px; border-radius: var(--r-sm);
+    background: rgba(91,82,216,0.1);
+    border: 1px solid rgba(160,154,245,0.15);
+    font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;
+  }
+  .elig-footer-icon { font-size: 0.9rem; flex-shrink: 0; }
+
+  /* ─── LOAN HERO CHIP ─── */
+  .loan-hero {
+    margin-bottom: 32px;
+    border-radius: var(--r-lg);
+    background: linear-gradient(135deg,
+      rgba(59,53,176,0.35) 0%,
+      rgba(91,82,216,0.2) 50%,
+      rgba(0,229,255,0.08) 100%);
+    border: 1px solid rgba(160,154,245,0.25);
+    position: relative; overflow: hidden;
+  }
+  .loan-hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--iris), var(--teal), transparent);
+  }
+  .loan-hero-inner {
+    padding: 24px 28px;
+    text-align: center;
+  }
+  .loan-hero-label {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin-bottom: 6px;
+  }
+  .loan-hero-amount {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 8vw, 4rem);
+    font-weight: 800; line-height: 1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--white) 0%, var(--periwinkle) 60%, var(--cyan) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  .loan-hero-sub {
+    font-size: 0.8rem; color: var(--text-muted);
+    margin-bottom: 14px; line-height: 1.5;
+  }
+  .loan-hero-badges {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .loan-hero-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 100px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(160,154,245,0.2);
+    font-size: 0.72rem; color: var(--white); font-weight: 500;
+  }
+  .loan-hero-change {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: 0.75rem;
+    font-family: var(--font-body);
+    text-decoration: none;
+    transition: color 0.2s; padding: 0;
+  }
+  .loan-hero-change:hover { color: var(--periwinkle); }
+
   /* ─── MAIN LAYOUT ─── */
   .page {
     position: relative; z-index: 1;
@@ -602,6 +735,10 @@
     .field-grid-2, .field-grid-3 { grid-template-columns: 1fr; }
     .radio-group-2, .radio-group-4 { grid-template-columns: 1fr 1fr; }
     .step-heading { font-size: 1.35rem; }
+    .elig-grid { grid-template-columns: 1fr; }
+    .elig-title { font-size: 0.875rem; }
+    .loan-hero-inner { padding: 20px 18px; }
+    .loan-hero-badges { gap: 6px; }
   }
   @media (max-width: 420px) {
     .radio-group-4 { grid-template-columns: 1fr; }
@@ -641,6 +778,62 @@
 <!-- MAIN -->
 <main class="page">
 
+  <!-- ELIGIBILITY BOX -->
+  <div class="eligibility-box" id="eligibility-box">
+    <div class="elig-header" onclick="toggleEligibility()">
+      <div class="elig-header-left">
+        <div class="elig-icon">✅</div>
+        <div>
+          <div class="elig-title">Before you apply — make sure you qualify</div>
+          <div class="elig-subtitle">Takes 5 minutes · No credit check · Instant decision</div>
+        </div>
+      </div>
+      <button class="elig-toggle-btn" id="elig-toggle-btn" aria-label="Toggle eligibility">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="elig-chevron" style="transition:transform 0.3s;"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="elig-body" id="elig-body">
+      <div class="elig-grid">
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Be at least <strong>18 years old</strong></span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Resident of <strong>BC, ON, NS, NB, PE or NL</strong></span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Steady income for the <strong>past 3 months</strong></span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Monthly net income of at least <strong>$800</strong></span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Active <strong>Canadian bank account</strong> (pre-authorized debits enabled)</span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Not currently in <strong>bankruptcy or consumer proposal</strong></span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Valid <strong>Canadian phone number</strong> and email address</span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-check">✓</span>
+          <span>Few or no <strong>non-sufficient fund (NSF)</strong> transactions</span>
+        </div>
+      </div>
+      <div class="elig-footer">
+        <span class="elig-footer-icon">⚡</span>
+        Funds deposited same day via Interac e-Transfer if approved before our daily cutoff.
+      </div>
+    </div>
+  </div>
+
   <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-top">
@@ -673,10 +866,19 @@
     <!-- ═══ STEP 1: PERSONAL ═══ -->
     <div class="step-panel active" id="step-1">
 
-      <div class="loan-chip">
-        <span class="loan-chip-amount" id="chip-amount">$750</span>
-        <span class="loan-chip-label">loan requested</span>
-        <button class="loan-chip-edit" onclick="history.back()">Change</button>
+      <!-- Redesigned loan hero chip -->
+      <div class="loan-hero">
+        <div class="loan-hero-inner">
+          <div class="loan-hero-label">You're applying for</div>
+          <div class="loan-hero-amount" id="chip-amount">$750</div>
+          <div class="loan-hero-sub">via Interac e-Transfer · No credit check · Decision in minutes</div>
+          <div class="loan-hero-badges">
+            <span class="loan-hero-badge"><span>🔒</span> Secure</span>
+            <span class="loan-hero-badge"><span>⚡</span> Same-day funding</span>
+            <span class="loan-hero-badge"><span>📋</span> Licensed lender</span>
+          </div>
+          <button class="loan-hero-change" onclick="history.back()">← Change amount</button>
+        </div>
       </div>
 
       <h1 class="step-heading">Tell us about yourself</h1>
@@ -1050,6 +1252,16 @@
 <script>
   // ─── CONFIG ─────────────────────────────────────────
   const WEBHOOK_URL = 'https://YOUR_WEBHOOK_ENDPOINT_HERE'; // ← Replace with your endpoint
+
+  // ─── ELIGIBILITY BOX TOGGLE ─────────────────────────
+  let eligOpen = true;
+  function toggleEligibility() {
+    eligOpen = !eligOpen;
+    const body    = document.getElementById('elig-body');
+    const chevron = document.getElementById('elig-chevron');
+    body.classList.toggle('collapsed', !eligOpen);
+    chevron.style.transform = eligOpen ? 'rotate(0deg)' : 'rotate(-90deg)';
+  }
 
   // ─── STATE ──────────────────────────────────────────
   let currentStep = 1;
@@ -1554,6 +1766,7 @@
     }
     document.querySelector('.progress-wrap').style.display = 'none';
     document.getElementById('trust-strip').style.display = 'none';
+    document.getElementById('eligibility-box').style.display = 'none';
 
     document.getElementById('ref-number').textContent = ref;
     const success = document.getElementById('success-screen');
