@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ═══ SEO META ═══ -->
+<title>Why Choose Waves Financial — Canada's Trusted Online Lender</title>
+<meta name="description" content="Discover why thousands of Canadians choose Waves Financial for fast, fair online loans. No credit check, same-day e-Transfer funding, transparent fees, and bank-level security. Licensed lender serving BC, ON, NS, NB, PE & NL.">
+<meta name="keywords" content="why choose Waves Financial, best online loan Canada, trusted Canadian lender, no credit check loan Canada, same day loan Canada, fair online lender Canada">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://wavesfinancial.ca/why-waves">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Why Choose Waves Financial — Canada's Trusted Online Lender">
+<meta property="og:description" content="No credit check. Same-day e-Transfer. Transparent fees. Licensed in 6 provinces. See why Canadians choose Waves Financial when they need cash fast.">
+<meta property="og:url" content="https://wavesfinancial.ca/why-waves">
+<meta property="og:site_name" content="Waves Financial">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FinancialService",
+  "name": "Waves Financial",
+  "description": "Fast, fair, and transparent online loans for Canadians. No credit check required. Funds delivered by Interac e-Transfer in minutes.",
+  "url": "https://wavesfinancial.ca",
+  "areaServed": ["British Columbia", "Ontario", "Nova Scotia", "New Brunswick", "Prince Edward Island", "Newfoundland and Labrador"],
+  "serviceType": "Personal Loan",
+  "currenciesAccepted": "CAD",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Online Personal Loans",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "name": "Online Personal Loan",
+        "description": "Fast online personal loans from $500 to $1,000 with no credit check",
+        "price": "500",
+        "priceCurrency": "CAD"
+      }
+    ]
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --deep:       #0D0B1F;
+    --navy:       #100E2E;
+    --violet:     #1E1650;
+    --royal:      #3B35B0;
+    --iris:       #5B52D8;
+    --lavender:   #7B74F0;
+    --periwinkle: #A09AF5;
+    --cyan:       #00E5FF;
+    --teal:       #1DE9C6;
+    --gold:       #FFD166;
+    --white:      #FFFFFF;
+    --text-muted: #9B97C5;
+    --card-bg:    rgba(30,22,80,0.55);
+    --glass:      rgba(91,82,216,0.12);
+    --border:     rgba(160,154,245,0.18);
+    --font-display: 'Syne', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+    --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 36px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--deep);
+    color: var(--white);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(59,53,176,0.28) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 15%, rgba(0,229,255,0.09) 0%, transparent 50%),
+      var(--deep);
+    pointer-events: none;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  section { position: relative; z-index: 1; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,11,31,0.9); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border); padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; height: 70px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo svg { width: 36px; height: 36px; }
+  .logo-text {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 0%, var(--periwinkle) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.9rem; font-weight: 500; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a.active { color: var(--periwinkle); }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-ghost {
+    padding: 9px 20px; border-radius: var(--r-sm);
+    border: 1px solid var(--border); background: transparent;
+    color: var(--white); font-family: var(--font-body);
+    font-size: 0.875rem; font-weight: 500; cursor: pointer;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .btn-ghost:hover { background: var(--glass); border-color: var(--lavender); }
+  .btn-primary {
+    padding: 10px 24px; border-radius: var(--r-sm);
+    background: linear-gradient(135deg, var(--royal), var(--iris));
+    color: var(--white); font-family: var(--font-body);
+    font-size: 0.875rem; font-weight: 600; border: none;
+    cursor: pointer; text-decoration: none;
+    box-shadow: 0 4px 20px rgba(91,82,216,0.4); transition: all 0.25s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(91,82,216,0.55); }
+  .nav-hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+
+  /* ─── HERO ─── */
+  .page-hero { padding: 140px 0 80px; text-align: center; }
+  .breadcrumb {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.78rem; color: var(--text-muted); margin-bottom: 20px;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .breadcrumb a:hover { color: var(--periwinkle); }
+  .breadcrumb-sep { color: rgba(160,154,245,0.3); }
+  .breadcrumb-current { color: var(--periwinkle); }
+  .page-hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 100px;
+    background: rgba(91,82,216,0.2); border: 1px solid rgba(160,154,245,0.3);
+    font-size: 0.78rem; font-weight: 700; color: var(--periwinkle);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .page-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -0.03em; margin-bottom: 18px;
+  }
+  .page-hero h1 span {
+    background: linear-gradient(90deg, var(--lavender), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .page-hero-sub {
+    font-size: 1.1rem; color: var(--text-muted);
+    max-width: 580px; margin: 0 auto 36px; line-height: 1.7;
+  }
+  .hero-cta-row { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .btn-cta-large {
+    padding: 16px 40px; font-size: 1rem; border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--teal), var(--cyan));
+    color: var(--deep); font-family: var(--font-display); font-weight: 700;
+    border: none; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 28px rgba(0,229,255,0.3); transition: all 0.25s;
+  }
+  .btn-cta-large:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,229,255,0.45); }
+
+  /* ─── SECTION STYLES ─── */
+  .section-eyebrow {
+    display: inline-block; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--periwinkle); margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 14px;
+  }
+  .section-sub { font-size: 1rem; color: var(--text-muted); max-width: 520px; line-height: 1.7; }
+
+  /* ─── TRUST NUMBERS STRIP ─── */
+  .trust-strip {
+    padding: 0 0 72px;
+  }
+  .trust-numbers {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--card-bg); backdrop-filter: blur(20px);
+    border: 1px solid var(--border); border-radius: var(--r-xl);
+    overflow: hidden; position: relative;
+  }
+  .trust-numbers::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--royal), var(--iris), var(--teal), var(--cyan));
+  }
+  .trust-num-item {
+    padding: 36px 28px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .trust-num-item:last-child { border-right: none; }
+  .trust-num {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 2.6rem);
+    font-weight: 800; line-height: 1;
+    background: linear-gradient(135deg, var(--white), var(--periwinkle));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    display: block; margin-bottom: 8px;
+  }
+  .trust-num-label { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+
+  /* ─── PILLARS SECTION ─── */
+  .pillars-section { padding: 80px 0; }
+  .pillars-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-top: 52px;
+  }
+  .pillar-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 36px 30px;
+    position: relative; overflow: hidden;
+    transition: all 0.3s;
+  }
+  .pillar-card:hover { border-color: rgba(160,154,245,0.4); transform: translateY(-5px); box-shadow: 0 20px 60px rgba(13,11,31,0.5); }
+  .pillar-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  }
+  .pillar-card.c1::before { background: linear-gradient(90deg, transparent, var(--iris), transparent); }
+  .pillar-card.c2::before { background: linear-gradient(90deg, transparent, var(--lavender), transparent); }
+  .pillar-card.c3::before { background: linear-gradient(90deg, transparent, var(--teal), transparent); }
+  .pillar-card.c4::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+  .pillar-card.c5::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .pillar-card.c6::before { background: linear-gradient(90deg, transparent, var(--periwinkle), transparent); }
+  .pillar-icon {
+    width: 56px; height: 56px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .bg-purple { background: rgba(91,82,216,0.2); }
+  .bg-teal   { background: rgba(29,233,198,0.15); }
+  .bg-cyan   { background: rgba(0,229,255,0.12); }
+  .bg-gold   { background: rgba(255,209,102,0.12); }
+  .bg-lavender { background: rgba(123,116,240,0.2); }
+  .bg-blue   { background: rgba(79,195,247,0.12); }
+  .pillar-title {
+    font-family: var(--font-display); font-size: 1.1rem;
+    font-weight: 700; margin-bottom: 10px;
+  }
+  .pillar-desc { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
+  .pillar-points { display: flex; flex-direction: column; gap: 7px; }
+  .pillar-point {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 0.82rem; color: rgba(255,255,255,0.75); line-height: 1.4;
+  }
+  .pillar-point-dot { color: var(--teal); font-weight: 700; flex-shrink: 0; font-size: 0.7rem; margin-top: 3px; }
+
+  /* ─── COMPARISON SECTION ─── */
+  .comparison-section {
+    padding: 80px 0;
+    background: rgba(30,22,80,0.2);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .comparison-table {
+    margin-top: 48px; border-radius: var(--r-xl);
+    border: 1px solid var(--border); overflow: hidden;
+    background: var(--card-bg); backdrop-filter: blur(20px);
+    position: relative;
+  }
+  .comparison-table::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--iris), var(--teal), var(--cyan));
+  }
+  .comp-header {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    background: rgba(13,11,31,0.5);
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-header-cell {
+    padding: 18px 20px; font-size: 0.8rem; font-weight: 700;
+    text-align: center;
+  }
+  .comp-header-cell:first-child { text-align: left; color: var(--text-muted); }
+  .comp-header-cell.highlight {
+    background: rgba(91,82,216,0.15);
+    color: var(--periwinkle);
+    border-left: 1px solid rgba(160,154,245,0.2);
+    border-right: 1px solid rgba(160,154,245,0.2);
+  }
+  .comp-header-cell.other { color: var(--text-muted); }
+  .comp-row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    border-bottom: 1px solid rgba(160,154,245,0.08);
+    transition: background 0.15s;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-row:hover { background: rgba(91,82,216,0.05); }
+  .comp-cell {
+    padding: 16px 20px; font-size: 0.875rem;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .comp-cell:first-child { justify-content: flex-start; color: var(--white); font-weight: 500; }
+  .comp-cell.highlight {
+    background: rgba(91,82,216,0.08);
+    border-left: 1px solid rgba(160,154,245,0.1);
+    border-right: 1px solid rgba(160,154,245,0.1);
+  }
+  .comp-cell.other { color: var(--text-muted); }
+  .check { color: var(--teal); font-weight: 700; font-size: 1rem; }
+  .cross { color: rgba(255,107,138,0.7); font-weight: 700; }
+  .partial { color: var(--gold); font-size: 0.8rem; }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials-section { padding: 80px 0; }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-top: 48px;
+  }
+  .testimonial-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 28px;
+    transition: all 0.3s;
+  }
+  .testimonial-card:hover { transform: translateY(-4px); border-color: rgba(160,154,245,0.3); }
+  .t-stars { color: var(--gold); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 14px; }
+  .t-quote {
+    font-size: 0.9rem; color: rgba(255,255,255,0.85);
+    line-height: 1.75; font-style: italic; margin-bottom: 20px;
+  }
+  .t-author { display: flex; align-items: center; gap: 12px; }
+  .t-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 0.85rem; font-weight: 700;
+  }
+  .av-1 { background: linear-gradient(135deg, var(--royal), var(--iris)); }
+  .av-2 { background: linear-gradient(135deg, var(--iris), var(--teal)); }
+  .av-3 { background: linear-gradient(135deg, var(--teal), var(--cyan)); color: var(--deep); }
+  .av-4 { background: linear-gradient(135deg, var(--royal), var(--lavender)); }
+  .av-5 { background: linear-gradient(135deg, var(--lavender), var(--cyan)); }
+  .av-6 { background: linear-gradient(135deg, var(--indigo, #2D2580), var(--teal)); }
+  .t-name { font-weight: 600; font-size: 0.875rem; }
+  .t-loc { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* ─── PROVINCES SECTION ─── */
+  .provinces-section { padding: 80px 0; }
+  .provinces-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-top: 44px;
+  }
+  .province-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 22px 20px;
+    display: flex; align-items: center; gap: 14px;
+    transition: all 0.2s;
+  }
+  .province-card:hover { border-color: rgba(160,154,245,0.35); background: rgba(30,22,80,0.7); }
+  .province-flag { font-size: 1.6rem; flex-shrink: 0; }
+  .province-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+  .province-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 100px;
+    font-size: 0.68rem; font-weight: 600;
+    background: rgba(29,233,198,0.12);
+    border: 1px solid rgba(29,233,198,0.25);
+    color: var(--teal);
+  }
+
+  /* ─── SECURITY SECTION ─── */
+  .security-section {
+    padding: 80px 0;
+    background: rgba(30,22,80,0.2);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .security-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: center; margin-top: 48px;
+  }
+  .security-points { display: flex; flex-direction: column; gap: 20px; }
+  .security-point {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 20px; border-radius: var(--r-md);
+    background: var(--card-bg); border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .security-point:hover { border-color: rgba(160,154,245,0.3); }
+  .security-point-icon {
+    width: 44px; height: 44px; border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    background: rgba(91,82,216,0.2);
+  }
+  .security-point-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+  .security-point-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+  .security-visual {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 40px 36px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .security-visual::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--iris), var(--teal), transparent);
+  }
+  .security-shield {
+    font-size: 3.5rem; margin-bottom: 16px; display: block;
+    filter: drop-shadow(0 0 20px rgba(29,233,198,0.3));
+  }
+  .security-visual-title {
+    font-family: var(--font-display); font-size: 1.2rem;
+    font-weight: 800; margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--white), var(--teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .security-visual-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+  .cert-badges { display: flex; flex-direction: column; gap: 10px; }
+  .cert-badge {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: var(--r-sm);
+    background: rgba(13,11,31,0.4); border: 1px solid var(--border);
+    font-size: 0.82rem; text-align: left;
+  }
+  .cert-badge-icon { font-size: 1rem; flex-shrink: 0; }
+  .cert-badge-text { color: rgba(255,255,255,0.85); line-height: 1.4; }
+  .cert-badge-text strong { color: var(--white); display: block; }
+
+  /* ─── CTA SECTION ─── */
+  .cta-section { padding: 80px 0 100px; }
+  .cta-card {
+    background: linear-gradient(135deg, rgba(59,53,176,0.35), rgba(29,233,198,0.08));
+    border: 1px solid rgba(160,154,245,0.22);
+    border-radius: var(--r-xl); padding: 72px 48px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--iris), var(--teal), var(--cyan));
+  }
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .cta-sub { font-size: 1rem; color: var(--text-muted); margin-bottom: 32px; }
+  .cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+  /* ─── FOOTER ─── */
+  footer { border-top: 1px solid var(--border); padding: 56px 0 28px; position: relative; z-index: 1; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
+  .footer-brand-tagline { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; margin: 14px 0 0; max-width: 280px; }
+  .footer-col-title { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--periwinkle); margin-bottom: 16px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 0.87rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom { padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .footer-copy { font-size: 0.78rem; color: var(--text-muted); }
+  .footer-legal { font-size: 0.72rem; color: rgba(155,151,197,0.55); max-width: 640px; line-height: 1.6; }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  .fd1 { transition-delay: 0.1s; }
+  .fd2 { transition-delay: 0.2s; }
+  .fd3 { transition-delay: 0.3s; }
+  .fd4 { transition-delay: 0.4s; }
+  .fd5 { transition-delay: 0.5s; }
+  .fd6 { transition-delay: 0.6s; }
+
+  /* ─── MOBILE STICKY CTA ─── */
+  .sticky-cta-mobile { display: none; position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 20px; z-index: 99; background: linear-gradient(to top, var(--deep) 60%, transparent); }
+  .sticky-cta-mobile a { display: block; width: 100%; padding: 15px; border-radius: var(--r-md); text-align: center; background: linear-gradient(135deg, var(--teal), var(--cyan)); color: var(--deep); font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-decoration: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+    .comp-header, .comp-row { grid-template-columns: 2fr 1fr 1fr; }
+    .comp-header-cell:nth-child(4), .comp-cell:nth-child(4) { display: none; }
+    .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+    .provinces-grid { grid-template-columns: repeat(2, 1fr); }
+    .security-grid { grid-template-columns: 1fr; }
+    .trust-numbers { grid-template-columns: repeat(2, 1fr); }
+    .trust-num-item:nth-child(2) { border-right: none; }
+    .trust-num-item:nth-child(3) { border-top: 1px solid var(--border); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .page-hero { padding: 110px 0 60px; }
+    .pillars-grid { grid-template-columns: 1fr; }
+    .comp-header, .comp-row { grid-template-columns: 1.5fr 1fr 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .provinces-grid { grid-template-columns: 1fr; }
+    .cta-card { padding: 44px 24px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .sticky-cta-mobile { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 38 38" fill="none">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/>
+          </linearGradient>
+          <linearGradient id="lg2" x1="0" y1="38" x2="38" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1DE9C6"/><stop offset="100%" stop-color="#5B52D8"/>
+          </linearGradient>
+        </defs>
+        <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M4 30 C7 24, 10 20, 13 24 C16 28, 17 32, 19 28 C21 24, 22 20, 25 24 C28 28, 31 24, 34 20" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <circle cx="33" cy="10" r="3.5" fill="url(#lg1)"/>
+      </svg>
+      <span class="logo-text">Waves Financial</span>
+    </a>
+    <div class="nav-links">
+      <a href="how-it-works.html">How It Works</a>
+      <a href="why-waves.html" class="active">Why Waves</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">Log In</a>
+      <a href="apply.html" class="btn-primary">Get a Loan →</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Why Waves</span>
+      </nav>
+      <div class="page-hero-eyebrow">Built for Canadians</div>
+      <h1>A lender that <span>actually works for you</span></h1>
+      <p class="page-hero-sub">We built Waves Financial because Canadians deserved better than confusing fees, long wait times, and lenders who judge you by a three-digit number. Here's what makes us different.</p>
+      <div class="hero-cta-row">
+        <a href="apply.html" class="btn-cta-large">
+          Apply Now — It's Free
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="how-it-works.html" class="btn-ghost">See how it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TRUST NUMBERS ═══ -->
+  <section class="trust-strip fade-in">
+    <div class="container">
+      <div class="trust-numbers">
+        <div class="trust-num-item">
+          <span class="trust-num">50,000+</span>
+          <span class="trust-num-label">Canadians helped</span>
+        </div>
+        <div class="trust-num-item">
+          <span class="trust-num">4.9★</span>
+          <span class="trust-num-label">Average customer rating</span>
+        </div>
+        <div class="trust-num-item">
+          <span class="trust-num">2 min</span>
+          <span class="trust-num-label">Average e-Transfer time</span>
+        </div>
+        <div class="trust-num-item">
+          <span class="trust-num">6</span>
+          <span class="trust-num-label">Provinces served</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 6 PILLARS ═══ -->
+  <section class="pillars-section">
+    <div class="container">
+      <div class="section-eyebrow">What sets us apart</div>
+      <h2 class="section-title">Six reasons Canadians<br>choose Waves Financial</h2>
+      <p class="section-sub">We've thought carefully about every part of the borrowing experience — from the moment you apply to the moment your loan is paid off.</p>
+
+      <div class="pillars-grid">
+
+        <div class="pillar-card c1 fade-in">
+          <div class="pillar-icon bg-purple">🚫</div>
+          <div class="pillar-title">No Credit Check — Ever</div>
+          <p class="pillar-desc">We never pull your credit report. Not for your first loan, not for any subsequent loan. We evaluate your eligibility based on your current income and bank history — not your past.</p>
+          <div class="pillar-points">
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>No hard or soft credit inquiry</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Your credit score is never impacted</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Bad credit history? You can still apply</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>New to Canada with no credit history? Welcome</div>
+          </div>
+        </div>
+
+        <div class="pillar-card c2 fade-in fd1">
+          <div class="pillar-icon bg-teal">⚡</div>
+          <div class="pillar-title">Same-Day Funding, 24/7</div>
+          <p class="pillar-desc">Financial emergencies don't happen during business hours. Our fully automated system is open around the clock — apply at 2am on a Sunday and receive your funds within minutes.</p>
+          <div class="pillar-points">
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Decisions made in under 60 seconds</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>e-Transfer sent within 2 minutes of signing</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Available evenings, weekends, and holidays</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>No waiting for a loan officer to call back</div>
+          </div>
+        </div>
+
+        <div class="pillar-card c3 fade-in fd2">
+          <div class="pillar-icon bg-cyan">📋</div>
+          <div class="pillar-title">Completely Transparent Fees</div>
+          <p class="pillar-desc">No hidden fees. No surprises. Before you sign anything, you'll see the exact APR, total repayment amount, and payment schedule. What you see is exactly what you pay.</p>
+          <div class="pillar-points">
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>APR clearly disclosed upfront: 23.00%</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Total cost of borrowing shown before signing</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>No application fees</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>No early repayment penalties</div>
+          </div>
+        </div>
+
+        <div class="pillar-card c4 fade-in fd3">
+          <div class="pillar-icon bg-gold">📅</div>
+          <div class="pillar-title">Flexible Repayment Your Way</div>
+          <p class="pillar-desc">We fit around your pay cycle — not the other way around. Choose weekly, biweekly, semi-monthly, or monthly repayments. Need to defer a payment? We work with you.</p>
+          <div class="pillar-points">
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>4 payment frequency options</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>90 to 150-day repayment terms</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Pay early and save on interest</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Deferral available with 48-hour notice</div>
+          </div>
+        </div>
+
+        <div class="pillar-card c5 fade-in fd4">
+          <div class="pillar-icon bg-lavender">🔒</div>
+          <div class="pillar-title">Bank-Level Security</div>
+          <p class="pillar-desc">Your personal and financial information is protected with the same 256-bit SSL encryption used by Canadian banks. We never sell your data or share it with third parties.</p>
+          <div class="pillar-points">
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>256-bit SSL encryption on all data</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Flinks IBV — read-only bank connection</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Your data is never sold or shared</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Compliant with Canadian privacy laws (PIPEDA)</div>
+          </div>
+        </div>
+
+        <div class="pillar-card c6 fade-in fd5">
+          <div class="pillar-icon bg-blue">📞</div>
+          <div class="pillar-title">Real Canadian Support</div>
+          <p class="pillar-desc">Our customer care team is based in Canada and available to help. Whether you have questions during the application or need support managing your loan, we're here for you.</p>
+          <div class="pillar-points">
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Canadian-based support team</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Available by phone and email</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>No chatbots — real people</div>
+            <div class="pillar-point"><span class="pillar-point-dot">→</span>Responsible lending practices always</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COMPARISON TABLE ═══ -->
+  <section class="comparison-section fade-in">
+    <div class="container">
+      <div class="section-eyebrow">Side-by-side comparison</div>
+      <h2 class="section-title">Waves Financial vs. the alternatives</h2>
+      <p class="section-sub">See how we compare to traditional banks, payday lenders, and other online loan providers.</p>
+
+      <div class="comparison-table">
+        <div class="comp-header">
+          <div class="comp-header-cell">Feature</div>
+          <div class="comp-header-cell highlight">🌊 Waves Financial</div>
+          <div class="comp-header-cell other">Traditional Bank</div>
+          <div class="comp-header-cell other">Payday Lender</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">No credit check</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+          <div class="comp-cell other"><span class="check">✓</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">Decision in minutes</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+          <div class="comp-cell other"><span class="check">✓</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">Available 24/7</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+          <div class="comp-cell other"><span class="partial">Varies</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">Flexible repayment (3–12 installments)</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="partial">Limited</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">Fully transparent fees</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="partial">Mostly</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">100% online, no branch visit</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="partial">Varies</span></div>
+          <div class="comp-cell other"><span class="check">✓</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">No early repayment penalty</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="partial">Varies</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">Licensed Canadian lender</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="partial">Varies</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell">Funds via Interac e-Transfer</div>
+          <div class="comp-cell highlight"><span class="check">✓</span></div>
+          <div class="comp-cell other"><span class="cross">✗</span></div>
+          <div class="comp-cell other"><span class="partial">Some</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TESTIMONIALS ═══ -->
+  <section class="testimonials-section fade-in">
+    <div class="container">
+      <div style="text-align:center;">
+        <div class="section-eyebrow">Customer Reviews</div>
+        <h2 class="section-title">Don't just take our word for it</h2>
+        <p class="section-sub" style="margin:0 auto;">Real feedback from real Canadians who chose Waves Financial when they needed help most.</p>
+      </div>
+      <div class="testimonials-grid" style="margin-top:48px;">
+
+        <div class="testimonial-card fade-in">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">"I was skeptical at first but the process was incredibly smooth. Applied at 9pm and had the money in my account by 9:15pm. Absolutely unreal. Will definitely use again."</p>
+          <div class="t-author">
+            <div class="t-avatar av-1">JM</div>
+            <div><div class="t-name">James M.</div><div class="t-loc">Toronto, ON</div></div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-in fd1">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">"My car broke down and I needed cash fast. Waves Financial had me approved in under 10 minutes. The flexible repayment options made it so easy to budget. Highly recommend."</p>
+          <div class="t-author">
+            <div class="t-avatar av-2">SL</div>
+            <div><div class="t-name">Sarah L.</div><div class="t-loc">Vancouver, BC</div></div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-in fd2">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">"No credit check was a huge deal for me. I've been turned down everywhere else. Waves Financial treated me with respect and got me the money I needed. Thank you!"</p>
+          <div class="t-author">
+            <div class="t-avatar av-3">RP</div>
+            <div><div class="t-name">Ryan P.</div><div class="t-loc">Halifax, NS</div></div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-in fd3">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">"I'm on EI and thought I wouldn't qualify anywhere. Waves Financial approved me the same night. The process was so simple — no paperwork, no stress. Genuinely impressed."</p>
+          <div class="t-author">
+            <div class="t-avatar av-4">MK</div>
+            <div><div class="t-name">Marie K.</div><div class="t-loc">Moncton, NB</div></div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-in fd4">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">"Transparent fees, fast approval, money in my account within minutes. I've dealt with other online lenders before — Waves Financial is by far the best experience I've had."</p>
+          <div class="t-author">
+            <div class="t-avatar av-5">DT</div>
+            <div><div class="t-name">David T.</div><div class="t-loc">Victoria, BC</div></div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-in fd5">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-quote">"I needed help covering rent before my next paycheque. The application was done on my phone in under 5 minutes. Customer service was also super helpful when I had a question."</p>
+          <div class="t-author">
+            <div class="t-avatar av-6">AL</div>
+            <div><div class="t-name">Amanda L.</div><div class="t-loc">Charlottetown, PE</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROVINCES ═══ -->
+  <section class="provinces-section fade-in">
+    <div class="container">
+      <div class="section-eyebrow">Where we operate</div>
+      <h2 class="section-title">Currently serving 6 provinces</h2>
+      <p class="section-sub">We're licensed and regulated in every province we operate in, ensuring your protection as a borrower at all times.</p>
+      <div class="provinces-grid">
+        <div class="province-card">
+          <span class="province-flag">🏔️</span>
+          <div><div class="province-name">British Columbia</div><span class="province-tag">Active</span></div>
+        </div>
+        <div class="province-card">
+          <span class="province-flag">🏙️</span>
+          <div><div class="province-name">Ontario</div><span class="province-tag">Active</span></div>
+        </div>
+        <div class="province-card">
+          <span class="province-flag">🌊</span>
+          <div><div class="province-name">Nova Scotia</div><span class="province-tag">Active</span></div>
+        </div>
+        <div class="province-card">
+          <span class="province-flag">🌲</span>
+          <div><div class="province-name">New Brunswick</div><span class="province-tag">Active</span></div>
+        </div>
+        <div class="province-card">
+          <span class="province-flag">🏝️</span>
+          <div><div class="province-name">Prince Edward Island</div><span class="province-tag">Active</span></div>
+        </div>
+        <div class="province-card">
+          <span class="province-flag">⚓</span>
+          <div><div class="province-name">Newfoundland & Labrador</div><span class="province-tag">Active</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SECURITY ═══ -->
+  <section class="security-section fade-in">
+    <div class="container">
+      <div class="section-eyebrow">Your security is our priority</div>
+      <h2 class="section-title">Protecting you at every step</h2>
+      <p class="section-sub">From the moment you start your application to the last repayment, your data is protected by industry-leading security standards.</p>
+
+      <div class="security-grid">
+        <div class="security-points">
+          <div class="security-point">
+            <div class="security-point-icon">🔐</div>
+            <div>
+              <div class="security-point-title">256-Bit SSL Encryption</div>
+              <p class="security-point-desc">Every piece of data you submit — including your SIN, banking details, and personal information — is encrypted using the same 256-bit SSL standard used by major Canadian banks.</p>
+            </div>
+          </div>
+          <div class="security-point">
+            <div class="security-point-icon">🏦</div>
+            <div>
+              <div class="security-point-title">Read-Only Bank Verification</div>
+              <p class="security-point-desc">Our Flinks IBV integration connects to your bank in read-only mode. We can see your account activity to verify income — but we cannot initiate or move any funds outside of your pre-authorized repayment schedule.</p>
+            </div>
+          </div>
+          <div class="security-point">
+            <div class="security-point-icon">🚫</div>
+            <div>
+              <div class="security-point-title">Your Data Is Never Sold</div>
+              <p class="security-point-desc">We collect your information to process your loan application and manage your account — nothing more. We never sell, rent, or trade your personal data to third parties or advertisers.</p>
+            </div>
+          </div>
+          <div class="security-point">
+            <div class="security-point-icon">📜</div>
+            <div>
+              <div class="security-point-title">PIPEDA Compliant</div>
+              <p class="security-point-desc">Waves Financial is fully compliant with Canada's Personal Information Protection and Electronic Documents Act (PIPEDA), giving you the right to access and correct your personal information at any time.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="security-visual">
+          <span class="security-shield">🛡️</span>
+          <div class="security-visual-title">Trusted & Regulated</div>
+          <p class="security-visual-sub">Waves Financial is a licensed lender regulated in every province we serve. You're always protected by provincial consumer lending laws.</p>
+          <div class="cert-badges">
+            <div class="cert-badge">
+              <span class="cert-badge-icon">🔒</span>
+              <div class="cert-badge-text"><strong>256-bit SSL Encrypted</strong>Bank-grade data security on all connections</div>
+            </div>
+            <div class="cert-badge">
+              <span class="cert-badge-icon">🇨🇦</span>
+              <div class="cert-badge-text"><strong>Licensed Canadian Lender</strong>Regulated in BC, ON, NS, NB, PE & NL</div>
+            </div>
+            <div class="cert-badge">
+              <span class="cert-badge-icon">📋</span>
+              <div class="cert-badge-text"><strong>PIPEDA Compliant</strong>Your privacy is protected by Canadian law</div>
+            </div>
+            <div class="cert-badge">
+              <span class="cert-badge-icon">🏦</span>
+              <div class="cert-badge-text"><strong>Flinks IBV Powered</strong>Secure, read-only bank verification</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section fade-in">
+    <div class="container">
+      <div class="cta-card">
+        <h2 class="cta-title">Ready to experience the difference?</h2>
+        <p class="cta-sub">Apply in 5 minutes. No credit check. Funds in your account today.</p>
+        <div class="cta-actions">
+          <a href="apply.html" class="btn-cta-large">
+            Apply Now — It's Free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="how-it-works.html" class="btn-ghost" style="padding:16px 28px;">How it works</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo">
+          <svg viewBox="0 0 38 38" fill="none" width="32" height="32">
+            <defs><linearGradient id="fg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient></defs>
+            <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#fg1)" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <circle cx="33" cy="10" r="3.5" fill="url(#fg1)"/>
+          </svg>
+          <span class="logo-text">Waves Financial</span>
+        </a>
+        <p class="footer-brand-tagline">Fast, fair, and transparent online loans for Canadians. When life sends a wave your way — we've got you covered.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Products</div>
+        <ul class="footer-links">
+          <li><a href="apply.html">Online Loans</a></li>
+          <li><a href="apply.html">Bad Credit Loans</a></li>
+          <li><a href="apply.html">No Credit Check</a></li>
+          <li><a href="apply.html">Installment Loans</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="why-waves.html">About Us</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Waves Financial, a division of [Parent Co.]. All Rights Reserved.</div>
+      <div class="footer-legal">The Annual Percentage Rate (APR) on loans is 23.00%. A $750 loan repaid over 120 days has an estimated total repayment of approximately $1,030. Approval is not guaranteed. All applications are subject to eligibility review. Please borrow responsibly. Rates and terms may vary by province.</div>
+    </div>
+  </div>
+</footer>
+
+<div class="sticky-cta-mobile"><a href="apply.html">Apply Now — It's Free →</a></div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
