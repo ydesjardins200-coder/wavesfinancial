@@ -491,6 +491,60 @@
   }
   .trust-item-icon { font-size: 0.85rem; }
 
+  /* ─── IBV STYLES ─── */
+  .ibv-header { margin-bottom: 20px; }
+  .ibv-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 100px;
+    background: rgba(29,233,198,0.1);
+    border: 1px solid rgba(29,233,198,0.25);
+    font-size: 0.72rem; font-weight: 600;
+    color: var(--teal); margin-bottom: 14px;
+    letter-spacing: 0.04em;
+  }
+  .ibv-howit {
+    display: flex; align-items: center;
+    background: rgba(13,11,31,0.4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 14px 18px;
+    margin-bottom: 24px; gap: 12px; flex-wrap: wrap;
+  }
+  .ibv-howit-item {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 0.78rem; color: var(--text-muted); flex: 1; min-width: 140px;
+  }
+  .ibv-howit-icon { font-size: 0.9rem; }
+  .ibv-howit-sep { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+  .flinks-wrap {
+    border: 1px solid var(--border); border-radius: var(--r-lg);
+    overflow: hidden; margin-bottom: 8px;
+    background: rgba(13,11,31,0.3); min-height: 380px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flinks-placeholder { width: 100%; padding: 36px 28px; }
+  .flinks-placeholder-inner { text-align: center; }
+  .flinks-logo-wrap { margin-bottom: 16px; }
+  .flinks-placeholder-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .flinks-placeholder-sub { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; max-width: 380px; margin: 0 auto 20px; }
+  .flinks-bank-logos { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 24px; }
+  .bank-pill { padding: 4px 12px; border-radius: 100px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); font-size: 0.72rem; font-weight: 700; color: var(--text-muted); }
+  .flinks-setup-box { display: flex; align-items: flex-start; gap: 12px; background: rgba(91,82,216,0.1); border: 1px dashed rgba(160,154,245,0.3); border-radius: var(--r-md); padding: 14px 16px; margin: 0 auto 24px; max-width: 440px; text-align: left; }
+  .flinks-setup-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .flinks-setup-title { font-size: 0.82rem; font-weight: 600; color: var(--periwinkle); margin-bottom: 4px; }
+  .flinks-setup-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+  .flinks-setup-desc code { background: rgba(160,154,245,0.15); padding: 1px 5px; border-radius: 4px; font-size: 0.72rem; color: var(--periwinkle); }
+  .btn-flinks-demo { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--royal), var(--iris)); color: var(--white); border: none; cursor: pointer; font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; box-shadow: 0 6px 20px rgba(91,82,216,0.35); transition: all 0.25s; }
+  .btn-flinks-demo:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(91,82,216,0.5); }
+  .flinks-connected { width: 100%; padding: 40px 28px; text-align: center; }
+  .connected-icon { font-size: 2.5rem; margin-bottom: 14px; }
+  .connected-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin-bottom: 14px; background: linear-gradient(135deg, var(--white), var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .connected-bank { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 24px; border-radius: var(--r-md); background: rgba(29,233,198,0.1); border: 1px solid rgba(29,233,198,0.3); margin-bottom: 16px; }
+  .connected-bank-name { font-weight: 700; font-size: 1rem; }
+  .connected-account-type { font-size: 0.8rem; color: var(--text-muted); }
+  .connected-sub { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; max-width: 360px; margin: 0 auto 16px; }
+  .btn-change-bank { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.78rem; text-decoration: underline; font-family: var(--font-body); transition: color 0.2s; }
+  .btn-change-bank:hover { color: var(--white); }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 680px) {
     .form-card { padding: 32px 24px; border-radius: var(--r-lg); }
@@ -753,102 +807,141 @@
       </div>
     </div>
 
-    <!-- ═══ STEP 3: BANKING ═══ -->
+    <!-- ═══ STEP 3: IBV — FLINKS ═══ -->
     <div class="step-panel" id="step-3">
-      <h1 class="step-heading">Banking details</h1>
-      <p class="step-subhead">Your loan will be deposited to this account via e-Transfer. Repayments are collected here automatically.</p>
 
-      <div class="security-note">
-        <span class="security-note-icon">🔒</span>
-        <span class="security-note-text">Your banking information is encrypted and transmitted securely. We use it solely for deposit and pre-authorized debit repayments as per your agreement.</span>
+      <!-- Header -->
+      <div class="ibv-header">
+        <div class="ibv-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Bank-level encryption
+        </div>
+        <h1 class="step-heading" style="margin-bottom:6px;">Connect your bank</h1>
+        <p class="step-subhead" style="margin-bottom:0;">Securely link your bank account so we can verify your income and set up e-Transfer deposits. Your login credentials are never stored by Waves Financial.</p>
       </div>
 
-      <div class="field-grid field-grid-2">
-        <div class="field">
-          <label class="field-label">Bank Name <span class="required">*</span></label>
-          <select class="field-select" id="bank-name">
-            <option value="">Select bank…</option>
-            <option value="RBC">RBC Royal Bank</option>
-            <option value="TD">TD Canada Trust</option>
-            <option value="BMO">BMO Bank of Montreal</option>
-            <option value="CIBC">CIBC</option>
-            <option value="Scotia">Scotiabank</option>
-            <option value="NBC">National Bank</option>
-            <option value="Desjardins">Desjardins</option>
-            <option value="Tangerine">Tangerine</option>
-            <option value="Other">Other</option>
-          </select>
-          <span class="field-error" id="err-bank-name">Please select your bank</span>
+      <!-- How it works strip -->
+      <div class="ibv-howit">
+        <div class="ibv-howit-item">
+          <span class="ibv-howit-icon">🔒</span>
+          <span>256-bit encrypted connection</span>
         </div>
-        <div class="field">
-          <label class="field-label">Account Type <span class="required">*</span></label>
-          <div class="radio-group radio-group-2" style="margin-top:6px;">
-            <label class="radio-option">
-              <input type="radio" name="account-type" value="chequing">
-              <span class="radio-label"><span class="radio-dot"></span>Chequing</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="account-type" value="savings">
-              <span class="radio-label"><span class="radio-dot"></span>Savings</span>
-            </label>
+        <div class="ibv-howit-sep"></div>
+        <div class="ibv-howit-item">
+          <span class="ibv-howit-icon">👁️</span>
+          <span>Read-only — we can't move money</span>
+        </div>
+        <div class="ibv-howit-sep"></div>
+        <div class="ibv-howit-item">
+          <span class="ibv-howit-icon">⚡</span>
+          <span>Takes under 60 seconds</span>
+        </div>
+      </div>
+
+      <!-- Flinks iframe container -->
+      <div class="flinks-wrap" id="flinks-wrap">
+
+        <!-- SANDBOX PLACEHOLDER — replace iframe src with your Flinks URL -->
+        <div class="flinks-placeholder" id="flinks-placeholder">
+          <div class="flinks-placeholder-inner">
+            <div class="flinks-logo-wrap">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <rect width="40" height="40" rx="10" fill="rgba(91,82,216,0.2)"/>
+                <path d="M12 28V18l8-6 8 6v10H24v-6h-8v6z" fill="none" stroke="url(#ibvg)" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M16 22h8" stroke="url(#ibvg)" stroke-width="2" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="ibvg" x1="12" y1="12" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#5B52D8"/>
+                    <stop offset="100%" stop-color="#00E5FF"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h3 class="flinks-placeholder-title">Instant Bank Verification</h3>
+            <p class="flinks-placeholder-sub">Powered by Flinks — Canada's trusted open banking platform used by major lenders across the country.</p>
+
+            <div class="flinks-bank-logos">
+              <span class="bank-pill">RBC</span>
+              <span class="bank-pill">TD</span>
+              <span class="bank-pill">BMO</span>
+              <span class="bank-pill">CIBC</span>
+              <span class="bank-pill">Scotia</span>
+              <span class="bank-pill">Desjardins</span>
+              <span class="bank-pill">+700 more</span>
+            </div>
+
+            <div class="flinks-setup-box">
+              <div class="flinks-setup-icon">⚙️</div>
+              <div>
+                <div class="flinks-setup-title">Awaiting Flinks credentials</div>
+                <div class="flinks-setup-desc">Replace <code>YOUR_FLINKS_CLIENT_ID</code> in the code with your Flinks iframe URL to activate this widget.</div>
+              </div>
+            </div>
+
+            <!-- This is where the real Flinks iframe goes -->
+            <!-- UNCOMMENT AND REPLACE when you have your Flinks Client ID:
+            <iframe
+              id="flinks-iframe"
+              src="https://YOUR_FLINKS_CLIENT_ID-iframe.private.fin.ag/v2/?institutionFilterEnable=false&country=CA&language=en&innerRedirect=true&theme=light&demo=false&backgroundColor=0D0B1F&foregroundColor1=ffffff&desktopLayout=true&headerEnable=false&progressMeterEnable=true"
+              style="width:100%;height:520px;border:none;border-radius:12px;"
+              allow="camera"
+              title="Flinks Bank Connection">
+            </iframe>
+            -->
+
+            <!-- SANDBOX demo button — simulates a successful Flinks connection -->
+            <button class="btn-flinks-demo" onclick="simulateFlinksSuccess()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+              Simulate Bank Connection (Sandbox)
+            </button>
           </div>
-          <span class="field-error" id="err-account-type">Please select account type</span>
         </div>
-      </div>
 
-      <div class="field-grid field-grid-3">
-        <div class="field">
-          <label class="field-label">Transit No. <span class="required">*</span></label>
-          <input type="text" class="field-input" id="transit" placeholder="00000" maxlength="5" inputmode="numeric">
-          <span class="field-error" id="err-transit">5-digit transit number</span>
-          <span class="field-hint">5 digits</span>
+        <!-- Connected state — shown after successful Flinks callback -->
+        <div class="flinks-connected" id="flinks-connected" style="display:none;">
+          <div class="connected-icon">✅</div>
+          <h3 class="connected-title">Bank Connected!</h3>
+          <div class="connected-bank" id="connected-bank-info">
+            <span class="connected-bank-name" id="connected-bank-name">RBC Royal Bank</span>
+            <span class="connected-account-type" id="connected-account-type">Chequing ••••4521</span>
+          </div>
+          <p class="connected-sub">Your bank account has been securely verified. You're all set to submit your application.</p>
+          <button class="btn-change-bank" onclick="resetFlinks()">Connect a different account</button>
         </div>
-        <div class="field">
-          <label class="field-label">Institution No. <span class="required">*</span></label>
-          <input type="text" class="field-input" id="institution" placeholder="000" maxlength="3" inputmode="numeric">
-          <span class="field-error" id="err-institution">3-digit institution number</span>
-          <span class="field-hint">3 digits</span>
+
+      </div>
+
+      <!-- Consent (shown after bank connected) -->
+      <div id="ibv-consent-wrap" style="display:none;">
+        <div class="consent-wrap" style="margin-top:20px;">
+          <label class="consent-label">
+            <input type="checkbox" id="consent-pad">
+            <span class="consent-box"></span>
+            <span class="consent-text">I authorize Waves Financial to initiate pre-authorized debits from the verified account for loan repayments as described in the <a href="#">Loan Agreement</a> and <a href="#">PAD Agreement</a>.</span>
+          </label>
         </div>
-        <div class="field">
-          <label class="field-label">Account No. <span class="required">*</span></label>
-          <input type="text" class="field-input" id="account" placeholder="0000000" maxlength="12" inputmode="numeric">
-          <span class="field-error" id="err-account">5–12 digit account number</span>
-          <span class="field-hint">5–12 digits</span>
+        <div class="consent-wrap">
+          <label class="consent-label">
+            <input type="checkbox" id="consent-terms">
+            <span class="consent-box"></span>
+            <span class="consent-text">I have read and agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>. I confirm that all information provided is accurate.</span>
+          </label>
         </div>
+        <span class="field-error" id="err-consent" style="display:none; margin-bottom:16px;">Please accept both agreements to continue</span>
       </div>
 
-      <div class="field-hint" style="margin-bottom:24px; padding:12px 14px; background:rgba(160,154,245,0.08); border-radius:var(--r-sm); border:1px solid var(--border);">
-        💡 Find these numbers on your cheque or in your online banking under "Account details."
-      </div>
-
-      <div class="consent-wrap">
-        <label class="consent-label">
-          <input type="checkbox" id="consent-pad">
-          <span class="consent-box"></span>
-          <span class="consent-text">I authorize Waves Financial to initiate pre-authorized debits from the above account for loan repayments as described in the <a href="#">Loan Agreement</a> and <a href="#">PAD Agreement</a>.</span>
-        </label>
-      </div>
-
-      <div class="consent-wrap">
-        <label class="consent-label">
-          <input type="checkbox" id="consent-terms">
-          <span class="consent-box"></span>
-          <span class="consent-text">I have read and agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>. I confirm that all information provided is accurate.</span>
-        </label>
-      </div>
-      <span class="field-error" id="err-consent" style="display:none; margin-bottom:16px;">Please accept both agreements to continue</span>
-
-      <div class="form-actions">
+      <div class="form-actions" style="margin-top:24px;">
         <button class="btn-back" onclick="prevStep(3)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Back
         </button>
-        <button class="btn-submit" id="submit-btn" onclick="submitApplication()">
-          <span id="submit-label">Submit Application</span>
+        <button class="btn-submit" id="submit-btn" onclick="submitApplication()" disabled>
+          <span id="submit-label">Connect Bank First</span>
           <div class="spinner" id="submit-spinner"></div>
           <svg id="submit-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
+
     </div>
 
     <!-- ═══ SUCCESS ═══ -->
@@ -1016,36 +1109,22 @@
 
   function validateStep3() {
     let valid = true;
-    const bankName   = document.getElementById('bank-name').value;
-    const acctType   = document.querySelector('input[name="account-type"]:checked');
-    const transit    = document.getElementById('transit').value.trim();
-    const institution= document.getElementById('institution').value.trim();
-    const account    = document.getElementById('account').value.trim();
-    const consentPAD = document.getElementById('consent-pad').checked;
-    const consentTerms=document.getElementById('consent-terms').checked;
-
-    if (!bankName) { showError('bank-name', true); valid = false; }
-    else clearError('bank-name');
-
-    if (!acctType) { showError('account-type', true); valid = false; }
-    else clearError('account-type');
-
-    if (!/^\d{5}$/.test(transit)) { showError('transit', true); valid = false; }
-    else clearError('transit');
-
-    if (!/^\d{3}$/.test(institution)) { showError('institution', true); valid = false; }
-    else clearError('institution');
-
-    if (!/^\d{5,12}$/.test(account)) { showError('account', true); valid = false; }
-    else clearError('account');
-
+    if (!flinksLoginId) {
+      valid = false;
+      // Shake the flinks wrap to indicate action needed
+      const wrap = document.getElementById('flinks-wrap');
+      wrap.style.borderColor = 'rgba(255,107,138,0.5)';
+      setTimeout(() => { wrap.style.borderColor = ''; }, 2000);
+      return false;
+    }
+    const consentPAD   = document.getElementById('consent-pad').checked;
+    const consentTerms = document.getElementById('consent-terms').checked;
     if (!consentPAD || !consentTerms) {
       document.getElementById('err-consent').style.display = 'block';
       valid = false;
     } else {
       document.getElementById('err-consent').style.display = 'none';
     }
-
     return valid;
   }
 
@@ -1104,12 +1183,66 @@
     e.target.value = val;
   });
 
-  // ─── NUMERIC ONLY ────────────────────────────────────
-  ['transit','institution','account'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function(e) {
-      e.target.value = e.target.value.replace(/\D/g, '');
-    });
+  // ─── FLINKS IBV ──────────────────────────────────────
+  let flinksLoginId   = null;
+  let flinksLoginData = {};
+
+  // Listen for Flinks postMessage callback (real integration)
+  window.addEventListener('message', function(event) {
+    // Validate origin matches your Flinks iframe domain
+    // if (!event.origin.includes('fin.ag')) return;
+    const data = event.data;
+    if (data && data.loginId) {
+      flinksLoginId   = data.loginId;
+      flinksLoginData = data;
+      onFlinksSuccess({
+        loginId:     data.loginId,
+        institution: data.institution || 'Your Bank',
+        accountType: data.accountType || 'Chequing',
+        accountMask: data.accountNumber ? '••••' + data.accountNumber.slice(-4) : '••••',
+      });
+    }
   });
+
+  // Sandbox simulation — remove in production
+  function simulateFlinksSuccess() {
+    const banks = ['RBC Royal Bank', 'TD Canada Trust', 'Scotiabank', 'BMO', 'CIBC'];
+    const bank  = banks[Math.floor(Math.random() * banks.length)];
+    const mask  = Math.floor(1000 + Math.random() * 9000);
+    flinksLoginId = 'sandbox-login-' + Math.random().toString(36).substr(2, 9);
+    flinksLoginData = { loginId: flinksLoginId, institution: bank, sandbox: true };
+    onFlinksSuccess({ loginId: flinksLoginId, institution: bank, accountType: 'Chequing', accountMask: '••••' + mask });
+  }
+
+  function onFlinksSuccess(data) {
+    // Hide placeholder, show connected state
+    document.getElementById('flinks-placeholder').style.display = 'none';
+    const connected = document.getElementById('flinks-connected');
+    connected.style.display = 'block';
+    connected.style.animation = 'fadeSlide 0.4s ease';
+    document.getElementById('connected-bank-name').textContent    = data.institution;
+    document.getElementById('connected-account-type').textContent = data.accountType + ' ' + data.accountMask;
+
+    // Show consent & enable submit
+    document.getElementById('ibv-consent-wrap').style.display = 'block';
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = false;
+    document.getElementById('submit-label').textContent = 'Submit Application';
+  }
+
+  function resetFlinks() {
+    flinksLoginId   = null;
+    flinksLoginData = {};
+    document.getElementById('flinks-placeholder').style.display = 'block';
+    document.getElementById('flinks-connected').style.display   = 'none';
+    document.getElementById('ibv-consent-wrap').style.display   = 'none';
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    document.getElementById('submit-label').textContent = 'Connect Bank First';
+    document.getElementById('consent-pad').checked   = false;
+    document.getElementById('consent-terms').checked = false;
+    document.getElementById('err-consent').style.display = 'none';
+  }
 
   // ─── SUBMIT ──────────────────────────────────────────
   async function submitApplication() {
@@ -1147,11 +1280,9 @@
         loanAmount:       document.getElementById('loan-amount').value,
       },
       banking: {
-        bankName:        document.getElementById('bank-name').value,
-        accountType:     document.querySelector('input[name="account-type"]:checked')?.value,
-        transitNumber:   document.getElementById('transit').value.trim(),
-        institutionNumber: document.getElementById('institution').value.trim(),
-        accountNumber:   document.getElementById('account').value.trim(),
+        flinksLoginId:   flinksLoginId,
+        institution:     flinksLoginData.institution || '',
+        sandbox:         flinksLoginData.sandbox || false,
       },
       meta: {
         submittedAt: new Date().toISOString(),
