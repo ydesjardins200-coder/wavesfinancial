@@ -128,14 +128,14 @@
   .hero-meta-item { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; color: rgba(255,255,255,0.78); }
 
   /* LANG hidden */
-  [data-lang="fr"] { display: block; }
-  [data-lang="en"] { display: none; }
-  body.lang-en [data-lang="fr"] { display: none; }
-  body.lang-en [data-lang="en"] { display: block; }
+  [data-lang="en"] { display: block; }
+  [data-lang="fr"] { display: none; }
+  body.lang-fr [data-lang="en"] { display: none; }
+  body.lang-fr [data-lang="fr"] { display: block; }
   /* For inline elements */
   span[data-lang] { display: none; }
-  body.lang-en span[data-lang="en"] { display: inline; }
-  body:not(.lang-en) span[data-lang="fr"] { display: inline; }
+  body.lang-fr span[data-lang="fr"] { display: inline; }
+  body:not(.lang-fr) span[data-lang="en"] { display: inline; }
 
   /* SHARED */
   .section-eyebrow { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--periwinkle); margin-bottom: 12px; }
@@ -347,8 +347,8 @@
     <div class="container">
       <!-- Language toggle -->
       <div class="lang-toggle">
-        <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">🇫🇷 Français</button>
-        <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="lang-btn" id="btn-fr" onclick="setLang('fr')">🇫🇷 Français</button>
+        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
       </div>
 
       <div class="hero-eyebrow"><span class="eyebrow-dot"></span>
@@ -846,15 +846,15 @@
 
 <script>
   function setLang(lang) {
-    document.body.classList.toggle('lang-en', lang === 'en');
+    document.body.classList.toggle('lang-fr', lang === 'fr');
     document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
     document.getElementById('btn-en').classList.toggle('active', lang === 'en');
     localStorage.setItem('careers-lang', lang);
   }
 
-  // Restore language preference
+  // Restore language preference — default is English
   const savedLang = localStorage.getItem('careers-lang');
-  if (savedLang === 'en') setLang('en');
+  if (savedLang === 'fr') setLang('fr');
 
   function toggleJob(id) {
     const card = document.getElementById(id);
