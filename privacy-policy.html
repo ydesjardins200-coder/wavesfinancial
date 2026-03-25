@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Privacy Policy — Waves Financial</title>
+<meta name="description" content="Waves Financial Privacy Policy. How we collect, use, protect, and share your personal information. Your rights under PIPEDA and provincial privacy law. Plain-language explanations throughout.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://wavesfinancial.ca/privacy-policy">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Privacy Policy — Waves Financial">
+<meta property="og:url" content="https://wavesfinancial.ca/privacy-policy">
+<meta property="og:site_name" content="Waves Financial">
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0D0B1F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --deep:       #0D0B1F;
+    --royal:      #3B35B0;
+    --iris:       #5B52D8;
+    --lavender:   #7B74F0;
+    --periwinkle: #A09AF5;
+    --cyan:       #00E5FF;
+    --teal:       #1DE9C6;
+    --gold:       #FFD166;
+    --white:      #FFFFFF;
+    --text-muted: #9B97C5;
+    --card-bg:    rgba(30,22,80,0.55);
+    --glass:      rgba(91,82,216,0.12);
+    --border:     rgba(160,154,245,0.18);
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-body:    'Plus Jakarta Sans', sans-serif;
+    --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 36px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--deep); color: var(--white); overflow-x: hidden; line-height: 1.6; }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(59,53,176,0.3) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 10%, rgba(0,229,255,0.1) 0%, transparent 50%),
+      var(--deep);
+    pointer-events: none;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  section { position: relative; z-index: 1; }
+
+  /* NAV */
+  .nav-mobile-open .nav-links {
+    display: flex !important; flex-direction: column;
+    position: fixed; top: 70px; left: 0; right: 0;
+    background: rgba(13,11,31,0.97); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border); padding: 20px 24px 28px; gap: 6px; z-index: 99;
+  }
+  .nav-mobile-open .nav-links a { padding: 12px 0; font-size: 1rem; border-bottom: 1px solid rgba(160,154,245,0.1); }
+  .nav-mobile-open .nav-hamburger span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-mobile-open .nav-hamburger span:nth-child(2) { opacity: 0; }
+  .nav-mobile-open .nav-hamburger span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-hamburger span { transition: all 0.25s; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(13,11,31,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo svg { width: 36px; height: 36px; }
+  .logo-text { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 0%, var(--periwinkle) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-ghost { padding: 9px 20px; border-radius: var(--r-sm); border: 1px solid var(--border); background: transparent; color: var(--white); font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .btn-ghost:hover { background: var(--glass); border-color: var(--lavender); }
+  .btn-primary { padding: 10px 24px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--royal), var(--iris)); color: var(--white); font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; box-shadow: 0 4px 20px rgba(91,82,216,0.4); transition: all 0.25s; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(91,82,216,0.55); }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+  .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+
+  /* PAGE HEADER */
+  .page-header { padding: 130px 0 60px; border-bottom: 1px solid var(--border); position: relative; z-index: 1; }
+  .page-header-inner { max-width: 680px; }
+  .page-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 14px; border-radius: 100px;
+    background: rgba(160,154,245,0.1); border: 1px solid rgba(160,154,245,0.25);
+    font-size: 0.75rem; font-weight: 700; color: var(--periwinkle);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .page-title { font-family: var(--font-display); font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .page-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 20px; }
+  .page-meta-item { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--text-muted); }
+  .page-meta-item strong { color: var(--white); }
+
+  /* LAYOUT */
+  .policy-layout { display: grid; grid-template-columns: 260px 1fr; gap: 48px; padding: 60px 0 100px; align-items: start; }
+
+  /* STICKY TOC */
+  .toc-sidebar { position: sticky; top: 90px; }
+  .toc-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px 20px; position: relative; overflow: hidden; }
+  .toc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--iris), var(--teal)); }
+  .toc-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--periwinkle); margin-bottom: 16px; }
+  .toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .toc-item a { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--r-sm); font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: all 0.2s; line-height: 1.4; }
+  .toc-item a:hover, .toc-item a.active { color: var(--white); background: rgba(91,82,216,0.15); }
+  .toc-item a.active { color: var(--teal); }
+  .toc-num { font-size: 0.65rem; font-weight: 800; color: var(--iris); width: 16px; flex-shrink: 0; }
+  .toc-contact { margin-top: 20px; padding: 16px; background: rgba(29,233,198,0.06); border: 1px solid rgba(29,233,198,0.18); border-radius: var(--r-md); }
+  .toc-contact-title { font-size: 0.72rem; font-weight: 700; color: var(--teal); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .toc-contact a { font-size: 0.78rem; color: var(--periwinkle); text-decoration: none; display: block; margin-bottom: 4px; }
+  .toc-contact a:hover { color: var(--white); }
+
+  /* CONTENT */
+  .policy-content { min-width: 0; }
+
+  .plain-language-banner {
+    background: linear-gradient(135deg, rgba(29,233,198,0.08), rgba(91,82,216,0.08));
+    border: 1px solid rgba(29,233,198,0.22); border-radius: var(--r-lg);
+    padding: 24px 28px; margin-bottom: 40px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .plb-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .plb-title { font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; margin-bottom: 6px; color: var(--teal); }
+  .plb-text { font-size: 0.84rem; color: var(--text-muted); line-height: 1.68; }
+
+  /* Section cards */
+  .policy-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 32px 36px; margin-bottom: 20px; position: relative; overflow: hidden; scroll-margin-top: 100px; }
+  .policy-section::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .s1::before  { background: linear-gradient(to bottom, var(--iris), var(--lavender)); }
+  .s2::before  { background: linear-gradient(to bottom, var(--teal), var(--cyan)); }
+  .s3::before  { background: linear-gradient(to bottom, var(--periwinkle), var(--iris)); }
+  .s4::before  { background: linear-gradient(to bottom, var(--gold), var(--teal)); }
+  .s5::before  { background: linear-gradient(to bottom, var(--cyan), var(--iris)); }
+  .s6::before  { background: linear-gradient(to bottom, var(--lavender), var(--teal)); }
+  .s7::before  { background: linear-gradient(to bottom, var(--teal), var(--periwinkle)); }
+  .s8::before  { background: linear-gradient(to bottom, var(--iris), var(--cyan)); }
+  .s9::before  { background: linear-gradient(to bottom, var(--periwinkle), var(--gold)); }
+  .s10::before { background: linear-gradient(to bottom, var(--teal), var(--lavender)); }
+  .s11::before { background: linear-gradient(to bottom, var(--gold), var(--iris)); }
+
+  .section-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+  .section-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+  .section-num { font-size: 0.68rem; font-weight: 800; color: var(--iris); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .section-heading { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
+
+  .plain-summary { background: rgba(29,233,198,0.05); border: 1px solid rgba(29,233,198,0.15); border-radius: var(--r-md); padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; }
+  .ps-label { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+  .ps-text { font-size: 0.82rem; color: rgba(255,255,255,0.82); line-height: 1.65; }
+  .ps-text strong { color: var(--white); }
+
+  .legal-text { font-size: 0.875rem; color: rgba(255,255,255,0.75); line-height: 1.82; }
+  .legal-text p { margin-bottom: 14px; }
+  .legal-text p:last-child { margin-bottom: 0; }
+  .legal-text strong { color: var(--white); font-weight: 700; }
+  .legal-text ul { list-style: none; display: flex; flex-direction: column; gap: 7px; margin: 12px 0; padding-left: 4px; }
+  .legal-text ul li { display: flex; align-items: flex-start; gap: 10px; }
+  .legal-text ul li::before { content: "→"; color: var(--periwinkle); font-weight: 700; flex-shrink: 0; margin-top: 1px; font-size: 0.8rem; }
+  .legal-text a { color: var(--periwinkle); text-decoration: none; }
+  .legal-text a:hover { color: var(--teal); }
+
+  /* Data type chips */
+  .data-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .data-chip { padding: 5px 12px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; background: rgba(91,82,216,0.14); border: 1px solid rgba(160,154,245,0.22); color: var(--periwinkle); }
+  .data-chip.sensitive { background: rgba(29,233,198,0.1); border-color: rgba(29,233,198,0.22); color: var(--teal); }
+
+  /* Third-party table */
+  .third-party-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.82rem; }
+  .third-party-table th { padding: 10px 14px; text-align: left; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--periwinkle); border-bottom: 1px solid var(--border); }
+  .third-party-table td { padding: 10px 14px; color: rgba(255,255,255,0.78); border-bottom: 1px solid rgba(160,154,245,0.06); vertical-align: top; }
+  .third-party-table tr:last-child td { border-bottom: none; }
+  .third-party-table tr:hover td { background: rgba(91,82,216,0.06); }
+  .purpose-tag { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 0.65rem; font-weight: 700; background: rgba(91,82,216,0.15); color: var(--periwinkle); border: 1px solid rgba(160,154,245,0.2); white-space: nowrap; }
+
+  /* Cookie types grid */
+  .cookie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .cookie-card { background: rgba(13,11,31,0.5); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; }
+  .cookie-type { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--periwinkle); margin-bottom: 5px; }
+  .cookie-purpose { font-size: 0.8rem; color: var(--text-muted); line-height: 1.55; }
+  .cookie-required { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 100px; font-size: 0.62rem; font-weight: 700; }
+  .req-yes { background: rgba(29,233,198,0.1); color: var(--teal); border: 1px solid rgba(29,233,198,0.2); }
+  .req-opt { background: rgba(91,82,216,0.12); color: var(--periwinkle); border: 1px solid rgba(91,82,216,0.22); }
+
+  /* Rights grid */
+  .rights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .right-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: var(--r-sm); background: rgba(91,82,216,0.08); border: 1px solid rgba(160,154,245,0.14); font-size: 0.82rem; line-height: 1.5; }
+  .right-icon { font-size: 0.95rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* Contact card */
+  .contact-card { margin-top: 22px; padding: 22px 24px; border-radius: var(--r-lg); background: rgba(13,11,31,0.6); border: 1px solid var(--border); }
+  .contact-card-title { font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; margin-bottom: 14px; }
+  .contact-row { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; color: var(--text-muted); margin-bottom: 8px; }
+  .contact-row:last-child { margin-bottom: 0; }
+  .contact-row strong { color: var(--white); }
+  .contact-row a { color: var(--periwinkle); text-decoration: none; }
+  .contact-row a:hover { color: var(--teal); }
+
+  /* Version bar */
+  .version-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: var(--r-md); background: rgba(13,11,31,0.5); border: 1px solid var(--border); margin-top: 32px; flex-wrap: wrap; gap: 12px; font-size: 0.78rem; color: var(--text-muted); }
+  .version-bar strong { color: var(--white); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 56px 0 28px; position: relative; z-index: 1; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
+  .footer-brand-tagline { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; margin: 14px 0 0; max-width: 280px; }
+  .footer-col-title { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--periwinkle); margin-bottom: 16px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 0.87rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom { padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .footer-copy { font-size: 0.78rem; color: var(--text-muted); }
+  .footer-legal { font-size: 0.72rem; color: rgba(155,151,197,0.55); max-width: 640px; line-height: 1.6; }
+
+  @media (max-width: 960px) {
+    .policy-layout { grid-template-columns: 1fr; }
+    .toc-sidebar { position: static; }
+    .cookie-grid { grid-template-columns: 1fr; }
+    .rights-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .policy-section { padding: 24px 20px; }
+    .cookie-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 38 38" fill="none">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
+          <linearGradient id="lg2" x1="0" y1="38" x2="38" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1DE9C6"/><stop offset="100%" stop-color="#5B52D8"/></linearGradient>
+        </defs>
+        <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M4 30 C7 24, 10 20, 13 24 C16 28, 17 32, 19 28 C21 24, 22 20, 25 24 C28 28, 31 24, 34 20" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <circle cx="33" cy="10" r="3.5" fill="url(#lg1)"/>
+      </svg>
+      <span class="logo-text">Waves Financial</span>
+    </a>
+    <div class="nav-links">
+      <a href="how-it-works.html">How It Works</a>
+      <a href="why-waves.html">Why Waves</a>
+      <a href="faq.html">FAQ</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="apply.html" class="btn-primary">Get a Loan →</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <div class="page-eyebrow">Legal · Waves Financial</div>
+        <h1 class="page-title">Privacy Policy</h1>
+        <p style="font-size:1rem;color:var(--text-muted);line-height:1.72;max-width:560px;">Your privacy matters to us. This policy explains exactly what data we collect, why we collect it, who we share it with, and what rights you have — in plain language, not legalese.</p>
+        <div class="page-meta">
+          <div class="page-meta-item">📅 <strong>Last updated:</strong> January 1, 2026</div>
+          <div class="page-meta-item">⚖️ <strong>Legislation:</strong> PIPEDA &amp; provincial equivalents</div>
+          <div class="page-meta-item">🇨🇦 <strong>Data stored:</strong> Canada only</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="container">
+    <div class="policy-layout">
+
+      <!-- STICKY TOC -->
+      <aside class="toc-sidebar">
+        <div class="toc-card">
+          <div class="toc-title">Table of Contents</div>
+          <ol class="toc-list">
+            <li class="toc-item"><a href="#s1"><span class="toc-num">01</span>Who We Are</a></li>
+            <li class="toc-item"><a href="#s2"><span class="toc-num">02</span>Data We Collect</a></li>
+            <li class="toc-item"><a href="#s3"><span class="toc-num">03</span>How We Collect It</a></li>
+            <li class="toc-item"><a href="#s4"><span class="toc-num">04</span>Why We Use Your Data</a></li>
+            <li class="toc-item"><a href="#s5"><span class="toc-num">05</span>Who We Share It With</a></li>
+            <li class="toc-item"><a href="#s6"><span class="toc-num">06</span>Cookies &amp; Tracking</a></li>
+            <li class="toc-item"><a href="#s7"><span class="toc-num">07</span>Analytics &amp; Marketing</a></li>
+            <li class="toc-item"><a href="#s8"><span class="toc-num">08</span>Data Storage &amp; Security</a></li>
+            <li class="toc-item"><a href="#s9"><span class="toc-num">09</span>Data Retention</a></li>
+            <li class="toc-item"><a href="#s10"><span class="toc-num">10</span>Your Rights</a></li>
+            <li class="toc-item"><a href="#s11"><span class="toc-num">11</span>Contact &amp; Complaints</a></li>
+          </ol>
+        </div>
+        <div class="toc-contact">
+          <div class="toc-contact-title">Privacy officer</div>
+          <a href="mailto:privacy@wavesfinancial.ca">✉️ privacy@wavesfinancial.ca</a>
+          <a href="tel:+18001234567">📞 1-800-123-4567</a>
+          <a href="https://www.priv.gc.ca" target="_blank">🏛️ OPC of Canada →</a>
+        </div>
+      </aside>
+
+      <!-- CONTENT -->
+      <div class="policy-content">
+
+        <div class="plain-language-banner">
+          <span class="plb-icon">🔒</span>
+          <div>
+            <div class="plb-title">We wrote this to be read</div>
+            <div class="plb-text">Every section starts with a <strong style="color:var(--teal);">Plain language summary</strong>. We believe you should understand exactly how your data is handled — not just that it is. <strong style="color:var(--white);">We never sell your data. Ever.</strong></div>
+          </div>
+        </div>
+
+        <!-- S1: WHO WE ARE -->
+        <div class="policy-section s1" id="s1">
+          <div class="section-header">
+            <span class="section-icon">🏢</span>
+            <div>
+              <div class="section-num">Section 01</div>
+              <div class="section-heading">Who We Are &amp; Scope of This Policy</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">This policy is from Waves Financial, a Canadian online lender. It covers everything that happens with your data when you visit our website or apply for a loan.</span>
+          </div>
+          <div class="legal-text">
+            <p><strong>Data Controller:</strong> Waves Financial, a division of [Parent Co.] (referred to as "Waves Financial," "we," "us," or "our"), is responsible for the personal information collected through the website <strong>wavesfinancial.ca</strong> and associated services.</p>
+            <p><strong>Scope:</strong> This Privacy Policy applies to all personal information collected by Waves Financial from visitors to our website, applicants for our loan products, and existing borrowers. It governs how we collect, use, store, share, and protect your personal information.</p>
+            <p><strong>Applicable law:</strong> Waves Financial operates in compliance with the <strong>Personal Information Protection and Electronic Documents Act (PIPEDA)</strong>, applicable provincial privacy legislation, and the Consumer Protection Acts of British Columbia, Ontario, Nova Scotia, New Brunswick, Prince Edward Island, and Newfoundland and Labrador.</p>
+            <p><strong>Changes to this policy:</strong> We may update this Privacy Policy periodically to reflect changes in our practices or applicable law. The current version is always available at <a href="privacy-policy.html">wavesfinancial.ca/privacy-policy</a>. We will notify active borrowers of material changes by email with at least 30 days' notice.</p>
+          </div>
+        </div>
+
+        <!-- S2: DATA WE COLLECT -->
+        <div class="policy-section s2" id="s2">
+          <div class="section-header">
+            <span class="section-icon">📋</span>
+            <div>
+              <div class="section-num">Section 02</div>
+              <div class="section-heading">Personal Data We Collect</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We collect your name, contact details, income information, and recent banking activity. We also collect standard website usage data. We never access your credit report.</span>
+          </div>
+          <div class="legal-text">
+            <p>We collect the minimum personal information required to evaluate your loan application, manage your account, and comply with our legal obligations. Here is exactly what we collect:</p>
+
+            <p><strong>Identity &amp; contact information:</strong></p>
+            <div class="data-chips">
+              <span class="data-chip">Full legal name</span>
+              <span class="data-chip">Date of birth</span>
+              <span class="data-chip">Residential address</span>
+              <span class="data-chip">Email address</span>
+              <span class="data-chip">Phone number</span>
+              <span class="data-chip">Government ID type</span>
+            </div>
+
+            <p><strong>Financial &amp; income information:</strong></p>
+            <div class="data-chips">
+              <span class="data-chip sensitive">Net monthly income</span>
+              <span class="data-chip sensitive">Income source / employer</span>
+              <span class="data-chip sensitive">90-day bank transaction history</span>
+              <span class="data-chip sensitive">Bank account details (for PAD)</span>
+              <span class="data-chip sensitive">Loan amount &amp; repayment preference</span>
+            </div>
+
+            <p><strong>Technical &amp; usage data:</strong></p>
+            <div class="data-chips">
+              <span class="data-chip">IP address</span>
+              <span class="data-chip">Browser type &amp; version</span>
+              <span class="data-chip">Operating system</span>
+              <span class="data-chip">Pages visited &amp; time on site</span>
+              <span class="data-chip">Referral source</span>
+              <span class="data-chip">Device type</span>
+            </div>
+
+            <p><strong>What we do NOT collect:</strong> We do not access your credit bureau report (no hard or soft inquiry). We do not collect your Social Insurance Number unless required by law for tax reporting purposes. We do not store your online banking login credentials.</p>
+          </div>
+        </div>
+
+        <!-- S3: HOW WE COLLECT -->
+        <div class="policy-section s3" id="s3">
+          <div class="section-header">
+            <span class="section-icon">🔗</span>
+            <div>
+              <div class="section-num">Section 03</div>
+              <div class="section-heading">How We Collect Your Data</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We collect data directly from you through our application form, through Flinks (our secure bank verification partner — read-only access), and automatically through standard web analytics tools.</span>
+          </div>
+          <div class="legal-text">
+            <p>We collect personal data through the following methods:</p>
+            <p><strong>1. Directly from you</strong> — when you fill out our loan application form, contact our support team, or communicate with us by phone or email. You provide this information voluntarily as part of requesting our services.</p>
+            <p><strong>2. Via Flinks (bank income verification)</strong> — when you connect your bank account during the application process, Flinks provides us with read-only access to your recent banking transaction history (90 days). Your banking login credentials are entered directly into Flinks' secure environment and are never transmitted to or stored by Waves Financial. Flinks is a licensed open banking data provider operating under its own privacy policy. We use this data solely to verify your income and account standing.</p>
+            <p><strong>3. Automatically through our website</strong> — when you visit wavesfinancial.ca, our systems automatically collect technical data such as your IP address, browser type, and pages visited. This is collected through cookies and standard web server logs. See Section 6 for details on our cookie use.</p>
+            <p><strong>4. From third-party identity verification services</strong> — in some cases, we may use a third-party service to verify your identity against government records. This is done with your explicit consent as part of the application process.</p>
+          </div>
+        </div>
+
+        <!-- S4: WHY WE USE IT -->
+        <div class="policy-section s4" id="s4">
+          <div class="section-header">
+            <span class="section-icon">🎯</span>
+            <div>
+              <div class="section-num">Section 04</div>
+              <div class="section-heading">Why We Use Your Data</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We use your data to assess your loan, manage your account, send important notifications, comply with the law, and (with your consent) send you relevant offers. You can opt out of marketing at any time.</span>
+          </div>
+          <div class="legal-text">
+            <p>We use your personal information only for the following purposes:</p>
+            <ul>
+              <li><strong>Loan assessment:</strong> To evaluate your eligibility and determine an appropriate loan amount based on your income and account activity</li>
+              <li><strong>Identity verification:</strong> To confirm that you are who you say you are and that the information provided is accurate</li>
+              <li><strong>Account management:</strong> To create your borrower account, process payments via PAD, issue e-Transfer funds, and manage your loan lifecycle</li>
+              <li><strong>Customer support:</strong> To respond to your inquiries, resolve issues, and provide assistance related to your loan</li>
+              <li><strong>Legal &amp; regulatory compliance:</strong> To meet our obligations under federal and provincial lending, privacy, anti-money-laundering, and tax legislation</li>
+              <li><strong>Fraud prevention:</strong> To detect and prevent fraudulent applications and unauthorized account access</li>
+              <li><strong>Service improvement:</strong> To analyze aggregated, anonymized data to understand how borrowers use our services and to improve our platform</li>
+              <li><strong>Marketing communications:</strong> To send you relevant promotional offers and product updates — <em>only with your consent</em>, which you may withdraw at any time</li>
+            </ul>
+            <p><strong>Legal basis for processing:</strong> We process your personal information on the basis of (a) your consent, given when you submit your application; (b) contractual necessity, to fulfill the terms of your Loan Agreement; and (c) legal obligation, to comply with applicable Canadian law.</p>
+            <p><strong>No automated decision-making with legal effect:</strong> While our initial approval assessment is automated, any application that results in a decline or modified offer is reviewed and can be escalated to a human agent upon your request. You are never subject to a fully automated, unappealable decision.</p>
+          </div>
+        </div>
+
+        <!-- S5: WHO WE SHARE WITH -->
+        <div class="policy-section s5" id="s5">
+          <div class="section-header">
+            <span class="section-icon">🤝</span>
+            <div>
+              <div class="section-num">Section 05</div>
+              <div class="section-heading">Who We Share Your Data With</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We share your data only with service providers who help us run our business, and only as required by law. <strong>We never sell your data to advertisers or data brokers.</strong> All third parties are contractually bound to protect it.</span>
+          </div>
+          <div class="legal-text">
+            <p>Waves Financial does not sell, rent, or trade your personal information. We may share it only in the following limited circumstances:</p>
+
+            <table class="third-party-table">
+              <thead>
+                <tr>
+                  <th>Recipient</th>
+                  <th>Purpose</th>
+                  <th>Data shared</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Flinks</strong></td>
+                  <td><span class="purpose-tag">Income verification</span></td>
+                  <td>Bank account connection (read-only)</td>
+                </tr>
+                <tr>
+                  <td><strong>Payment processor</strong></td>
+                  <td><span class="purpose-tag">PAD collection</span></td>
+                  <td>Bank account details, payment amounts</td>
+                </tr>
+                <tr>
+                  <td><strong>Cloud infrastructure (Canada)</strong></td>
+                  <td><span class="purpose-tag">Data hosting</span></td>
+                  <td>Encrypted application &amp; account data</td>
+                </tr>
+                <tr>
+                  <td><strong>Email service provider</strong></td>
+                  <td><span class="purpose-tag">Transactional email</span></td>
+                  <td>Name, email address</td>
+                </tr>
+                <tr>
+                  <td><strong>Identity verification service</strong></td>
+                  <td><span class="purpose-tag">KYC / fraud prevention</span></td>
+                  <td>Name, DOB, government ID type</td>
+                </tr>
+                <tr>
+                  <td><strong>Collection agencies</strong></td>
+                  <td><span class="purpose-tag">Default only</span></td>
+                  <td>Name, contact details, outstanding balance — only in the event of loan default</td>
+                </tr>
+                <tr>
+                  <td><strong>Government / regulatory authorities</strong></td>
+                  <td><span class="purpose-tag">Legal obligation</span></td>
+                  <td>As required by law — only when legally compelled</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p>All third-party service providers are contractually obligated to use your data solely for the purpose for which it was shared, to protect it with appropriate security measures, and to delete it when no longer required. We do not permit third parties to use your data for their own marketing purposes.</p>
+          </div>
+        </div>
+
+        <!-- S6: COOKIES -->
+        <div class="policy-section s6" id="s6">
+          <div class="section-header">
+            <span class="section-icon">🍪</span>
+            <div>
+              <div class="section-num">Section 06</div>
+              <div class="section-heading">Cookies &amp; Tracking Technologies</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We use cookies to keep your session secure and to understand how people use our site. You can disable non-essential cookies in your browser settings. We don't use cookies to track you across other websites.</span>
+          </div>
+          <div class="legal-text">
+            <p>Our website uses cookies — small text files stored on your device — to provide a functional, secure experience and to understand how our website is used. Here is a breakdown of the cookies we use:</p>
+
+            <div class="cookie-grid">
+              <div class="cookie-card">
+                <div class="cookie-type">Essential cookies</div>
+                <div class="cookie-purpose">Required for the website to function. Keep your session active, remember your application progress, and protect against CSRF attacks.</div>
+                <span class="cookie-required req-yes">Required — cannot opt out</span>
+              </div>
+              <div class="cookie-card">
+                <div class="cookie-type">Analytics cookies</div>
+                <div class="cookie-purpose">Help us understand which pages are visited, how long users stay, and where they come from. Data is aggregated and anonymized.</div>
+                <span class="cookie-required req-opt">Optional — can opt out</span>
+              </div>
+              <div class="cookie-card">
+                <div class="cookie-type">Preference cookies</div>
+                <div class="cookie-purpose">Remember your settings and preferences (e.g. language choice) so you don't have to re-enter them on each visit.</div>
+                <span class="cookie-required req-opt">Optional — can opt out</span>
+              </div>
+              <div class="cookie-card">
+                <div class="cookie-type">Marketing cookies</div>
+                <div class="cookie-purpose">Allow us to measure the effectiveness of our advertising campaigns. Used only if you have consented to marketing communications.</div>
+                <span class="cookie-required req-opt">Optional — can opt out</span>
+              </div>
+            </div>
+
+            <p><strong>How to manage cookies:</strong> You can configure your browser to refuse some or all cookies, or to notify you when a cookie is set. Note that disabling essential cookies will prevent our loan application from functioning. For instructions specific to your browser, visit <a href="https://www.allaboutcookies.org" target="_blank">allaboutcookies.org</a>.</p>
+            <p><strong>No cross-site tracking:</strong> We do not use cookies or other technologies to track you across third-party websites. Our tracking is limited to activity on wavesfinancial.ca.</p>
+          </div>
+        </div>
+
+        <!-- S7: ANALYTICS & MARKETING -->
+        <div class="policy-section s7" id="s7">
+          <div class="section-header">
+            <span class="section-icon">📊</span>
+            <div>
+              <div class="section-num">Section 07</div>
+              <div class="section-heading">Analytics &amp; Marketing Communications</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We use standard web analytics to improve our site. We may send you relevant offers by email — but only if you've consented. You can unsubscribe at any time with one click. We don't share your email with advertisers.</span>
+          </div>
+          <div class="legal-text">
+            <p><strong>Web analytics:</strong> We use web analytics tools (such as Google Analytics) to collect aggregated, anonymized data about how visitors use our website. This helps us understand which pages are most visited, identify technical issues, and improve the user experience. Analytics data is never linked to your personally identifiable information.</p>
+            <p><strong>Email marketing:</strong> By accepting our Terms and Conditions, you consent to receiving occasional marketing emails from Waves Financial about our products, services, and promotions. These emails are sent by us directly and are never shared with third-party advertisers.</p>
+            <p><strong>Unsubscribing:</strong> You may opt out of marketing emails at any time by clicking the "Unsubscribe" link at the bottom of any marketing email, or by emailing <a href="mailto:support@wavesfinancial.ca">support@wavesfinancial.ca</a> with the subject line "Unsubscribe." Opting out of marketing communications does not affect transactional emails related to your active loan (payment reminders, receipts, account updates).</p>
+            <p><strong>Advertising pixels:</strong> We may use standard conversion tracking pixels (such as Google Ads or Meta Pixel) to measure whether visitors who clicked our ads went on to apply for a loan. These tools use cookies and collect anonymized data only. No personal loan data is ever shared with advertising platforms.</p>
+            <p><strong>No targeted profiling:</strong> We do not build personal profiles for targeted advertising purposes, and we do not sell data to advertising networks or data brokers.</p>
+          </div>
+        </div>
+
+        <!-- S8: STORAGE & SECURITY -->
+        <div class="policy-section s8" id="s8">
+          <div class="section-header">
+            <span class="section-icon">🛡️</span>
+            <div>
+              <div class="section-num">Section 08</div>
+              <div class="section-heading">Data Storage &amp; Security</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">Your data is stored on encrypted servers in Canada. We use 256-bit SSL, strict access controls, and regular security audits. In the unlikely event of a breach, we will notify you as required by law.</span>
+          </div>
+          <div class="legal-text">
+            <p><strong>Where your data is stored:</strong> All personal data collected by Waves Financial is stored on secure servers located in Canada. We do not transfer personal information outside of Canada, except as required by applicable law or with your explicit consent.</p>
+            <p><strong>Encryption in transit:</strong> All communications between your browser and our platform are protected by <strong>256-bit SSL/TLS encryption</strong>. Look for the padlock icon in your browser's address bar when visiting wavesfinancial.ca.</p>
+            <p><strong>Encryption at rest:</strong> Personal and financial data stored on our servers is encrypted at rest using industry-standard AES-256 encryption.</p>
+            <p><strong>Access controls:</strong> Access to your personal information is strictly limited to Waves Financial employees and contractors who need it to perform their duties. All personnel with access to personal data are subject to confidentiality agreements and receive regular privacy training.</p>
+            <p><strong>Security audits:</strong> Our systems undergo regular security audits and vulnerability assessments. We use industry-standard practices including firewalls, intrusion detection, and multi-factor authentication for administrative access.</p>
+            <p><strong>Breach notification:</strong> In the event of a data breach that poses a real risk of significant harm to you, Waves Financial will notify you and the Office of the Privacy Commissioner of Canada (or applicable provincial authority) within the timeframes required by PIPEDA and applicable provincial law. We will provide you with clear information about what happened, what data was affected, and what steps we are taking.</p>
+          </div>
+        </div>
+
+        <!-- S9: DATA RETENTION -->
+        <div class="policy-section s9" id="s9">
+          <div class="section-header">
+            <span class="section-icon">🗓️</span>
+            <div>
+              <div class="section-num">Section 09</div>
+              <div class="section-heading">Data Retention</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">We keep your data for as long as necessary to fulfill your loan and meet legal requirements. Once those periods pass, your personal information is securely deleted or anonymized.</span>
+          </div>
+          <div class="legal-text">
+            <p>We retain your personal information for the minimum period necessary to fulfill the purpose for which it was collected, and as required by applicable law.</p>
+            <ul>
+              <li><strong>Active loan period:</strong> Your full account data is retained for the duration of your loan and for 7 years after final repayment, to comply with Canadian tax, financial record-keeping, and consumer protection legislation</li>
+              <li><strong>Declined applications:</strong> Data from unsuccessful applications is retained for 90 days for fraud prevention purposes and then securely deleted</li>
+              <li><strong>Marketing data:</strong> If you have opted out of marketing communications, your opt-out preference is retained indefinitely to ensure we honour your request</li>
+              <li><strong>Technical logs:</strong> Server logs and technical usage data are retained for up to 12 months for security and operational purposes</li>
+              <li><strong>Communications records:</strong> Records of support interactions (calls, emails, chats) are retained for 3 years to support quality assurance and dispute resolution</li>
+            </ul>
+            <p><strong>Secure deletion:</strong> When personal data is no longer required, it is securely deleted using methods that prevent recovery, or irreversibly anonymized so that it can no longer be linked to you as an individual.</p>
+            <p>You may request early deletion of your personal information at any time (see Section 10). Note that we are not able to delete data that we are legally required to retain, and deletion does not affect data already disclosed to third parties as described in Section 5.</p>
+          </div>
+        </div>
+
+        <!-- S10: YOUR RIGHTS -->
+        <div class="policy-section s10" id="s10">
+          <div class="section-header">
+            <span class="section-icon">⚖️</span>
+            <div>
+              <div class="section-num">Section 10</div>
+              <div class="section-heading">Your Privacy Rights</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">You have the right to see your data, correct it, delete it, and opt out of marketing. Requests are free and we respond within 30 days. You can also complain to the Privacy Commissioner of Canada if you're unhappy with our response.</span>
+          </div>
+          <div class="legal-text">
+            <p>Under PIPEDA and applicable provincial privacy legislation, you have the following rights regarding your personal information:</p>
+
+            <div class="rights-grid">
+              <div class="right-item"><span class="right-icon">👁️</span><div><strong>Right of access</strong><br>Request a copy of all personal information we hold about you, including how it is being used.</div></div>
+              <div class="right-item"><span class="right-icon">✏️</span><div><strong>Right to correction</strong><br>Request that inaccurate, outdated, or incomplete information be corrected or updated.</div></div>
+              <div class="right-item"><span class="right-icon">🗑️</span><div><strong>Right to deletion</strong><br>Request deletion of your personal information, subject to our legal retention obligations.</div></div>
+              <div class="right-item"><span class="right-icon">🚫</span><div><strong>Right to withdraw consent</strong><br>Withdraw your consent to processing at any time. This may affect our ability to provide services.</div></div>
+              <div class="right-item"><span class="right-icon">📧</span><div><strong>Right to opt out of marketing</strong><br>Unsubscribe from promotional communications at any time, with no effect on your loan or account.</div></div>
+              <div class="right-item"><span class="right-icon">📤</span><div><strong>Right to portability</strong><br>Request your data in a structured, commonly used format where technically feasible.</div></div>
+              <div class="right-item"><span class="right-icon">🙋</span><div><strong>Right to human review</strong><br>Request human review of any automated decision that has affected you.</div></div>
+              <div class="right-item"><span class="right-icon">🏛️</span><div><strong>Right to complain</strong><br>Lodge a complaint with the OPC of Canada or applicable provincial privacy commissioner.</div></div>
+            </div>
+
+            <p style="margin-top:18px;"><strong>How to exercise your rights:</strong> Submit a written request to <a href="mailto:privacy@wavesfinancial.ca">privacy@wavesfinancial.ca</a> clearly describing your request. We will acknowledge receipt within 5 business days and provide a full response within <strong>30 calendar days</strong>. We may request proof of identity to verify your request. All rights requests are free of charge.</p>
+            <p><strong>Limitations:</strong> Certain rights may be limited in specific circumstances — for example, we cannot delete data that we are legally required to retain, and withdrawal of consent for core processing activities may require us to terminate the loan service. We will explain any limitation clearly when responding to your request.</p>
+          </div>
+        </div>
+
+        <!-- S11: CONTACT & COMPLAINTS -->
+        <div class="policy-section s11" id="s11">
+          <div class="section-header">
+            <span class="section-icon">📬</span>
+            <div>
+              <div class="section-num">Section 11</div>
+              <div class="section-heading">Contact, Complaints &amp; Privacy Officer</div>
+            </div>
+          </div>
+          <div class="plain-summary">
+            <span class="ps-label">Plain language</span>
+            <span class="ps-text">If you have a privacy question or concern, email us at privacy@wavesfinancial.ca. If you're not satisfied with our response, you can escalate to the Office of the Privacy Commissioner of Canada — it's free.</span>
+          </div>
+          <div class="legal-text">
+            <p>Waves Financial has designated a Privacy Officer responsible for compliance with this policy and applicable privacy legislation. For any privacy-related questions, requests, or complaints, please contact:</p>
+
+            <div class="contact-card">
+              <div class="contact-card-title">🔒 Waves Financial — Privacy Officer</div>
+              <div class="contact-row">🏢 <strong>Waves Financial</strong>, a division of [Parent Co.], Canada</div>
+              <div class="contact-row">✉️ <a href="mailto:privacy@wavesfinancial.ca">privacy@wavesfinancial.ca</a> — privacy &amp; data requests</div>
+              <div class="contact-row">📞 <a href="tel:+18001234567">1-800-123-4567</a> — Mon–Fri 8AM–8PM, Sat 10AM–4PM ET</div>
+              <div class="contact-row">💬 <a href="contact.html">wavesfinancial.ca/contact</a> — contact form</div>
+            </div>
+
+            <p style="margin-top:20px;"><strong>Escalation — Office of the Privacy Commissioner of Canada:</strong> If you are unsatisfied with our response to a privacy concern, you have the right to file a complaint with the Office of the Privacy Commissioner of Canada:</p>
+            <ul>
+              <li>Website: <a href="https://www.priv.gc.ca" target="_blank">priv.gc.ca</a></li>
+              <li>Toll-free: 1-800-282-1376</li>
+              <li>TTY: 1-800-282-1376</li>
+              <li>There is no cost to file a complaint</li>
+            </ul>
+            <p><strong>Provincial privacy commissioners:</strong> Residents of British Columbia and Alberta may also contact their provincial privacy commissioner. In Quebec, complaints may be filed with the Commission d'accès à l'information (CAI).</p>
+          </div>
+        </div>
+
+        <!-- Version bar -->
+        <div class="version-bar">
+          <div>📅 <strong>Version 1.0</strong> · Effective January 1, 2026</div>
+          <div>✉️ <a href="mailto:privacy@wavesfinancial.ca" style="color:var(--periwinkle);text-decoration:none;">privacy@wavesfinancial.ca</a></div>
+          <div>🏛️ <a href="https://www.priv.gc.ca" target="_blank" style="color:var(--periwinkle);text-decoration:none;">OPC of Canada →</a></div>
+          <div><a href="terms-and-conditions.html" style="color:var(--periwinkle);text-decoration:none;">Terms &amp; Conditions →</a></div>
+        </div>
+
+      </div><!-- end policy-content -->
+    </div><!-- end policy-layout -->
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo">
+          <svg viewBox="0 0 38 38" fill="none" width="32" height="32">
+            <defs><linearGradient id="fg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient></defs>
+            <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#fg1)" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <circle cx="33" cy="10" r="3.5" fill="url(#fg1)"/>
+          </svg>
+          <span class="logo-text">Waves Financial</span>
+        </a>
+        <p class="footer-brand-tagline">Fast, fair, and transparent online loans for Canadians. When life sends a wave your way — we've got you covered.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Products</div>
+        <ul class="footer-links">
+          <li><a href="online-loans.html">Online Loans</a></li>
+          <li><a href="bad-credit-loans.html">Bad Credit Loans</a></li>
+          <li><a href="no-credit-check-loans.html">No Credit Check</a></li>
+          <li><a href="installment-loans.html">Installment Loans</a></li>
+          <li><a href="e-transfer-loans.html">e-Transfer Loans</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="online-payment.html">Online Payment</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Waves Financial, a division of [Parent Co.]. All Rights Reserved.</div>
+      <div class="footer-legal">The Annual Percentage Rate (APR) on loans is 23.00%. A $750 loan repaid over 120 days has an estimated total repayment of approximately $1,030. Approval is not guaranteed. All applications are subject to eligibility review. Please borrow responsibly. Rates and terms may vary by province.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('.policy-section');
+  const tocLinks = document.querySelectorAll('.toc-item a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.toc-item a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  document.querySelector('.nav-hamburger').addEventListener('click', () => {
+    document.querySelector('nav').classList.toggle('nav-mobile-open');
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.querySelector('nav').classList.remove('nav-mobile-open'));
+  });
+</script>
+</body>
+</html>
