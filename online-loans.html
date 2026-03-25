@@ -114,12 +114,27 @@
   .hero {
     min-height: 100vh; display: flex; align-items: center;
     padding: 120px 0 80px; position: relative;
-    background-image: url('https://i0.wp.com/picjumbo.com/wp-content/uploads/beautiful-beach-free-image-after-sunset-sky-free-photo.jpeg');
-    background-size: cover; background-position: center 40%;
+    background:
+      radial-gradient(ellipse 60% 40% at 70% 60%, rgba(0,229,255,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 20% 80%, rgba(91,82,216,0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(29,233,198,0.06) 0%, transparent 60%),
+      linear-gradient(160deg, #0a0818 0%, #0f0d24 30%, #0d1a2e 60%, #091422 100%);
+  }
+  /* Simulated city light grid */
+  .hero::after {
+    content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(91,82,216,0.018) 3px, rgba(91,82,216,0.018) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,229,255,0.012) 3px, rgba(0,229,255,0.012) 4px);
+    mask-image: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%);
   }
   .hero::before {
     content: ''; position: absolute; inset: 0; z-index: 0;
-    background: linear-gradient(135deg, rgba(13,11,31,0.88) 0%, rgba(13,11,31,0.72) 50%, rgba(13,11,31,0.55) 100%);
+    background:
+      radial-gradient(ellipse 30% 25% at 15% 45%, rgba(0,229,255,0.09) 0%, transparent 100%),
+      radial-gradient(ellipse 20% 15% at 85% 35%, rgba(29,233,198,0.07) 0%, transparent 100%),
+      radial-gradient(ellipse 40% 30% at 50% 90%, rgba(13,11,31,0.95) 0%, transparent 100%);
   }
   .hero .container { position: relative; z-index: 1; }
   .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
