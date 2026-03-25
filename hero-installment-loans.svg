@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0c0610"/>
+      <stop offset="25%"  stop-color="#1a0c22"/>
+      <stop offset="55%"  stop-color="#2d1418"/>
+      <stop offset="78%"  stop-color="#5a2008"/>
+      <stop offset="92%"  stop-color="#a04010"/>
+      <stop offset="100%" stop-color="#c86018"/>
+    </linearGradient>
+    <radialGradient id="sun_glow" cx="38%" cy="100%" r="55%">
+      <stop offset="0%"   stop-color="#ff9020" stop-opacity="0.55"/>
+      <stop offset="35%"  stop-color="#c05010" stop-opacity="0.3"/>
+      <stop offset="70%"  stop-color="#7a1a30" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="sun_disc" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffe080" stop-opacity="0.9"/>
+      <stop offset="40%"  stop-color="#ffb040" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ff7020" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="horizon_band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#e07018" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#a04008" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="prairie_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3a1a08"/>
+      <stop offset="100%" stop-color="#1e0e04"/>
+    </linearGradient>
+    <linearGradient id="wheat_mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#6a3010"/>
+      <stop offset="60%"  stop-color="#2a1008"/>
+      <stop offset="100%" stop-color="#120804"/>
+    </linearGradient>
+    <linearGradient id="ground_near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1a0c06"/>
+      <stop offset="100%" stop-color="#080402"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2a1a10" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0a0806" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starglow"><feGaussianBlur stdDeviation="0.5"/></filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="#040208" stop-opacity="0.65"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1440" height="900" fill="url(#sky)"/>
+  <!-- Sun glow bloom -->
+  <rect width="1440" height="900" fill="url(#sun_glow)"/>
+
+  <!-- Stars — only upper sky, sparse (dusk not night) -->
+  <g filter="url(#starglow)" opacity="0.55">
+    <circle cx="200"  cy="35"  r="0.8" fill="white" opacity="0.6"/>
+    <circle cx="420"  cy="22"  r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="680"  cy="42"  r="0.9" fill="white" opacity="0.65"/>
+    <circle cx="900"  cy="18"  r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="1120" cy="38"  r="0.8" fill="white" opacity="0.6"/>
+    <circle cx="1340" cy="25"  r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="80"   cy="80"  r="0.6" fill="white" opacity="0.35"/>
+    <circle cx="560"  cy="75"  r="0.7" fill="white" opacity="0.4"/>
+    <circle cx="1020" cy="68"  r="0.6" fill="white" opacity="0.35"/>
+    <circle cx="310"  cy="110" r="0.6" fill="white" opacity="0.28"/>
+    <circle cx="820"  cy="95"  r="0.7" fill="white" opacity="0.32"/>
+    <circle cx="1260" cy="105" r="0.6" fill="white" opacity="0.28"/>
+  </g>
+
+  <!-- Setting sun disc -->
+  <circle cx="548" cy="582" r="90" fill="url(#sun_disc)" opacity="0.7" filter="url(#softglow)"/>
+  <circle cx="548" cy="582" r="48" fill="#ffe8a0" opacity="0.35"/>
+  <circle cx="548" cy="582" r="28" fill="#fff0c0" opacity="0.4"/>
+
+  <!-- Horizon warm band -->
+  <rect x="0" y="555" width="1440" height="80" fill="url(#horizon_band)"/>
+
+  <!-- Far flat prairie — thin dark strip at horizon -->
+  <rect x="0" y="568" width="1440" height="32" fill="url(#prairie_far)"/>
+
+  <!-- Grain elevator silhouettes (iconic Canadian prairie) -->
+  <!-- Left elevator complex -->
+  <g fill="#150c04">
+    <rect x="180" y="480" width="38" height="90"/>
+    <polygon points="180,480 199,455 218,480"/>
+    <rect x="225" y="500" width="28" height="70"/>
+    <polygon points="225,500 239,482 253,500"/>
+    <rect x="160" y="510" width="18" height="60"/>
+  </g>
+  <!-- Right elevator -->
+  <g fill="#120a03">
+    <rect x="1240" y="488" width="42" height="82"/>
+    <polygon points="1240,488 1261,462 1282,488"/>
+    <rect x="1288" y="505" width="30" height="65"/>
+    <polygon points="1288,505 1303,488 1318,505"/>
+  </g>
+
+  <!-- Mid-distance wheat field — undulating rows -->
+  <path d="M0 590 Q120 575 240 582 Q360 589 480 578 Q600 567 720 574
+           Q840 581 960 570 Q1080 559 1200 568 Q1320 577 1440 565
+           L1440 680 Q1320 692 1200 686 Q1080 680 960 690
+           Q840 700 720 692 Q600 684 480 694 Q360 704 240 696 Q120 688 0 698 Z"
+    fill="url(#wheat_mid)"/>
+
+  <!-- Wheat stalks — mid field texture -->
+  <g stroke="#4a2008" stroke-width="1" opacity="0.5">
+    <line x1="80"   y1="640" x2="85"  y2="590"/>
+    <line x1="160"  y1="638" x2="165" y2="588"/>
+    <line x1="240"  y1="642" x2="245" y2="592"/>
+    <line x1="320"  y1="637" x2="325" y2="587"/>
+    <line x1="400"  y1="641" x2="405" y2="591"/>
+    <line x1="480"  y1="638" x2="485" y2="588"/>
+    <line x1="560"  y1="640" x2="565" y2="590"/>
+    <line x1="640"  y1="636" x2="645" y2="586"/>
+    <line x1="720"  y1="641" x2="725" y2="591"/>
+    <line x1="800"  y1="638" x2="805" y2="588"/>
+    <line x1="880"  y1="640" x2="885" y2="590"/>
+    <line x1="960"  y1="637" x2="965" y2="587"/>
+    <line x1="1040" y1="641" x2="1045" y2="591"/>
+    <line x1="1120" y1="638" x2="1125" y2="588"/>
+    <line x1="1200" y1="640" x2="1205" y2="590"/>
+    <line x1="1280" y1="637" x2="1285" y2="587"/>
+    <line x1="1360" y1="641" x2="1365" y2="591"/>
+  </g>
+
+  <!-- Road vanishing into horizon — perspective lines -->
+  <path d="M620 900 L680 900 L558 582 L538 582 Z" fill="url(#road)" opacity="0.7"/>
+  <!-- Road centre dashes -->
+  <g fill="#3a2010" opacity="0.4">
+    <rect x="626" y="840" width="4" height="25" transform="skewX(-3)"/>
+    <rect x="619" y="790" width="4" height="20" transform="skewX(-3)"/>
+    <rect x="612" y="745" width="3" height="16" transform="skewX(-3)"/>
+    <rect x="606" y="706" width="3" height="13" transform="skewX(-3)"/>
+    <rect x="601" y="672" width="2" height="10" transform="skewX(-3)"/>
+    <rect x="597" y="643" width="2" height="8"  transform="skewX(-3)"/>
+  </g>
+
+  <!-- Foreground dark field / ground -->
+  <path d="M0 720 Q360 705 720 710 Q1080 715 1440 702 L1440 900 L0 900 Z"
+    fill="url(#ground_near)"/>
+
+  <!-- Fence posts along road — left side -->
+  <g stroke="#2a1208" stroke-width="1.5" opacity="0.6">
+    <line x1="490" y1="610" x2="488" y2="650"/>
+    <line x1="460" y1="615" x2="456" y2="660"/>
+    <line x1="425" y1="622" x2="420" y2="672"/>
+    <line x1="385" y1="630" x2="378" y2="685"/>
+    <line x1="340" y1="638" x2="330" y2="700"/>
+    <line x1="288" y1="648" x2="275" y2="718"/>
+    <line x1="228" y1="660" x2="212" y2="738"/>
+    <line x1="158" y1="672" x2="138" y2="758"/>
+    <line x1="78"  y1="686" x2="52"  y2="780"/>
+  </g>
+  <!-- Fence wire -->
+  <path d="M490 630 Q400 648 300 664 Q200 678 80 696" stroke="#2a1208" stroke-width="0.8" fill="none" opacity="0.4"/>
+  <path d="M490 640 Q400 658 300 675 Q200 690 80 710" stroke="#2a1208" stroke-width="0.8" fill="none" opacity="0.35"/>
+
+  <!-- Fence posts — right side -->
+  <g stroke="#2a1208" stroke-width="1.5" opacity="0.6">
+    <line x1="750" y1="610" x2="752" y2="650"/>
+    <line x1="785" y1="615" x2="788" y2="662"/>
+    <line x1="825" y1="622" x2="830" y2="672"/>
+    <line x1="870" y1="630" x2="877" y2="686"/>
+    <line x1="922" y1="638" x2="932" y2="702"/>
+    <line x1="982" y1="648" x2="996" y2="720"/>
+    <line x1="1050" y1="660" x2="1068" y2="740"/>
+    <line x1="1128" y1="672" x2="1150" y2="762"/>
+    <line x1="1215" y1="686" x2="1242" y2="782"/>
+  </g>
+  <path d="M750 630 Q860 648 980 664 Q1100 678 1215 696" stroke="#2a1208" stroke-width="0.8" fill="none" opacity="0.4"/>
+  <path d="M750 640 Q860 658 980 676 Q1100 692 1215 712" stroke="#2a1208" stroke-width="0.8" fill="none" opacity="0.35"/>
+
+  <!-- Sun rays fanning out (subtle) -->
+  <g stroke="#e07820" stroke-width="1" opacity="0.08" fill="none">
+    <line x1="548" y1="582" x2="0"    y2="300"/>
+    <line x1="548" y1="582" x2="100"  y2="200"/>
+    <line x1="548" y1="582" x2="250"  y2="150"/>
+    <line x1="548" y1="582" x2="420"  y2="120"/>
+    <line x1="548" y1="582" x2="620"  y2="100"/>
+    <line x1="548" y1="582" x2="820"  y2="120"/>
+    <line x1="548" y1="582" x2="980"  y2="155"/>
+    <line x1="548" y1="582" x2="1120" y2="200"/>
+    <line x1="548" y1="582" x2="1250" y2="280"/>
+    <line x1="548" y1="582" x2="1440" y2="380"/>
+  </g>
+
+  <!-- Warm glow on ground from sunset -->
+  <ellipse cx="548" cy="660" rx="500" ry="60" fill="#c06018" opacity="0.07" filter="url(#softglow)"/>
+  <ellipse cx="548" cy="640" rx="200" ry="25" fill="#e07820" opacity="0.08" filter="url(#softglow)"/>
+
+  <!-- Vignette -->
+  <rect width="1440" height="900" fill="url(#vignette)"/>
+</svg>
