@@ -589,7 +589,7 @@
     .sticky-cta-mobile { display: block; }
   }
 
-  /* ═══ MEGA MENU NAV ═══ */
+    /* ═══ MEGA MENU NAV ═══ */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     background: rgba(13,11,31,0.92); backdrop-filter: blur(24px);
@@ -801,6 +801,129 @@
       </div>
 
       <!-- Company -->
+      <div class="nav-item" id="mega-company">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">
+          Company
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mega-menu mega-company" role="menu">
+          <div class="mega-section" style="grid-column:1/-1">
+            <div class="mega-section-label">Who we are</div>
+          </div>
+          <a href="about.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(160,154,245,0.14);">🏢</div>
+            <div class="mega-link-text"><div class="mega-link-title">About Us</div><div class="mega-link-desc">Our story, mission &amp; values</div></div>
+          </a>
+          <a href="why-waves.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">🌊</div>
+            <div class="mega-link-text"><div class="mega-link-title">Why Waves</div><div class="mega-link-desc">What sets us apart</div></div>
+          </a>
+          <a href="reviews.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(255,209,102,0.1);">⭐</div>
+            <div class="mega-link-text"><div class="mega-link-title">Reviews</div><div class="mega-link-desc">4.8★ · 340+ verified borrowers</div></div>
+          </a>
+          <a href="blog.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.14);">📝</div>
+            <div class="mega-link-text"><div class="mega-link-title">Blog</div><div class="mega-link-desc">Financial tips &amp; guides</div></div>
+          </a>
+          <a href="careers.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(0,229,255,0.08);">🚀</div>
+            <div class="mega-link-text"><div class="mega-link-title">Careers</div><div class="mega-link-desc">3 open roles · Granby, QC</div></div>
+          </a>
+          <a href="contact.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">💬</div>
+            <div class="mega-link-text"><div class="mega-link-title">Contact</div><div class="mega-link-desc">Real Canadians · no bots</div></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="nav-item" id="mega-support">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">
+          Support
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mega-menu mega-support" role="menu">
+          <div class="mega-section" style="grid-column:1/-1">
+            <div class="mega-section-label">Help &amp; resources</div>
+          </div>
+          <a href="how-it-works.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.14);">🗺️</div>
+            <div class="mega-link-text"><div class="mega-link-title">How It Works</div><div class="mega-link-desc">Apply to funded in 10 min</div></div>
+          </a>
+          <a href="faq.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">❓</div>
+            <div class="mega-link-text"><div class="mega-link-title">FAQ</div><div class="mega-link-desc">Common questions answered</div></div>
+          </a>
+          <a href="online-payment.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(0,229,255,0.08);">💸</div>
+            <div class="mega-link-text"><div class="mega-link-title">Online Payment</div><div class="mega-link-desc">Make or confirm a payment</div></div>
+          </a>
+          <a href="contact.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(255,209,102,0.1);">📞</div>
+            <div class="mega-link-text"><div class="mega-link-title">Contact Support</div><div class="mega-link-desc">Mon–Sat · real humans</div></div>
+          </a>
+          <a href="privacy-policy.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(160,154,245,0.1);">🔒</div>
+            <div class="mega-link-text"><div class="mega-link-title">Privacy Policy</div><div class="mega-link-desc">How we protect your data</div></div>
+          </a>
+          <a href="terms-and-conditions.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.1);">📄</div>
+            <div class="mega-link-text"><div class="mega-link-title">Terms &amp; Conditions</div><div class="mega-link-desc">Loan terms · 23% APR</div></div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Desktop CTA -->
+    <div class="nav-actions">
+      <a href="apply.html" class="btn-primary">Get a Loan →</a>
+    </div>
+
+    <!-- Hamburger -->
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="mobile-drawer" id="mobile-drawer" role="navigation" aria-label="Mobile navigation">
+  <div class="mobile-section">
+    <div class="mobile-section-label">Products</div>
+    <div class="mobile-links">
+      <a href="online-loans.html" class="mobile-link"><span class="mobile-link-icon">🌐</span><span class="mobile-link-label">Online Loans</span></a>
+      <a href="bad-credit-loans.html" class="mobile-link"><span class="mobile-link-icon">💳</span><span class="mobile-link-label">Bad Credit Loans</span></a>
+      <a href="no-credit-check-loans.html" class="mobile-link"><span class="mobile-link-icon">🚫</span><span class="mobile-link-label">No Credit Check</span></a>
+      <a href="installment-loans.html" class="mobile-link"><span class="mobile-link-icon">📅</span><span class="mobile-link-label">Installment Loans</span></a>
+      <a href="e-transfer-loans.html" class="mobile-link"><span class="mobile-link-icon">⚡</span><span class="mobile-link-label">e-Transfer Loans</span></a>
+    </div>
+  </div>
+  <div class="mobile-section">
+    <div class="mobile-section-label">Company</div>
+    <div class="mobile-links">
+      <a href="about.html" class="mobile-link"><span class="mobile-link-icon">🏢</span><span class="mobile-link-label">About Us</span></a>
+      <a href="why-waves.html" class="mobile-link"><span class="mobile-link-icon">🌊</span><span class="mobile-link-label">Why Waves</span></a>
+      <a href="reviews.html" class="mobile-link"><span class="mobile-link-icon">⭐</span><span class="mobile-link-label">Reviews</span></a>
+      <a href="blog.html" class="mobile-link"><span class="mobile-link-icon">📝</span><span class="mobile-link-label">Blog</span></a>
+      <a href="careers.html" class="mobile-link"><span class="mobile-link-icon">🚀</span><span class="mobile-link-label">Careers</span></a>
+      <a href="contact.html" class="mobile-link"><span class="mobile-link-icon">💬</span><span class="mobile-link-label">Contact</span></a>
+    </div>
+  </div>
+  <div class="mobile-section">
+    <div class="mobile-section-label">Support</div>
+    <div class="mobile-links">
+      <a href="how-it-works.html" class="mobile-link"><span class="mobile-link-icon">🗺️</span><span class="mobile-link-label">How It Works</span></a>
+      <a href="faq.html" class="mobile-link"><span class="mobile-link-icon">❓</span><span class="mobile-link-label">FAQ</span></a>
+      <a href="online-payment.html" class="mobile-link"><span class="mobile-link-icon">💸</span><span class="mobile-link-label">Online Payment</span></a>
+      <a href="privacy-policy.html" class="mobile-link"><span class="mobile-link-icon">🔒</span><span class="mobile-link-label">Privacy Policy</span></a>
+      <a href="terms-and-conditions.html" class="mobile-link"><span class="mobile-link-icon">📄</span><span class="mobile-link-label">Terms &amp; Conditions</span></a>
+    </div>
+  </div>
+  <a href="apply.html" class="mobile-cta">Get a Loan — It's Free →</a>
+</div>
+<!-- Company -->
       <div class="nav-item" id="mega-company">
         <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">
           Company
