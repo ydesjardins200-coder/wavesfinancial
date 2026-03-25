@@ -289,6 +289,120 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
   .hiw-item:last-child{border-bottom:none;}
 }
 @media(max-width:400px){.radio-grid-2{grid-template-columns:1fr;}.form-card{padding:22px 16px;}}
+
+/* ─── CUSTOMER TYPE SELECTOR ─── */
+.type-selector {
+  width: 100%; max-width: 600px; margin-bottom: 22px;
+}
+.type-heading {
+  font-size: 1.1rem; font-weight: 800; text-align: center;
+  margin-bottom: 6px; color: var(--white);
+}
+.type-sub {
+  font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 18px;
+}
+.type-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.type-card {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 22px 16px; border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: rgba(13,11,31,0.6);
+  cursor: pointer; transition: all 0.22s; text-align: center;
+  text-decoration: none;
+}
+.type-card:hover {
+  border-color: rgba(91,82,216,0.5); background: rgba(91,82,216,0.12);
+  transform: translateY(-2px); box-shadow: 0 8px 32px rgba(91,82,216,0.2);
+}
+.type-card.new-loan:hover, .type-card.new-loan.selected {
+  border-color: rgba(29,233,198,0.5); background: rgba(29,233,198,0.08);
+  box-shadow: 0 8px 32px rgba(29,233,198,0.15);
+}
+.type-card.renewal:hover, .type-card.renewal.selected {
+  border-color: rgba(91,82,216,0.6); background: rgba(91,82,216,0.15);
+  box-shadow: 0 8px 32px rgba(91,82,216,0.25);
+}
+.type-icon { font-size: 2rem; }
+.type-title { font-size: 1rem; font-weight: 800; color: var(--white); }
+.type-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+.type-arrow { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ─── FORM SECTIONS ─── */
+.form-section {
+  margin-bottom: 6px; padding-bottom: 6px;
+}
+.form-section-title {
+  font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--iris); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.form-section-title::after {
+  content: ''; flex: 1; height: 1px; background: rgba(91,82,216,0.2);
+}
+
+/* ─── CONDITIONAL ROWS ─── */
+.cond-row {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  pointer-events: none;
+}
+.cond-row.open {
+  max-height: 600px; opacity: 1; pointer-events: all;
+}
+
+/* ─── YES/NO TOGGLE ─── */
+.yn-group { display: flex; gap: 8px; }
+.yn-option { position: relative; flex: 1; }
+.yn-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+.yn-label {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px; border-radius: var(--r-md);
+  border: 1px solid rgba(160,154,245,0.16); background: var(--input-bg);
+  font-size: 0.875rem; font-weight: 600; color: var(--text-muted);
+  cursor: pointer; transition: all 0.18s;
+}
+.yn-option input:checked + .yn-label {
+  border-color: rgba(91,82,216,0.5); background: rgba(91,82,216,0.18); color: var(--white);
+}
+
+/* ─── FUND METHOD CARDS ─── */
+.fund-group { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.fund-option { position: relative; }
+.fund-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+.fund-label {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; border-radius: var(--r-md);
+  border: 1px solid rgba(160,154,245,0.16); background: var(--input-bg);
+  cursor: pointer; transition: all 0.18s;
+}
+.fund-option input:checked + .fund-label {
+  border-color: rgba(91,82,216,0.5); background: rgba(91,82,216,0.15);
+}
+.fund-dot {
+  width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+  border: 2px solid rgba(160,154,245,0.3); transition: all 0.2s;
+}
+.fund-option input:checked + .fund-label .fund-dot {
+  border-color: var(--iris); background: var(--iris);
+}
+.fund-info { flex: 1; }
+.fund-title { font-size: 0.875rem; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+.fund-desc  { font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; }
+.fund-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 100px;
+  font-size: 0.65rem; font-weight: 700; margin-left: 6px;
+}
+.fund-badge.free  { background: rgba(29,233,198,0.15); color: var(--teal); }
+.fund-badge.fee   { background: rgba(255,209,102,0.12); color: var(--gold); }
+
+/* ─── SINGLE-PAGE RENEWAL FORM ─── */
+#renewal-form { display: none; }
+#renewal-form .form-card { margin-bottom: 0; }
+
+@media(max-width:500px) { .type-cards { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -383,19 +497,39 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
 <!-- PAGE -->
 <main class="page" id="main-page">
 
-  <!-- TOP TRUST BAR -->
-  <div class="trust-bar" id="trust-bar">
+  <!-- ═══ CUSTOMER TYPE SELECTOR ═══ -->
+  <div class="type-selector" id="type-selector">
+    <div class="type-heading">Welcome to Waves Financial</div>
+    <div class="type-sub">Are you a new or returning customer?</div>
+    <div class="type-cards">
+      <div class="type-card new-loan" onclick="selectType('new')">
+        <div class="type-icon">🌊</div>
+        <div class="type-title">New Loan</div>
+        <div class="type-desc">First time applying with Waves Financial? Start your application here.</div>
+        <div class="type-arrow">Apply now →</div>
+      </div>
+      <div class="type-card renewal" onclick="selectType('renewal')">
+        <div class="type-icon">🔄</div>
+        <div class="type-title">Loan Renewal</div>
+        <div class="type-desc">Existing customer? Renew your current loan quickly — most info pre-filled.</div>
+        <div class="type-arrow">Renew now →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOP TRUST BAR (hidden until type selected) ═══ -->
+  <div class="trust-bar" id="trust-bar" style="display:none;">
     <div class="trust-pill"><span class="dot"></span>No credit check</div>
     <div class="trust-pill"><span class="dot"></span>Decision in minutes</div>
     <div class="trust-pill"><span class="dot"></span>256-bit encrypted</div>
     <div class="trust-pill"><span class="dot"></span>Licensed Canadian lender</div>
   </div>
 
-  <!-- STEPPER -->
-  <div class="progress-wrap" id="progress-wrap">
+  <!-- ═══ STEPPER (new loan only) ═══ -->
+  <div class="progress-wrap" id="progress-wrap" style="display:none;">
     <div class="progress-top">
       <span class="progress-step-label" id="step-label">Step 1 — Personal Info</span>
-      <span class="progress-counter" id="step-counter">1 of 3</span>
+      <span class="progress-counter" id="step-counter">1 of 4</span>
     </div>
     <div class="stepper">
       <div class="stepper-item"><div class="step-node active" id="node-1"><span class="step-num">1</span></div></div>
@@ -403,19 +537,26 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
       <div class="stepper-item"><div class="step-node" id="node-2"><span class="step-num">2</span></div></div>
       <div class="step-line" id="line-2"></div>
       <div class="stepper-item"><div class="step-node" id="node-3"><span class="step-num">3</span></div></div>
+      <div class="step-line" id="line-3"></div>
+      <div class="stepper-item"><div class="step-node" id="node-4"><span class="step-num">4</span></div></div>
     </div>
     <div class="stepper-labels">
       <span class="stepper-label active" id="lbl-1">Personal</span>
-      <span class="stepper-label" id="lbl-2">Financial</span>
-      <span class="stepper-label" id="lbl-3">Banking</span>
+      <span class="stepper-label" id="lbl-2">Employment</span>
+      <span class="stepper-label" id="lbl-3">Loan & Bank</span>
+      <span class="stepper-label" id="lbl-4">Contact</span>
     </div>
   </div>
 
-  <!-- FORM CARD -->
-  <div class="form-card" id="form-card">
+  <!-- ══════════════════════════════════════════════════════════════════
+       NEW LOAN FORM (4 steps)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="form-card" id="new-loan-form" style="display:none;">
 
-    <!-- STEP 1 -->
+    <!-- ─── STEP 1: PERSONAL INFO ─── -->
     <div class="step-panel active" id="step-1">
+
+      <!-- Amount Hero -->
       <div class="amount-hero">
         <div class="amount-label" id="amount-label">How much do you need?</div>
         <div class="amount-display" id="amount-display">$800</div>
@@ -435,274 +576,370 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
         </div>
       </div>
 
-      <h1 class="step-heading">Tell us about yourself</h1>
-      <p class="step-sub">Your information is encrypted and never shared with third parties.</p>
+      <h1 class="step-heading">Your personal info</h1>
+      <p class="step-sub">All information is encrypted and never shared with third parties.</p>
 
+      <div class="form-section-title">Identity</div>
       <div class="field-row field-row-2">
-        <div class="field">
-          <label class="field-label">First Name <span class="req">*</span></label>
-          <input type="text" class="field-input" id="fn" placeholder="Marie" autocomplete="given-name">
-          <span class="field-err" id="err-fn">&#9888; Enter your first name</span>
-        </div>
-        <div class="field">
-          <label class="field-label">Last Name <span class="req">*</span></label>
-          <input type="text" class="field-input" id="ln" placeholder="Tremblay" autocomplete="family-name">
-          <span class="field-err" id="err-ln">&#9888; Enter your last name</span>
-        </div>
+        <div class="field"><label class="field-label">First Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-fn" placeholder="Marie" autocomplete="given-name">
+          <span class="field-err" id="err-n-fn">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Last Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-ln" placeholder="Tremblay" autocomplete="family-name">
+          <span class="field-err" id="err-n-ln">&#9888; Required</span></div>
       </div>
       <div class="field-row field-row-2">
-        <div class="field">
-          <label class="field-label">Date of Birth <span class="req">*</span></label>
-          <input type="date" class="field-input" id="dob" autocomplete="bday">
-          <span class="field-err" id="err-dob">&#9888; Must be 18 or older</span>
-        </div>
-        <div class="field">
-          <label class="field-label">Province <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select class="field-select" id="prov">
-              <option value="">Select province&hellip;</option>
-              <option value="BC">British Columbia</option>
-              <option value="ON">Ontario</option>
-              <option value="NS">Nova Scotia</option>
-              <option value="NB">New Brunswick</option>
-              <option value="PE">Prince Edward Island</option>
-              <option value="NL">Newfoundland &amp; Labrador</option>
-            </select>
+        <div class="field"><label class="field-label">Email <span class="req">*</span></label>
+          <input type="email" class="field-input" id="n-email" placeholder="marie@email.com" autocomplete="email">
+          <span class="field-err" id="err-n-email">&#9888; Valid email required</span></div>
+        <div class="field"><label class="field-label">Date of Birth <span class="req">*</span></label>
+          <input type="date" class="field-input" id="n-dob" autocomplete="bday">
+          <span class="field-err" id="err-n-dob">&#9888; Must be 18+</span></div>
+      </div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Home Phone <span class="req">*</span></label>
+          <input type="tel" class="field-input" id="n-hphone" placeholder="(514) 555-0100" autocomplete="tel">
+          <span class="field-err" id="err-n-hphone">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Cell Phone <span class="req">*</span></label>
+          <input type="tel" class="field-input" id="n-cphone" placeholder="(514) 555-0123" autocomplete="tel-local">
+          <span class="field-err" id="err-n-cphone">&#9888; Required</span></div>
+      </div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Sex <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="n-sex" value="male"><span class="yn-label">Male</span></label>
+            <label class="yn-option"><input type="radio" name="n-sex" value="female"><span class="yn-label">Female</span></label>
           </div>
-          <span class="field-err" id="err-prov">&#9888; Select your province</span>
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label class="field-label">Street Address <span class="req">*</span></label>
-          <input type="text" class="field-input" id="addr" placeholder="123 Main Street" autocomplete="street-address">
-          <span class="field-err" id="err-addr">&#9888; Enter your address</span>
-        </div>
-      </div>
-      <div class="field-row field-row-2">
-        <div class="field">
-          <label class="field-label">City <span class="req">*</span></label>
-          <input type="text" class="field-input" id="city" placeholder="Halifax" autocomplete="address-level2">
-          <span class="field-err" id="err-city">&#9888; Enter your city</span>
-        </div>
-        <div class="field">
-          <label class="field-label">Postal Code <span class="req">*</span></label>
-          <input type="text" class="field-input" id="postal" placeholder="B3J 1A1" maxlength="7" autocomplete="postal-code">
-          <span class="field-err" id="err-postal">&#9888; Enter a valid postal code</span>
-        </div>
-      </div>
-      <div class="field-row field-row-2">
-        <div class="field">
-          <label class="field-label">Phone <span class="req">*</span></label>
-          <input type="tel" class="field-input" id="phone" placeholder="(514) 555-0123" autocomplete="tel">
-          <span class="field-err" id="err-phone">&#9888; Enter a valid phone number</span>
-        </div>
-        <div class="field">
-          <label class="field-label">Email <span class="req">*</span></label>
-          <input type="email" class="field-input" id="email" placeholder="marie@email.com" autocomplete="email">
-          <span class="field-err" id="err-email">&#9888; Enter a valid email</span>
-        </div>
-      </div>
-
-      <div class="section-sep">Identity verification</div>
-
-      <div class="field-row">
-        <div class="field">
-          <label class="field-label">Social Insurance Number (SIN) <span class="req">*</span></label>
+          <span class="field-err" id="err-n-sex">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Social Insurance Number</label>
           <div class="sin-wrap">
-            <input type="password" class="field-input" id="sin" placeholder="000 000 000" maxlength="11" inputmode="numeric">
-            <button type="button" class="sin-eye" id="sin-eye" onclick="toggleSin()">
+            <input type="password" class="field-input" id="n-sin" placeholder="000 000 000" maxlength="11" inputmode="numeric">
+            <button type="button" class="sin-eye" onclick="toggleSin('n-sin')">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
-          </div>
-          <span class="field-err" id="err-sin">&#9888; Enter a valid 9-digit SIN</span>
-          <div class="inline-trust">
-            <span class="inline-trust-icon">🔒</span>
-            Your SIN is encrypted with 256-bit SSL and used only for identity verification. It is never stored in plain text.
-          </div>
-        </div>
+          </div></div>
+      </div>
+
+      <div class="form-section-title" style="margin-top:20px;">Residential Address</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Street Address <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-addr" placeholder="123 Main Street" autocomplete="street-address">
+          <span class="field-err" id="err-n-addr">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Apt / Unit</label>
+          <input type="text" class="field-input" id="n-apt" placeholder="Apt 4B"></div>
+      </div>
+      <div class="field-row field-row-2" style="grid-template-columns:1fr 1fr 1fr;" id="city-row-new">
+        <div class="field"><label class="field-label">City <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-city" placeholder="Halifax" autocomplete="address-level2">
+          <span class="field-err" id="err-n-city">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Province <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="n-prov">
+              <option value="">Select&hellip;</option>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="NL">Newfoundland &amp; Labrador</option>
+              <option value="MB">Manitoba</option>
+              <option value="NB">New Brunswick</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="ON">Ontario</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="QC">Quebec</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="NU">Nunavut</option>
+              <option value="NT">Northwest Territories</option>
+              <option value="YT">Yukon</option>
+            </select></div>
+          <span class="field-err" id="err-n-prov">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Postal Code <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-postal" placeholder="B3J 1A1" maxlength="7" autocomplete="postal-code">
+          <span class="field-err" id="err-n-postal">&#9888; Invalid postal code</span></div>
       </div>
 
       <div class="actions">
-        <button class="btn-next-step" onclick="goNext(1)">
-          Continue &mdash; Financial Info
+        <button class="btn-back-step" onclick="selectType(null)">&#8592; Back</button>
+        <button class="btn-next-step" onclick="goNext(1)">Continue &mdash; Employment
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
       <div class="micro-trust">
-        <span class="micro-item">🔒 256-bit SSL</span>
-        <span class="micro-item">🚫 No credit check</span>
-        <span class="micro-item">⚡ Instant decision</span>
-        <span class="micro-item">🇨🇦 Licensed in Canada</span>
+        <span class="micro-item">🔒 256-bit SSL</span><span class="micro-item">🚫 No credit check</span>
+        <span class="micro-item">⚡ Instant decision</span><span class="micro-item">🇨🇦 Licensed in Canada</span>
       </div>
     </div>
 
-    <!-- STEP 2 -->
+    <!-- ─── STEP 2: EMPLOYMENT & INCOME ─── -->
     <div class="step-panel" id="step-2">
       <div class="loan-chip">
-        <span class="loan-chip-val" id="chip-val">$800</span>
+        <span class="loan-chip-val" id="n-chip-val">$800</span>
         <span class="loan-chip-sep">&middot;</span>
         <span class="loan-chip-sub">No credit check &middot; 23% APR</span>
       </div>
-      <h1 class="step-heading">Your financial info</h1>
-      <p class="step-sub">We verify your income &mdash; not your credit score &mdash; so everyone gets a fair shot.</p>
+      <h1 class="step-heading">Employment &amp; income</h1>
+      <p class="step-sub">We verify income, not your credit score.</p>
 
+      <div class="form-section-title">Source of Income</div>
       <div class="field-row">
-        <div class="field">
-          <label class="field-label">Employment Status <span class="req">*</span></label>
-          <div class="radio-grid radio-grid-2" style="margin-top:6px;">
-            <label class="radio-option"><input type="radio" name="emp" value="employed" onchange="toggleEmployer()"><span class="radio-card"><span class="radio-dot"></span><span class="radio-icon">💼</span>Employed</span></label>
-            <label class="radio-option"><input type="radio" name="emp" value="self-employed" onchange="toggleEmployer()"><span class="radio-card"><span class="radio-dot"></span><span class="radio-icon">🛠️</span>Self-Employed</span></label>
-            <label class="radio-option"><input type="radio" name="emp" value="benefits" onchange="toggleEmployer()"><span class="radio-card"><span class="radio-dot"></span><span class="radio-icon">📋</span>Benefits / EI</span></label>
-            <label class="radio-option"><input type="radio" name="emp" value="other" onchange="toggleEmployer()"><span class="radio-card"><span class="radio-dot"></span><span class="radio-icon">🔄</span>Other Income</span></label>
-          </div>
-          <span class="field-err" id="err-emp">&#9888; Select your employment status</span>
-        </div>
-      </div>
-
-      <div id="employer-row" style="max-height:0;overflow:hidden;opacity:0;transition:all 0.3s ease;">
-        <div class="field-row" style="padding-top:12px;">
-          <div class="field">
-            <label class="field-label">Employer Name</label>
-            <input type="text" class="field-input" id="employer" placeholder="Acme Corp" autocomplete="organization">
-          </div>
-        </div>
-      </div>
-
-      <div class="field-row field-row-2" style="margin-top:14px;">
-        <div class="field">
-          <label class="field-label">Monthly Net Income <span class="req">*</span></label>
-          <input type="number" class="field-input" id="income" placeholder="2,500" min="800" inputmode="numeric">
-          <span class="field-err" id="err-income">&#9888; Minimum $800/month required</span>
-          <span class="field-hint">After-tax, in CAD</span>
-        </div>
-        <div class="field">
-          <label class="field-label">Pay Frequency <span class="req">*</span></label>
+        <div class="field"><label class="field-label">Primary Source of Income <span class="req">*</span></label>
           <div class="select-wrap">
-            <select class="field-select" id="payfreq">
-              <option value="">Select&hellip;</option>
-              <option value="weekly">Weekly</option>
-              <option value="biweekly">Every 2 weeks</option>
-              <option value="semimonthly">Twice a month</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
-          <span class="field-err" id="err-payfreq">&#9888; Select pay frequency</span>
+            <select class="field-select" id="n-income-src" onchange="toggleIncomeFields('n')">
+              <option value="">Choose&hellip;</option>
+              <option value="employed">Employed</option>
+              <option value="ei">Employment Insurance</option>
+              <option value="retirement">Retirement, CPP</option>
+              <option value="self">Self-Employed</option>
+              <option value="other">Other</option>
+            </select></div>
+          <span class="field-err" id="err-n-income-src">&#9888; Required</span></div>
+      </div>
+      <div class="field-row" id="n-other-income-row" style="display:none;">
+        <div class="field"><label class="field-label">Other Income Type</label>
+          <div class="select-wrap">
+            <select class="field-select" id="n-other-income">
+              <option value="">Choose&hellip;</option>
+              <option value="disability">Disability (CMSM, WCB, ISB, AISH, ODSP)</option>
+              <option value="insurance">Insurance Income</option>
+              <option value="student">Student Loan</option>
+              <option value="child-tax">Child Tax</option>
+              <option value="social">Social Assistance</option>
+            </select></div></div>
+      </div>
+
+      <!-- Employed / Self-Employed fields -->
+      <div class="cond-row" id="n-employed-fields">
+        <div class="form-section-title">Employment Details</div>
+        <div class="field-row field-row-2">
+          <div class="field"><label class="field-label">Employer Name <span class="req">*</span></label>
+            <input type="text" class="field-input" id="n-employer" placeholder="Acme Corp">
+            <span class="field-err" id="err-n-employer">&#9888; Required</span></div>
+          <div class="field"><label class="field-label">Work Phone <span class="req">*</span></label>
+            <input type="tel" class="field-input" id="n-work-phone" placeholder="(514) 555-0200">
+            <span class="field-err" id="err-n-work-phone">&#9888; Required</span></div>
+        </div>
+        <div class="field-row field-row-2">
+          <div class="field"><label class="field-label">Job Description <span class="req">*</span></label>
+            <input type="text" class="field-input" id="n-job-desc" placeholder="Sales Associate">
+            <span class="field-err" id="err-n-job-desc">&#9888; Required</span></div>
+          <div class="field"><label class="field-label">Immediate Supervisor <span class="req">*</span></label>
+            <input type="text" class="field-input" id="n-supervisor" placeholder="John Smith">
+            <span class="field-err" id="err-n-supervisor">&#9888; Required</span></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Approximate Hiring Date <span class="req">*</span></label>
+            <input type="date" class="field-input" id="n-hire-date">
+            <span class="field-err" id="err-n-hire-date">&#9888; Required</span></div>
         </div>
       </div>
 
-      <div class="section-sep">Your repayment options</div>
-      <div class="repayment-preview">
-        <div class="repay-card active" data-freq="biweekly" onclick="selectRepay(this)">
-          <div class="repay-freq">Biweekly</div>
-          <div class="repay-amount" id="repay-biweekly">~$91</div>
-          <div class="repay-duration">8 payments</div>
-        </div>
-        <div class="repay-card" data-freq="weekly" onclick="selectRepay(this)">
-          <div class="repay-freq">Weekly</div>
-          <div class="repay-amount" id="repay-weekly">~$46</div>
-          <div class="repay-duration">16 payments</div>
-        </div>
-        <div class="repay-card" data-freq="monthly" onclick="selectRepay(this)">
-          <div class="repay-freq">Monthly</div>
-          <div class="repay-amount" id="repay-monthly">~$176</div>
-          <div class="repay-duration">5 payments</div>
+      <!-- EI fields -->
+      <div class="cond-row" id="n-ei-fields">
+        <div class="form-section-title">EI Details</div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">When did you start receiving EI? <span class="req">*</span></label>
+            <input type="date" class="field-input" id="n-ei-start">
+            <span class="field-err" id="err-n-ei-start">&#9888; Required</span></div>
         </div>
       </div>
-      <p style="font-size:0.68rem;color:var(--text-muted);margin-bottom:16px;text-align:center;">Estimates at 23% APR. Exact amounts confirmed in your Loan Agreement.</p>
+
+      <div class="form-section-title">Pay Details</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Paid by <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="n-paid-by" value="direct"><span class="yn-label">Direct Deposit</span></label>
+            <label class="yn-option"><input type="radio" name="n-paid-by" value="cheque"><span class="yn-label">Cheques</span></label>
+          </div>
+          <span class="field-err" id="err-n-paid-by">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Pay Frequency <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="n-pay-freq">
+              <option value="">Choose&hellip;</option>
+              <option value="weekly">Every week</option>
+              <option value="biweekly">Every 2 weeks</option>
+              <option value="every4">Every 4 weeks</option>
+              <option value="monthly-date">Every month, on a specific date</option>
+              <option value="monthly-week">Every month, on a specific week</option>
+              <option value="monthly-last">Every month, on the last day</option>
+              <option value="twice-dates">Twice a month, on specific dates</option>
+              <option value="twice-weeks">Twice a month, on specific weeks</option>
+            </select></div>
+          <span class="field-err" id="err-n-pay-freq">&#9888; Required</span></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label class="field-label">Next Pay Deposit Date <span class="req">*</span></label>
+          <input type="date" class="field-input" id="n-next-pay">
+          <span class="field-err" id="err-n-next-pay">&#9888; Required</span></div>
+      </div>
 
       <div class="actions">
         <button class="btn-back-step" onclick="goBack(2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
-        <button class="btn-next-step" onclick="goNext(2)">Continue &mdash; Connect Bank<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        <button class="btn-next-step" onclick="goNext(2)">Continue &mdash; Loan &amp; Bank
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
       </div>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- ─── STEP 3: LOAN + BANK INFO ─── -->
     <div class="step-panel" id="step-3">
       <div class="loan-chip">
-        <span class="loan-chip-val" id="chip-val-3">$800</span>
+        <span class="loan-chip-val" id="n-chip-val-3">$800</span>
         <span class="loan-chip-sep">&middot;</span>
-        <span class="loan-chip-sub" id="chip-repay-3">~$91 biweekly</span>
+        <span class="loan-chip-sub">No credit check &middot; 23% APR</span>
       </div>
-      <h1 class="step-heading">Connect your bank</h1>
-      <p class="step-sub">Securely link your account to verify income and receive funds via e-Transfer. Read-only &mdash; we can never move money.</p>
+      <h1 class="step-heading">Loan &amp; banking details</h1>
+      <p class="step-sub">Your bank info is used to deposit funds and set up repayments only.</p>
 
-      <div class="flinks-box" id="flinks-box">
-        <div class="flinks-inner" id="flinks-placeholder">
-          <div class="flinks-logo">🏦</div>
-          <div class="flinks-title">Instant Bank Verification</div>
-          <div class="flinks-sub">Powered by Flinks &mdash; Canada's trusted open banking platform. Your login credentials are entered directly into your bank's secure environment and never transmitted to Waves Financial.</div>
-          <div class="banks-row">
-            <span class="bank-chip">RBC</span><span class="bank-chip">TD</span><span class="bank-chip">BMO</span>
-            <span class="bank-chip">CIBC</span><span class="bank-chip">Scotia</span><span class="bank-chip">Desjardins</span>
-            <span class="bank-chip">Tangerine</span><span class="bank-chip">EQ Bank</span><span class="bank-chip">+700 more</span>
+      <div class="form-section-title">Loan Details</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Declaring bankruptcy or consumer proposal? <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="n-bankrupt-now" value="yes"><span class="yn-label">Yes</span></label>
+            <label class="yn-option"><input type="radio" name="n-bankrupt-now" value="no"><span class="yn-label">No</span></label>
           </div>
-          <div class="how-it-works-strip">
-            <div class="hiw-item"><div class="hiw-icon">🔒</div><div class="hiw-text">256-bit encrypted</div></div>
-            <div class="hiw-item"><div class="hiw-icon">👁️</div><div class="hiw-text">Read-only · can't move money</div></div>
-            <div class="hiw-item"><div class="hiw-icon">⚡</div><div class="hiw-text">Under 60 seconds</div></div>
+          <span class="field-err" id="err-n-bankrupt-now">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Ever declared bankruptcy in the past? <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="n-bankrupt-past" value="yes"><span class="yn-label">Yes</span></label>
+            <label class="yn-option"><input type="radio" name="n-bankrupt-past" value="no"><span class="yn-label">No</span></label>
           </div>
-          <div class="flinks-dev-note">
-            <span style="font-size:1rem;flex-shrink:0;">⚙️</span>
-            <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.55;">
-              <strong style="color:var(--periwinkle);">Dev mode</strong> &mdash; Replace <code>YOUR_FLINKS_CLIENT_ID</code> in the source with your Flinks iframe URL. Use the button below to simulate a successful connection for testing.
-            </div>
-          </div>
-          <!-- Real Flinks iframe — uncomment when ready:
-          <iframe id="flinks-iframe"
-            src="https://YOUR_FLINKS_CLIENT_ID-iframe.private.fin.ag/v2/?institutionFilterEnable=false&country=CA&language=en&innerRedirect=true&demo=false&backgroundColor=0D0B1F&foregroundColor1=ffffff&desktopLayout=true&headerEnable=false&progressMeterEnable=true"
-            style="width:100%;height:520px;border:none;border-radius:12px;"
-            allow="camera" title="Flinks Bank Connection">
-          </iframe>
-          -->
-          <button class="btn-demo" onclick="simulateFlinks()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
-            Simulate Bank Connection (Sandbox)
-          </button>
-        </div>
-        <div class="flinks-connected" id="flinks-connected">
-          <div class="connected-check">&#9989;</div>
-          <div class="connected-title">Bank Connected!</div>
-          <div class="connected-bank-pill">
-            <span class="connected-bank-name" id="conn-bank">RBC Royal Bank</span>
-            <span class="connected-acct" id="conn-acct">Chequing &bull;&bull;&bull;&bull;4521</span>
-          </div>
-          <div class="connected-sub">Your account is securely verified. Your credentials were never transmitted to Waves Financial.</div>
-          <button class="btn-reconnect" onclick="resetFlinks()">Connect a different account</button>
-        </div>
+          <span class="field-err" id="err-n-bankrupt-past">&#9888; Required</span></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label class="field-label">How would you like to receive your funds? <span class="req">*</span></label>
+          <div class="fund-group">
+            <label class="fund-option">
+              <input type="radio" name="n-fund-method" value="direct" checked>
+              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+                <span class="fund-title">Direct Deposit <span class="fund-badge free">Free</span></span>
+                <span class="fund-desc">Deposited directly into your account same day if approved before 2:30 PM EST.</span>
+              </span></span>
+            </label>
+            <label class="fund-option">
+              <input type="radio" name="n-fund-method" value="instant">
+              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+                <span class="fund-title">Instant Deposit</span>
+                <span class="fund-desc">Funds in your account within 1&ndash;2 hours of approval.</span>
+              </span></span>
+            </label>
+          </div></div>
       </div>
 
-      <div class="consent-block" id="consent-block">
-        <label class="consent-row">
-          <input type="checkbox" id="c-pad">
-          <span class="consent-box"></span>
-          <span class="consent-text">I authorize Waves Financial to initiate pre-authorized debits from the verified account for loan repayments as outlined in the <a href="terms-and-conditions.html" target="_blank">Loan Agreement</a> and PAD Agreement.</span>
-        </label>
-        <label class="consent-row">
-          <input type="checkbox" id="c-terms">
-          <span class="consent-box"></span>
-          <span class="consent-text">I have read and agree to the <a href="terms-and-conditions.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>. I confirm all information provided is accurate.</span>
-        </label>
-        <span class="field-err" id="err-consent">&#9888; Please accept both agreements to continue</span>
+      <div class="form-section-title" style="margin-top:20px;">Banking Information</div>
+      <div class="inline-trust"><span class="inline-trust-icon">🔒</span>Your banking details are encrypted with 256-bit SSL and used only to deposit your funds and set up pre-authorized repayments.</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Your Bank <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="n-bank">
+              <option value="">Please choose&hellip;</option>
+              <option value="td">TD Canada Trust</option>
+              <option value="cibc">CIBC</option>
+              <option value="rbc">Royal Bank (RBC)</option>
+              <option value="bmo">Bank of Montreal</option>
+              <option value="scotia">Bank of Nova Scotia</option>
+              <option value="other">Other</option>
+            </select></div>
+          <span class="field-err" id="err-n-bank">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Institution Number <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="n-institution">
+              <option value="">Please choose&hellip;</option>
+              <option value="006">006 (National Bank)</option>
+              <option value="016">016 (HSBC)</option>
+              <option value="030">030 (Canadian Western Bank)</option>
+              <option value="219">219 (Alberta TBF)</option>
+              <option value="614">614 (ING Direct)</option>
+              <option value="806">806 (Duca Financial)</option>
+              <option value="809">809 (Credit Union BC)</option>
+              <option value="815">815 (Caisse Pop. Desjardins)</option>
+              <option value="819">819 (Desjardins)</option>
+              <option value="828">828 (Credit Union ON)</option>
+              <option value="829">829 (Desjardins Ontario)</option>
+              <option value="842">842 (Alterna Savings)</option>
+              <option value="865">865 (Caisse Pop. Acadie)</option>
+              <option value="889">889 (Credit Union SK)</option>
+              <option value="899">899 (Credit Union AB)</option>
+              <option value="other">Other</option>
+              <option value="unknown">I don't know</option>
+            </select></div>
+          <span class="field-err" id="err-n-institution">&#9888; Required</span></div>
+      </div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">5-Figure Transit Number <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-transit" placeholder="12345" maxlength="5" inputmode="numeric">
+          <span class="field-err" id="err-n-transit">&#9888; 5 digits required</span></div>
+        <div class="field"><label class="field-label">Account Number <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-account" placeholder="1234567" inputmode="numeric">
+          <span class="field-err" id="err-n-account">&#9888; Required</span></div>
       </div>
 
       <div class="actions">
         <button class="btn-back-step" onclick="goBack(3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
-        <button class="btn-submit" id="submit-btn" onclick="submitApp()" disabled>
-          <span id="submit-lbl">Connect Bank First</span>
-          <div class="spinner" id="submit-spinner"></div>
-          <svg id="submit-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <button class="btn-next-step" onclick="goNext(3)">Continue &mdash; Safety Contact
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
-      <div class="micro-trust" style="margin-top:16px;">
-        <span class="micro-item">🔒 Bank-level encryption</span>
-        <span class="micro-item">👁️ Read-only access</span>
-        <span class="micro-item">🚫 Credentials never stored</span>
+    </div>
+
+    <!-- ─── STEP 4: SAFETY CONTACT + SUBMIT ─── -->
+    <div class="step-panel" id="step-4">
+      <h1 class="step-heading">Safety contact &amp; submit</h1>
+      <p class="step-sub">Your safety contact shows us you're using our service in good faith. They won't be contacted unless absolutely necessary.</p>
+
+      <div class="form-section-title">Safety Contact</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">First Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-sc-fn" placeholder="Jean">
+          <span class="field-err" id="err-n-sc-fn">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Last Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="n-sc-ln" placeholder="Martin">
+          <span class="field-err" id="err-n-sc-ln">&#9888; Required</span></div>
+      </div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Phone Number <span class="req">*</span></label>
+          <input type="tel" class="field-input" id="n-sc-phone" placeholder="(514) 555-0199">
+          <span class="field-err" id="err-n-sc-phone">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Your Relationship <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="n-sc-rel">
+              <option value="">Please choose&hellip;</option>
+              <option value="spouse">Spouse</option>
+              <option value="father">Father</option>
+              <option value="mother">Mother</option>
+              <option value="child">Child</option>
+              <option value="sister">Sister</option>
+              <option value="brother">Brother</option>
+              <option value="friend">Friend</option>
+              <option value="other">Other</option>
+            </select></div>
+          <span class="field-err" id="err-n-sc-rel">&#9888; Required</span></div>
+      </div>
+
+      <div class="form-section-title" style="margin-top:20px;">Consent</div>
+      <div class="consent-block" style="display:flex;">
+        <label class="consent-row">
+          <input type="checkbox" id="n-consent-terms">
+          <span class="consent-box"></span>
+          <span class="consent-text">I confirm all information is accurate and I have read and agreed to the <a href="terms-and-conditions.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</span>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" id="n-consent-contact">
+          <span class="consent-box"></span>
+          <span class="consent-text">I accept periodic contact by Waves Financial by email with promotions or updates regarding my account.</span>
+        </label>
+        <span class="field-err" id="err-n-consent">&#9888; You must accept the terms to continue</span>
+      </div>
+
+      <div class="actions">
+        <button class="btn-back-step" onclick="goBack(4)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <button class="btn-submit" id="n-submit-btn" onclick="submitNew()">
+          <span id="n-submit-lbl">Submit Application</span>
+          <div class="spinner" id="n-spinner"></div>
+          <svg id="n-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
       </div>
     </div>
 
     <!-- SUCCESS -->
-    <div id="success-screen">
+    <div id="success-screen" style="display:none;">
       <div class="success-wave">🌊</div>
       <div class="success-title">Application Submitted!</div>
       <p class="success-sub">Your application is in. Our team reviews submissions during business hours &mdash; you'll hear back soon.</p>
@@ -710,329 +947,651 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
       <div class="success-next">
         <div class="success-next-item"><span class="success-step-badge">1</span>We'll verify your application &mdash; usually within a few hours during business hours.</div>
         <div class="success-next-item"><span class="success-step-badge">2</span>You'll receive an email with your approval decision and a loan agreement to e-sign.</div>
-        <div class="success-next-item"><span class="success-step-badge">3</span>Once signed, funds arrive via Interac e-Transfer &mdash; typically within 2 minutes.</div>
+        <div class="success-next-item"><span class="success-step-badge">3</span>Once signed, funds arrive via your chosen method &mdash; Direct Deposit or Instant Deposit.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
     </div>
 
     <!-- DECLINE -->
-    <div id="decline-screen">
+    <div id="decline-screen" style="display:none;">
       <div class="decline-icon">🌊</div>
       <div class="decline-title">We can't approve this application</div>
-      <p class="decline-sub">We appreciate you applying. Based on the information provided, we're unable to offer a loan at this time. This is not a credit check &mdash; it's based on our eligibility criteria.</p>
-      <div class="decline-reason">
-        <span style="font-size:1rem;flex-shrink:0;">💡</span>
-        <span id="decline-reason-text">Your monthly income appears to be below our $800/month minimum requirement.</span>
-      </div>
+      <p class="decline-sub">We appreciate you applying. Based on the information provided, we're unable to offer a loan at this time. This is not a credit check.</p>
+      <div class="decline-reason"><span style="font-size:1rem;flex-shrink:0;">💡</span><span id="decline-reason-text">Your monthly income appears to be below our minimum requirement.</span></div>
       <div class="alternatives">
-        <a href="contact.html" class="alt-card">
-          <span class="alt-icon">💬</span>
-          <div><div class="alt-title">Talk to our team</div><div class="alt-desc">Sometimes exceptions apply. Call or email us to discuss your situation.</div></div>
-          <svg style="margin-left:auto;flex-shrink:0;color:var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="faq.html" class="alt-card">
-          <span class="alt-icon">❓</span>
-          <div><div class="alt-title">Read our eligibility FAQ</div><div class="alt-desc">Learn exactly what we look for and when you might qualify.</div></div>
-          <svg style="margin-left:auto;flex-shrink:0;color:var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="how-it-works.html" class="alt-card">
-          <span class="alt-icon">🗺️</span>
-          <div><div class="alt-title">Learn how it works</div><div class="alt-desc">Understand the full process so you're ready for your next application.</div></div>
-          <svg style="margin-left:auto;flex-shrink:0;color:var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+        <a href="contact.html" class="alt-card"><span class="alt-icon">💬</span><div><div class="alt-title">Talk to our team</div><div class="alt-desc">Sometimes exceptions apply. Call or email us.</div></div><svg style="margin-left:auto;flex-shrink:0;color:var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a href="faq.html" class="alt-card"><span class="alt-icon">❓</span><div><div class="alt-title">Eligibility FAQ</div><div class="alt-desc">Learn what we look for and when you might qualify.</div></div><svg style="margin-left:auto;flex-shrink:0;color:var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
-      <button class="btn-retry" onclick="resetApp()">
+      <button class="btn-retry" onclick="resetAll()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        Try again with different info
+        Try again
       </button>
     </div>
 
-  </div><!-- /form-card -->
+  </div><!-- /new-loan-form -->
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       RENEWAL FORM (single page, conditional sections)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="form-card" id="renewal-form">
+
+    <div id="renewal-fields">
+      <div class="loan-chip" style="margin-bottom:18px;">
+        <span class="loan-chip-val">Loan Renewal</span>
+        <span class="loan-chip-sep">&middot;</span>
+        <span class="loan-chip-sub">Existing customer</span>
+      </div>
+      <h1 class="step-heading">Renew your loan</h1>
+      <p class="step-sub">Update only what's changed since your last loan &mdash; most fields are optional if nothing is different.</p>
+
+      <!-- PERSONAL -->
+      <div class="form-section-title">Personal Information</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Date of Birth <span class="req">*</span></label>
+          <input type="date" class="field-input" id="r-dob">
+          <span class="field-err" id="err-r-dob">&#9888; Required</span></div>
+      </div>
+
+      <!-- ADDRESS CHANGE -->
+      <div class="form-section-title" style="margin-top:18px;">Address</div>
+      <div class="field-row">
+        <div class="field"><label class="field-label">Did you change address? <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="r-addr-changed" value="no" onchange="toggleRenew('r-addr-fields','no')"><span class="yn-label">No</span></label>
+            <label class="yn-option"><input type="radio" name="r-addr-changed" value="yes" onchange="toggleRenew('r-addr-fields','yes')"><span class="yn-label">Yes</span></label>
+          </div>
+          <span class="field-err" id="err-r-addr-changed">&#9888; Required</span></div>
+      </div>
+      <div class="cond-row" id="r-addr-fields">
+        <div class="field-row" style="padding-top:12px;">
+          <div class="field"><label class="field-label">Street Address <span class="req">*</span></label>
+            <input type="text" class="field-input" id="r-addr" placeholder="123 Main Street"></div>
+        </div>
+        <div class="field-row field-row-2" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="field"><label class="field-label">City</label>
+            <input type="text" class="field-input" id="r-city" placeholder="Halifax"></div>
+          <div class="field"><label class="field-label">Province <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-prov">
+                <option value="">Select&hellip;</option>
+                <option value="AB">Alberta</option><option value="BC">British Columbia</option>
+                <option value="NL">Newfoundland &amp; Labrador</option><option value="MB">Manitoba</option>
+                <option value="NB">New Brunswick</option><option value="NS">Nova Scotia</option>
+                <option value="ON">Ontario</option><option value="PE">Prince Edward Island</option>
+                <option value="QC">Quebec</option><option value="SK">Saskatchewan</option>
+                <option value="NU">Nunavut</option><option value="NT">Northwest Territories</option>
+                <option value="YT">Yukon</option>
+              </select></div></div>
+          <div class="field"><label class="field-label">Postal Code</label>
+            <input type="text" class="field-input" id="r-postal" placeholder="B3J 1A1" maxlength="7"></div>
+        </div>
+      </div>
+
+      <!-- EMPLOYMENT CHANGE -->
+      <div class="form-section-title" style="margin-top:18px;">Employment</div>
+      <div class="field-row">
+        <div class="field"><label class="field-label">Did you change jobs? <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="r-job-changed" value="no" onchange="toggleRenew('r-job-fields','no')"><span class="yn-label">No</span></label>
+            <label class="yn-option"><input type="radio" name="r-job-changed" value="yes" onchange="toggleRenew('r-job-fields','yes')"><span class="yn-label">Yes</span></label>
+          </div>
+          <span class="field-err" id="err-r-job-changed">&#9888; Required</span></div>
+      </div>
+      <div class="cond-row" id="r-job-fields">
+        <div class="field-row field-row-2" style="padding-top:12px;">
+          <div class="field"><label class="field-label">Source of Income <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-income-src" onchange="toggleIncomeFields('r')">
+                <option value="">Choose&hellip;</option>
+                <option value="employed">Employed</option>
+                <option value="ei">Employment Insurance</option>
+                <option value="retirement">Retirement</option>
+                <option value="self">Self-Employed</option>
+                <option value="other">Other</option>
+              </select></div></div>
+          <div class="field"><label class="field-label">Other Income Type</label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-other-income">
+                <option value="">Choose&hellip;</option>
+                <option value="disability">Disability (CMSM, WCB, ISB)</option>
+                <option value="insurance">Insurance Income</option>
+                <option value="student">Student Loan</option>
+                <option value="child-tax">Child Tax</option>
+                <option value="social">Social Assistance</option>
+              </select></div></div>
+        </div>
+        <div class="cond-row" id="r-hire-date-field">
+          <div class="field-row" style="padding-top:12px;">
+            <div class="field"><label class="field-label">Approximate Hiring Date <span class="req">*</span></label>
+              <input type="date" class="field-input" id="r-hire-date"></div>
+          </div>
+        </div>
+        <div class="cond-row" id="r-ei-field">
+          <div class="field-row" style="padding-top:12px;">
+            <div class="field"><label class="field-label">EI Start Date <span class="req">*</span></label>
+              <input type="date" class="field-input" id="r-ei-start"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pay frequency always shown -->
+      <div class="field-row" style="margin-top:14px;">
+        <div class="field"><label class="field-label">Pay Frequency <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="r-pay-freq">
+              <option value="">Choose&hellip;</option>
+              <option value="weekly">Every week</option>
+              <option value="biweekly">Every 2 weeks</option>
+              <option value="every4">Every 4 weeks</option>
+              <option value="monthly-date">Every month, on a specific date</option>
+              <option value="monthly-week">Every month, on a specific week</option>
+              <option value="monthly-last">Every month, on the last day</option>
+              <option value="twice-dates">Twice a month, on specific dates</option>
+              <option value="twice-weeks">Twice a month, on specific weeks</option>
+            </select></div>
+          <span class="field-err" id="err-r-pay-freq">&#9888; Required</span></div>
+      </div>
+
+      <!-- BANKING CHANGE -->
+      <div class="form-section-title" style="margin-top:18px;">Banking</div>
+      <div class="field-row">
+        <div class="field"><label class="field-label">Did you change banking information? <span class="req">*</span></label>
+          <div class="yn-group" style="margin-top:2px;">
+            <label class="yn-option"><input type="radio" name="r-bank-changed" value="no" onchange="toggleRenew('r-bank-fields','no')"><span class="yn-label">No</span></label>
+            <label class="yn-option"><input type="radio" name="r-bank-changed" value="yes" onchange="toggleRenew('r-bank-fields','yes')"><span class="yn-label">Yes</span></label>
+          </div>
+          <span class="field-err" id="err-r-bank-changed">&#9888; Required</span></div>
+      </div>
+      <div class="cond-row" id="r-bank-fields">
+        <div class="field-row field-row-2" style="padding-top:12px;">
+          <div class="field"><label class="field-label">New Bank <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-bank">
+                <option value="">Please choose&hellip;</option>
+                <option value="td">TD Canada Trust</option><option value="cibc">CIBC</option>
+                <option value="rbc">Royal Bank (RBC)</option><option value="bmo">Bank of Montreal</option>
+                <option value="scotia">Bank of Nova Scotia</option><option value="other">Other</option>
+              </select></div></div>
+          <div class="field"><label class="field-label">Institution Number <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-institution">
+                <option value="">Please choose&hellip;</option>
+                <option value="006">006 (National Bank)</option><option value="016">016 (HSBC)</option>
+                <option value="030">030 (Canadian Western Bank)</option><option value="219">219 (Alberta TBF)</option>
+                <option value="614">614 (ING Direct)</option><option value="806">806 (Duca Financial)</option>
+                <option value="809">809 (Credit Union BC)</option><option value="815">815 (Caisse Pop. Desjardins)</option>
+                <option value="819">819 (Desjardins)</option><option value="828">828 (Credit Union ON)</option>
+                <option value="829">829 (Desjardins Ontario)</option><option value="842">842 (Alterna Savings)</option>
+                <option value="865">865 (Caisse Pop. Acadie)</option><option value="889">889 (Credit Union SK)</option>
+                <option value="899">899 (Credit Union AB)</option><option value="other">Other</option>
+                <option value="unknown">I don't know</option>
+              </select></div></div>
+        </div>
+        <div class="field-row field-row-2">
+          <div class="field"><label class="field-label">5-Figure Transit Number <span class="req">*</span></label>
+            <input type="text" class="field-input" id="r-transit" placeholder="12345" maxlength="5" inputmode="numeric"></div>
+          <div class="field"><label class="field-label">Account Number <span class="req">*</span></label>
+            <input type="text" class="field-input" id="r-account" placeholder="1234567" inputmode="numeric"></div>
+        </div>
+      </div>
+
+      <!-- LOAN INFO -->
+      <div class="form-section-title" style="margin-top:18px;">Loan Request</div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Amount <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="field-select" id="r-amount">
+              <option value="500">$500</option><option value="600">$600</option>
+              <option value="700">$700</option><option value="800" selected>$800</option>
+              <option value="900">$900</option><option value="1000">$1,000</option>
+            </select></div></div>
+        <div class="field"><label class="field-label">Next Pay Date <span class="req">*</span></label>
+          <input type="date" class="field-input" id="r-next-pay">
+          <span class="field-err" id="err-r-next-pay">&#9888; Required</span></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label class="field-label">How would you like to receive your funds? <span class="req">*</span></label>
+          <div class="fund-group">
+            <label class="fund-option"><input type="radio" name="r-fund-method" value="direct" checked>
+              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+                <span class="fund-title">Direct Deposit <span class="fund-badge free">Free</span></span>
+                <span class="fund-desc">Same day if approved before 2:30 PM EST.</span>
+              </span></span></label>
+            <label class="fund-option"><input type="radio" name="r-fund-method" value="instant">
+              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+                <span class="fund-title">Instant Deposit</span>
+                <span class="fund-desc">Within 1&ndash;2 hours of approval.</span>
+              </span></span></label>
+            <label class="fund-option"><input type="radio" name="r-fund-method" value="etransfer">
+              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+                <span class="fund-title">Interac e-Transfer&reg; <span class="fund-badge fee">+$6.00</span></span>
+                <span class="fund-desc">Sent to your email on file. Available to returning clients only.</span>
+              </span></span></label>
+          </div></div>
+      </div>
+
+      <!-- CONSENT -->
+      <div class="consent-block" style="display:flex;margin-top:18px;">
+        <label class="consent-row">
+          <input type="checkbox" id="r-consent-terms">
+          <span class="consent-box"></span>
+          <span class="consent-text">I confirm all information is accurate and agree to the <a href="terms-and-conditions.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</span>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" id="r-consent-contact">
+          <span class="consent-box"></span>
+          <span class="consent-text">I accept periodic contact by Waves Financial by email with promotions or updates regarding my account.</span>
+        </label>
+        <span class="field-err" id="err-r-consent">&#9888; You must accept the terms to continue</span>
+      </div>
+
+      <div class="actions" style="margin-top:26px;">
+        <button class="btn-back-step" onclick="selectType(null)">&#8592; Back</button>
+        <button class="btn-submit" id="r-submit-btn" onclick="submitRenewal()">
+          <span id="r-submit-lbl">Submit Renewal</span>
+          <div class="spinner" id="r-spinner"></div>
+          <svg id="r-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Renewal success -->
+    <div id="renewal-success" style="display:none;text-align:center;padding:16px 0;">
+      <div class="success-wave">🔄</div>
+      <div class="success-title">Renewal Submitted!</div>
+      <p class="success-sub">Your renewal request has been received. We'll review it and get back to you quickly during business hours.</p>
+      <div class="success-ref">Reference # <strong id="r-ref-num">WF-R-000000</strong></div>
+      <div class="success-next">
+        <div class="success-next-item"><span class="success-step-badge">1</span>We'll verify your renewal request and updated information.</div>
+        <div class="success-next-item"><span class="success-step-badge">2</span>You'll receive an email confirming your new loan amount and terms.</div>
+        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen deposit method on the same day if approved before 2:30 PM EST.</div>
+      </div>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
+    </div>
+
+  </div><!-- /renewal-form -->
+
 </main>
 
 <script>
-const WEBHOOK_URL = 'https://YOUR_WEBHOOK_ENDPOINT_HERE';
-let step = 1, loanAmount = 800, selectedRepayFreq = 'biweekly', flinksId = null, flinksData = {};
+const WEBHOOK_NEW     = 'https://YOUR_WEBHOOK_NEW_LOAN_HERE';
+const WEBHOOK_RENEWAL = 'https://YOUR_WEBHOOK_RENEWAL_HERE';
+
+// ─── AMOUNT ──────────────────────────────────────────────────────────
+let loanAmount = 800;
 const APR = 0.23;
-
 function calcPayment(p, freq) {
-  const days = {weekly:112, biweekly:112, monthly:150};
-  const n    = {weekly:16,  biweekly:8,   monthly:5};
-  return Math.ceil(p * (1 + APR * days[freq] / 365) / n[freq]);
+  const days={weekly:112,biweekly:112,monthly:150};
+  const n={weekly:16,biweekly:8,monthly:5};
+  return Math.ceil(p*(1+APR*days[freq]/365)/n[freq]);
 }
-
-function updateAmountUI() {
-  document.getElementById('amount-display').textContent = '$' + loanAmount.toLocaleString();
-  const bw = calcPayment(loanAmount,'biweekly');
-  document.getElementById('est-payment').textContent = '~$' + bw;
-  document.getElementById('repay-biweekly').textContent = '~$' + calcPayment(loanAmount,'biweekly');
-  document.getElementById('repay-weekly').textContent   = '~$' + calcPayment(loanAmount,'weekly');
-  document.getElementById('repay-monthly').textContent  = '~$' + calcPayment(loanAmount,'monthly');
-  document.getElementById('chip-val').textContent  = '$' + loanAmount.toLocaleString();
-  document.getElementById('chip-val-3').textContent = '$' + loanAmount.toLocaleString();
-  updateChip3();
-}
-
 function setAmount(btn, val) {
   loanAmount = val;
-  document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  updateAmountUI();
+  const bw = calcPayment(val,'biweekly');
+  document.getElementById('amount-display').textContent = '$'+val.toLocaleString();
+  document.getElementById('est-payment').textContent = '~$'+bw;
+  document.getElementById('n-chip-val').textContent   = '$'+val.toLocaleString();
+  document.getElementById('n-chip-val-3').textContent = '$'+val.toLocaleString();
+}
+// URL param
+const urlParams = new URLSearchParams(window.location.search);
+const ap = parseInt(urlParams.get('amount'));
+if (ap && [500,600,700,800,900,1000].includes(ap)) {
+  loanAmount = ap;
+  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.toggle('active',parseInt(b.textContent.replace(/\D/g,''))===ap));
+  document.getElementById('amount-label').textContent = "You're applying for";
+  document.getElementById('amount-picker').style.display = 'none';
+  document.getElementById('amount-display').textContent = '$'+ap.toLocaleString();
+  document.getElementById('est-payment').textContent = '~$'+calcPayment(ap,'biweekly');
 }
 
-function selectRepay(card) {
-  document.querySelectorAll('.repay-card').forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
-  selectedRepayFreq = card.dataset.freq;
-  updateChip3();
-}
+// ─── CUSTOMER TYPE SELECTOR ───────────────────────────────────────────
+function selectType(type) {
+  const selector = document.getElementById('type-selector');
+  const newForm  = document.getElementById('new-loan-form');
+  const renForm  = document.getElementById('renewal-form');
+  const stepper  = document.getElementById('progress-wrap');
+  const trustBar = document.getElementById('trust-bar');
 
-function updateChip3() {
-  const pay = calcPayment(loanAmount, selectedRepayFreq);
-  const labels = {weekly:'weekly', biweekly:'biweekly', monthly:'monthly'};
-  document.getElementById('chip-repay-3').textContent = '~$' + pay + ' ' + labels[selectedRepayFreq];
-}
-
-const STEP_LABELS = ['Personal Info','Financial Info','Banking Details'];
-function updateStepper(n) {
-  document.getElementById('step-label').textContent   = 'Step ' + n + ' \u2014 ' + STEP_LABELS[n-1];
-  document.getElementById('step-counter').textContent = n + ' of 3';
-  for (let i = 1; i <= 3; i++) {
-    const node = document.getElementById('node-' + i);
-    const lbl  = document.getElementById('lbl-'  + i);
-    node.classList.remove('active','done'); lbl.classList.remove('active','done');
-    if (i < n)  { node.classList.add('done');   lbl.classList.add('done'); }
-    if (i === n){ node.classList.add('active');  lbl.classList.add('active'); }
-    if (i < 3) document.getElementById('line-' + i).classList.toggle('done', i < n);
+  if (!type) {
+    selector.style.display = 'block';
+    newForm.style.display  = 'none';
+    renForm.style.display  = 'none';
+    stepper.style.display  = 'none';
+    trustBar.style.display = 'none';
+    return;
   }
-}
+  selector.style.display = 'none';
+  trustBar.style.display = 'flex';
 
-function showPanel(n, dir) {
-  const cur = document.getElementById('step-' + step);
-  if (cur) { cur.classList.remove('active','slide-back'); }
-  const next = document.getElementById('step-' + n);
-  if (next) {
-    if (dir === 'back') next.classList.add('slide-back'); else next.classList.remove('slide-back');
-    next.classList.add('active');
+  if (type === 'new') {
+    newForm.style.display = 'block';
+    stepper.style.display = 'block';
+    currentStep = 1;
+    updateStepper(1);
+    showPanel(1, 'forward');
+  } else {
+    renForm.style.display = 'block';
+    stepper.style.display = 'none';
   }
-  step = n; updateStepper(n);
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function setErr(id, show, msg) {
-  const el  = document.getElementById('err-' + id);
-  const inp = document.getElementById(id) || document.querySelector('[name="' + id + '"]');
-  if (el) { el.classList.toggle('show', show); if (msg) el.textContent = '\u26a0 ' + msg; }
-  if (inp) inp.classList.toggle('err', show);
+// ─── STEPPER (new loan) ───────────────────────────────────────────────
+let currentStep = 1;
+const TOTAL_STEPS = 4;
+const STEP_LABELS = ['Personal Info','Employment & Income','Loan & Bank','Safety Contact'];
+function updateStepper(n) {
+  document.getElementById('step-label').textContent   = 'Step '+n+' \u2014 '+STEP_LABELS[n-1];
+  document.getElementById('step-counter').textContent = n+' of '+TOTAL_STEPS;
+  for (let i=1;i<=TOTAL_STEPS;i++) {
+    const node=document.getElementById('node-'+i), lbl=document.getElementById('lbl-'+i);
+    node.classList.remove('active','done'); lbl.classList.remove('active','done');
+    if(i<n){node.classList.add('done');lbl.classList.add('done');}
+    if(i===n){node.classList.add('active');lbl.classList.add('active');}
+    if(i<TOTAL_STEPS) document.getElementById('line-'+i).classList.toggle('done',i<n);
+  }
+}
+function showPanel(n, dir) {
+  for(let i=1;i<=TOTAL_STEPS;i++){
+    const p=document.getElementById('step-'+i);
+    if(p){p.classList.remove('active','slide-back');}
+  }
+  const next=document.getElementById('step-'+n);
+  if(next){if(dir==='back')next.classList.add('slide-back');next.classList.add('active');}
+  currentStep=n; updateStepper(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goNext(from) {
+  const valid = validateStep(from);
+  if(!valid) return;
+  if(from<TOTAL_STEPS) showPanel(from+1,'forward');
+}
+function goBack(from) { showPanel(from-1,'back'); }
+
+// ─── VALIDATION HELPERS ───────────────────────────────────────────────
+function setErr(id,show,msg){
+  const el=document.getElementById('err-'+id);
+  const inp=document.getElementById(id)||document.querySelector('[name="'+id+'"]');
+  if(el){el.classList.toggle('show',show);if(msg)el.textContent='\u26a0 '+msg;}
+  if(inp)inp.classList.toggle('err',show);
   return show;
 }
-function clrErr(id) { setErr(id, false); }
+function clrErr(id){setErr(id,false);}
 
-function validateStep1() {
+function validateStep(n) {
   let ok = true;
-  const fn=document.getElementById('fn').value.trim(), ln=document.getElementById('ln').value.trim();
-  const dob=document.getElementById('dob').value, prov=document.getElementById('prov').value;
-  const addr=document.getElementById('addr').value.trim(), city=document.getElementById('city').value.trim();
-  const postal=document.getElementById('postal').value.trim(), phone=document.getElementById('phone').value.trim();
-  const email=document.getElementById('email').value.trim(), sin=document.getElementById('sin').value.replace(/\D/g,'');
-  if(!fn){setErr('fn',true);ok=false;}else clrErr('fn');
-  if(!ln){setErr('ln',true);ok=false;}else clrErr('ln');
-  if(!dob){setErr('dob',true,'Date of birth required');ok=false;}
-  else{const age=(Date.now()-new Date(dob))/(365.25*24*3600*1000);if(age<18){setErr('dob',true,'Must be 18 or older');ok=false;}else clrErr('dob');}
-  if(!prov){setErr('prov',true);ok=false;}else clrErr('prov');
-  if(!addr){setErr('addr',true);ok=false;}else clrErr('addr');
-  if(!city){setErr('city',true);ok=false;}else clrErr('city');
-  if(!/^[A-Za-z]\d[A-Za-z][\s]?\d[A-Za-z]\d$/.test(postal)){setErr('postal',true);ok=false;}else clrErr('postal');
-  if(phone.replace(/\D/g,'').length<10){setErr('phone',true);ok=false;}else clrErr('phone');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setErr('email',true);ok=false;}else clrErr('email');
-  if(sin.length!==9||!/^\d+$/.test(sin)){setErr('sin',true);ok=false;}else clrErr('sin');
-  return ok;
-}
-
-function validateStep2() {
-  let ok = true;
-  const emp=document.querySelector('input[name="emp"]:checked');
-  const income=parseFloat(document.getElementById('income').value);
-  const freq=document.getElementById('payfreq').value;
-  if(!emp){setErr('emp',true);ok=false;}else clrErr('emp');
-  if(!income||income<800){
-    if(income>0&&income<800){setErr('income',true,'Minimum $800/month required');triggerDecline('low-income');return 'decline';}
-    setErr('income',true,income>0?'Minimum $800/month required':'Enter your monthly income');ok=false;
-  }else clrErr('income');
-  if(!freq){setErr('payfreq',true);ok=false;}else clrErr('payfreq');
-  return ok;
-}
-
-function validateStep3() {
-  if(!flinksId){
-    const box=document.getElementById('flinks-box');
-    box.style.borderColor='rgba(255,107,138,0.45)';box.style.boxShadow='0 0 0 3px rgba(255,107,138,0.08)';
-    setTimeout(()=>{box.style.borderColor='';box.style.boxShadow='';},2500);
-    return false;
+  if (n===1) {
+    if(!v('n-fn'))ok=false; if(!v('n-ln'))ok=false;
+    if(!vEmail('n-email'))ok=false; if(!vDob('n-dob'))ok=false;
+    if(!vPhone('n-hphone'))ok=false; if(!vPhone('n-cphone'))ok=false;
+    if(!vRadio('n-sex'))ok=false;
+    if(!v('n-addr'))ok=false; if(!v('n-city'))ok=false;
+    if(!v('n-prov','n-prov'))ok=false;
+    if(!vPostal('n-postal'))ok=false;
+  } else if (n===2) {
+    if(!v('n-income-src','n-income-src'))ok=false;
+    const src=document.getElementById('n-income-src').value;
+    if(src==='employed'||src==='self'){
+      if(!v('n-employer'))ok=false; if(!vPhone('n-work-phone'))ok=false;
+      if(!v('n-job-desc'))ok=false; if(!v('n-supervisor'))ok=false;
+      if(!v('n-hire-date'))ok=false;
+    }
+    if(src==='ei'){if(!v('n-ei-start'))ok=false;}
+    if(!vRadio('n-paid-by'))ok=false;
+    if(!v('n-pay-freq','n-pay-freq'))ok=false;
+    if(!v('n-next-pay'))ok=false;
+  } else if (n===3) {
+    if(!vRadio('n-bankrupt-now'))ok=false;
+    if(!vRadio('n-bankrupt-past'))ok=false;
+    if(!v('n-bank','n-bank'))ok=false;
+    if(!v('n-institution','n-institution'))ok=false;
+    if(!vTransit('n-transit'))ok=false;
+    if(!v('n-account'))ok=false;
+  } else if (n===4) {
+    if(!v('n-sc-fn'))ok=false; if(!v('n-sc-ln'))ok=false;
+    if(!vPhone('n-sc-phone'))ok=false;
+    if(!v('n-sc-rel','n-sc-rel'))ok=false;
+    const t=document.getElementById('n-consent-terms').checked;
+    if(!t){setErr('n-consent',true,'You must accept the terms to continue');ok=false;}else clrErr('n-consent');
   }
-  if(!document.getElementById('c-pad').checked||!document.getElementById('c-terms').checked){setErr('consent',true);return false;}
-  clrErr('consent');return true;
+  return ok;
 }
 
-function goNext(from) {
-  if(from===1){if(!validateStep1())return;showPanel(2,'forward');}
-  else if(from===2){const r=validateStep2();if(r==='decline'||!r)return;showPanel(3,'forward');}
+function v(id, selId) {
+  const el = document.getElementById(selId||id);
+  const val = el ? el.value.trim() : '';
+  if(!val){setErr(id,true);return false;}clrErr(id);return true;
 }
-function goBack(from){showPanel(from-1,'back');}
-
-function toggleEmployer(){
-  const s=document.querySelector('input[name="emp"]:checked')?.value;
-  const row=document.getElementById('employer-row');
-  const show=s==='employed'||s==='self-employed';
-  row.style.maxHeight=show?'100px':'0';row.style.opacity=show?'1':'0';row.style.pointerEvents=show?'all':'none';
+function vEmail(id){
+  const val=document.getElementById(id).value.trim();
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  if(!ok){setErr(id,true,'Valid email required');return false;}clrErr(id);return true;
+}
+function vDob(id){
+  const val=document.getElementById(id).value;
+  if(!val){setErr(id,true,'Required');return false;}
+  const age=(Date.now()-new Date(val))/(365.25*24*3600*1000);
+  if(age<18){setErr(id,true,'Must be 18 or older');return false;}
+  clrErr(id);return true;
+}
+function vPhone(id){
+  const val=document.getElementById(id).value.replace(/\D/g,'');
+  if(val.length<10){setErr(id,true,'Valid phone required');return false;}clrErr(id);return true;
+}
+function vPostal(id){
+  const val=document.getElementById(id).value.trim();
+  if(!/^[A-Za-z]\d[A-Za-z][\s]?\d[A-Za-z]\d$/.test(val)){setErr(id,true,'Invalid postal code');return false;}clrErr(id);return true;
+}
+function vTransit(id){
+  const val=document.getElementById(id).value.replace(/\D/g,'');
+  if(val.length!==5){setErr(id,true,'Must be 5 digits');return false;}clrErr(id);return true;
+}
+function vRadio(name){
+  const checked=document.querySelector('input[name="'+name+'"]:checked');
+  if(!checked){setErr(name,true,'Required');return false;}clrErr(name);return true;
 }
 
-function toggleSin(){
-  const inp=document.getElementById('sin'); const on=inp.type==='password';
-  inp.type=on?'text':'password';
-  document.getElementById('sin-eye').style.color=on?'var(--periwinkle)':'var(--text-muted)';
+// ─── INCOME FIELD TOGGLE ──────────────────────────────────────────────
+function toggleIncomeFields(prefix) {
+  const src = document.getElementById(prefix+'-income-src').value;
+  const empFields = document.getElementById(prefix+'-employed-fields') ||
+                    document.getElementById(prefix+'-hire-date-field');
+  const eiFields  = document.getElementById(prefix+'-ei-fields') ||
+                    document.getElementById(prefix+'-ei-field');
+  const otherRow  = document.getElementById(prefix+'-other-income-row');
+
+  const showEmp = src==='employed'||src==='self';
+  const showEI  = src==='ei';
+
+  if(empFields) { empFields.classList.toggle('open', showEmp); }
+  if(eiFields)  { eiFields.classList.toggle('open', showEI); }
+  if(otherRow)  { otherRow.style.display = (src==='other')?'grid':'none'; }
 }
 
-document.getElementById('sin').addEventListener('input',function(e){
-  let v=e.target.value.replace(/\D/g,'').slice(0,9);
-  if(v.length>6)v=v.slice(0,3)+' '+v.slice(3,6)+' '+v.slice(6);
-  else if(v.length>3)v=v.slice(0,3)+' '+v.slice(3);
-  e.target.value=v;
-});
-document.getElementById('phone').addEventListener('input',function(e){
-  let v=e.target.value.replace(/\D/g,'').slice(0,10);
+// ─── RENEWAL CONDITIONAL TOGGLE ───────────────────────────────────────
+function toggleRenew(rowId, val) {
+  const row = document.getElementById(rowId);
+  if(row) row.classList.toggle('open', val==='yes');
+}
+
+// ─── INPUT FORMATTERS ─────────────────────────────────────────────────
+function fmtPhone(el) {
+  let v=el.value.replace(/\D/g,'').slice(0,10);
   if(v.length>6)v='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6);
   else if(v.length>3)v='('+v.slice(0,3)+') '+v.slice(3);
   else if(v.length)v='('+v;
-  e.target.value=v;
-});
-document.getElementById('postal').addEventListener('input',function(e){
-  let v=e.target.value.replace(/\s/g,'').toUpperCase().slice(0,6);
+  el.value=v;
+}
+function fmtPostal(el) {
+  let v=el.value.replace(/\s/g,'').toUpperCase().slice(0,6);
   if(v.length>3)v=v.slice(0,3)+' '+v.slice(3);
-  e.target.value=v;
-});
-document.querySelectorAll('.field-input,.field-select').forEach(el=>{
-  el.addEventListener('input',()=>{el.classList.remove('err');const err=document.getElementById('err-'+el.id);if(err)err.classList.remove('show');if(el.value)el.classList.add('has-val');else el.classList.remove('has-val');});
-  el.addEventListener('change',()=>{el.classList.remove('err');const err=document.getElementById('err-'+el.id);if(err)err.classList.remove('show');if(el.value)el.classList.add('has-val');else el.classList.remove('has-val');});
-});
-
-window.addEventListener('message',function(e){
-  const d=e.data; if(d&&d.loginId){flinksId=d.loginId;flinksData=d;
-    onFlinksSuccess({loginId:d.loginId,institution:d.institution||'Your Bank',accountType:d.accountType||'Chequing',accountMask:d.accountNumber?'••••'+d.accountNumber.slice(-4):'••••'});}
-});
-
-function simulateFlinks(){
-  const banks=['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
-  const bank=banks[Math.floor(Math.random()*banks.length)];
-  const mask=String(Math.floor(1000+Math.random()*9000));
-  flinksId='sandbox-'+Math.random().toString(36).substr(2,9);flinksData={loginId:flinksId,institution:bank,sandbox:true};
-  onFlinksSuccess({loginId:flinksId,institution:bank,accountType:'Chequing',accountMask:'\u2022\u2022\u2022\u2022'+mask});
+  el.value=v;
+}
+function fmtSin(el) {
+  let v=el.value.replace(/\D/g,'').slice(0,9);
+  if(v.length>6)v=v.slice(0,3)+' '+v.slice(3,6)+' '+v.slice(6);
+  else if(v.length>3)v=v.slice(0,3)+' '+v.slice(3);
+  el.value=v;
+}
+function toggleSin(id) {
+  const inp=document.getElementById(id);
+  inp.type=inp.type==='password'?'text':'password';
 }
 
-function onFlinksSuccess(d){
-  document.getElementById('flinks-placeholder').style.display='none';
-  const conn=document.getElementById('flinks-connected');conn.style.display='block';
-  document.getElementById('conn-bank').textContent=d.institution;
-  document.getElementById('conn-acct').textContent=d.accountType+' '+d.accountMask;
-  const cb=document.getElementById('consent-block');cb.style.display='flex';
-  const btn=document.getElementById('submit-btn');btn.disabled=false;
-  document.getElementById('submit-lbl').textContent='Submit Application';
+// attach formatters
+document.addEventListener('DOMContentLoaded', () => {
+  ['n-hphone','n-cphone','n-work-phone','n-sc-phone','r-phone'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.addEventListener('input',()=>fmtPhone(el));
+  });
+  ['n-postal','r-postal'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.addEventListener('input',()=>fmtPostal(el));
+  });
+  const sinEl=document.getElementById('n-sin'); if(sinEl)sinEl.addEventListener('input',()=>fmtSin(sinEl));
+  // Clear errors on input
+  document.querySelectorAll('.field-input,.field-select').forEach(el=>{
+    el.addEventListener('input',()=>{el.classList.remove('err');const err=document.getElementById('err-'+el.id);if(err)err.classList.remove('show');});
+    el.addEventListener('change',()=>{el.classList.remove('err');const err=document.getElementById('err-'+el.id);if(err)err.classList.remove('show');});
+  });
+});
+
+// ─── SUBMIT NEW LOAN ──────────────────────────────────────────────────
+async function submitNew() {
+  if(!validateStep(4))return;
+  const btn=document.getElementById('n-submit-btn');
+  const lbl=document.getElementById('n-submit-lbl');
+  const spinner=document.getElementById('n-spinner');
+  const arrow=document.getElementById('n-arrow');
+  btn.disabled=true; lbl.textContent='Submitting\u2026';
+  spinner.style.display='block'; arrow.style.display='none';
+  const ref=genRef('WF');
+  const payload={
+    formType:'new_loan', ref, submittedAt:new Date().toISOString(), loanAmount,
+    personal:{
+      firstName:gv('n-fn'), lastName:gv('n-ln'), email:gv('n-email'), dob:gv('n-dob'),
+      homePhone:gv('n-hphone'), cellPhone:gv('n-cphone'),
+      sex:gr('n-sex'), sin:gv('n-sin').replace(/\s/g,''),
+      address:gv('n-addr'), apt:gv('n-apt'), city:gv('n-city'),
+      province:gv('n-prov'), postal:gv('n-postal'),
+    },
+    employment:{
+      source:gv('n-income-src'), otherIncome:gv('n-other-income'),
+      employer:gv('n-employer'), workPhone:gv('n-work-phone'),
+      jobDesc:gv('n-job-desc'), supervisor:gv('n-supervisor'),
+      hireDate:gv('n-hire-date'), eiStart:gv('n-ei-start'),
+      paidBy:gr('n-paid-by'), payFreq:gv('n-pay-freq'), nextPay:gv('n-next-pay'),
+    },
+    loan:{
+      amount:loanAmount, fundMethod:gr('n-fund-method'),
+      bankruptNow:gr('n-bankrupt-now'), bankruptPast:gr('n-bankrupt-past'),
+    },
+    banking:{
+      bank:gv('n-bank'), institution:gv('n-institution'),
+      transit:gv('n-transit'), account:gv('n-account'),
+    },
+    safetyContact:{
+      firstName:gv('n-sc-fn'), lastName:gv('n-sc-ln'),
+      phone:gv('n-sc-phone'), relationship:gv('n-sc-rel'),
+    },
+  };
+  await doSubmit(WEBHOOK_NEW, payload, ref, 'new');
 }
 
-function resetFlinks(){
-  flinksId=null;flinksData={};
-  document.getElementById('flinks-placeholder').style.display='block';
-  document.getElementById('flinks-connected').style.display='none';
-  document.getElementById('consent-block').style.display='none';
-  const btn=document.getElementById('submit-btn');btn.disabled=true;
-  document.getElementById('submit-lbl').textContent='Connect Bank First';
-  document.getElementById('c-pad').checked=false;document.getElementById('c-terms').checked=false;clrErr('consent');
+// ─── SUBMIT RENEWAL ───────────────────────────────────────────────────
+async function submitRenewal() {
+  let ok=true;
+  if(!vDob('r-dob'))ok=false;
+  if(!vRadio('r-addr-changed'))ok=false;
+  if(!vRadio('r-job-changed'))ok=false;
+  if(!vRadio('r-bank-changed'))ok=false;
+  if(!v('r-pay-freq','r-pay-freq'))ok=false;
+  if(!v('r-next-pay'))ok=false;
+  const t=document.getElementById('r-consent-terms').checked;
+  if(!t){setErr('r-consent',true,'You must accept the terms');ok=false;}else clrErr('r-consent');
+  if(!ok)return;
+
+  const btn=document.getElementById('r-submit-btn');
+  const lbl=document.getElementById('r-submit-lbl');
+  const spinner=document.getElementById('r-spinner');
+  const arrow=document.getElementById('r-arrow');
+  btn.disabled=true; lbl.textContent='Submitting\u2026';
+  spinner.style.display='block'; arrow.style.display='none';
+  const ref=genRef('WF-R');
+  const payload={
+    formType:'renewal', ref, submittedAt:new Date().toISOString(),
+    personal:{ dob:gv('r-dob') },
+    address:{
+      changed:gr('r-addr-changed'),
+      address:gv('r-addr'), city:gv('r-city'),
+      province:gv('r-prov'), postal:gv('r-postal'),
+    },
+    employment:{
+      changed:gr('r-job-changed'),
+      source:gv('r-income-src'), otherIncome:gv('r-other-income'),
+      hireDate:gv('r-hire-date'), eiStart:gv('r-ei-start'),
+      payFreq:gv('r-pay-freq'),
+    },
+    banking:{
+      changed:gr('r-bank-changed'),
+      bank:gv('r-bank'), institution:gv('r-institution'),
+      transit:gv('r-transit'), account:gv('r-account'),
+    },
+    loan:{
+      amount:parseInt(document.getElementById('r-amount').value)||800,
+      nextPay:gv('r-next-pay'), fundMethod:gr('r-fund-method'),
+    },
+  };
+  await doSubmit(WEBHOOK_RENEWAL, payload, ref, 'renewal');
 }
 
-async function submitApp(){
-  if(!validateStep3())return;
-  const btn=document.getElementById('submit-btn'),lbl=document.getElementById('submit-lbl');
-  const spinner=document.getElementById('submit-spinner'),arrow=document.getElementById('submit-arrow');
-  btn.disabled=true;lbl.textContent='Submitting\u2026';spinner.style.display='block';arrow.style.display='none';
-  const ref=genRef();
-  const payload={ref,submittedAt:new Date().toISOString(),loanAmount,repayFrequency:selectedRepayFreq,
-    personal:{firstName:document.getElementById('fn').value.trim(),lastName:document.getElementById('ln').value.trim(),
-      dob:document.getElementById('dob').value,province:document.getElementById('prov').value,
-      address:document.getElementById('addr').value.trim(),city:document.getElementById('city').value.trim(),
-      postal:document.getElementById('postal').value.trim(),phone:document.getElementById('phone').value.trim(),
-      email:document.getElementById('email').value.trim(),sin:document.getElementById('sin').value.replace(/\s/g,'')},
-    financial:{employmentStatus:document.querySelector('input[name="emp"]:checked')?.value,
-      employer:document.getElementById('employer').value.trim(),
-      monthlyIncome:document.getElementById('income').value,payFrequency:document.getElementById('payfreq').value},
-    banking:{flinksLoginId:flinksId,institution:flinksData.institution||'',sandbox:!!flinksData.sandbox}};
-  try{
-    const res=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(res.ok||WEBHOOK_URL.includes('YOUR_WEBHOOK'))showSuccess(ref);else throw new Error('Server error '+res.status);
-  }catch(err){
-    if(WEBHOOK_URL.includes('YOUR_WEBHOOK')){showSuccess(ref);return;}
-    btn.disabled=false;lbl.textContent='Submit Application';spinner.style.display='none';arrow.style.display='inline';
+async function doSubmit(url, payload, ref, type) {
+  try {
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok||url.includes('YOUR_WEBHOOK')){showOutcome(ref,type,'success');}
+    else throw new Error('Server error');
+  } catch(err) {
+    if(url.includes('YOUR_WEBHOOK')){showOutcome(ref,type,'success');return;}
+    const lbl=document.getElementById(type==='new'?'n-submit-lbl':'r-submit-lbl');
+    const btn=document.getElementById(type==='new'?'n-submit-btn':'r-submit-btn');
+    const spinner=document.getElementById(type==='new'?'n-spinner':'r-spinner');
+    const arrow=document.getElementById(type==='new'?'n-arrow':'r-arrow');
+    btn.disabled=false; lbl.textContent=type==='new'?'Submit Application':'Submit Renewal';
+    spinner.style.display='none'; arrow.style.display='inline';
     alert('There was an issue submitting. Please try again or call us at 1-800-123-4567.');
   }
 }
 
-function genRef(){return 'WF-'+Math.floor(100000+Math.random()*900000);}
-
-function showSuccess(ref){
-  hideFormUI();document.getElementById('ref-num').textContent=ref;
-  const s=document.getElementById('success-screen');s.style.display='block';
+function showOutcome(ref, type, outcome) {
+  if(type==='new') {
+    for(let i=1;i<=4;i++){const p=document.getElementById('step-'+i);if(p)p.style.display='none';}
+    document.getElementById('progress-wrap').style.display='none';
+    document.getElementById('trust-bar').style.display='none';
+    if(outcome==='success'){
+      document.getElementById('ref-num').textContent=ref;
+      document.getElementById('success-screen').style.display='block';
+    }
+  } else {
+    document.getElementById('renewal-fields').style.display='none';
+    document.getElementById('trust-bar').style.display='none';
+    if(outcome==='success'){
+      document.getElementById('r-ref-num').textContent=ref;
+      document.getElementById('renewal-success').style.display='block';
+    }
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-const DECLINE_REASONS={
-  'low-income':'Your reported monthly income is below our $800/month minimum requirement. If your income situation changes, you are welcome to reapply.',
-  'age':'You must be at least 18 years old (or the age of majority in your province) to apply.',
-  'province':'We currently operate in BC, ON, NS, NB, PE, and NL. We hope to expand soon.',
-  'generic':'Based on the information provided, we are unable to approve this application. Please contact us if you believe this is an error.'
-};
-
-function triggerDecline(reason){
-  document.getElementById('decline-reason-text').textContent=DECLINE_REASONS[reason]||DECLINE_REASONS.generic;
-  hideFormUI();const d=document.getElementById('decline-screen');d.style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
+function resetAll(){
+  location.reload();
 }
 
-function hideFormUI(){
-  for(let i=1;i<=3;i++){const p=document.getElementById('step-'+i);if(p)p.style.display='none';}
-  document.getElementById('progress-wrap').style.display='none';
-  document.getElementById('trust-bar').style.display='none';
-}
+function gv(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function gr(name){const el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
+function genRef(prefix){return prefix+'-'+Math.floor(100000+Math.random()*900000);}
 
-function resetApp(){
-  step=1;flinksId=null;flinksData={};loanAmount=800;selectedRepayFreq='biweekly';
-  document.getElementById('success-screen').style.display='none';
-  document.getElementById('decline-screen').style.display='none';
-  document.getElementById('progress-wrap').style.display='block';
-  document.getElementById('trust-bar').style.display='flex';
-  for(let i=1;i<=3;i++){const p=document.getElementById('step-'+i);if(p){p.style.display='';p.classList.remove('active','slide-back');}}
-  ['fn','ln','dob','addr','city','postal','phone','email','sin'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('err','has-val');}});
-  document.getElementById('prov').value='';
-  document.querySelectorAll('.field-err').forEach(e=>e.classList.remove('show'));
-  document.querySelectorAll('input[name="emp"]').forEach(r=>r.checked=false);
-  document.getElementById('income').value='';document.getElementById('payfreq').value='';document.getElementById('employer').value='';
-  resetFlinks();
-  document.getElementById('step-1').classList.add('active');
-  updateStepper(1);updateAmountUI();
-  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.toggle('active',parseInt(b.textContent.replace(/\D/g,''))===800));
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-// URL param
-const urlParams=new URLSearchParams(window.location.search);
-const amountParam=parseInt(urlParams.get('amount'));
-if(amountParam&&[500,600,700,800,900,1000].includes(amountParam)){
-  loanAmount=amountParam;
-  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.toggle('active',parseInt(b.textContent.replace(/\D/g,''))===loanAmount));
-  document.getElementById('amount-label').textContent="You're applying for";
-  document.getElementById('amount-picker').style.display='none';
-}
-updateAmountUI();
-
-// Mega menu
+// ─── MEGA MENU ────────────────────────────────────────────────────────
 const megaItems=document.querySelectorAll('.nav-item[id^="mega-"]');let closeTimer=null;
 megaItems.forEach(item=>{
   const trigger=item.querySelector('.nav-trigger');
@@ -1044,7 +1603,6 @@ megaItems.forEach(item=>{
 });
 document.addEventListener('click',e=>{if(!e.target.closest('.nav-item'))megaItems.forEach(i=>i.classList.remove('mega-open'));});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')megaItems.forEach(i=>i.classList.remove('mega-open'));});
-
 const hamburger=document.getElementById('nav-hamburger'),drawer=document.getElementById('mobile-drawer'),mainNav=document.getElementById('main-nav');
 if(hamburger&&drawer){
   hamburger.addEventListener('click',()=>{const isOpen=drawer.classList.toggle('open');mainNav.classList.toggle('nav-open',isOpen);hamburger.setAttribute('aria-expanded',isOpen);document.body.style.overflow=isOpen?'hidden':'';});
