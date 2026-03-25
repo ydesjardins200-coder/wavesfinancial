@@ -294,10 +294,10 @@
 
   /* ─── MEGA MENU PANEL ─── */
   .mega-menu {
-    position: absolute; top: calc(100% + 12px); left: 50%;
+    position: absolute; top: 100%; left: 50%;
     background: rgba(10,8,28,0.97); backdrop-filter: blur(28px);
     border: 1px solid var(--border); border-radius: var(--r-xl);
-    padding: 28px 28px 24px;
+    padding: 40px 28px 24px;
     box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(91,82,216,0.1);
     display: none; min-width: 680px;
     pointer-events: none; opacity: 0;
@@ -305,10 +305,8 @@
     transform: translateX(-50%) translateY(-6px);
   }
   .mega-menu::before {
-    content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
-    width: 12px; height: 6px;
-    border-left: 6px solid transparent; border-right: 6px solid transparent;
-    border-bottom: 6px solid rgba(160,154,245,0.3);
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 12px;
+    background: transparent;
   }
   .nav-item.mega-open .mega-menu {
     display: grid; pointer-events: all; opacity: 1;
@@ -1080,7 +1078,7 @@
       closeTimer = setTimeout(() => {
         item.classList.remove('mega-open');
         trigger.setAttribute('aria-expanded', 'false');
-      }, 120);
+      }, 200);
     };
 
     item.addEventListener('mouseenter', open);
