@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#06040e"/>
+      <stop offset="22%"  stop-color="#0e0820"/>
+      <stop offset="48%"  stop-color="#1a0e38"/>
+      <stop offset="68%"  stop-color="#2e1858"/>
+      <stop offset="82%"  stop-color="#4a2878"/>
+      <stop offset="92%"  stop-color="#6a3890"/>
+      <stop offset="100%" stop-color="#8048a8"/>
+    </linearGradient>
+    <radialGradient id="sunrise" cx="62%" cy="100%" r="58%">
+      <stop offset="0%"   stop-color="#d070ff" stop-opacity="0.45"/>
+      <stop offset="28%"  stop-color="#8040c0" stop-opacity="0.3"/>
+      <stop offset="60%"  stop-color="#4020a0" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="sun_warm" cx="62%" cy="100%" r="30%">
+      <stop offset="0%"   stop-color="#ff80ff" stop-opacity="0.3"/>
+      <stop offset="50%"  stop-color="#c050e0" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="mountain_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2a1848"/>
+      <stop offset="100%" stop-color="#140e30"/>
+    </linearGradient>
+    <linearGradient id="mountain_mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1a0e38"/>
+      <stop offset="100%" stop-color="#0e0820"/>
+    </linearGradient>
+    <linearGradient id="forest_left" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#120c28"/>
+      <stop offset="100%" stop-color="#080618"/>
+    </linearGradient>
+    <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#120c30"/>
+      <stop offset="50%"  stop-color="#0a0820"/>
+      <stop offset="100%" stop-color="#060510"/>
+    </linearGradient>
+    <linearGradient id="shore" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1a1030"/>
+      <stop offset="100%" stop-color="#0c0820"/>
+    </linearGradient>
+    <radialGradient id="reflection" cx="62%" cy="0%" r="80%">
+      <stop offset="0%"   stop-color="#9060d0" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starglow"><feGaussianBlur stdDeviation="0.6"/></filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="#030210" stop-opacity="0.6"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1440" height="900" fill="url(#sky)"/>
+  <rect width="1440" height="900" fill="url(#sunrise)"/>
+  <rect width="1440" height="900" fill="url(#sun_warm)"/>
+
+  <!-- Stars — upper half only -->
+  <g filter="url(#starglow)">
+    <circle cx="90"   cy="38"  r="0.9" fill="white" opacity="0.6"/>
+    <circle cx="240"  cy="20"  r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="410"  cy="50"  r="1.0" fill="#e0c8ff" opacity="0.7"/>
+    <circle cx="570"  cy="15"  r="0.8" fill="white" opacity="0.55"/>
+    <circle cx="730"  cy="42"  r="0.7" fill="white" opacity="0.45"/>
+    <circle cx="890"  cy="22"  r="1.0" fill="#d8b8ff" opacity="0.65"/>
+    <circle cx="1050" cy="48"  r="0.8" fill="white" opacity="0.5"/>
+    <circle cx="1210" cy="25"  r="0.9" fill="white" opacity="0.6"/>
+    <circle cx="1370" cy="42"  r="0.7" fill="#e0c8ff" opacity="0.5"/>
+    <circle cx="160"  cy="90"  r="0.6" fill="white" opacity="0.38"/>
+    <circle cx="350"  cy="105" r="0.7" fill="white" opacity="0.42"/>
+    <circle cx="520"  cy="78"  r="0.6" fill="white" opacity="0.36"/>
+    <circle cx="720"  cy="100" r="0.8" fill="white" opacity="0.4"/>
+    <circle cx="910"  cy="82"  r="0.6" fill="white" opacity="0.36"/>
+    <circle cx="1110" cy="95"  r="0.7" fill="white" opacity="0.4"/>
+    <circle cx="1320" cy="80"  r="0.6" fill="white" opacity="0.36"/>
+    <circle cx="55"   cy="138" r="0.5" fill="white" opacity="0.28"/>
+    <circle cx="470"  cy="130" r="0.6" fill="white" opacity="0.3"/>
+    <circle cx="840"  cy="125" r="0.5" fill="white" opacity="0.28"/>
+    <circle cx="1250" cy="135" r="0.6" fill="white" opacity="0.3"/>
+  </g>
+
+  <!-- Far mountains — Coast Range silhouette -->
+  <path d="M0 480
+    L70 415 L140 450 L210 390 L290 420 L360 375 L440 410
+    L510 365 L590 400 L660 368 L730 395 L800 355 L870 390
+    L940 362 L1010 392 L1080 360 L1150 388 L1220 365 L1290 392
+    L1360 372 L1440 400 L1440 900 L0 900 Z"
+    fill="url(#mountain_far)" opacity="0.9"/>
+
+  <!-- Snow on far peaks -->
+  <g fill="#d0b8f0" opacity="0.25">
+    <path d="M210 390 L228 408 L246 392 L264 412 L282 394 Z"/>
+    <path d="M510 365 L528 386 L546 368 L564 388 L582 370 Z"/>
+    <path d="M800 355 L820 378 L840 360 L860 380 L878 362 Z"/>
+    <path d="M1080 360 L1098 382 L1116 364 L1134 384 L1152 366 Z"/>
+  </g>
+
+  <!-- Mid mountains -->
+  <path d="M0 530
+    L80 462 L165 510 L248 448 L330 495 L415 438 L500 482
+    L580 428 L660 472 L740 445 L820 478 L900 422 L975 465
+    L1055 438 L1130 468 L1210 445 L1290 472 L1370 450 L1440 468
+    L1440 900 L0 900 Z"
+    fill="url(#mountain_mid)"/>
+
+  <!-- Dense conifer forest — left bank -->
+  <path d="M0 570
+    Q30 548 60 558 Q90 568 120 548 Q150 528 180 542
+    Q210 556 240 538 Q270 520 300 535 Q330 550 360 532
+    Q390 514 420 528 Q450 542 480 526 Q510 510 530 520
+    L530 900 L0 900 Z"
+    fill="url(#forest_left)"/>
+  <!-- Individual conifer spires on left -->
+  <g fill="#0a0618" opacity="0.95">
+    <polygon points="22,570  38,508  54,570"/>
+    <polygon points="48,565  66,498  84,565"/>
+    <polygon points="78,558  96,492  114,558"/>
+    <polygon points="108,562 128,494 148,562"/>
+    <polygon points="138,555 160,485 182,555"/>
+    <polygon points="168,560 192,490 216,560"/>
+    <polygon points="200,552 225,482 250,552"/>
+  </g>
+  <!-- Snow tips on left conifers -->
+  <g fill="#c0a8e8" opacity="0.2">
+    <polygon points="38,508  38,518  30,515"/>
+    <polygon points="66,498  66,510  56,507"/>
+    <polygon points="96,492  96,504  86,501"/>
+    <polygon points="128,494 128,506 118,503"/>
+    <polygon points="160,485 160,498 149,495"/>
+  </g>
+
+  <!-- Dense conifer forest — right bank -->
+  <path d="M910 520
+    Q950 502 990 518 Q1030 534 1070 515 Q1110 496 1150 512
+    Q1190 528 1230 510 Q1270 492 1310 508 Q1350 524 1390 508
+    L1440 512 L1440 900 L910 900 Z"
+    fill="url(#forest_left)"/>
+  <g fill="#0a0618" opacity="0.95">
+    <polygon points="922,522 940,455 958,522"/>
+    <polygon points="952,518 972,448 992,518"/>
+    <polygon points="985,512 1006,442 1027,512"/>
+    <polygon points="1020,515 1042,445 1064,515"/>
+    <polygon points="1058,510 1082,440 1106,510"/>
+    <polygon points="1098,512 1124,442 1150,512"/>
+    <polygon points="1140,508 1168,438 1196,508"/>
+    <polygon points="1185,510 1214,440 1243,510"/>
+  </g>
+  <g fill="#c0a8e8" opacity="0.2">
+    <polygon points="940,455 940,467 930,464"/>
+    <polygon points="972,448 972,462 960,459"/>
+    <polygon points="1006,442 1006,456 994,453"/>
+    <polygon points="1042,445 1042,459 1030,456"/>
+    <polygon points="1082,440 1082,455 1069,452"/>
+  </g>
+
+  <!-- Ocean / inlet -->
+  <path d="M0 592 Q360 578 720 582 Q1080 586 1440 572
+           L1440 900 L0 900 Z"
+    fill="url(#ocean)"/>
+  <!-- Reflection on water -->
+  <path d="M0 592 Q360 578 720 582 Q1080 586 1440 572
+           L1440 900 L0 900 Z"
+    fill="url(#reflection)"/>
+
+  <!-- Sunrise column reflection on water -->
+  <ellipse cx="893" cy="700" rx="160" ry="20"
+           fill="#c060f0" opacity="0.1" filter="url(#softglow)"/>
+  <ellipse cx="893" cy="700" rx="50"  ry="7"
+           fill="#d080ff" opacity="0.12"/>
+
+  <!-- Gentle water ripple lines -->
+  <g stroke="#7040b0" stroke-width="0.8" opacity="0.1" fill="none">
+    <path d="M100 640 Q360 630 620 635 Q720 637 820 632"/>
+    <path d="M200 665 Q420 655 640 660 Q760 663 900 657"/>
+    <path d="M0   690 Q300 680 560 685 Q700 688 860 682"/>
+  </g>
+
+  <!-- Rocky shoreline -->
+  <path d="M0 740 Q80 725 160 732 Q240 739 320 728
+           Q400 717 480 725 Q560 733 640 724
+           Q720 715 800 722 Q880 729 960 720
+           Q1040 711 1120 718 Q1200 725 1280 718 Q1360 711 1440 716
+           L1440 900 L0 900 Z"
+    fill="url(#shore)"/>
+  <!-- Boulders on shore -->
+  <g fill="#100c22" opacity="0.85">
+    <ellipse cx="120"  cy="748" rx="22" ry="10"/>
+    <ellipse cx="280"  cy="740" rx="16" ry="8"/>
+    <ellipse cx="480"  cy="738" rx="20" ry="9"/>
+    <ellipse cx="680"  cy="735" rx="14" ry="7"/>
+    <ellipse cx="860"  cy="732" rx="18" ry="8"/>
+    <ellipse cx="1060" cy="730" rx="22" ry="9"/>
+    <ellipse cx="1260" cy="728" rx="16" ry="7"/>
+    <ellipse cx="1400" cy="732" rx="20" ry="8"/>
+  </g>
+
+  <!-- Sunrise glow bloom on horizon -->
+  <ellipse cx="893" cy="572" rx="380" ry="50"
+           fill="#c060f0" opacity="0.08" filter="url(#softglow)"/>
+  <ellipse cx="893" cy="565" rx="160" ry="22"
+           fill="#d888ff" opacity="0.1" filter="url(#softglow)"/>
+
+  <!-- Vignette -->
+  <rect width="1440" height="900" fill="url(#vignette)"/>
+</svg>
