@@ -176,7 +176,23 @@
     min-height: 100vh;
     display: flex; align-items: center;
     padding: 120px 0 80px;
+    position: relative;
+    background-image: url('https://i0.wp.com/picjumbo.com/wp-content/uploads/beautiful-beach-free-image-after-sunset-sky-free-photo.jpeg');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
   }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(13,11,31,0.82) 0%,
+      rgba(13,11,31,0.70) 50%,
+      rgba(13,11,31,0.55) 100%
+    );
+  }
+  .hero .container { position: relative; z-index: 1; }
   .hero-grid {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 60px; align-items: center;
@@ -215,7 +231,7 @@
   }
 
   .hero-subtitle {
-    font-size: 1.1rem; color: var(--text-muted);
+    font-size: 1.1rem; color: var(--white);
     line-height: 1.7; margin-bottom: 36px;
     max-width: 480px;
   }
