@@ -1123,11 +1123,27 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
 
     <!-- ─── RENEWAL STEP 1: PERSONAL + EXISTING CONDITIONAL FIELDS ─── -->
     <div class="step-panel active" id="r-step-1">
-      <div class="loan-chip" style="margin-bottom:18px;">
-        <span class="loan-chip-val">Loan Renewal</span>
-        <span class="loan-chip-sep">&middot;</span>
-        <span class="loan-chip-sub">Existing customer</span>
+
+      <!-- Amount hero -->
+      <div class="amount-hero">
+        <div class="amount-label">How much do you need?</div>
+        <div class="amount-display" id="r-amount-display">$800</div>
+        <div class="amount-estimate">Estimated biweekly payment: <strong id="r-est-payment">~$91</strong> &middot; 23% APR &middot; Returning customer</div>
+        <div class="amount-picker-grid">
+          <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,500)">$500</button>
+          <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,600)">$600</button>
+          <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,700)">$700</button>
+          <button class="amount-btn r-amount-btn active" onclick="rSetAmount(this,800)">$800</button>
+          <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,900)">$900</button>
+          <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,1000)">$1,000</button>
+        </div>
+        <div class="amount-badges">
+          <span class="amount-badge">🔒 Secure</span>
+          <span class="amount-badge">⚡ Same-day e-Transfer</span>
+          <span class="amount-badge">🔄 Returning customer</span>
+        </div>
       </div>
+
       <h1 class="step-heading">Your information</h1>
       <p class="step-sub">Confirm your details and update only what has changed since your last loan.</p>
 
@@ -1305,7 +1321,7 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
       <div class="form-section-title" style="margin-top:18px;">Loan Request</div>
       <div class="field-row field-row-2">
         <div class="field"><label class="field-label">Amount <span class="req">*</span></label>
-          <div class="select-wrap">
+          <div class="select-wrap" style="display:none;">
             <select class="field-select" id="r-amount">
               <option value="500">$500</option><option value="600">$600</option>
               <option value="700">$700</option><option value="800" selected>$800</option>
@@ -1559,13 +1575,29 @@ function calcPayment(p, freq) {
 }
 function setAmount(btn, val) {
   loanAmount = val;
-  document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.amount-btn:not(.r-amount-btn)').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const bw = calcPayment(val,'biweekly');
   document.getElementById('amount-display').textContent = '$'+val.toLocaleString();
   document.getElementById('est-payment').textContent = '~$'+bw;
   document.getElementById('n-chip-val').textContent   = '$'+val.toLocaleString();
   document.getElementById('n-chip-val-3').textContent = '$'+val.toLocaleString();
+}
+
+function rSetAmount(btn, val) {
+  document.querySelectorAll('.r-amount-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const bw = calcPayment(val,'biweekly');
+  document.getElementById('r-amount-display').textContent = '$'+val.toLocaleString();
+  document.getElementById('r-est-payment').textContent = '~$'+bw;
+  // keep the hidden select in sync so the payload reads correctly
+  const sel = document.getElementById('r-amount');
+  if(sel) sel.value = val;
+  // keep chips in sync if already rendered
+  const cv  = document.getElementById('r-chip-val');
+  const cv3 = document.getElementById('r-chip-val-3');
+  if(cv)  cv.textContent  = '$'+val.toLocaleString();
+  if(cv3) cv3.textContent = '$'+val.toLocaleString();
 }
 // URL param
 const urlParams = new URLSearchParams(window.location.search);
