@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Sky: deep plum to dark blue-black -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#070510"/>
+      <stop offset="30%" stop-color="#120820"/>
+      <stop offset="60%" stop-color="#1a0c18"/>
+      <stop offset="85%" stop-color="#1f1008"/>
+      <stop offset="100%" stop-color="#180e05"/>
+    </linearGradient>
+    <!-- Sunset/dusk glow on horizon -->
+    <radialGradient id="horizonglow" cx="50%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#c45a10" stop-opacity="0.35"/>
+      <stop offset="40%" stop-color="#8b2e5a" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <!-- Side glow (setting sun off left) -->
+    <radialGradient id="sunglow" cx="0%" cy="70%" r="55%">
+      <stop offset="0%" stop-color="#e07820" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#9b3060" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <!-- Hills far -->
+    <linearGradient id="hill_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1230"/>
+      <stop offset="100%" stop-color="#150a20"/>
+    </linearGradient>
+    <!-- Hills mid -->
+    <linearGradient id="hill_mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e0e28"/>
+      <stop offset="100%" stop-color="#0f0818"/>
+    </linearGradient>
+    <!-- Ground / field -->
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#120a08"/>
+      <stop offset="100%" stop-color="#080504"/>
+    </linearGradient>
+    <!-- River glow -->
+    <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c46a20" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#8b3a08" stop-opacity="0.2"/>
+    </linearGradient>
+    <!-- Autumn foliage gradients -->
+    <linearGradient id="foliage_amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c85a08"/>
+      <stop offset="60%" stop-color="#7a2a05"/>
+      <stop offset="100%" stop-color="#0f0805"/>
+    </linearGradient>
+    <linearGradient id="foliage_gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d4820a"/>
+      <stop offset="55%" stop-color="#8a4008"/>
+      <stop offset="100%" stop-color="#0f0805"/>
+    </linearGradient>
+    <linearGradient id="foliage_red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a02515"/>
+      <stop offset="60%" stop-color="#5a1008"/>
+      <stop offset="100%" stop-color="#0f0805"/>
+    </linearGradient>
+    <linearGradient id="foliage_dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1035"/>
+      <stop offset="100%" stop-color="#080510"/>
+    </linearGradient>
+    <!-- Filters -->
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="treeglow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starblur">
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#040308" stop-opacity="0.65"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky base -->
+  <rect width="1440" height="900" fill="url(#sky)"/>
+
+  <!-- Horizon dusk glow -->
+  <rect width="1440" height="900" fill="url(#horizonglow)"/>
+  <!-- Left sunset bleed -->
+  <rect width="1440" height="900" fill="url(#sunglow)"/>
+
+  <!-- Stars — fewer, dimmer, it's dusk not full night -->
+  <g opacity="0.5" filter="url(#starblur)">
+    <circle cx="200" cy="50" r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="380" cy="35" r="0.8" fill="white" opacity="0.6"/>
+    <circle cx="580" cy="55" r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="760" cy="28" r="0.9" fill="white" opacity="0.6"/>
+    <circle cx="940" cy="48" r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="1120" cy="32" r="0.8" fill="white" opacity="0.55"/>
+    <circle cx="1300" cy="55" r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="480" cy="90" r="0.6" fill="white" opacity="0.35"/>
+    <circle cx="840" cy="80" r="0.7" fill="white" opacity="0.4"/>
+    <circle cx="1050" cy="95" r="0.6" fill="white" opacity="0.35"/>
+    <!-- Warm-tinted stars near horizon glow -->
+    <circle cx="620" cy="120" r="0.8" fill="#ffd4a0" opacity="0.3"/>
+    <circle cx="820" cy="110" r="0.7" fill="#ffd4a0" opacity="0.25"/>
+  </g>
+
+  <!-- Distant rolling hills — left -->
+  <path d="M0 500 Q80 440 180 470 Q280 500 380 450 Q480 400 580 445 Q620 465 660 460
+           L660 900 L0 900 Z" fill="url(#hill_far)" opacity="0.7"/>
+
+  <!-- Distant rolling hills — right -->
+  <path d="M780 455 Q860 420 960 448 Q1060 475 1160 440 Q1260 405 1360 445 Q1400 460 1440 455
+           L1440 900 L780 900 Z" fill="url(#hill_far)" opacity="0.7"/>
+
+  <!-- Mid hills / treeline silhouette far -->
+  <path d="M0 540
+    Q60 500 130 520 Q200 540 270 500 Q340 460 420 490 Q500 520 570 490
+    Q630 465 700 488 Q760 510 830 478 Q900 445 970 475
+    Q1040 505 1110 475 Q1180 445 1250 472 Q1320 498 1390 470 L1440 465
+    L1440 900 L0 900 Z"
+    fill="url(#hill_mid)"/>
+
+  <!-- River winding through valley -->
+  <path d="M580 660 Q640 645 700 655 Q760 665 820 650 Q860 640 900 650
+           L920 680 Q880 670 840 682 Q800 694 760 680 Q720 666 680 678 Q640 690 600 680 Z"
+    fill="url(#river)" opacity="0.6"/>
+  <!-- River light shimmer -->
+  <path d="M620 665 Q680 658 740 662 Q800 667 860 656" stroke="#e07828" stroke-width="1.5" fill="none" opacity="0.25"/>
+
+  <!-- Autumn forest — left bank, large trees with foliage -->
+  <!-- Tree 1: amber maple -->
+  <g>
+    <ellipse cx="80" cy="600" rx="70" ry="55" fill="url(#foliage_amber)" opacity="0.9"/>
+    <ellipse cx="80" cy="595" rx="52" ry="40" fill="#b84808" opacity="0.5"/>
+    <rect x="74" y="655" width="12" height="80" fill="#1a0c08"/>
+  </g>
+  <!-- Tree 2: gold birch cluster -->
+  <g>
+    <ellipse cx="185" cy="585" rx="60" ry="50" fill="url(#foliage_gold)" opacity="0.9"/>
+    <ellipse cx="185" cy="580" rx="42" ry="35" fill="#c07010" opacity="0.5"/>
+    <rect x="180" y="638" width="10" height="90" fill="#160a05"/>
+  </g>
+  <!-- Tree 3: red maple -->
+  <g>
+    <ellipse cx="285" cy="595" rx="65" ry="52" fill="url(#foliage_red)" opacity="0.9"/>
+    <ellipse cx="285" cy="590" rx="48" ry="38" fill="#8a1808" opacity="0.5"/>
+    <rect x="279" y="648" width="12" height="85" fill="#150a06"/>
+  </g>
+  <!-- Tree 4: dark conifer -->
+  <g>
+    <polygon points="355,530 395,640 315,640" fill="url(#foliage_dark)" opacity="0.95"/>
+    <polygon points="345,570 388,650 302,650" fill="#100c1e" opacity="0.8"/>
+    <rect x="367" y="640" width="10" height="60" fill="#0a0810"/>
+  </g>
+  <!-- More left trees -->
+  <g>
+    <ellipse cx="430" cy="600" rx="55" ry="45" fill="url(#foliage_amber)" opacity="0.85"/>
+    <rect x="424" y="646" width="10" height="75" fill="#1a0c08"/>
+  </g>
+
+  <!-- Autumn forest — right bank -->
+  <g>
+    <ellipse cx="1010" cy="595" rx="60" ry="50" fill="url(#foliage_gold)" opacity="0.9"/>
+    <ellipse cx="1010" cy="590" rx="44" ry="36" fill="#c07010" opacity="0.5"/>
+    <rect x="1005" y="646" width="10" height="80" fill="#160a05"/>
+  </g>
+  <g>
+    <ellipse cx="1110" cy="585" rx="65" ry="52" fill="url(#foliage_red)" opacity="0.9"/>
+    <ellipse cx="1110" cy="580" rx="46" ry="37" fill="#8a1808" opacity="0.5"/>
+    <rect x="1105" y="638" width="11" height="88" fill="#150a06"/>
+  </g>
+  <g>
+    <polygon points="1190,528 1228,638 1152,638" fill="url(#foliage_dark)" opacity="0.95"/>
+    <polygon points="1182,565 1222,645 1142,645" fill="#100c1e" opacity="0.8"/>
+    <rect x="1202" y="638" width="10" height="62" fill="#0a0810"/>
+  </g>
+  <g>
+    <ellipse cx="1290" cy="592" rx="62" ry="50" fill="url(#foliage_amber)" opacity="0.9"/>
+    <ellipse cx="1290" cy="587" rx="44" ry="36" fill="#b84808" opacity="0.5"/>
+    <rect x="1284" y="643" width="11" height="82" fill="#1a0c08"/>
+  </g>
+  <g>
+    <ellipse cx="1385" cy="600" rx="58" ry="47" fill="url(#foliage_gold)" opacity="0.9"/>
+    <rect x="1380" y="648" width="10" height="78" fill="#160a05"/>
+  </g>
+
+  <!-- Foreground ground plane -->
+  <path d="M0 750 Q360 735 720 742 Q1080 749 1440 738 L1440 900 L0 900 Z"
+    fill="url(#ground)"/>
+
+  <!-- Foreground dark grass / low shrubs -->
+  <path d="M0 760 Q60 748 120 755 Q180 762 240 750 Q300 738 360 750
+           Q420 762 480 752 Q540 742 600 752 Q660 762 720 754
+           Q780 746 840 754 Q900 762 960 752 Q1020 742 1080 752
+           Q1140 762 1200 754 Q1260 746 1320 752 Q1380 758 1440 748
+           L1440 900 L0 900 Z"
+    fill="#080508" opacity="0.95"/>
+
+  <!-- Scattered foreground grass tufts -->
+  <g fill="#1a0e05" opacity="0.8">
+    <path d="M150 760 L155 735 L158 760"/>
+    <path d="M158 760 L165 728 L170 760"/>
+    <path d="M480 755 L485 730 L488 755"/>
+    <path d="M490 755 L496 725 L500 755"/>
+    <path d="M900 758 L905 733 L908 758"/>
+    <path d="M1200 755 L1205 730 L1208 755"/>
+    <path d="M1210 755 L1216 726 L1220 755"/>
+  </g>
+
+  <!-- Warm light bloom from horizon (setting sun just below hills) -->
+  <ellipse cx="360" cy="530" rx="320" ry="80" fill="#d06018" opacity="0.07" filter="url(#softglow)"/>
+  <ellipse cx="360" cy="520" rx="160" ry="35" fill="#e07020" opacity="0.08" filter="url(#softglow)"/>
+
+  <!-- Foliage glow — warm backlight on treetops -->
+  <ellipse cx="200" cy="590" rx="150" ry="30" fill="#c86018" opacity="0.08" filter="url(#softglow)"/>
+  <ellipse cx="1200" cy="585" rx="160" ry="28" fill="#c86018" opacity="0.07" filter="url(#softglow)"/>
+
+  <!-- Dark vignette -->
+  <rect width="1440" height="900" fill="url(#vignette)"/>
+</svg>
