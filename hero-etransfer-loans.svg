@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#04030e"/>
+      <stop offset="40%" stop-color="#080620"/>
+      <stop offset="75%" stop-color="#071228"/>
+      <stop offset="100%" stop-color="#050e20"/>
+    </linearGradient>
+    <!-- Aurora — wide green/teal band -->
+    <linearGradient id="aur1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#00c8a0" stop-opacity="0"/>
+      <stop offset="20%"  stop-color="#00e5c0" stop-opacity="0.55"/>
+      <stop offset="50%"  stop-color="#1DE9C6" stop-opacity="0.45"/>
+      <stop offset="80%"  stop-color="#00c8e0" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00a0c8" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Aurora — purple accent -->
+    <linearGradient id="aur2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#5B52D8" stop-opacity="0"/>
+      <stop offset="35%"  stop-color="#7B74F0" stop-opacity="0.35"/>
+      <stop offset="65%"  stop-color="#00E5FF" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#5B52D8" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Frozen lake -->
+    <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#091828" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#040c18" stop-opacity="1"/>
+    </linearGradient>
+    <!-- Ice sheen -->
+    <linearGradient id="icesheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1DE9C6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#00E5FF" stop-opacity="0.04"/>
+    </linearGradient>
+    <!-- Distant treeline -->
+    <linearGradient id="trees_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0c1830"/>
+      <stop offset="100%" stop-color="#060e1e"/>
+    </linearGradient>
+    <!-- Near shore trees -->
+    <linearGradient id="trees_near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#060812"/>
+      <stop offset="100%" stop-color="#020408"/>
+    </linearGradient>
+    <!-- Snow ground -->
+    <linearGradient id="snow_ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0e1828"/>
+      <stop offset="100%" stop-color="#060c14"/>
+    </linearGradient>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="medglow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starglow">
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    <radialGradient id="aurora_glow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%"   stop-color="#1DE9C6" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="moon_glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#c8e8ff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="#030210" stop-opacity="0.7"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1440" height="900" fill="url(#sky)"/>
+
+  <!-- Aurora ambient glow -->
+  <rect width="1440" height="900" fill="url(#aurora_glow)"/>
+
+  <!-- Stars -->
+  <g filter="url(#starglow)">
+    <circle cx="80"   cy="45"  r="0.9" fill="white" opacity="0.75"/>
+    <circle cx="210"  cy="28"  r="0.7" fill="white" opacity="0.6"/>
+    <circle cx="355"  cy="52"  r="1.1" fill="#d0f0ff" opacity="0.8"/>
+    <circle cx="490"  cy="18"  r="0.8" fill="white" opacity="0.65"/>
+    <circle cx="635"  cy="42"  r="0.7" fill="white" opacity="0.55"/>
+    <circle cx="780"  cy="22"  r="1.0" fill="#c8e8ff" opacity="0.75"/>
+    <circle cx="920"  cy="50"  r="0.8" fill="white" opacity="0.6"/>
+    <circle cx="1060" cy="30"  r="0.9" fill="white" opacity="0.7"/>
+    <circle cx="1200" cy="48"  r="0.7" fill="#d0f0ff" opacity="0.6"/>
+    <circle cx="1360" cy="25"  r="1.0" fill="white" opacity="0.65"/>
+    <circle cx="140"  cy="95"  r="0.6" fill="white" opacity="0.45"/>
+    <circle cx="310"  cy="108" r="0.8" fill="white" opacity="0.5"/>
+    <circle cx="470"  cy="85"  r="0.7" fill="white" opacity="0.45"/>
+    <circle cx="620"  cy="110" r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="800"  cy="88"  r="0.9" fill="white" opacity="0.55"/>
+    <circle cx="960"  cy="102" r="0.7" fill="white" opacity="0.45"/>
+    <circle cx="1110" cy="78"  r="0.8" fill="white" opacity="0.5"/>
+    <circle cx="1280" cy="95"  r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="40"   cy="140" r="0.7" fill="white" opacity="0.35"/>
+    <circle cx="550"  cy="135" r="0.6" fill="white" opacity="0.35"/>
+    <circle cx="1020" cy="128" r="0.7" fill="white" opacity="0.38"/>
+    <circle cx="1400" cy="138" r="0.6" fill="white" opacity="0.35"/>
+  </g>
+
+  <!-- Moon halo -->
+  <circle cx="1160" cy="95" r="70" fill="url(#moon_glow)" opacity="0.8"/>
+  <!-- Moon -->
+  <circle cx="1160" cy="95" r="26" fill="#ddeeff" opacity="0.22" filter="url(#softglow)"/>
+  <circle cx="1160" cy="95" r="20" fill="#eef5ff" opacity="0.28"/>
+  <circle cx="1160" cy="95" r="14" fill="#f8faff" opacity="0.35"/>
+
+  <!-- Aurora band 1 — wide teal sweep -->
+  <path d="M-100 310 Q200 240 500 270 Q720 295 960 258 Q1150 230 1540 285"
+        stroke="none" fill="none"/>
+  <ellipse cx="680" cy="265" rx="820" ry="85"
+           fill="url(#aur1)" opacity="0.75" transform="rotate(-4 680 265)"/>
+  <!-- Aurora band 2 — tighter purple above -->
+  <ellipse cx="720" cy="215" rx="680" ry="55"
+           fill="url(#aur2)" opacity="0.6" transform="rotate(3 720 215)"/>
+  <!-- Aurora streaks — vertical curtain effect -->
+  <g opacity="0.18">
+    <line x1="320" y1="160" x2="295" y2="340" stroke="#1DE9C6" stroke-width="1.5"/>
+    <line x1="440" y1="155" x2="420" y2="320" stroke="#00E5FF" stroke-width="1"/>
+    <line x1="560" y1="148" x2="545" y2="315" stroke="#1DE9C6" stroke-width="1.5"/>
+    <line x1="680" y1="152" x2="668" y2="308" stroke="#00E5FF" stroke-width="1"/>
+    <line x1="800" y1="145" x2="792" y2="305" stroke="#1DE9C6" stroke-width="1.5"/>
+    <line x1="920" y1="150" x2="915" y2="312" stroke="#7B74F0" stroke-width="1"/>
+    <line x1="1040" y1="155" x2="1038" y2="318" stroke="#1DE9C6" stroke-width="1"/>
+  </g>
+
+  <!-- Distant conifer treeline — full width band -->
+  <path d="M0 490
+    L25 445 L50 465 L75 440 L100 458 L125 432 L150 452
+    L175 428 L200 448 L225 435 L250 452 L275 430 L300 448
+    L325 425 L350 445 L375 428 L400 448 L425 432 L450 450
+    L475 428 L500 445 L525 430 L550 448 L575 425 L600 442
+    L625 428 L650 445 L675 430 L700 448 L725 428 L750 445
+    L775 430 L800 448 L825 428 L850 445 L875 428 L900 445
+    L925 430 L950 448 L975 428 L1000 445 L1025 430 L1050 448
+    L1075 428 L1100 445 L1125 430 L1150 448 L1175 428 L1200 445
+    L1225 430 L1250 448 L1275 430 L1300 445 L1325 428 L1350 448
+    L1375 430 L1400 448 L1420 432 L1440 448
+    L1440 900 L0 900 Z"
+    fill="url(#trees_far)"/>
+
+  <!-- Aurora reflection hint on treeline tops -->
+  <path d="M0 448 Q360 440 720 444 Q1080 448 1440 442"
+        stroke="#1DE9C6" stroke-width="0.8" fill="none" opacity="0.12"/>
+
+  <!-- Frozen lake — wide centre band -->
+  <path d="M0 560 Q360 548 720 552 Q1080 556 1440 546
+           L1440 720 Q1080 730 720 726 Q360 722 0 730 Z"
+    fill="url(#lake)"/>
+  <!-- Ice sheen overlay -->
+  <path d="M0 560 Q360 548 720 552 Q1080 556 1440 546
+           L1440 720 Q1080 730 720 726 Q360 722 0 730 Z"
+    fill="url(#icesheen)"/>
+
+  <!-- Aurora reflection on lake -->
+  <ellipse cx="720" cy="635" rx="680" ry="40"
+           fill="#1DE9C6" opacity="0.055" filter="url(#softglow)"/>
+  <ellipse cx="720" cy="635" rx="380" ry="18"
+           fill="#00E5FF" opacity="0.07"/>
+  <!-- Moon reflection on lake -->
+  <ellipse cx="1100" cy="640" rx="80" ry="8"
+           fill="#c8e8ff" opacity="0.15"/>
+  <ellipse cx="1100" cy="640" rx="25" ry="3"
+           fill="#eef5ff" opacity="0.25"/>
+  <!-- Ice crack lines -->
+  <g stroke="#1DE9C6" stroke-width="0.5" opacity="0.08" fill="none">
+    <path d="M200 590 L240 620 L210 650"/>
+    <path d="M580 580 L640 615 L600 660"/>
+    <path d="M900 595 L940 625 L915 660"/>
+    <path d="M1250 585 L1290 618 L1260 655"/>
+  </g>
+
+  <!-- Near shore snow bank — left -->
+  <path d="M0 715 Q80 700 160 710 Q220 718 280 705 Q340 692 380 708
+           L380 900 L0 900 Z" fill="url(#snow_ground)" opacity="0.9"/>
+  <!-- Near shore snow bank — right -->
+  <path d="M1060 708 Q1120 695 1200 705 Q1280 715 1360 702 Q1400 696 1440 705
+           L1440 900 L1060 900 Z" fill="url(#snow_ground)" opacity="0.9"/>
+
+  <!-- Foreground snow ground -->
+  <path d="M0 740 Q360 728 720 732 Q1080 736 1440 726 L1440 900 L0 900 Z"
+    fill="#060c18"/>
+
+  <!-- Foreground conifers — left cluster -->
+  <g fill="url(#trees_near)">
+    <polygon points="10,900  32,780  54,900"/>
+    <polygon points="38,900  62,758  86,900"/>
+    <polygon points="70,900  96,742  122,900"/>
+    <polygon points="105,900 132,760 158,900"/>
+    <polygon points="140,900 166,748 192,900"/>
+    <polygon points="170,900 194,772 218,900"/>
+  </g>
+  <!-- Snow on left treetops -->
+  <g fill="#0e1e32" opacity="0.8">
+    <polygon points="32,780  32,790  22,790"/>
+    <polygon points="62,758  62,770  50,768"/>
+    <polygon points="96,742  96,755  84,752"/>
+    <polygon points="132,760 132,772 120,769"/>
+    <polygon points="166,748 166,760 154,757"/>
+  </g>
+
+  <!-- Foreground conifers — right cluster -->
+  <g fill="url(#trees_near)">
+    <polygon points="1250,900 1272,768 1294,900"/>
+    <polygon points="1282,900 1306,750 1330,900"/>
+    <polygon points="1316,900 1342,742 1368,900"/>
+    <polygon points="1352,900 1378,758 1404,900"/>
+    <polygon points="1390,900 1414,772 1438,900"/>
+  </g>
+  <!-- Snow on right treetops -->
+  <g fill="#0e1e32" opacity="0.8">
+    <polygon points="1272,768 1272,780 1260,778"/>
+    <polygon points="1306,750 1306,763 1294,760"/>
+    <polygon points="1342,742 1342,756 1328,753"/>
+    <polygon points="1378,758 1378,770 1366,768"/>
+    <polygon points="1414,772 1414,783 1402,780"/>
+  </g>
+
+  <!-- Vignette -->
+  <rect width="1440" height="900" fill="url(#vignette)"/>
+</svg>
