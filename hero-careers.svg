@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#07060f"/>
+      <stop offset="22%"  stop-color="#0e0b1e"/>
+      <stop offset="48%"  stop-color="#180e2e"/>
+      <stop offset="70%"  stop-color="#2a1245"/>
+      <stop offset="86%"  stop-color="#3e1858"/>
+      <stop offset="100%" stop-color="#521e68"/>
+    </linearGradient>
+    <radialGradient id="dusk_glow" cx="55%" cy="100%" r="52%">
+      <stop offset="0%"   stop-color="#8030c0" stop-opacity="0.4"/>
+      <stop offset="35%"  stop-color="#5020a0" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="warm_side" cx="15%" cy="80%" r="45%">
+      <stop offset="0%"   stop-color="#c04060" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="hill_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2a1448"/>
+      <stop offset="100%" stop-color="#160a30"/>
+    </linearGradient>
+    <linearGradient id="hill_mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1e1038"/>
+      <stop offset="100%" stop-color="#0e0820"/>
+    </linearGradient>
+    <linearGradient id="field_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2a1840"/>
+      <stop offset="100%" stop-color="#160e28"/>
+    </linearGradient>
+    <linearGradient id="field_near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#180e2a"/>
+      <stop offset="100%" stop-color="#0a0818"/>
+    </linearGradient>
+    <linearGradient id="foliage_amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#8a3808"/>
+      <stop offset="100%" stop-color="#2a0e05"/>
+    </linearGradient>
+    <linearGradient id="foliage_purple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4a1858"/>
+      <stop offset="100%" stop-color="#1a0828"/>
+    </linearGradient>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starglow"><feGaussianBlur stdDeviation="0.55"/></filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="#030210" stop-opacity="0.62"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1440" height="900" fill="url(#sky)"/>
+  <rect width="1440" height="900" fill="url(#dusk_glow)"/>
+  <rect width="1440" height="900" fill="url(#warm_side)"/>
+
+  <!-- Stars -->
+  <g filter="url(#starglow)">
+    <circle cx="72"   cy="42"  r="0.8" fill="white" opacity="0.6"/>
+    <circle cx="200"  cy="22"  r="0.7" fill="#e0c8ff" opacity="0.65"/>
+    <circle cx="340"  cy="50"  r="0.9" fill="white" opacity="0.7"/>
+    <circle cx="480"  cy="18"  r="0.7" fill="white" opacity="0.58"/>
+    <circle cx="620"  cy="44"  r="0.8" fill="#d8c0ff" opacity="0.62"/>
+    <circle cx="760"  cy="24"  r="0.9" fill="white" opacity="0.68"/>
+    <circle cx="900"  cy="48"  r="0.7" fill="white" opacity="0.58"/>
+    <circle cx="1040" cy="20"  r="0.8" fill="#e0c8ff" opacity="0.65"/>
+    <circle cx="1180" cy="45"  r="0.7" fill="white" opacity="0.58"/>
+    <circle cx="1350" cy="22"  r="0.9" fill="white" opacity="0.68"/>
+    <circle cx="140"  cy="88"  r="0.6" fill="white" opacity="0.42"/>
+    <circle cx="310"  cy="104" r="0.7" fill="white" opacity="0.45"/>
+    <circle cx="500"  cy="78"  r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="700"  cy="100" r="0.7" fill="white" opacity="0.42"/>
+    <circle cx="870"  cy="82"  r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="1060" cy="96"  r="0.7" fill="white" opacity="0.42"/>
+    <circle cx="1240" cy="78"  r="0.6" fill="white" opacity="0.38"/>
+    <circle cx="420"  cy="130" r="0.5" fill="white" opacity="0.3"/>
+    <circle cx="820"  cy="118" r="0.6" fill="white" opacity="0.32"/>
+    <circle cx="1140" cy="128" r="0.5" fill="white" opacity="0.3"/>
+  </g>
+
+  <!-- Far rolling hills of Eastern Townships -->
+  <path d="M0 490 Q90 458 180 472 Q270 486 360 455 Q450 424 540 448
+           Q630 472 720 448 Q810 424 900 448 Q990 472 1080 452
+           Q1170 432 1260 450 Q1350 468 1440 452
+           L1440 900 L0 900 Z" fill="url(#hill_far)"/>
+
+  <!-- Mid hills — gentler Quebec countryside -->
+  <path d="M0 545 Q80 518 170 532 Q260 546 350 520
+           Q440 494 530 515 Q620 536 710 512
+           Q800 488 890 508 Q980 528 1070 508
+           Q1160 488 1250 508 Q1340 528 1440 510
+           L1440 900 L0 900 Z" fill="url(#hill_mid)"/>
+
+  <!-- Farmland fields — flat patchwork of Quebec farmland -->
+  <path d="M0 585 Q180 568 360 576 Q540 584 720 568
+           Q900 552 1080 562 Q1260 572 1440 558
+           L1440 900 L0 900 Z" fill="url(#field_far)"/>
+
+  <!-- Farm field dividing lines (rows) -->
+  <g stroke="#3a1858" stroke-width="0.8" opacity="0.3" fill="none">
+    <path d="M0 610 Q360 598 720 604 Q1080 610 1440 598"/>
+    <path d="M0 635 Q360 623 720 629 Q1080 635 1440 623"/>
+    <path d="M0 660 Q360 648 720 654 Q1080 660 1440 648"/>
+    <path d="M0 685 Q360 673 720 679 Q1080 685 1440 673"/>
+  </g>
+  <!-- Vertical field dividers (farm strips) -->
+  <g stroke="#3a1858" stroke-width="0.6" opacity="0.2" fill="none">
+    <line x1="240" y1="585" x2="230" y2="900"/>
+    <line x1="480" y1="578" x2="468" y2="900"/>
+    <line x1="720" y1="572" x2="706" y2="900"/>
+    <line x1="960" y1="565" x2="944" y2="900"/>
+    <line x1="1200" y1="560" x2="1182" y2="900"/>
+  </g>
+
+  <!-- Autumn tree clusters — Eastern Townships maple trees -->
+  <!-- Left cluster -->
+  <g>
+    <ellipse cx="105" cy="548" rx="65" ry="48" fill="url(#foliage_amber)" opacity="0.85"/>
+    <ellipse cx="105" cy="545" rx="45" ry="33" fill="#6a2808" opacity="0.5"/>
+    <rect x="100" y="596" width="10" height="55" fill="#1a0c08"/>
+  </g>
+  <g>
+    <ellipse cx="195" cy="535" rx="55" ry="42" fill="url(#foliage_purple)" opacity="0.9"/>
+    <ellipse cx="195" cy="532" rx="38" ry="28" fill="#380e48" opacity="0.5"/>
+    <rect x="191" y="577" width="8" height="50" fill="#120810"/>
+  </g>
+  <g>
+    <ellipse cx="278" cy="542" rx="50" ry="40" fill="url(#foliage_amber)" opacity="0.8"/>
+    <rect x="274" y="582" width="8" height="48" fill="#1a0c08"/>
+  </g>
+
+  <!-- Right cluster -->
+  <g>
+    <ellipse cx="1165" cy="538" rx="58" ry="44" fill="url(#foliage_purple)" opacity="0.9"/>
+    <ellipse cx="1165" cy="535" rx="40" ry="30" fill="#380e48" opacity="0.5"/>
+    <rect x="1161" y="582" width="8" height="52" fill="#120810"/>
+  </g>
+  <g>
+    <ellipse cx="1255" cy="545" rx="62" ry="46" fill="url(#foliage_amber)" opacity="0.85"/>
+    <ellipse cx="1255" cy="542" rx="44" ry="32" fill="#6a2808" opacity="0.5"/>
+    <rect x="1251" y="591" width="10" height="54" fill="#1a0c08"/>
+  </g>
+  <g>
+    <ellipse cx="1345" cy="535" rx="52" ry="40" fill="url(#foliage_purple)" opacity="0.85"/>
+    <rect x="1341" y="575" width="8" height="50" fill="#120810"/>
+  </g>
+
+  <!-- Church/village steeple silhouette (quintessential Quebec) -->
+  <g fill="#0e0820" opacity="0.9">
+    <!-- Main building -->
+    <rect x="658" y="498" width="44" height="60"/>
+    <!-- Nave -->
+    <rect x="640" y="518" width="80" height="40"/>
+    <!-- Roof of nave -->
+    <polygon points="636,518 660,502 700,502 724,518"/>
+    <!-- Bell tower -->
+    <rect x="672" y="458" width="16" height="42"/>
+    <!-- Steeple -->
+    <polygon points="668,458 680,428 692,458"/>
+    <!-- Small window -->
+    <rect x="676" y="464" width="8" height="10" fill="#2a1848" opacity="0.8"/>
+  </g>
+
+  <!-- Dusk glow on horizon -->
+  <ellipse cx="720" cy="572" rx="500" ry="45" fill="#8030c0" opacity="0.07" filter="url(#softglow)"/>
+  <ellipse cx="720" cy="560" rx="220" ry="18" fill="#a040d0" opacity="0.08" filter="url(#softglow)"/>
+
+  <!-- Foreground dark ground -->
+  <path d="M0 745 Q360 730 720 736 Q1080 742 1440 728 L1440 900 L0 900 Z"
+    fill="url(#field_near)"/>
+
+  <!-- Vignette -->
+  <rect width="1440" height="900" fill="url(#vignette)"/>
+</svg>
