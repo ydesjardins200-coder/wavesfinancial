@@ -47,6 +47,26 @@
     overflow-x: hidden;
     line-height: 1.6;
   }
+  /* Mobile nav drawer */
+.nav-mobile-open .nav-links {
+  display: flex !important;
+  flex-direction: column;
+  position: fixed; top: 70px; left: 0; right: 0;
+  background: rgba(13,11,31,0.97);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px 28px;
+  gap: 6px; z-index: 99;
+}
+.nav-mobile-open .nav-links a {
+  padding: 12px 0;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(160,154,245,0.1);
+}
+.nav-mobile-open .nav-hamburger span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.nav-mobile-open .nav-hamburger span:nth-child(2) { opacity: 0; }
+.nav-mobile-open .nav-hamburger span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+.nav-hamburger span { transition: all 0.25s; }
 
   /* ─── NOISE OVERLAY ─── */
   body::before {
@@ -1267,6 +1287,16 @@
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  // Hamburger menu
+document.querySelector('.nav-hamburger').addEventListener('click', () => {
+  document.querySelector('nav').classList.toggle('nav-mobile-open');
+});
+// Close on link click
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelector('nav').classList.remove('nav-mobile-open');
+  });
+});
 </script>
 </body>
 </html>
