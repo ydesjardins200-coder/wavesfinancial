@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#08060f"/>
+      <stop offset="30%"  stop-color="#120c22"/>
+      <stop offset="58%"  stop-color="#1e1030"/>
+      <stop offset="78%"  stop-color="#2a1840"/>
+      <stop offset="90%"  stop-color="#3a2050"/>
+      <stop offset="100%" stop-color="#2a1848"/>
+    </linearGradient>
+    <radialGradient id="dawn_glow" cx="72%" cy="100%" r="55%">
+      <stop offset="0%"   stop-color="#6040c0" stop-opacity="0.45"/>
+      <stop offset="40%"  stop-color="#4030a0" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="light_beam" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#a090ff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0a1830"/>
+      <stop offset="60%"  stop-color="#060e20"/>
+      <stop offset="100%" stop-color="#030810"/>
+    </linearGradient>
+    <linearGradient id="cliff_far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#181028"/>
+      <stop offset="100%" stop-color="#0c0818"/>
+    </linearGradient>
+    <linearGradient id="cliff_near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#100c20"/>
+      <stop offset="100%" stop-color="#060410"/>
+    </linearGradient>
+    <linearGradient id="lighthouse_body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#e8e0f8"/>
+      <stop offset="100%" stop-color="#9888d0"/>
+    </linearGradient>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="beamglow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="35" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="starglow"><feGaussianBlur stdDeviation="0.6"/></filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="#030210" stop-opacity="0.65"/>
+    </radialGradient>
+    <radialGradient id="ocean_glow" cx="70%" cy="0%" r="80%">
+      <stop offset="0%"   stop-color="#5B52D8" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1440" height="900" fill="url(#sky)"/>
+  <!-- Dawn/dusk glow upper right -->
+  <rect width="1440" height="900" fill="url(#dawn_glow)"/>
+
+  <!-- Stars -->
+  <g filter="url(#starglow)">
+    <circle cx="80"   cy="40"  r="0.9" fill="white" opacity="0.65"/>
+    <circle cx="220"  cy="22"  r="0.7" fill="white" opacity="0.55"/>
+    <circle cx="380"  cy="55"  r="1.0" fill="#d0ccff" opacity="0.7"/>
+    <circle cx="520"  cy="18"  r="0.8" fill="white" opacity="0.6"/>
+    <circle cx="660"  cy="44"  r="0.7" fill="white" opacity="0.5"/>
+    <circle cx="790"  cy="25"  r="1.1" fill="#c8c0ff" opacity="0.75"/>
+    <circle cx="940"  cy="50"  r="0.8" fill="white" opacity="0.55"/>
+    <circle cx="1080" cy="28"  r="0.9" fill="white" opacity="0.65"/>
+    <circle cx="1220" cy="45"  r="0.7" fill="#d0ccff" opacity="0.55"/>
+    <circle cx="1380" cy="22"  r="1.0" fill="white" opacity="0.6"/>
+    <circle cx="150"  cy="88"  r="0.6" fill="white" opacity="0.4"/>
+    <circle cx="330"  cy="105" r="0.8" fill="white" opacity="0.45"/>
+    <circle cx="500"  cy="78"  r="0.7" fill="white" opacity="0.4"/>
+    <circle cx="700"  cy="102" r="0.6" fill="white" opacity="0.38"/>
+    <circle cx="870"  cy="82"  r="0.8" fill="white" opacity="0.45"/>
+    <circle cx="1050" cy="98"  r="0.7" fill="white" opacity="0.4"/>
+    <circle cx="1300" cy="88"  r="0.6" fill="white" opacity="0.38"/>
+    <circle cx="40"   cy="135" r="0.6" fill="white" opacity="0.3"/>
+    <circle cx="600"  cy="128" r="0.7" fill="white" opacity="0.32"/>
+    <circle cx="1160" cy="118" r="0.6" fill="white" opacity="0.3"/>
+  </g>
+
+  <!-- Lighthouse beam — sweeping cone of light -->
+  <path d="M1050 342 L680 580 L780 580 Z" fill="#a090ff" opacity="0.08" filter="url(#beamglow)"/>
+  <path d="M1050 342 L730 560 L760 560 Z" fill="#c0b0ff" opacity="0.12" filter="url(#beamglow)"/>
+  <!-- Beam core -->
+  <line x1="1050" y1="342" x2="200" y2="600" stroke="#d0c8ff" stroke-width="1.5" opacity="0.15"/>
+
+  <!-- Far distant headland / sea cliff -->
+  <path d="M0 540 Q80 510 160 525 Q240 540 320 505 Q400 470 480 490
+           Q540 505 580 498 Q620 491 640 498
+           L640 900 L0 900 Z" fill="url(#cliff_far)" opacity="0.8"/>
+
+  <!-- Ocean -->
+  <path d="M0 580 Q360 565 720 570 Q1080 575 1440 560
+           L1440 900 L0 900 Z" fill="url(#ocean)"/>
+  <rect width="1440" height="900" fill="url(#ocean_glow)"/>
+
+  <!-- Ocean shimmer lines -->
+  <g stroke="#5B52D8" stroke-width="0.8" opacity="0.08" fill="none">
+    <path d="M0 625 Q180 618 360 622 Q540 626 720 620 Q900 614 1080 618 Q1260 622 1440 615"/>
+    <path d="M0 648 Q180 641 360 645 Q540 649 720 643 Q900 637 1080 641 Q1260 645 1440 638"/>
+    <path d="M0 672 Q180 665 360 669 Q540 673 720 667 Q900 661 1080 665 Q1260 669 1440 662"/>
+  </g>
+  <!-- Lighthouse reflection on water -->
+  <ellipse cx="1050" cy="630" rx="120" ry="12" fill="#a090ff" opacity="0.08" filter="url(#softglow)"/>
+  <ellipse cx="1050" cy="640" rx="60"  ry="6"  fill="#c0b0ff" opacity="0.1"/>
+
+  <!-- Main headland / cliff where lighthouse sits -->
+  <path d="M820 900 Q880 750 960 640 Q1000 590 1040 570
+           Q1060 565 1080 570 Q1120 582 1160 600
+           Q1220 630 1280 680 Q1340 730 1380 790 L1440 900 Z"
+    fill="url(#cliff_near)"/>
+  <!-- Cliff rocky texture -->
+  <path d="M960 640 Q980 628 1000 635 Q1020 642 1040 630 Q1060 618 1080 628"
+        stroke="#2a1848" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M900 720 Q930 702 960 712 Q990 722 1020 705 Q1050 688 1075 700"
+        stroke="#2a1848" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+  <!-- Lighthouse structure -->
+  <!-- Base / keeper's house -->
+  <rect x="1022" y="432" width="56" height="32" fill="#c8c0e8" opacity="0.85"/>
+  <polygon points="1022,432 1050,418 1078,432" fill="#a898d8" opacity="0.9"/>
+  <!-- Tower body -->
+  <path d="M1038 432 L1032 360 L1068 360 L1062 432 Z" fill="url(#lighthouse_body)" opacity="0.92"/>
+  <!-- Horizontal stripe -->
+  <rect x="1032" y="400" width="36" height="8" fill="#5B52D8" opacity="0.6"/>
+  <!-- Lantern room -->
+  <rect x="1030" y="348" width="40" height="16" fill="#c8c0e8" opacity="0.9"/>
+  <!-- Lantern glass -->
+  <rect x="1033" y="352" width="34" height="9" fill="#ffe8a0" opacity="0.7"/>
+  <!-- Light glow -->
+  <circle cx="1050" cy="356" r="14" fill="#ffe060" opacity="0.5" filter="url(#softglow)"/>
+  <circle cx="1050" cy="356" r="7"  fill="#fff8c0" opacity="0.8"/>
+  <!-- Top cap -->
+  <polygon points="1028,348 1050,338 1072,348" fill="#9888d0" opacity="0.9"/>
+  <!-- Railing line -->
+  <line x1="1028" y1="348" x2="1072" y2="348" stroke="#c0b8e8" stroke-width="1.5" opacity="0.7"/>
+  <!-- Door -->
+  <rect x="1044" y="450" width="12" height="14" rx="6" fill="#2a1848" opacity="0.6"/>
+
+  <!-- Rocks at cliff base -->
+  <ellipse cx="940"  cy="608" rx="28" ry="10" fill="#120c22" opacity="0.8"/>
+  <ellipse cx="1000" cy="618" rx="20" ry="8"  fill="#0e0a1e" opacity="0.7"/>
+  <ellipse cx="1110" cy="615" rx="24" ry="9"  fill="#120c22" opacity="0.75"/>
+  <ellipse cx="1170" cy="628" rx="18" ry="7"  fill="#0e0a1e" opacity="0.7"/>
+
+  <!-- Foreground cliff edge (near camera) -->
+  <path d="M0 760 Q60 745 120 752 Q180 759 240 748 Q300 737 360 748
+           Q420 759 480 750 Q520 744 540 748
+           L540 900 L0 900 Z" fill="#080510" opacity="0.95"/>
+
+  <!-- Vignette -->
+  <rect width="1440" height="900" fill="url(#vignette)"/>
+</svg>
