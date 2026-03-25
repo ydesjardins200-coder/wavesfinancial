@@ -58,33 +58,6 @@
   section { position: relative; z-index: 1; }
 
   /* NAV */
-  .nav-mobile-open .nav-links {
-    display: flex !important; flex-direction: column;
-    position: fixed; top: 70px; left: 0; right: 0;
-    background: rgba(13,11,31,0.97); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border); padding: 20px 24px 28px; gap: 6px; z-index: 99;
-  }
-  .nav-mobile-open .nav-links a { padding: 12px 0; font-size: 1rem; border-bottom: 1px solid rgba(160,154,245,0.1); }
-  .nav-mobile-open .nav-hamburger span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-  .nav-mobile-open .nav-hamburger span:nth-child(2) { opacity: 0; }
-  .nav-mobile-open .nav-hamburger span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-  .nav-hamburger span { transition: all 0.25s; }
-
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(13,11,31,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; }
-  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 70px; }
-  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo svg { width: 36px; height: 36px; }
-  .logo-text { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 0%, var(--periwinkle) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .nav-links { display: flex; align-items: center; gap: 28px; }
-  .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--white); }
-  .nav-actions { display: flex; align-items: center; gap: 12px; }
-  .btn-ghost { padding: 9px 20px; border-radius: var(--r-sm); border: 1px solid var(--border); background: transparent; color: var(--white); font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; }
-  .btn-ghost:hover { background: var(--glass); border-color: var(--lavender); }
-  .btn-primary { padding: 10px 24px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--royal), var(--iris)); color: var(--white); font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; box-shadow: 0 4px 20px rgba(91,82,216,0.4); transition: all 0.25s; display: inline-flex; align-items: center; gap: 6px; }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(91,82,216,0.55); }
-  .nav-hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
-  .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
 
   /* HERO */
   .hero {
@@ -293,8 +266,6 @@
     .featured-card { padding: 36px 28px; }
   }
   @media (max-width: 640px) {
-    .nav-links { display: none; }
-    .nav-hamburger { display: flex; }
     .reviews-masonry { columns: 1; }
     .breakdown-categories { grid-template-columns: 1fr 1fr; }
     .province-grid { grid-template-columns: 1fr; }
@@ -305,38 +276,344 @@
     .footer-grid { grid-template-columns: 1fr; }
     .sticky-cta-mobile { display: block; }
   }
+
+  /* ═══ MEGA MENU NAV ═══ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,11,31,0.92); backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border); padding: 0 24px;
+    transition: background 0.3s;
+  }
+  nav.scrolled { background: rgba(13,11,31,0.98); }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; height: 70px;
+  }
+
+  /* Logo */
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+  .logo svg { width: 36px; height: 36px; }
+  .logo-text { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 0%, var(--periwinkle) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* Top-level nav items */
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-item { position: relative; }
+  .nav-item > a, .nav-trigger {
+    display: flex; align-items: center; gap: 5px;
+    padding: 8px 14px; border-radius: var(--r-sm);
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.88rem; font-weight: 500; transition: all 0.2s;
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .nav-item > a:hover, .nav-trigger:hover,
+  .nav-item.active > a, .nav-item.active .nav-trigger { color: var(--white); background: rgba(91,82,216,0.12); }
+  .nav-trigger svg { width: 13px; height: 13px; transition: transform 0.25s; flex-shrink: 0; }
+  .nav-item.mega-open .nav-trigger { color: var(--white); background: rgba(91,82,216,0.12); }
+  .nav-item.mega-open .nav-trigger svg { transform: rotate(180deg); }
+
+  /* Nav actions */
+  .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .btn-ghost { padding: 8px 18px; border-radius: var(--r-sm); border: 1px solid var(--border); background: transparent; color: var(--white); font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+  .btn-ghost:hover { background: var(--glass); border-color: var(--lavender); }
+  .btn-primary { padding: 9px 22px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--royal), var(--iris)); color: var(--white); font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; box-shadow: 0 4px 20px rgba(91,82,216,0.4); transition: all 0.25s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(91,82,216,0.55); }
+
+  /* ─── MEGA MENU PANEL ─── */
+  .mega-menu {
+    position: absolute; top: calc(100% + 12px); left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10,8,28,0.97); backdrop-filter: blur(28px);
+    border: 1px solid var(--border); border-radius: var(--r-xl);
+    padding: 28px 28px 24px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(91,82,216,0.1);
+    display: none; min-width: 680px;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    transform: translateX(-50%) translateY(-6px);
+  }
+  .mega-menu::before {
+    content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 6px;
+    border-left: 6px solid transparent; border-right: 6px solid transparent;
+    border-bottom: 6px solid rgba(160,154,245,0.3);
+  }
+  .nav-item.mega-open .mega-menu {
+    display: grid; pointer-events: all; opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Products mega: 3 cols */
+  .mega-products { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  /* Company mega: 2 cols */
+  .mega-company  { grid-template-columns: repeat(2, 1fr); gap: 6px; min-width: 520px; }
+  /* Support mega: 2 cols */
+  .mega-support  { grid-template-columns: repeat(2, 1fr); gap: 6px; min-width: 480px; }
+
+  /* Mega section header */
+  .mega-section { margin-bottom: 4px; }
+  .mega-section-label {
+    font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--iris); margin-bottom: 8px;
+    padding-left: 10px;
+  }
+
+  /* Mega link item */
+  .mega-link {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 12px; border-radius: var(--r-md);
+    text-decoration: none; transition: all 0.18s;
+    border: 1px solid transparent;
+  }
+  .mega-link:hover {
+    background: rgba(91,82,216,0.12); border-color: rgba(160,154,245,0.18);
+  }
+  .mega-link-icon {
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem; margin-top: 1px;
+  }
+  .mega-link-text { min-width: 0; }
+  .mega-link-title { font-weight: 700; font-size: 0.84rem; color: var(--white); margin-bottom: 2px; line-height: 1.2; }
+  .mega-link-desc  { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+  .mega-link:hover .mega-link-title { color: var(--teal); }
+
+  /* CTA strip inside mega */
+  .mega-cta-strip {
+    grid-column: 1 / -1; margin-top: 12px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .mega-cta-text { font-size: 0.8rem; color: var(--text-muted); }
+  .mega-cta-text strong { color: var(--white); }
+  .mega-cta-btn {
+    padding: 8px 20px; border-radius: var(--r-sm);
+    background: linear-gradient(135deg, var(--teal), var(--cyan));
+    color: var(--deep); font-family: var(--font-display); font-size: 0.82rem; font-weight: 800;
+    text-decoration: none; white-space: nowrap; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mega-cta-btn:hover { box-shadow: 0 6px 20px rgba(0,229,255,0.35); transform: translateY(-1px); }
+
+  /* Hamburger */
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 10; }
+  .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.25s; }
+
+  /* ─── MOBILE DRAWER ─── */
+  .mobile-drawer {
+    display: none; position: fixed; top: 70px; left: 0; right: 0; bottom: 0;
+    background: rgba(10,8,28,0.98); backdrop-filter: blur(24px);
+    border-top: 1px solid var(--border); overflow-y: auto; z-index: 99;
+    padding: 20px 24px 40px;
+  }
+  .mobile-drawer.open { display: block; }
+
+  .mobile-section { margin-bottom: 28px; }
+  .mobile-section-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--iris); margin-bottom: 10px; padding-left: 4px; }
+  .mobile-links { display: flex; flex-direction: column; gap: 2px; }
+  .mobile-link { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: var(--r-md); text-decoration: none; transition: all 0.18s; border: 1px solid transparent; }
+  .mobile-link:hover { background: rgba(91,82,216,0.12); border-color: rgba(160,154,245,0.15); }
+  .mobile-link-icon { font-size: 1rem; width: 28px; text-align: center; flex-shrink: 0; }
+  .mobile-link-label { font-size: 0.9rem; font-weight: 600; color: var(--white); }
+  .mobile-cta { display: block; width: 100%; padding: 15px; margin-top: 24px; border-radius: var(--r-md); text-align: center; background: linear-gradient(135deg, var(--teal), var(--cyan)); color: var(--deep); font-family: var(--font-display); font-size: 1rem; font-weight: 800; text-decoration: none; }
+
+  /* Hamburger open state */
+  .nav-open .nav-hamburger span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-open .nav-hamburger span:nth-child(2) { opacity: 0; }
+  .nav-open .nav-hamburger span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  @media (max-width: 900px) {
+    .nav-links, .nav-actions .btn-ghost { display: none; }
+    .nav-hamburger { display: flex; }
+  }
+  /* END MEGA MENU NAV */
+
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav id="main-nav">
   <div class="nav-inner">
+    <!-- Logo -->
     <a href="index.html" class="logo">
       <svg viewBox="0 0 38 38" fill="none">
         <defs>
-          <linearGradient id="lg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
-          <linearGradient id="lg2" x1="0" y1="38" x2="38" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1DE9C6"/><stop offset="100%" stop-color="#5B52D8"/></linearGradient>
+          <linearGradient id="nl1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5B52D8"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
+          <linearGradient id="nl2" x1="0" y1="38" x2="38" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1DE9C6"/><stop offset="100%" stop-color="#5B52D8"/></linearGradient>
         </defs>
-        <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round" fill="none"/>
-        <path d="M4 30 C7 24, 10 20, 13 24 C16 28, 17 32, 19 28 C21 24, 22 20, 25 24 C28 28, 31 24, 34 20" stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6"/>
-        <circle cx="33" cy="10" r="3.5" fill="url(#lg1)"/>
+        <path d="M4 24 C7 18, 10 14, 13 18 C16 22, 17 26, 19 22 C21 18, 22 14, 25 18 C28 22, 31 18, 34 14" stroke="url(#nl1)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M4 30 C7 24, 10 20, 13 24 C16 28, 17 32, 19 28 C21 24, 22 20, 25 24 C28 28, 31 24, 34 20" stroke="url(#nl2)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <circle cx="33" cy="10" r="3.5" fill="url(#nl1)"/>
       </svg>
       <span class="logo-text">Waves Financial</span>
     </a>
+
+    <!-- Desktop nav -->
     <div class="nav-links">
-      <a href="how-it-works.html">How It Works</a>
-      <a href="why-waves.html">Why Waves</a>
-      <a href="faq.html">FAQ</a>
-      <a href="blog.html">Blog</a>
-      <a href="contact.html">Contact</a>
+
+      <!-- Products -->
+      <div class="nav-item" id="mega-products">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">
+          Products
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mega-menu mega-products" role="menu">
+          <div class="mega-section" style="grid-column:1/-1">
+            <div class="mega-section-label">Our loan products</div>
+          </div>
+          <a href="online-loans.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.18);">🌐</div>
+            <div class="mega-link-text"><div class="mega-link-title">Online Loans</div><div class="mega-link-desc">$500–$1,000 · fully online</div></div>
+          </a>
+          <a href="bad-credit-loans.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(255,107,138,0.12);">💳</div>
+            <div class="mega-link-text"><div class="mega-link-title">Bad Credit Loans</div><div class="mega-link-desc">Income-based · no judgment</div></div>
+          </a>
+          <a href="no-credit-check-loans.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.12);">🚫</div>
+            <div class="mega-link-text"><div class="mega-link-title">No Credit Check</div><div class="mega-link-desc">Zero credit inquiry · ever</div></div>
+          </a>
+          <a href="installment-loans.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(255,209,102,0.12);">📅</div>
+            <div class="mega-link-text"><div class="mega-link-title">Installment Loans</div><div class="mega-link-desc">Fixed payments · flexible schedule</div></div>
+          </a>
+          <a href="e-transfer-loans.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(0,229,255,0.1);">⚡</div>
+            <div class="mega-link-text"><div class="mega-link-title">e-Transfer Loans</div><div class="mega-link-desc">Funded in ~2 min · 24/7</div></div>
+          </a>
+          <div class="mega-cta-strip">
+            <div class="mega-cta-text"><strong>No credit check.</strong> Apply in 5 minutes.</div>
+            <a href="apply.html" class="mega-cta-btn">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company -->
+      <div class="nav-item" id="mega-company">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">
+          Company
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mega-menu mega-company" role="menu">
+          <div class="mega-section" style="grid-column:1/-1">
+            <div class="mega-section-label">Who we are</div>
+          </div>
+          <a href="about.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(160,154,245,0.14);">🏢</div>
+            <div class="mega-link-text"><div class="mega-link-title">About Us</div><div class="mega-link-desc">Our story, mission &amp; values</div></div>
+          </a>
+          <a href="why-waves.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">🌊</div>
+            <div class="mega-link-text"><div class="mega-link-title">Why Waves</div><div class="mega-link-desc">What sets us apart</div></div>
+          </a>
+          <a href="reviews.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(255,209,102,0.1);">⭐</div>
+            <div class="mega-link-text"><div class="mega-link-title">Reviews</div><div class="mega-link-desc">4.8★ · 340+ verified borrowers</div></div>
+          </a>
+          <a href="blog.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.14);">📝</div>
+            <div class="mega-link-text"><div class="mega-link-title">Blog</div><div class="mega-link-desc">Financial tips &amp; guides</div></div>
+          </a>
+          <a href="careers.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(0,229,255,0.08);">🚀</div>
+            <div class="mega-link-text"><div class="mega-link-title">Careers</div><div class="mega-link-desc">3 open roles · Granby, QC</div></div>
+          </a>
+          <a href="contact.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">💬</div>
+            <div class="mega-link-text"><div class="mega-link-title">Contact</div><div class="mega-link-desc">Real Canadians · no bots</div></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="nav-item" id="mega-support">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">
+          Support
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mega-menu mega-support" role="menu">
+          <div class="mega-section" style="grid-column:1/-1">
+            <div class="mega-section-label">Help &amp; resources</div>
+          </div>
+          <a href="how-it-works.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.14);">🗺️</div>
+            <div class="mega-link-text"><div class="mega-link-title">How It Works</div><div class="mega-link-desc">Apply to funded in 10 min</div></div>
+          </a>
+          <a href="faq.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">❓</div>
+            <div class="mega-link-text"><div class="mega-link-title">FAQ</div><div class="mega-link-desc">Common questions answered</div></div>
+          </a>
+          <a href="online-payment.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(0,229,255,0.08);">💸</div>
+            <div class="mega-link-text"><div class="mega-link-title">Online Payment</div><div class="mega-link-desc">Make or confirm a payment</div></div>
+          </a>
+          <a href="contact.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(255,209,102,0.1);">📞</div>
+            <div class="mega-link-text"><div class="mega-link-title">Contact Support</div><div class="mega-link-desc">Mon–Sat · real humans</div></div>
+          </a>
+          <a href="privacy-policy.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(160,154,245,0.1);">🔒</div>
+            <div class="mega-link-text"><div class="mega-link-title">Privacy Policy</div><div class="mega-link-desc">How we protect your data</div></div>
+          </a>
+          <a href="terms-and-conditions.html" class="mega-link" role="menuitem">
+            <div class="mega-link-icon" style="background:rgba(91,82,216,0.1);">📄</div>
+            <div class="mega-link-text"><div class="mega-link-title">Terms &amp; Conditions</div><div class="mega-link-desc">Loan terms · 23% APR</div></div>
+          </a>
+        </div>
+      </div>
+
     </div>
+
+    <!-- Desktop CTA -->
     <div class="nav-actions">
       <a href="apply.html" class="btn-primary">Get a Loan →</a>
     </div>
-    <button class="nav-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+
+    <!-- Hamburger -->
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile drawer -->
+<div class="mobile-drawer" id="mobile-drawer" role="navigation" aria-label="Mobile navigation">
+  <div class="mobile-section">
+    <div class="mobile-section-label">Products</div>
+    <div class="mobile-links">
+      <a href="online-loans.html" class="mobile-link"><span class="mobile-link-icon">🌐</span><span class="mobile-link-label">Online Loans</span></a>
+      <a href="bad-credit-loans.html" class="mobile-link"><span class="mobile-link-icon">💳</span><span class="mobile-link-label">Bad Credit Loans</span></a>
+      <a href="no-credit-check-loans.html" class="mobile-link"><span class="mobile-link-icon">🚫</span><span class="mobile-link-label">No Credit Check</span></a>
+      <a href="installment-loans.html" class="mobile-link"><span class="mobile-link-icon">📅</span><span class="mobile-link-label">Installment Loans</span></a>
+      <a href="e-transfer-loans.html" class="mobile-link"><span class="mobile-link-icon">⚡</span><span class="mobile-link-label">e-Transfer Loans</span></a>
+    </div>
+  </div>
+  <div class="mobile-section">
+    <div class="mobile-section-label">Company</div>
+    <div class="mobile-links">
+      <a href="about.html" class="mobile-link"><span class="mobile-link-icon">🏢</span><span class="mobile-link-label">About Us</span></a>
+      <a href="why-waves.html" class="mobile-link"><span class="mobile-link-icon">🌊</span><span class="mobile-link-label">Why Waves</span></a>
+      <a href="reviews.html" class="mobile-link"><span class="mobile-link-icon">⭐</span><span class="mobile-link-label">Reviews</span></a>
+      <a href="blog.html" class="mobile-link"><span class="mobile-link-icon">📝</span><span class="mobile-link-label">Blog</span></a>
+      <a href="careers.html" class="mobile-link"><span class="mobile-link-icon">🚀</span><span class="mobile-link-label">Careers</span></a>
+      <a href="contact.html" class="mobile-link"><span class="mobile-link-icon">💬</span><span class="mobile-link-label">Contact</span></a>
+    </div>
+  </div>
+  <div class="mobile-section">
+    <div class="mobile-section-label">Support</div>
+    <div class="mobile-links">
+      <a href="how-it-works.html" class="mobile-link"><span class="mobile-link-icon">🗺️</span><span class="mobile-link-label">How It Works</span></a>
+      <a href="faq.html" class="mobile-link"><span class="mobile-link-icon">❓</span><span class="mobile-link-label">FAQ</span></a>
+      <a href="online-payment.html" class="mobile-link"><span class="mobile-link-icon">💸</span><span class="mobile-link-label">Online Payment</span></a>
+      <a href="privacy-policy.html" class="mobile-link"><span class="mobile-link-icon">🔒</span><span class="mobile-link-label">Privacy Policy</span></a>
+      <a href="terms-and-conditions.html" class="mobile-link"><span class="mobile-link-icon">📄</span><span class="mobile-link-label">Terms &amp; Conditions</span></a>
+    </div>
+  </div>
+  <a href="apply.html" class="mobile-cta">Get a Loan — It's Free →</a>
+</div>
+
+
 
 <main>
 
@@ -844,14 +1121,75 @@
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  document.querySelector('.nav-hamburger').addEventListener('click', () => {
-    document.querySelector('nav').classList.toggle('nav-mobile-open');
   });
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    a.addEventListener('click', () => {
-      document.querySelector('nav').classList.remove('nav-mobile-open');
+
+// ── MEGA MENU ──
+  const megaItems = document.querySelectorAll('.nav-item[id^="mega-"]');
+  let closeTimer = null;
+
+  megaItems.forEach(item => {
+    const trigger = item.querySelector('.nav-trigger');
+
+    const open = () => {
+      clearTimeout(closeTimer);
+      megaItems.forEach(i => i !== item && i.classList.remove('mega-open'));
+      item.classList.add('mega-open');
+      trigger.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+      closeTimer = setTimeout(() => {
+        item.classList.remove('mega-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }, 120);
+    };
+
+    item.addEventListener('mouseenter', open);
+    item.addEventListener('mouseleave', close);
+    item.querySelector('.mega-menu').addEventListener('mouseenter', () => clearTimeout(closeTimer));
+    trigger.addEventListener('click', () => item.classList.contains('mega-open') ? close() : open());
+  });
+
+  // Close on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.nav-item')) {
+      megaItems.forEach(i => i.classList.remove('mega-open'));
+    }
+  });
+
+  // Keyboard: Escape closes
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') megaItems.forEach(i => i.classList.remove('mega-open'));
+  });
+
+  // ── MOBILE DRAWER ──
+  const hamburger = document.getElementById('nav-hamburger');
+  const drawer    = document.getElementById('mobile-drawer');
+  const mainNav   = document.getElementById('main-nav');
+
+  if (hamburger && drawer) {
+    hamburger.addEventListener('click', () => {
+      const isOpen = drawer.classList.toggle('open');
+      mainNav.classList.toggle('nav-open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     });
-  });
+    drawer.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        drawer.classList.remove('open');
+        mainNav.classList.remove('nav-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  // Scroll-based nav styling
+  const navEl = document.getElementById('main-nav');
+  if (navEl) {
+    window.addEventListener('scroll', () => {
+      navEl.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  }
 </script>
 </body>
 </html>
