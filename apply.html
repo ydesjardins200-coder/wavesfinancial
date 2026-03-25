@@ -1099,23 +1099,63 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
   <!-- ══════════════════════════════════════════════════════════════════
        RENEWAL FORM (single page, conditional sections)
   ══════════════════════════════════════════════════════════════════ -->
+  <!-- Renewal stepper (separate from new-loan stepper) -->
+  <div class="progress-wrap" id="r-progress-wrap" style="display:none;">
+    <div class="progress-top">
+      <span class="progress-step-label" id="r-step-label">Step 1 — Your Information</span>
+      <span class="progress-counter" id="r-step-counter">1 of 3</span>
+    </div>
+    <div class="stepper">
+      <div class="stepper-item"><div class="step-node active" id="r-node-1"><span class="step-num">1</span></div></div>
+      <div class="step-line" id="r-line-1"></div>
+      <div class="stepper-item"><div class="step-node" id="r-node-2"><span class="step-num">2</span></div></div>
+      <div class="step-line" id="r-line-2"></div>
+      <div class="stepper-item"><div class="step-node" id="r-node-3"><span class="step-num">3</span></div></div>
+    </div>
+    <div class="stepper-labels">
+      <span class="stepper-label active" id="r-lbl-1">Your Info</span>
+      <span class="stepper-label" id="r-lbl-2">Loan Agreement</span>
+      <span class="stepper-label" id="r-lbl-3">Bank Verification</span>
+    </div>
+  </div>
+
   <div class="form-card" id="renewal-form">
 
-    <div id="renewal-fields">
+    <!-- ─── RENEWAL STEP 1: PERSONAL + EXISTING CONDITIONAL FIELDS ─── -->
+    <div class="step-panel active" id="r-step-1">
       <div class="loan-chip" style="margin-bottom:18px;">
         <span class="loan-chip-val">Loan Renewal</span>
         <span class="loan-chip-sep">&middot;</span>
         <span class="loan-chip-sub">Existing customer</span>
       </div>
-      <h1 class="step-heading">Renew your loan</h1>
-      <p class="step-sub">Update only what's changed since your last loan &mdash; most fields are optional if nothing is different.</p>
+      <h1 class="step-heading">Your information</h1>
+      <p class="step-sub">Confirm your details and update only what has changed since your last loan.</p>
 
-      <!-- PERSONAL -->
+      <!-- PERSONAL IDENTITY -->
       <div class="form-section-title">Personal Information</div>
       <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">First Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="r-fn" placeholder="Marie" autocomplete="given-name">
+          <span class="field-err" id="err-r-fn">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Last Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="r-ln" placeholder="Tremblay" autocomplete="family-name">
+          <span class="field-err" id="err-r-ln">&#9888; Required</span></div>
+      </div>
+      <div class="field-row field-row-2">
         <div class="field"><label class="field-label">Date of Birth <span class="req">*</span></label>
-          <input type="date" class="field-input" id="r-dob">
+          <input type="date" class="field-input" id="r-dob" autocomplete="bday">
           <span class="field-err" id="err-r-dob">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Email <span class="req">*</span></label>
+          <input type="email" class="field-input" id="r-email" placeholder="marie@email.com" autocomplete="email">
+          <span class="field-err" id="err-r-email">&#9888; Valid email required</span></div>
+      </div>
+      <div class="field-row field-row-2">
+        <div class="field"><label class="field-label">Cell Phone <span class="req">*</span></label>
+          <input type="tel" class="field-input" id="r-cphone" placeholder="(514) 555-0123" autocomplete="tel">
+          <span class="field-err" id="err-r-cphone">&#9888; Required</span></div>
+        <div class="field"><label class="field-label">Home Phone <span class="req">*</span></label>
+          <input type="tel" class="field-input" id="r-hphone" placeholder="(514) 555-0100" autocomplete="tel">
+          <span class="field-err" id="err-r-hphone">&#9888; Required</span></div>
       </div>
 
       <!-- ADDRESS CHANGE -->
@@ -1133,7 +1173,7 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
           <div class="field"><label class="field-label">Street Address <span class="req">*</span></label>
             <input type="text" class="field-input" id="r-addr" placeholder="123 Main Street"></div>
         </div>
-        <div class="field-row field-row-2" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="field-row" style="grid-template-columns:1fr 1fr 1fr;">
           <div class="field"><label class="field-label">City</label>
             <input type="text" class="field-input" id="r-city" placeholder="Halifax"></div>
           <div class="field"><label class="field-label">Province <span class="req">*</span></label>
@@ -1200,7 +1240,7 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
         </div>
       </div>
 
-      <!-- Pay frequency always shown -->
+      <!-- PAY FREQUENCY -->
       <div class="field-row" style="margin-top:14px;">
         <div class="field"><label class="field-label">Pay Frequency <span class="req">*</span></label>
           <div class="select-wrap">
@@ -1261,7 +1301,7 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
         </div>
       </div>
 
-      <!-- LOAN INFO -->
+      <!-- LOAN REQUEST -->
       <div class="form-section-title" style="margin-top:18px;">Loan Request</div>
       <div class="field-row field-row-2">
         <div class="field"><label class="field-label">Amount <span class="req">*</span></label>
@@ -1296,41 +1336,207 @@ nav.scrolled{background:rgba(13,11,31,0.98);}
           </div></div>
       </div>
 
-      <!-- CONSENT -->
-      <div class="consent-block" style="display:flex;margin-top:18px;">
-        <label class="consent-row">
-          <input type="checkbox" id="r-consent-terms">
-          <span class="consent-box"></span>
-          <span class="consent-text">I confirm all information is accurate and agree to the <a href="terms-and-conditions.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</span>
-        </label>
-        <label class="consent-row">
-          <input type="checkbox" id="r-consent-contact">
-          <span class="consent-box"></span>
-          <span class="consent-text">I accept periodic contact by Waves Financial by email with promotions or updates regarding my account.</span>
-        </label>
-        <span class="field-err" id="err-r-consent">&#9888; You must accept the terms to continue</span>
-      </div>
-
       <div class="actions" style="margin-top:26px;">
         <button class="btn-back-step" onclick="selectType(null)">&#8592; Back</button>
-        <button class="btn-submit" id="r-submit-btn" onclick="submitRenewal()">
-          <span id="r-submit-lbl">Submit Renewal</span>
+        <button class="btn-next-step" onclick="rGoNext(1)">Continue &mdash; Loan Agreement
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div><!-- /r-step-1 -->
+
+    <!-- ─── RENEWAL STEP 2: LOAN AGREEMENT & E-SIGNATURE ─── -->
+    <div class="step-panel" id="r-step-2">
+      <div class="loan-chip" style="margin-bottom:18px;">
+        <span class="loan-chip-val" id="r-chip-val">$800</span>
+        <span class="loan-chip-sep">&middot;</span>
+        <span class="loan-chip-sub">Review &amp; sign your renewal agreement</span>
+      </div>
+      <h1 class="step-heading">Renewal Agreement</h1>
+      <p class="step-sub">Please read your renewal loan agreement carefully before signing. Your typed signature is legally binding.</p>
+
+      <div style="border:1px solid var(--border);border-radius:var(--r-lg);background:rgba(8,6,20,0.5);overflow:hidden;margin-bottom:18px;">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(91,82,216,0.2);border:1px solid rgba(91,82,216,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">📄</div>
+            <div>
+              <div style="font-size:0.85rem;font-weight:700;color:var(--white);">Waves Financial Loan Renewal Agreement</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);">Loan Renewal &middot; 23% APR &middot; <span id="r-contract-amount">$800</span></div>
+            </div>
+          </div>
+          <div style="font-size:0.68rem;color:var(--teal);font-weight:700;padding:3px 10px;border-radius:100px;background:rgba(29,233,198,0.1);border:1px solid rgba(29,233,198,0.2);">Pending signature</div>
+        </div>
+        <div style="padding:16px 18px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Renewal Amount</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--white);" id="r-contract-amount-2">$800</div>
+            </div>
+            <div style="padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Annual Interest Rate</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--white);">23% APR</div>
+            </div>
+            <div style="padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Deposit Method</div>
+              <div style="font-size:0.9rem;font-weight:700;color:var(--white);" id="r-contract-fund">Direct Deposit</div>
+            </div>
+            <div style="padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Pay Frequency</div>
+              <div style="font-size:0.9rem;font-weight:700;color:var(--white);" id="r-contract-freq">—</div>
+            </div>
+          </div>
+          <div style="height:220px;overflow-y:auto;border:1px solid rgba(160,154,245,0.12);border-radius:var(--r-md);padding:14px 16px;background:rgba(13,11,31,0.5);font-size:0.78rem;color:var(--text-muted);line-height:1.75;margin-bottom:6px;">
+            <p style="font-weight:700;color:var(--white);margin-bottom:10px;">LOAN RENEWAL AGREEMENT</p>
+            <p style="margin-bottom:8px;">This Loan Renewal Agreement ("Agreement") is entered into between <strong style="color:var(--white);">Waves Financial Inc.</strong> ("Lender") and the existing client identified in this renewal request ("Borrower"), effective as of the date of signing below.</p>
+            <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">1. RENEWAL AMOUNT &amp; DISBURSEMENT</p>
+            <p style="margin-bottom:8px;">The Lender agrees to provide the Borrower with the renewal loan amount selected above. Funds will be disbursed via the method selected by the Borrower, on the same business day of approval if approved before 2:30 PM EST.</p>
+            <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">2. INTEREST RATE</p>
+            <p style="margin-bottom:8px;">This renewal carries an Annual Percentage Rate (APR) of <strong style="color:var(--white);">23%</strong> on a simple interest basis. Total cost of borrowing will be disclosed in your final renewal documents.</p>
+            <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">3. REPAYMENT</p>
+            <p style="margin-bottom:8px;">Repayments will be collected via Pre-Authorized Debit (PAD) from the verified bank account, aligned with the Borrower's pay frequency. The Borrower may repay in full at any time without penalty.</p>
+            <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">4. PRE-AUTHORIZED DEBIT AUTHORIZATION</p>
+            <p style="margin-bottom:8px;">By signing this Agreement, the Borrower authorizes Waves Financial Inc. to initiate pre-authorized debit transactions from the verified bank account for each scheduled repayment on or after each due date. This authorization remains in effect until all amounts owing are paid in full.</p>
+            <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">5. DEFAULT &amp; GOVERNING LAW</p>
+            <p style="margin-bottom:8px;">The Borrower will be in default if a payment is not received within 3 business days of the due date. An NSF fee of $45.00 applies per returned payment. This Agreement is governed by the laws of the Borrower's province of residence and applicable federal laws of Canada.</p>
+            <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">6. ENTIRE AGREEMENT</p>
+            <p style="margin-bottom:0;">This Agreement, together with the <a href="terms-and-conditions.html" style="color:var(--periwinkle);">Terms &amp; Conditions</a> and <a href="privacy-policy.html" style="color:var(--periwinkle);">Privacy Policy</a>, constitutes the entire agreement between the parties.</p>
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-bottom:16px;">Scroll to read the full agreement before signing.</div>
+          <label class="consent-row" style="margin-bottom:14px;">
+            <input type="checkbox" id="r-read-contract">
+            <span class="consent-box"></span>
+            <span class="consent-text">I have read and understand the full renewal agreement above.</span>
+          </label>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(160,154,245,0.22);border-radius:var(--r-lg);background:rgba(8,6,20,0.5);padding:22px 20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(29,233,198,0.12);border:1px solid rgba(29,233,198,0.2);display:flex;align-items:center;justify-content:center;font-size:1rem;">✍️</div>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;color:var(--white);">Electronic Signature</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Type your full legal name exactly as it appears on your ID</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Full Legal Name <span class="req">*</span></label>
+          <input type="text" class="field-input" id="r-esig" placeholder="Marie Tremblay" autocomplete="name"
+            style="font-size:1.1rem;font-style:italic;letter-spacing:0.02em;">
+          <span class="field-err" id="err-r-esig">&#9888; Your signature is required</span>
+          <div class="field-hint" style="margin-top:6px;">By typing your name you are providing an electronic signature and agreeing to be legally bound by the renewal agreement above. Timestamp: <span id="r-sig-timestamp" style="color:var(--periwinkle);font-weight:600;"></span></div>
+        </div>
+        <div class="consent-block" style="display:flex;margin-top:14px;">
+          <label class="consent-row">
+            <input type="checkbox" id="r-consent-terms">
+            <span class="consent-box"></span>
+            <span class="consent-text">I agree to the <a href="terms-and-conditions.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>, and I authorize Waves Financial to initiate pre-authorized debits from my verified bank account for loan repayments.</span>
+          </label>
+          <label class="consent-row">
+            <input type="checkbox" id="r-consent-contact">
+            <span class="consent-box"></span>
+            <span class="consent-text">I accept periodic contact by Waves Financial by email with promotions or account updates.</span>
+          </label>
+          <span class="field-err" id="err-r-consent">&#9888; Please read the agreement, sign, and accept the terms to continue</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-back-step" onclick="rGoBack(2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <button class="btn-next-step" onclick="rGoNext(2)">Continue &mdash; Bank Verification
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div><!-- /r-step-2 -->
+
+    <!-- ─── RENEWAL STEP 3: FLINKS BANK VERIFICATION ─── -->
+    <div class="step-panel" id="r-step-3">
+      <div class="loan-chip" style="margin-bottom:18px;">
+        <span class="loan-chip-val" id="r-chip-val-3">$800</span>
+        <span class="loan-chip-sep">&middot;</span>
+        <span class="loan-chip-sub">Last step &mdash; verify your bank</span>
+      </div>
+      <h1 class="step-heading">Connect your bank</h1>
+      <p class="step-sub">Securely link your Canadian bank account to confirm your details and receive funds. Read-only &mdash; we can never move money.</p>
+
+      <div class="flinks-box" id="r-flinks-box">
+        <div class="flinks-inner" id="r-flinks-placeholder">
+          <div class="flinks-logo">🏦</div>
+          <div class="flinks-title">Instant Bank Verification</div>
+          <div class="flinks-sub">Powered by Flinks &mdash; your login credentials are entered directly into your bank's secure environment and never transmitted to Waves Financial.</div>
+          <div class="banks-row">
+            <span class="bank-chip">RBC</span><span class="bank-chip">TD</span><span class="bank-chip">BMO</span>
+            <span class="bank-chip">CIBC</span><span class="bank-chip">Scotia</span><span class="bank-chip">Desjardins</span>
+            <span class="bank-chip">Tangerine</span><span class="bank-chip">EQ Bank</span><span class="bank-chip">+700 more</span>
+          </div>
+          <div class="how-it-works-strip">
+            <div class="hiw-item"><div class="hiw-icon">🔒</div><div class="hiw-text">256-bit encrypted</div></div>
+            <div class="hiw-item"><div class="hiw-icon">👁️</div><div class="hiw-text">Read-only &middot; can't move money</div></div>
+            <div class="hiw-item"><div class="hiw-icon">⚡</div><div class="hiw-text">Under 60 seconds</div></div>
+          </div>
+          <div class="flinks-dev-note">
+            <span style="font-size:1rem;flex-shrink:0;">⚙️</span>
+            <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.55;">
+              <strong style="color:var(--periwinkle);">Dev mode</strong> &mdash; Replace <code>YOUR_FLINKS_CLIENT_ID</code> with your Flinks iframe URL to activate. Use the button below for sandbox testing.
+            </div>
+          </div>
+          <!-- Real Flinks iframe — uncomment when ready:
+          <iframe id="r-flinks-iframe"
+            src="https://YOUR_FLINKS_CLIENT_ID-iframe.private.fin.ag/v2/?institutionFilterEnable=false&country=CA&language=en&innerRedirect=true&demo=false&backgroundColor=0D0B1F&foregroundColor1=ffffff&desktopLayout=true&headerEnable=false&progressMeterEnable=true"
+            style="width:100%;height:520px;border:none;border-radius:12px;"
+            allow="camera" title="Flinks Bank Connection">
+          </iframe>
+          -->
+          <button class="btn-demo" onclick="rSimulateFlinks()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+            Simulate Bank Connection (Sandbox)
+          </button>
+        </div>
+        <div class="flinks-connected" id="r-flinks-connected">
+          <div class="connected-check">&#9989;</div>
+          <div class="connected-title">Bank Connected!</div>
+          <div class="connected-bank-pill">
+            <span class="connected-bank-name" id="r-conn-bank">RBC Royal Bank</span>
+            <span class="connected-acct" id="r-conn-acct">Chequing &bull;&bull;&bull;&bull;4521</span>
+          </div>
+          <div class="connected-sub">Your account is securely verified. Your credentials were never transmitted to Waves Financial.</div>
+          <button class="btn-reconnect" onclick="rResetFlinks()">Connect a different account</button>
+        </div>
+      </div>
+
+      <div class="consent-block" id="r-consent-block" style="display:none;">
+        <label class="consent-row">
+          <input type="checkbox" id="r-c-pad">
+          <span class="consent-box"></span>
+          <span class="consent-text">I authorize Waves Financial to initiate pre-authorized debits from the verified account for renewal repayments as outlined in the signed Renewal Agreement.</span>
+        </label>
+        <span class="field-err" id="err-r-flinks-consent">&#9888; Please accept the PAD authorization to continue</span>
+      </div>
+
+      <div class="micro-trust" style="margin:16px 0;">
+        <span class="micro-item">🔒 Bank-level encryption</span>
+        <span class="micro-item">👁️ Read-only access</span>
+        <span class="micro-item">🚫 Credentials never stored</span>
+      </div>
+
+      <div class="actions">
+        <button class="btn-back-step" onclick="rGoBack(3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <button class="btn-submit" id="r-submit-btn" onclick="submitRenewal()" disabled>
+          <span id="r-submit-lbl">Connect Bank First</span>
           <div class="spinner" id="r-spinner"></div>
           <svg id="r-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
-    </div>
+    </div><!-- /r-step-3 -->
 
-    <!-- Renewal success -->
+    <!-- RENEWAL SUCCESS -->
     <div id="renewal-success" style="display:none;text-align:center;padding:16px 0;">
       <div class="success-wave">🔄</div>
       <div class="success-title">Renewal Submitted!</div>
-      <p class="success-sub">Your renewal request has been received. We'll review it and get back to you quickly during business hours.</p>
+      <p class="success-sub">Your signed renewal and bank verification are in. Our team will review your file and contact you quickly during business hours.</p>
       <div class="success-ref">Reference # <strong id="r-ref-num">WF-R-000000</strong></div>
       <div class="success-next">
         <div class="success-next-item"><span class="success-step-badge">1</span>We'll verify your renewal request and updated information.</div>
         <div class="success-next-item"><span class="success-step-badge">2</span>You'll receive an email confirming your new loan amount and terms.</div>
-        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen deposit method on the same day if approved before 2:30 PM EST.</div>
+        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
     </div>
@@ -1408,7 +1614,10 @@ function selectType(type) {
     showPanel(1, 'forward');
   } else {
     renForm.style.display = 'block';
-    stepper.style.display = 'none';
+    document.getElementById('r-progress-wrap').style.display = 'block';
+    rCurrentStep = 1;
+    rUpdateStepper(1);
+    rShowPanel(1, 'forward');
   }
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -1653,7 +1862,7 @@ function toggleSin(id) {
 
 // attach formatters
 document.addEventListener('DOMContentLoaded', () => {
-  ['n-hphone','n-cphone','n-work-phone','n-sc-phone','r-phone'].forEach(id=>{
+  ['n-hphone','n-cphone','n-work-phone','n-sc-phone','r-cphone','r-hphone'].forEach(id=>{
     const el=document.getElementById(id); if(el)el.addEventListener('input',()=>fmtPhone(el));
   });
   ['n-postal','r-postal'].forEach(id=>{
@@ -1719,18 +1928,139 @@ async function submitNew() {
   await doSubmit(WEBHOOK_NEW, payload, ref, 'new');
 }
 
-// ─── SUBMIT RENEWAL ───────────────────────────────────────────────────
-async function submitRenewal() {
+// ─── RENEWAL STEPPER ─────────────────────────────────────────────────
+let rCurrentStep = 1;
+const R_STEP_LABELS = ['Your Information','Loan Agreement','Bank Verification'];
+
+function rUpdateStepper(n) {
+  document.getElementById('r-step-label').textContent   = 'Step '+n+' \u2014 '+R_STEP_LABELS[n-1];
+  document.getElementById('r-step-counter').textContent = n+' of 3';
+  for(let i=1;i<=3;i++){
+    const node=document.getElementById('r-node-'+i), lbl=document.getElementById('r-lbl-'+i);
+    node.classList.remove('active','done'); lbl.classList.remove('active','done');
+    if(i<n){node.classList.add('done');lbl.classList.add('done');}
+    if(i===n){node.classList.add('active');lbl.classList.add('active');}
+    if(i<3) document.getElementById('r-line-'+i).classList.toggle('done',i<n);
+  }
+}
+
+function rShowPanel(n, dir) {
+  for(let i=1;i<=3;i++){
+    const p=document.getElementById('r-step-'+i);
+    if(p){p.classList.remove('active','slide-back');}
+  }
+  const next=document.getElementById('r-step-'+n);
+  if(next){if(dir==='back')next.classList.add('slide-back');next.classList.add('active');}
+  rCurrentStep=n; rUpdateStepper(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function rGoNext(from) {
+  if(from===1){
+    if(!rValidateStep1())return;
+    rSyncContractSummary();
+    rShowPanel(2,'forward');
+  } else if(from===2){
+    if(!rValidateStep2())return;
+    rShowPanel(3,'forward');
+  }
+}
+function rGoBack(from){ rShowPanel(from-1,'back'); }
+
+function rValidateStep1() {
   let ok=true;
+  if(!v('r-fn'))ok=false; if(!v('r-ln'))ok=false;
   if(!vDob('r-dob'))ok=false;
+  if(!vEmail('r-email'))ok=false;
+  if(!vPhone('r-cphone'))ok=false; if(!vPhone('r-hphone'))ok=false;
   if(!vRadio('r-addr-changed'))ok=false;
   if(!vRadio('r-job-changed'))ok=false;
-  if(!vRadio('r-bank-changed'))ok=false;
   if(!v('r-pay-freq','r-pay-freq'))ok=false;
+  if(!vRadio('r-bank-changed'))ok=false;
   if(!v('r-next-pay'))ok=false;
-  const t=document.getElementById('r-consent-terms').checked;
-  if(!t){setErr('r-consent',true,'You must accept the terms');ok=false;}else clrErr('r-consent');
-  if(!ok)return;
+  return ok;
+}
+
+function rValidateStep2() {
+  let ok=true;
+  const read=document.getElementById('r-read-contract').checked;
+  const sig=document.getElementById('r-esig').value.trim();
+  const terms=document.getElementById('r-consent-terms').checked;
+  if(!sig){setErr('r-esig',true,'Your signature is required');ok=false;}else clrErr('r-esig');
+  if(!read||!sig||!terms){setErr('r-consent',true,'Please read the agreement, sign, and accept the terms');ok=false;}else clrErr('r-consent');
+  return ok;
+}
+
+// ─── RENEWAL CONTRACT SYNC ────────────────────────────────────────────
+function rSyncContractSummary() {
+  const amt = parseInt(document.getElementById('r-amount').value)||800;
+  document.getElementById('r-contract-amount').textContent  = '$'+amt.toLocaleString();
+  document.getElementById('r-contract-amount-2').textContent = '$'+amt.toLocaleString();
+  document.getElementById('r-chip-val').textContent   = '$'+amt.toLocaleString();
+  document.getElementById('r-chip-val-3').textContent = '$'+amt.toLocaleString();
+  const fundEl=document.querySelector('input[name="r-fund-method"]:checked');
+  const fundLabels={direct:'Direct Deposit (Free)',instant:'Instant Deposit',etransfer:'Interac e-Transfer® (+$6)'};
+  if(fundEl) document.getElementById('r-contract-fund').textContent=fundLabels[fundEl.value]||fundEl.value;
+  const freqEl=document.getElementById('r-pay-freq');
+  if(freqEl&&freqEl.value){
+    const opt=freqEl.options[freqEl.selectedIndex];
+    document.getElementById('r-contract-freq').textContent=opt?opt.text:'—';
+  }
+  const now=new Date();
+  document.getElementById('r-sig-timestamp').textContent=now.toLocaleString('en-CA',{
+    year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'
+  });
+}
+
+// ─── RENEWAL FLINKS ───────────────────────────────────────────────────
+let rFlinksId=null, rFlinksData={};
+
+function rSimulateFlinks(){
+  const banks=['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
+  const bank=banks[Math.floor(Math.random()*banks.length)];
+  const mask=String(Math.floor(1000+Math.random()*9000));
+  rFlinksId='sandbox-r-'+Math.random().toString(36).substr(2,9);
+  rFlinksData={loginId:rFlinksId,institution:bank,sandbox:true};
+  rOnFlinksSuccess({institution:bank,accountType:'Chequing',accountMask:'\u2022\u2022\u2022\u2022'+mask});
+}
+
+function rOnFlinksSuccess(d){
+  document.getElementById('r-flinks-placeholder').style.display='none';
+  const conn=document.getElementById('r-flinks-connected');
+  conn.style.display='block'; conn.style.animation='fadeIn 0.4s ease';
+  document.getElementById('r-conn-bank').textContent=d.institution;
+  document.getElementById('r-conn-acct').textContent=d.accountType+' '+d.accountMask;
+  const cb=document.getElementById('r-consent-block');
+  cb.style.display='flex';
+  const btn=document.getElementById('r-submit-btn');
+  btn.disabled=false;
+  document.getElementById('r-submit-lbl').textContent='Submit Renewal';
+}
+
+function rResetFlinks(){
+  rFlinksId=null; rFlinksData={};
+  document.getElementById('r-flinks-placeholder').style.display='block';
+  document.getElementById('r-flinks-connected').style.display='none';
+  document.getElementById('r-consent-block').style.display='none';
+  const btn=document.getElementById('r-submit-btn');
+  btn.disabled=true;
+  document.getElementById('r-submit-lbl').textContent='Connect Bank First';
+  const pad=document.getElementById('r-c-pad');
+  if(pad)pad.checked=false;
+  clrErr('r-flinks-consent');
+}
+
+// ─── SUBMIT RENEWAL ───────────────────────────────────────────────────
+async function submitRenewal() {
+  if(!rFlinksId){
+    const box=document.getElementById('r-flinks-box');
+    box.style.borderColor='rgba(255,107,138,0.45)';box.style.boxShadow='0 0 0 3px rgba(255,107,138,0.08)';
+    setTimeout(()=>{box.style.borderColor='';box.style.boxShadow='';},2500);
+    return;
+  }
+  const pad=document.getElementById('r-c-pad');
+  if(pad&&!pad.checked){setErr('r-flinks-consent',true,'Please accept the PAD authorization to continue');return;}
+  clrErr('r-flinks-consent');
 
   const btn=document.getElementById('r-submit-btn');
   const lbl=document.getElementById('r-submit-lbl');
@@ -1741,7 +2071,11 @@ async function submitRenewal() {
   const ref=genRef('WF-R');
   const payload={
     formType:'renewal', ref, submittedAt:new Date().toISOString(),
-    personal:{ dob:gv('r-dob') },
+    signature:{ fullName:gv('r-esig'), timestamp:document.getElementById('r-sig-timestamp').textContent },
+    personal:{
+      firstName:gv('r-fn'), lastName:gv('r-ln'), dob:gv('r-dob'),
+      email:gv('r-email'), cellPhone:gv('r-cphone'), homePhone:gv('r-hphone'),
+    },
     address:{
       changed:gr('r-addr-changed'),
       address:gv('r-addr'), city:gv('r-city'),
@@ -1757,6 +2091,7 @@ async function submitRenewal() {
       changed:gr('r-bank-changed'),
       bank:gv('r-bank'), institution:gv('r-institution'),
       transit:gv('r-transit'), account:gv('r-account'),
+      flinksLoginId:rFlinksId, flinksInstitution:rFlinksData.institution||'', sandbox:!!rFlinksData.sandbox,
     },
     loan:{
       amount:parseInt(document.getElementById('r-amount').value)||800,
@@ -1793,7 +2128,8 @@ function showOutcome(ref, type, outcome) {
       document.getElementById('success-screen').style.display='block';
     }
   } else {
-    document.getElementById('renewal-fields').style.display='none';
+    for(let i=1;i<=3;i++){const p=document.getElementById('r-step-'+i);if(p)p.style.display='none';}
+    document.getElementById('r-progress-wrap').style.display='none';
     document.getElementById('trust-bar').style.display='none';
     if(outcome==='success'){
       document.getElementById('r-ref-num').textContent=ref;
