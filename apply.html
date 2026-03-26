@@ -836,6 +836,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
                 <span class="fund-title">Instant Deposit</span>
                 <span class="fund-desc">In your account within 1&ndash;2 hours of approval.</span>
               </span></span></label>
+            <label class="fund-option"><input type="radio" name="n-fund-method" value="etransfer">
+              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+                <span class="fund-title">Interac e-Transfer&reg; <span class="fund-badge fee">+$6.00</span></span>
+                <span class="fund-desc">Sent to your email on file within ~2 minutes of approval.</span>
+              </span></span></label>
           </div></div>
       </div>
 
@@ -2059,7 +2064,7 @@ function syncContractSummary() {
   document.getElementById('n-chip-val').textContent   = '$'+amt.toLocaleString();
   document.getElementById('n-chip-val-3').textContent = '$'+amt.toLocaleString();
   const fundEl = document.querySelector('input[name="n-fund-method"]:checked');
-  const fundLabels = {direct:'Direct Deposit (Free)', instant:'Instant Deposit'};
+  const fundLabels = {direct:'Direct Deposit (Free)', instant:'Instant Deposit', etransfer:'Interac e-Transfer® (+$6)'};
   if(fundEl) document.getElementById('contract-fund-method').textContent = fundLabels[fundEl.value]||fundEl.value;
   const freqEl = document.getElementById('n-pay-freq');
   if(freqEl && freqEl.value) {
