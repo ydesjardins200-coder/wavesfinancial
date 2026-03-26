@@ -618,7 +618,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
           <input type="email" class="field-input" id="n-email" placeholder="marie@email.com" autocomplete="email">
           <span class="field-err" id="err-n-email">&#9888; Valid email required</span></div>
         <div class="field"><label class="field-label">Date of Birth <span class="req">*</span></label>
-          <input type="date" class="field-input" id="n-dob" autocomplete="bday">
+          <input type="date" class="field-input" id="n-dob" autocomplete="bday" min="1900-01-01" max="2006-12-31">
           <span class="field-err" id="err-n-dob">&#9888; Must be 18+</span></div>
       </div>
       <div class="field-row field-row-2">
@@ -1132,7 +1132,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       </div>
       <div class="field-row field-row-2">
         <div class="field"><label class="field-label">Date of Birth <span class="req">*</span></label>
-          <input type="date" class="field-input" id="r-dob" autocomplete="bday">
+          <input type="date" class="field-input" id="r-dob" autocomplete="bday" min="1900-01-01" max="2006-12-31">
           <span class="field-err" id="err-r-dob">&#9888; Required</span></div>
         <div class="field"><label class="field-label">Email <span class="req">*</span></label>
           <input type="email" class="field-input" id="r-email" placeholder="marie@email.com" autocomplete="email">
