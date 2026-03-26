@@ -51,16 +51,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 .progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .progress-step-label{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--periwinkle);}
 .progress-counter{font-size:0.7rem;color:var(--text-muted);}
-.stepper{display:flex;align-items:center;width:100%;}
-.stepper-item{display:flex;align-items:center;flex:1;}
-.stepper-item:last-child{flex:0;}
+/* Stepper — nodes and lines as direct flex children, no wrapper interference */
+.stepper{display:flex;align-items:center;width:100%;position:relative;}
 .step-node{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:800;border:2px solid rgba(160,154,245,0.2);background:rgba(13,11,31,0.8);color:var(--text-muted);transition:all 0.4s ease;position:relative;z-index:1;}
 .step-node.active{border-color:var(--iris);background:rgba(91,82,216,0.25);color:var(--white);box-shadow:0 0 0 4px rgba(91,82,216,0.15),0 0 20px rgba(91,82,216,0.3);}
 .step-node.done{border-color:var(--teal);background:rgba(29,233,198,0.18);color:var(--teal);}
 .step-node.done .step-num{display:none;}
 .step-node.done::after{content:'✓';font-size:0.9rem;font-weight:800;}
-.step-line{flex:1;height:2px;margin:0 3px;background:rgba(160,154,245,0.12);transition:background 0.5s ease;}
-.step-line.done{background:linear-gradient(90deg,var(--iris),var(--teal));}
+/* Line sits directly between nodes as a flex-grow child */
+.step-line{flex:1;height:2px;margin:0 4px;background:rgba(160,154,245,0.12);position:relative;overflow:hidden;border-radius:2px;}
+.step-line-fill{position:absolute;left:0;top:0;height:100%;width:0%;border-radius:2px;background:linear-gradient(90deg,var(--iris),var(--teal));transition:width 0.4s ease;}
+.step-line.done .step-line-fill{width:100%;}
 .stepper-labels{display:flex;justify-content:space-between;margin-top:8px;}
 .stepper-label{font-size:0.68rem;color:var(--text-muted);flex:1;text-align:center;transition:color 0.3s;}
 .stepper-label:first-child{text-align:left;}
@@ -531,11 +532,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <span class="progress-counter" id="step-counter">1 of 3</span>
     </div>
     <div class="stepper">
-      <div class="stepper-item"><div class="step-node active" id="node-1"><span class="step-num">1</span></div></div>
-      <div class="step-line" id="line-1"></div>
-      <div class="stepper-item"><div class="step-node" id="node-2"><span class="step-num">2</span></div></div>
-      <div class="step-line" id="line-2"></div>
-      <div class="stepper-item"><div class="step-node" id="node-3"><span class="step-num">3</span></div></div>
+      <div class="step-node active" id="node-1"><span class="step-num">1</span></div>
+      <div class="step-line" id="line-1"><div class="step-line-fill" id="line-1-fill"></div></div>
+      <div class="step-node" id="node-2"><span class="step-num">2</span></div>
+      <div class="step-line" id="line-2"><div class="step-line-fill" id="line-2-fill"></div></div>
+      <div class="step-node" id="node-3"><span class="step-num">3</span></div>
     </div>
     <div class="stepper-labels">
       <span class="stepper-label active" id="lbl-1">Your Info</span>
@@ -1050,11 +1051,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <span class="progress-counter" id="r-step-counter">1 of 3</span>
     </div>
     <div class="stepper">
-      <div class="stepper-item"><div class="step-node active" id="r-node-1"><span class="step-num">1</span></div></div>
-      <div class="step-line" id="r-line-1"></div>
-      <div class="stepper-item"><div class="step-node" id="r-node-2"><span class="step-num">2</span></div></div>
-      <div class="step-line" id="r-line-2"></div>
-      <div class="stepper-item"><div class="step-node" id="r-node-3"><span class="step-num">3</span></div></div>
+      <div class="step-node active" id="r-node-1"><span class="step-num">1</span></div>
+      <div class="step-line" id="r-line-1"><div class="step-line-fill" id="r-line-1-fill"></div></div>
+      <div class="step-node" id="r-node-2"><span class="step-num">2</span></div>
+      <div class="step-line" id="r-line-2"><div class="step-line-fill" id="r-line-2-fill"></div></div>
+      <div class="step-node" id="r-node-3"><span class="step-num">3</span></div>
     </div>
     <div class="stepper-labels">
       <span class="stepper-label active" id="r-lbl-1">Your Info</span>
@@ -1672,7 +1673,10 @@ function updateStepper(n) {
     node.classList.remove('active','done'); lbl.classList.remove('active','done');
     if(i<n){node.classList.add('done');lbl.classList.add('done');}
     if(i===n){node.classList.add('active');lbl.classList.add('active');}
-    if(i<TOTAL_STEPS) document.getElementById('line-'+i).classList.toggle('done',i<n);
+    if(i<TOTAL_STEPS){
+      const fill=document.getElementById('line-'+i+'-fill');
+      if(fill) fill.style.width = i<n ? '100%' : '0%';
+    }
   }
 }
 function showPanel(n, dir) {
@@ -1912,6 +1916,25 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('input',()=>{el.classList.remove('err');const err=document.getElementById('err-'+el.id);if(err)err.classList.remove('show');});
     el.addEventListener('change',()=>{el.classList.remove('err');const err=document.getElementById('err-'+el.id);if(err)err.classList.remove('show');});
   });
+
+  // ── LIVE STEP-1 FIELD PROGRESS ────────────────────────────────────────
+  const NEW_STEP1_FIELDS=['n-fn','n-ln','n-email','n-dob','n-hphone','n-cphone','n-addr','n-city','n-prov','n-postal','n-income-src','n-pay-freq','n-next-pay'];
+  const REN_STEP1_FIELDS=['r-fn','r-ln','r-email','r-dob','r-hphone','r-cphone','r-pay-freq','r-next-pay'];
+
+  function calcStepProgress(ids){let f=0;for(const id of ids){const el=document.getElementById(id);if(el&&el.value.trim()!=='')f++;}return Math.round(f/ids.length*100);}
+  function updateLineFill(fillId,pct){const el=document.getElementById(fillId);if(el)el.style.width=Math.min(100,pct)+'%';}
+
+  function onNewStep1Change(){if(document.getElementById('step-1')?.classList.contains('active'))updateLineFill('line-1-fill',calcStepProgress(NEW_STEP1_FIELDS));}
+  function onRenStep1Change(){if(document.getElementById('r-step-1')?.classList.contains('active'))updateLineFill('r-line-1-fill',calcStepProgress(REN_STEP1_FIELDS));}
+
+  NEW_STEP1_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',onNewStep1Change);el.addEventListener('change',onNewStep1Change);}});
+  REN_STEP1_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',onRenStep1Change);el.addEventListener('change',onRenStep1Change);}});
+
+  // Step 2 — e-sig partially fills line-2
+  const esig=document.getElementById('n-esig');
+  if(esig)esig.addEventListener('input',()=>updateLineFill('line-2-fill',esig.value.trim().length>0?60:0));
+  const rEsig=document.getElementById('r-esig');
+  if(rEsig)rEsig.addEventListener('input',()=>updateLineFill('r-line-2-fill',rEsig.value.trim().length>0?60:0));
 });
 
 // ─── SUBMIT NEW LOAN ──────────────────────────────────────────────────
@@ -1978,7 +2001,10 @@ function rUpdateStepper(n) {
     node.classList.remove('active','done'); lbl.classList.remove('active','done');
     if(i<n){node.classList.add('done');lbl.classList.add('done');}
     if(i===n){node.classList.add('active');lbl.classList.add('active');}
-    if(i<3) document.getElementById('r-line-'+i).classList.toggle('done',i<n);
+    if(i<3){
+      const fill=document.getElementById('r-line-'+i+'-fill');
+      if(fill) fill.style.width = i<n ? '100%' : '0%';
+    }
   }
 }
 
