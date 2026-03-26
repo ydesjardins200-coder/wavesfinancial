@@ -24,7 +24,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:var(--font);background:var(--deep);color:var(--white);min-height:100vh;overflow-x:hidden;}
+body{font-family:var(--font);background:var(--deep);color:var(--white);-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:
   radial-gradient(ellipse 70% 55% at 10% -5%,rgba(59,53,176,0.35) 0%,transparent 55%),
   radial-gradient(ellipse 50% 40% at 90% 5%,rgba(0,229,255,0.09) 0%,transparent 50%),
