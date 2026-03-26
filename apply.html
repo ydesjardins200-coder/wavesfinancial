@@ -426,14 +426,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 .demo-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.15s;}
 .demo-close:hover{background:rgba(255,255,255,0.06);color:var(--white);}
 .demo-body{padding:22px 24px;}
-.demo-scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
+.demo-scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
 @media(max-width:520px){.demo-scenarios{grid-template-columns:repeat(2,1fr);}}
-.scenario-btn{padding:10px 8px;border-radius:var(--r-md);border:2px solid transparent;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.18s;text-align:center;}
+.scenario-btn{padding:8px 6px;border-radius:var(--r-md);border:2px solid transparent;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.18s;text-align:center;}
 .scenario-btn:hover{background:rgba(255,255,255,0.06);}
 .scenario-btn.selected{background:rgba(91,82,216,0.15);}
-.scenario-dot{width:12px;height:12px;border-radius:50%;margin:0 auto 7px;}
-.scenario-name{font-size:0.78rem;font-weight:700;color:var(--white);}
-.scenario-desc{font-size:0.65rem;color:var(--text-muted);margin-top:2px;line-height:1.4;}
+.scenario-dot{width:10px;height:10px;border-radius:50%;margin:0 auto 5px;}
+.scenario-name{font-size:0.72rem;font-weight:700;color:var(--white);}
+.scenario-desc{font-size:0.6rem;color:var(--text-muted);margin-top:1px;line-height:1.3;}
+/* Payload editor */
+.payload-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+@media(max-width:520px){.payload-grid{grid-template-columns:1fr;}}
+.payload-field{display:flex;flex-direction:column;gap:4px;}
+.payload-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);}
+.payload-input{background:rgba(8,6,20,0.7);border:1px solid rgba(160,154,245,0.2);border-radius:var(--r-sm);padding:8px 10px;color:var(--white);font-family:var(--font);font-size:0.85rem;width:100%;transition:border-color 0.2s;}
+.payload-input:focus{outline:none;border-color:var(--iris);}
+.payload-input option{background:var(--deep);}
+.payload-divider{grid-column:1/-1;height:1px;background:rgba(160,154,245,0.1);margin:4px 0;}
+.payload-section-title{grid-column:1/-1;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--iris);margin-bottom:-4px;}
 .demo-run-btn{width:100%;padding:13px;border-radius:var(--r-md);border:none;background:linear-gradient(135deg,var(--royal),var(--iris));color:var(--white);font-family:var(--font);font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;}
 .demo-run-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(91,82,216,0.5);}
 .demo-result{display:none;border-radius:var(--r-lg);overflow:hidden;border:1px solid rgba(160,154,245,0.15);}
@@ -1539,7 +1549,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <button class="demo-close" onclick="closeScoringDemo()">✕</button>
     </div>
     <div class="demo-body">
-      <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;line-height:1.6;">Select a risk profile below to simulate what the decisioning engine would return for a real applicant. Each scenario uses the loan amount and applicant data collected in the form.</p>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px;line-height:1.55;">Quick-load a scenario or edit any field manually, then click <strong style="color:var(--white);">Run</strong> to see the score.</p>
+
+      <!-- Quick-load scenario buttons -->
       <div class="demo-scenarios" id="demo-scenarios">
         <button class="scenario-btn selected" data-scenario="gold" onclick="selectScenario(this)">
           <div class="scenario-dot" style="background:#FFD166;box-shadow:0 0 8px rgba(255,209,102,0.5);"></div>
@@ -1571,6 +1583,58 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
           <div class="scenario-name">🔴 Red</div>
           <div class="scenario-desc">Auto-declined<br>Score 90–100</div>
         </button>
+      </div>
+
+      <!-- Editable payload form -->
+      <div class="payload-grid">
+
+        <div class="payload-section-title">📊 Bank Signals (from Flinks)</div>
+
+        <div class="payload-field">
+          <label class="payload-label">Verified Income / month ($)</label>
+          <input class="payload-input" type="number" id="dp-income" min="0" step="100" placeholder="2400">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">Declared Income / month ($)</label>
+          <input class="payload-input" type="number" id="dp-declared" min="0" step="100" placeholder="2500">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">Fixed Obligations / month ($)</label>
+          <input class="payload-input" type="number" id="dp-obligations" min="0" step="50" placeholder="400">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">Average Daily Balance ($)</label>
+          <input class="payload-input" type="number" id="dp-balance" min="0" step="50" placeholder="800">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">NSF Count (last 90 days)</label>
+          <input class="payload-input" type="number" id="dp-nsf" min="0" max="30" step="1" placeholder="0">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">Payment Oppositions (last 90 days)</label>
+          <input class="payload-input" type="number" id="dp-oppositions" min="0" max="10" step="1" placeholder="0">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">Account Age (days)</label>
+          <input class="payload-input" type="number" id="dp-age" min="0" step="30" placeholder="365">
+        </div>
+        <div class="payload-field">
+          <label class="payload-label">Income Regularity</label>
+          <select class="payload-input" id="dp-regularity">
+            <option value="consistent">Consistent</option>
+            <option value="variable">Variable</option>
+            <option value="irregular">Irregular</option>
+            <option value="undetected">Undetected</option>
+          </select>
+        </div>
+
+        <div class="payload-divider"></div>
+        <div class="payload-section-title">💰 Loan</div>
+
+        <div class="payload-field">
+          <label class="payload-label">Requested Amount ($)</label>
+          <input class="payload-input" type="number" id="dp-amount" min="100" max="1000" step="100" placeholder="300">
+        </div>
       </div>
 
       <button class="demo-run-btn" onclick="runScoringDemo()">
@@ -2342,37 +2406,107 @@ function demoScore(bankData, declaredIncome, requestedAmount) {
 // ── DEMO UI CONTROLLER ─────────────────────────────────────────────────────
 let demoSelectedScenario = 'gold';
 
-function openScoringDemo(){
+// Helper — set a payload field value
+function dpSet(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+// Helper — get a payload field value as number (or string for select)
+function dpGet(id, fallback = 0) {
+  const el = document.getElementById(id);
+  if (!el) return fallback;
+  return el.tagName === 'SELECT' ? el.value : (parseFloat(el.value) || fallback);
+}
+
+// Fill payload fields from a bankData object + loan/income values
+function fillPayloadFields(bankData, requestedAmount, declaredIncome) {
+  dpSet('dp-income',      bankData.verifiedIncome);
+  dpSet('dp-declared',    declaredIncome);
+  dpSet('dp-obligations', bankData.fixedObligations);
+  dpSet('dp-balance',     bankData.avgDailyBalance);
+  dpSet('dp-nsf',         bankData.nsfCount);
+  dpSet('dp-oppositions', bankData.oppositionCount);
+  dpSet('dp-age',         bankData.accountAgeDays);
+  dpSet('dp-regularity',  bankData.incomeRegularity);
+  dpSet('dp-amount',      requestedAmount);
+}
+
+function openScoringDemo() {
   document.getElementById('demo-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeScoringDemo(){
-  document.getElementById('demo-overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-function handleOverlayClick(e){if(e.target===document.getElementById('demo-overlay'))closeScoringDemo();}
-function selectScenario(btn){
-  document.querySelectorAll('.scenario-btn').forEach(b=>{
+  document.body.style.overflow = 'hidden';
+
+  // Pre-fill from Gold scenario but override amount + declared income from the form
+  const formAmount = loanAmount || 300;
+  const goldData   = DEMO_MOCK_BANK['gold'];
+  fillPayloadFields(goldData, formAmount, Math.round(goldData.verifiedIncome * 1.08));
+
+  // Mark Gold as selected
+  document.querySelectorAll('.scenario-btn').forEach(b => {
     b.classList.remove('selected');
-    b.style.borderColor='transparent';
+    b.style.borderColor = 'transparent';
+  });
+  const goldBtn = document.querySelector('.scenario-btn[data-scenario="gold"]');
+  if (goldBtn) {
+    goldBtn.classList.add('selected');
+    goldBtn.style.borderColor = TIER_COLORS['gold'].border;
+  }
+  demoSelectedScenario = 'gold';
+
+  // Reset result panel
+  const res = document.getElementById('demo-result');
+  res.classList.remove('visible');
+  res.style.display = 'none';
+}
+
+function closeScoringDemo() {
+  document.getElementById('demo-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('demo-overlay')) closeScoringDemo();
+}
+
+function selectScenario(btn) {
+  // Update button states
+  document.querySelectorAll('.scenario-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.style.borderColor = 'transparent';
   });
   btn.classList.add('selected');
-  demoSelectedScenario=btn.dataset.scenario;
-  const col=TIER_COLORS[demoSelectedScenario];
-  btn.style.borderColor=col.border;
-  // Reset result
-  const res=document.getElementById('demo-result');
+  demoSelectedScenario = btn.dataset.scenario;
+  const col = TIER_COLORS[demoSelectedScenario];
+  btn.style.borderColor = col.border;
+
+  // Load scenario values into the payload fields
+  const bankData      = DEMO_MOCK_BANK[demoSelectedScenario];
+  const formAmount    = loanAmount || 300;
+  const declaredIncome = Math.round(bankData.verifiedIncome * 1.08);
+  fillPayloadFields(bankData, formAmount, declaredIncome);
+
+  // Reset result panel
+  const res = document.getElementById('demo-result');
   res.classList.remove('visible');
-  res.style.display='none';
+  res.style.display = 'none';
 }
 
-function runScoringDemo(){
-  const bankData = DEMO_MOCK_BANK[demoSelectedScenario];
-  const requestedAmount = loanAmount || 300;
-  // Use a plausible declared income — slightly above verified for realism
-  const declaredIncome = Math.round(bankData.verifiedIncome * 1.08);
-  const result = demoScore(bankData, declaredIncome, requestedAmount);
+function runScoringDemo() {
+  // Read all values from the editable payload fields
+  const bankData = {
+    verifiedIncome:   dpGet('dp-income',      2400),
+    declaredIncome:   dpGet('dp-declared',    2500),
+    fixedObligations: dpGet('dp-obligations', 400),
+    avgDailyBalance:  dpGet('dp-balance',     800),
+    nsfCount:         dpGet('dp-nsf',         0),
+    oppositionCount:  dpGet('dp-oppositions', 0),
+    accountAgeDays:   dpGet('dp-age',         365),
+    incomeRegularity: dpGet('dp-regularity',  'consistent'),
+  };
+  const requestedAmount = dpGet('dp-amount', loanAmount || 300);
+  const declaredIncome  = bankData.declaredIncome;
 
+  const result = demoScore(bankData, declaredIncome, requestedAmount);
   renderDemoResult(result, bankData, requestedAmount, declaredIncome);
 }
 
