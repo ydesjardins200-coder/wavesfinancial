@@ -1460,13 +1460,20 @@
 </div>
 
 <script>
-  // Navbar scroll
-  const navbar = document.getElementById('navbar');
+  // ── NAVBAR SCROLL (rAF-batched — prevents forced reflow) ─────────────────
+  const mainNav = document.getElementById('main-nav');
+  let scrollTicking = false;
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-  });
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        if (mainNav) mainNav.classList.toggle('scrolled', window.scrollY > 40);
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
 
-  // Loan calculator
+  // ── LOAN CALCULATOR ───────────────────────────────────────────────────────
   const slider      = document.getElementById('loan-slider');
   const calcDisplay = document.getElementById('calc-display');
   const sumAmount   = document.getElementById('sum-amount');
@@ -1474,12 +1481,12 @@
 
   function updateCalc() {
     const val = parseInt(slider.value);
-    const pct = (val - 500) / 500;
+    const pct = (val - 500) / 500 * 100;
+    // All reads first, then all writes — prevents layout thrashing
     calcDisplay.textContent = '$' + val.toLocaleString();
     sumAmount.textContent   = '$' + val.toLocaleString();
-    const total = Math.round(val * 1.375 / 10) * 10;
-    sumTotal.textContent = '~$' + total.toLocaleString();
-    slider.style.background = `linear-gradient(to right, var(--iris) 0%, var(--iris) ${pct*100}%, rgba(160,154,245,0.2) ${pct*100}%, rgba(160,154,245,0.2) 100%)`;
+    sumTotal.textContent    = '~$' + (Math.round(val * 1.375 / 10) * 10).toLocaleString();
+    slider.style.background = `linear-gradient(to right,var(--iris) 0%,var(--iris) ${pct}%,rgba(160,154,245,0.2) ${pct}%,rgba(160,154,245,0.2) 100%)`;
     slider.setAttribute('aria-valuenow', val);
     slider.setAttribute('aria-valuetext', '$' + val.toLocaleString());
   }
@@ -1492,21 +1499,18 @@
     btn.classList.add('active');
   }
 
-  // FAQ toggle
+  // ── FAQ TOGGLE (read isOpen before any writes) ────────────────────────────
   function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const isOpen = item.classList.contains('open');
+    const item   = btn.parentElement;
+    const isOpen = item.classList.contains('open'); // read first
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
   }
 
-  // Scroll animations
+  // ── SCROLL ANIMATIONS ─────────────────────────────────────────────────────
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); }
-    });
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
-
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
   // Hamburger menu
 // ── MEGA MENU ──
@@ -1569,13 +1573,6 @@
     });
   }
 
-  // Scroll-based nav styling
-  const navEl = document.getElementById('main-nav');
-  if (navEl) {
-    window.addEventListener('scroll', () => {
-      navEl.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
-  }
 // Close on link click
 document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', () => {
