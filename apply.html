@@ -2128,53 +2128,51 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
     weekday:'short', month:'short', day:'numeric', year:'numeric'
   });
 
-  // Render
-  const headerStyle = 'font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);padding:6px 8px;text-align:';
-  const cellStyle   = 'font-size:0.72rem;padding:7px 8px;border-top:1px solid rgba(160,154,245,0.07);text-align:';
+  const hSt = 'font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);padding:6px 8px;text-align:';
+  const cSt = 'font-size:0.72rem;padding:7px 8px;border-top:1px solid rgba(160,154,245,0.07);text-align:';
 
   const rowsHtml = rows.map((r, i) => {
-    const isLast = i === rows.length - 1;
+    const isLast   = i === rows.length - 1;
     const balColor = r.balance === 0 ? '#1DE9C6' : 'var(--white)';
-    return `<tr style="${isLast ? 'background:rgba(29,233,198,0.05);' : ''}">
-      <td style="${cellStyle}left;color:var(--text-muted);">#${i+1}</td>
-      <td style="${cellStyle}left;color:var(--white);font-weight:600;">${fmtDate(r.date)}</td>
-      <td style="${cellStyle}right;color:var(--white);font-weight:700;">$${r.payment.toFixed(2)}</td>
-      <td style="${cellStyle}right;color:var(--text-muted);">$${r.interest.toFixed(2)}</td>
-      <td style="${cellStyle}right;color:${balColor};font-weight:${r.balance===0?'800':'400'};">$${r.balance.toFixed(2)}</td>
-    </tr>`;
+    const balWt    = r.balance === 0 ? '800' : '400';
+    const trBg     = isLast ? 'background:rgba(29,233,198,0.05);' : '';
+    return '<tr style="' + trBg + '">'
+      + '<td style="' + cSt + 'left;color:var(--text-muted);">#' + (i+1) + '</td>'
+      + '<td style="' + cSt + 'left;color:var(--white);font-weight:600;">' + fmtDate(r.date) + '</td>'
+      + '<td style="' + cSt + 'right;color:var(--white);font-weight:700;">$' + r.payment.toFixed(2) + '</td>'
+      + '<td style="' + cSt + 'right;color:var(--text-muted);">$' + r.interest.toFixed(2) + '</td>'
+      + '<td style="' + cSt + 'right;color:' + balColor + ';font-weight:' + balWt + ';">$' + r.balance.toFixed(2) + '</td>'
+      + '</tr>';
   }).join('');
 
-  container.innerHTML = `
-    <div style="border:1px solid rgba(160,154,245,0.15);border-radius:8px;overflow:hidden;margin-bottom:8px;">
-      <table style="width:100%;border-collapse:collapse;font-family:var(--font);">
-        <thead style="background:rgba(91,82,216,0.15);">
-          <tr>
-            <th style="${headerStyle}left;">#</th>
-            <th style="${headerStyle}left;">Payment Date</th>
-            <th style="${headerStyle}right;">Amount</th>
-            <th style="${headerStyle}right;">Interest</th>
-            <th style="${headerStyle}right;">Balance</th>
-          </tr>
-        </thead>
-        <tbody>${rowsHtml}</tbody>
-        <tfoot style="background:rgba(8,6,20,0.4);">
-          <tr>
-            <td colspan="2" style="font-size:0.7rem;font-weight:700;padding:7px 8px;color:var(--periwinkle);">Totals</td>
-            <td style="font-size:0.72rem;font-weight:800;padding:7px 8px;text-align:right;color:var(--white);">$${totalOwed.toFixed(2)}</td>
-            <td style="font-size:0.72rem;font-weight:700;padding:7px 8px;text-align:right;color:var(--text-muted);">$${totalInterest.toFixed(2)}</td>
-            <td style="font-size:0.72rem;font-weight:800;padding:7px 8px;text-align:right;color:#1DE9C6;">$0.00</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-    <p style="font-size:0.65rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">
-      Payments are due the day after each pay date, collected via Pre-Authorized Debit.
-      Total of borrowing: <strong style="color:var(--white);">$${totalOwed.toFixed(2)}</strong> 
-      (principal $${principal.toLocaleString()} + interest $${totalInterest.toFixed(2)}).
-    </p>`;
+  container.innerHTML = ''
+    + '<div style="border:1px solid rgba(160,154,245,0.15);border-radius:8px;overflow:hidden;margin-bottom:8px;">'
+    + '<table style="width:100%;border-collapse:collapse;font-family:var(--font);">'
+    + '<thead style="background:rgba(91,82,216,0.15);">'
+    + '<tr>'
+    + '<th style="' + hSt + 'left;">#</th>'
+    + '<th style="' + hSt + 'left;">Payment Date</th>'
+    + '<th style="' + hSt + 'right;">Amount</th>'
+    + '<th style="' + hSt + 'right;">Interest</th>'
+    + '<th style="' + hSt + 'right;">Balance</th>'
+    + '</tr></thead>'
+    + '<tbody>' + rowsHtml + '</tbody>'
+    + '<tfoot style="background:rgba(8,6,20,0.4);">'
+    + '<tr>'
+    + '<td colspan="2" style="font-size:0.7rem;font-weight:700;padding:7px 8px;color:var(--periwinkle);">Totals</td>'
+    + '<td style="font-size:0.72rem;font-weight:800;padding:7px 8px;text-align:right;color:var(--white);">$' + totalOwed.toFixed(2) + '</td>'
+    + '<td style="font-size:0.72rem;font-weight:700;padding:7px 8px;text-align:right;color:var(--text-muted);">$' + totalInterest.toFixed(2) + '</td>'
+    + '<td style="font-size:0.72rem;font-weight:800;padding:7px 8px;text-align:right;color:#1DE9C6;">$0.00</td>'
+    + '</tr></tfoot>'
+    + '</table></div>'
+    + '<p style="font-size:0.65rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">'
+    + 'Payments are due the day after each pay date, collected via Pre-Authorized Debit. '
+    + 'Total cost of borrowing: <strong style="color:var(--white);">$' + totalOwed.toFixed(2) + '</strong>'
+    + ' (principal $' + principal.toLocaleString() + ' + interest $' + totalInterest.toFixed(2) + ').'
+    + '</p>';
 }
 
-
+function syncContractSummary() {
   const amt = loanAmount;
   document.getElementById('contract-amount').textContent  = '$'+amt.toLocaleString();
   document.getElementById('contract-amount-2').textContent = '$'+amt.toLocaleString();
