@@ -2336,7 +2336,7 @@ function demoFeasible(obs,inc,req){
   const cands=[req,...DEMO_CANDIDATES].filter(c=>c<=req);
   cands.sort((a,b)=>b-a);
   for(const c of cands){
-    if((obs+demoCalcPayment(c)*2)/inc<0.50) return c;
+    if((obs+demoCalcPayment(c)*2)/inc<0.75) return c;
   }
   return 0;
 }
@@ -2378,7 +2378,7 @@ function demoScore(bankData, declaredIncome, requestedAmount) {
   const flags=[];
   if(nsfCount>=3) flags.push(`High NSF activity: ${nsfCount} in 90 days`);
   if(oppositionCount>=1) flags.push(`Payment opposition(s) detected: ${oppositionCount}`);
-  if(dtiRatio>0.50) flags.push(`DTI elevated: ${(dtiRatio*100).toFixed(1)}%`);
+  if(dtiRatio>0.75) flags.push(`DTI elevated: ${(dtiRatio*100).toFixed(1)}%`);
   if(misPts===10&&misRatio!==null) flags.push(`Income overstated by ${(misRatio*100).toFixed(1)}%`);
   if(balPts===10) flags.push('Average daily balance critically low vs loan amount');
   if(incomeRegularity==='irregular') flags.push('Income pattern irregular — manual verification recommended');
@@ -2568,7 +2568,7 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
     const verIncome    = bankData.verifiedIncome;
     const obligations  = bankData.fixedObligations;
     const avgBalance   = bankData.avgDailyBalance;
-    const DTI_LIMIT    = 0.50;
+    const DTI_LIMIT    = 0.75;
     const BAL_MIN_RATIO= 0.10; // avg daily balance must be ≥ 10% of loan
 
     const rows = ALL_AMOUNTS.map(amount => {
@@ -2640,7 +2640,7 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
             📋 Loan Amount Feasibility — Analyst View
           </div>
           <div style="font-size:0.68rem;color:var(--text-muted);">
-            DTI limit 50% · Balance ≥ 10% of loan
+            DTI limit 75% · Balance ≥ 10% of loan
           </div>
         </div>
         <!-- Column headers -->
