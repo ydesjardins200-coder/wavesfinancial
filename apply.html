@@ -583,6 +583,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
     <div class="step-panel active" id="step-1">
 
       <!-- Amount Hero -->
+      <!-- ⚠️ SANDBOX ONLY — remove before go-live -->
+      <div id="sandbox-fill-new" style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button onclick="fillDummyNew()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r-sm);border:1px dashed rgba(255,209,102,0.5);background:rgba(255,209,102,0.08);color:var(--gold);font-family:var(--font);font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,209,102,0.15)'" onmouseout="this.style.background='rgba(255,209,102,0.08)'">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Fill Dummy Data
+        </button>
+      </div>
+
       <div class="amount-hero">
         <div class="amount-label" id="amount-label">How much do you need?</div>
         <div class="amount-display" id="amount-display">$300</div>
@@ -1099,6 +1107,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
     <div class="step-panel active" id="r-step-1">
 
       <!-- Amount hero -->
+      <!-- ⚠️ SANDBOX ONLY — remove before go-live -->
+      <div id="sandbox-fill-renewal" style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button onclick="fillDummyRenewal()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r-sm);border:1px dashed rgba(255,209,102,0.5);background:rgba(255,209,102,0.08);color:var(--gold);font-family:var(--font);font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,209,102,0.15)'" onmouseout="this.style.background='rgba(255,209,102,0.08)'">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Fill Dummy Data
+        </button>
+      </div>
+
       <div class="amount-hero">
         <div class="amount-label">How much do you need?</div>
         <div class="amount-display" id="r-amount-display">$800</div>
@@ -1654,6 +1670,161 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 <script>
 const WEBHOOK_NEW     = 'https://YOUR_WEBHOOK_NEW_LOAN_HERE';
 const WEBHOOK_RENEWAL = 'https://YOUR_WEBHOOK_RENEWAL_HERE';
+
+// ── SANDBOX MODE ──────────────────────────────────────────────────────────────
+// Detected when webhooks are still placeholder URLs.
+// Remove the fillDummy* functions and sandbox-fill divs before go-live.
+const IS_SANDBOX_FORM = WEBHOOK_NEW.includes('YOUR_WEBHOOK');
+
+if (IS_SANDBOX_FORM) {
+  // Pre-check all checkboxes as soon as DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    [
+      'n-read-contract','n-consent-terms','n-consent-contact',
+      'c-pad',
+      'r-read-contract','r-consent-terms','r-consent-contact',
+      'r-c-pad',
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.checked = true;
+    });
+  });
+} else {
+  // Hide sandbox-only UI in production
+  document.addEventListener('DOMContentLoaded', () => {
+    ['sandbox-fill-new','sandbox-fill-renewal'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+  });
+}
+
+// ── DUMMY DATA — NEW LOAN ─────────────────────────────────────────────────────
+function fillDummyNew() {
+  // Step 1 — Personal
+  document.getElementById('n-fn').value    = 'Marie';
+  document.getElementById('n-ln').value    = 'Tremblay';
+  document.getElementById('n-email').value = 'marie.tremblay@test.ca';
+  document.getElementById('n-dob').value   = '1990-04-15';
+  document.getElementById('n-hphone').value = '(514) 555-0100';
+  document.getElementById('n-cphone').value = '(514) 555-0123';
+  fmtPhone(document.getElementById('n-hphone'));
+  fmtPhone(document.getElementById('n-cphone'));
+
+  // Sex
+  const sexMale = document.querySelector('input[name="n-sex"][value="male"]');
+  if (sexMale) sexMale.checked = true;
+
+  // SIN
+  const sin = document.getElementById('n-sin');
+  if (sin) { sin.value = '046 454 286'; fmtSin(sin); }
+
+  // Address
+  document.getElementById('n-addr').value   = '123 Rue Principale';
+  document.getElementById('n-city').value   = 'Montreal';
+  document.getElementById('n-prov').value   = 'QC';
+  document.getElementById('n-postal').value = 'H2X 1A1';
+  fmtPostal(document.getElementById('n-postal'));
+
+  // Employment
+  const incSrc = document.getElementById('n-income-src');
+  if (incSrc) { incSrc.value = 'employed'; toggleIncomeFields('n'); }
+  const employer = document.getElementById('n-employer');
+  if (employer) employer.value = 'Acme Corporation';
+  const paidBy = document.querySelector('input[name="n-paid-by"][value="direct"]');
+  if (paidBy) paidBy.checked = true;
+  const payFreq = document.getElementById('n-pay-freq');
+  if (payFreq) payFreq.value = 'biweekly';
+
+  // Next pay date — next Friday
+  const nextFriday = new Date();
+  nextFriday.setDate(nextFriday.getDate() + ((5 - nextFriday.getDay() + 7) % 7 || 7));
+  document.getElementById('n-next-pay').value = nextFriday.toISOString().slice(0, 10);
+
+  // Bankruptcy radios
+  const bkNow  = document.querySelector('input[name="n-bankrupt-now"][value="no"]');
+  const bkPast = document.querySelector('input[name="n-bankrupt-past"][value="no"]');
+  if (bkNow)  bkNow.checked  = true;
+  if (bkPast) bkPast.checked = true;
+
+  // Safety contact
+  document.getElementById('n-sc-fn').value    = 'Jean';
+  document.getElementById('n-sc-ln').value    = 'Martin';
+  document.getElementById('n-sc-phone').value = '(514) 555-0199';
+  fmtPhone(document.getElementById('n-sc-phone'));
+  const scRel = document.getElementById('n-sc-rel');
+  if (scRel) scRel.value = 'spouse';
+
+  // Checkboxes
+  ['n-read-contract','n-consent-terms','n-consent-contact'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.checked = true;
+  });
+
+  // E-signature (step 2) — pre-fill so it's ready when they get there
+  const esig = document.getElementById('n-esig');
+  if (esig) {
+    esig.value = 'Marie Tremblay';
+    syncContractSummary();
+  }
+
+  // Trigger input events to clear any error states
+  document.querySelectorAll('#step-1 .field-input, #step-1 .field-select').forEach(el => {
+    el.dispatchEvent(new Event('input'));
+    el.dispatchEvent(new Event('change'));
+  });
+}
+
+// ── DUMMY DATA — RENEWAL ──────────────────────────────────────────────────────
+function fillDummyRenewal() {
+  // Personal
+  document.getElementById('r-fn').value    = 'Jean';
+  document.getElementById('r-ln').value    = 'Bouchard';
+  document.getElementById('r-email').value = 'jean.bouchard@test.ca';
+  document.getElementById('r-dob').value   = '1985-08-22';
+  document.getElementById('r-cphone').value = '(418) 555-0200';
+  document.getElementById('r-hphone').value = '(418) 555-0201';
+  fmtPhone(document.getElementById('r-cphone'));
+  fmtPhone(document.getElementById('r-hphone'));
+
+  // Address — no change
+  const addrNo = document.querySelector('input[name="r-addr-changed"][value="no"]');
+  if (addrNo) { addrNo.checked = true; toggleRenew('r-addr-fields', 'no'); }
+
+  // Employment — no change
+  const jobNo = document.querySelector('input[name="r-job-changed"][value="no"]');
+  if (jobNo) { jobNo.checked = true; toggleRenew('r-job-fields', 'no'); }
+
+  // Pay frequency
+  const payFreq = document.getElementById('r-pay-freq');
+  if (payFreq) payFreq.value = 'biweekly';
+
+  // Banking — no change
+  const bankNo = document.querySelector('input[name="r-bank-changed"][value="no"]');
+  if (bankNo) { bankNo.checked = true; toggleRenew('r-bank-fields', 'no'); }
+
+  // Next pay date
+  const nextFriday = new Date();
+  nextFriday.setDate(nextFriday.getDate() + ((5 - nextFriday.getDay() + 7) % 7 || 7));
+  document.getElementById('r-next-pay').value = nextFriday.toISOString().slice(0, 10);
+
+  // Checkboxes
+  ['r-read-contract','r-consent-terms','r-consent-contact'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.checked = true;
+  });
+
+  // E-signature (step 2)
+  const esig = document.getElementById('r-esig');
+  if (esig) {
+    esig.value = 'Jean Bouchard';
+    rSyncContractSummary();
+  }
+
+  // Trigger input events
+  document.querySelectorAll('#r-step-1 .field-input, #r-step-1 .field-select').forEach(el => {
+    el.dispatchEvent(new Event('input'));
+    el.dispatchEvent(new Event('change'));
+  });
+}
 
 // ─── AMOUNT ──────────────────────────────────────────────────────────
 let loanAmount = 300;
