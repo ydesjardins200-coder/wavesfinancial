@@ -2516,11 +2516,10 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
   const dec = DECISION_LABELS[r.decision];
   const s   = r.signals;
 
-  // Score bar width
+  // Score bar
   const barW = Math.max(2, Math.min(100, r.score));
   const barColor = col.text;
 
-  // Score gradient bar
   const scoreBarHtml = `
     <div style="padding:14px 20px 0;background:rgba(8,6,20,0.5);">
       <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
@@ -2535,7 +2534,7 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
   const signalsHtml = s ? `
     <div class="result-signals">
       ${signalRow('NSF Events (90d)', s.nsfCount, s.nsfPts, 25)}
-      ${signalRow('Payment Oppositions', s.oppPts===undefined?bankData.oppositionCount:bankData.oppositionCount, s.oppPts, 20)}
+      ${signalRow('Payment Oppositions', bankData.oppositionCount, s.oppPts, 20)}
       ${signalRow('Debt-to-Income', (s.dtiRatio*100).toFixed(1)+'%', s.dtiPts, 20)}
       ${signalRow('Income Regularity', s.incomeRegularity, s.regPts, 15)}
       ${signalRow('Income Mismatch', s.misRatio!==null?(s.misRatio*100).toFixed(1)+'%':'n/a', s.misPts, 10)}
@@ -2562,6 +2561,109 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
       <div style="text-align:right;"><div class="approved-label">Decision</div><div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;background:${dec.bg};color:${dec.color};font-size:0.72rem;font-weight:700;margin-top:4px;">${dec.label}</div></div>
     </div>`;
 
+  // ── LOAN FEASIBILITY TABLE (manual_review only) ───────────────────────────
+  let feasibilityHtml = '';
+  if (r.decision === 'manual_review' && s) {
+    const ALL_AMOUNTS  = [500, 400, 300, 200, 100];
+    const verIncome    = bankData.verifiedIncome;
+    const obligations  = bankData.fixedObligations;
+    const avgBalance   = bankData.avgDailyBalance;
+    const DTI_LIMIT    = 0.50;
+    const BAL_MIN_RATIO= 0.10; // avg daily balance must be ≥ 10% of loan
+
+    const rows = ALL_AMOUNTS.map(amount => {
+      const biweeklyPayment = demoCalcPayment(amount);
+      const monthlyPayment  = biweeklyPayment * 2;
+      const dti             = verIncome > 0 ? (obligations + monthlyPayment) / verIncome : 1;
+      const balRatio        = avgBalance / amount;
+      const dtiPass         = dti < DTI_LIMIT;
+      const balPass         = balRatio >= BAL_MIN_RATIO;
+      const feasible        = dtiPass && balPass;
+
+      const rowBg    = feasible ? 'rgba(29,233,198,0.06)' : 'rgba(255,107,138,0.04)';
+      const rowBorder= feasible ? 'rgba(29,233,198,0.2)'  : 'rgba(255,107,138,0.1)';
+      const amtColor = feasible ? '#1DE9C6'                : '#FF6B8A';
+      const badge    = feasible
+        ? `<span style="padding:2px 8px;border-radius:100px;background:rgba(29,233,198,0.15);color:#1DE9C6;font-size:0.62rem;font-weight:700;">✓ Feasible</span>`
+        : `<span style="padding:2px 8px;border-radius:100px;background:rgba(255,107,138,0.12);color:#FF6B8A;font-size:0.62rem;font-weight:700;">✗ Not feasible</span>`;
+
+      // Reason chips for non-feasible
+      const reasons = [];
+      if (!dtiPass) reasons.push(`DTI ${(dti*100).toFixed(0)}% ≥ 50%`);
+      if (!balPass) reasons.push(`Balance ${(balRatio*100).toFixed(0)}% of loan`);
+      const reasonHtml = reasons.length
+        ? `<div style="font-size:0.6rem;color:#FF9945;margin-top:3px;">${reasons.join(' · ')}</div>`
+        : '';
+
+      // Is this the requested amount?
+      const isRequested = amount === requestedAmount;
+      const reqTag = isRequested
+        ? `<span style="font-size:0.58rem;color:var(--periwinkle);margin-left:5px;font-weight:600;">requested</span>`
+        : '';
+
+      return `
+        <div style="display:grid;grid-template-columns:80px 1fr 90px 90px 100px;align-items:center;
+                    gap:8px;padding:9px 14px;border-radius:8px;margin-bottom:4px;
+                    background:${rowBg};border:1px solid ${rowBorder};">
+          <div style="font-size:0.88rem;font-weight:800;color:${amtColor};">
+            $${amount.toLocaleString()}${reqTag}
+          </div>
+          <div>
+            <div style="font-size:0.72rem;color:var(--white);font-weight:600;">
+              $${biweeklyPayment.toFixed(0)}/biweekly
+              <span style="color:var(--text-muted);font-weight:400;"> · $${monthlyPayment.toFixed(0)}/mo</span>
+            </div>
+            ${reasonHtml}
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:0.68rem;color:var(--text-muted);">DTI</div>
+            <div style="font-size:0.8rem;font-weight:700;color:${dtiPass?'#1DE9C6':'#FF6B8A'};">${(dti*100).toFixed(1)}%</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:0.68rem;color:var(--text-muted);">Bal/Loan</div>
+            <div style="font-size:0.8rem;font-weight:700;color:${balPass?'#1DE9C6':'#FF9945'};">${(balRatio*100).toFixed(0)}%</div>
+          </div>
+          <div style="text-align:right;">${badge}</div>
+        </div>`;
+    });
+
+    const feasibleCount = ALL_AMOUNTS.filter(amt => {
+      const monthly = demoCalcPayment(amt) * 2;
+      const dti = verIncome > 0 ? (obligations + monthly) / verIncome : 1;
+      return dti < DTI_LIMIT && (avgBalance / amt) >= BAL_MIN_RATIO;
+    }).length;
+
+    feasibilityHtml = `
+      <div style="padding:16px 20px;border-top:1px solid rgba(160,154,245,0.12);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--periwinkle);">
+            📋 Loan Amount Feasibility — Analyst View
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">
+            DTI limit 50% · Balance ≥ 10% of loan
+          </div>
+        </div>
+        <!-- Column headers -->
+        <div style="display:grid;grid-template-columns:80px 1fr 90px 90px 100px;gap:8px;
+                    padding:0 14px 6px;font-size:0.6rem;font-weight:700;text-transform:uppercase;
+                    letter-spacing:0.08em;color:var(--text-muted);">
+          <span>Amount</span><span>Payment</span><span style="text-align:center;">DTI</span>
+          <span style="text-align:center;">Bal/Loan</span><span style="text-align:right;">Status</span>
+        </div>
+        ${rows.join('')}
+        <div style="margin-top:10px;padding:8px 14px;border-radius:8px;background:rgba(91,82,216,0.08);
+                    border:1px solid rgba(91,82,216,0.15);font-size:0.72rem;color:var(--text-muted);
+                    display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.85rem;">💡</span>
+          <span>
+            <strong style="color:var(--white);">${feasibleCount} of ${ALL_AMOUNTS.length} amounts are feasible</strong>
+            for this client based on verified income of <strong style="color:var(--white);">$${verIncome.toLocaleString()}/mo</strong>
+            and fixed obligations of <strong style="color:var(--white);">$${obligations.toLocaleString()}/mo</strong>.
+          </span>
+        </div>
+      </div>`;
+  }
+
   el.innerHTML = `
     <div class="result-tier-banner" style="background:${col.bg};border-bottom:1px solid ${col.border};">
       <div class="tier-badge" style="background:${col.bg};border:1px solid ${col.border};">
@@ -2581,6 +2683,7 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
     ${flagsHtml}
     ${hardDeclineHtml}
     ${approvedHtml}
+    ${feasibilityHtml}
   `;
 
   el.style.display='block';
