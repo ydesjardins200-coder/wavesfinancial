@@ -550,25 +550,33 @@
     padding-left: 10px;
   }
 
-  /* Mega link item */
+  /* Mega link item — flattened to 1 element, icon/desc via CSS attr() */
   .mega-link {
-    display: flex; align-items: flex-start; gap: 11px;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto auto;
+    align-items: start;
+    gap: 0 10px;
     padding: 10px 12px; border-radius: var(--r-md);
     text-decoration: none; transition: all 0.18s;
     border: 1px solid transparent;
+    font-weight: 700; font-size: 0.84rem; color: var(--white); line-height: 1.2;
   }
-  .mega-link:hover {
-    background: rgba(91,82,216,0.12); border-color: rgba(160,154,245,0.18);
-  }
-  .mega-link-icon {
-    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  .mega-link:hover { background: rgba(91,82,216,0.12); border-color: rgba(160,154,245,0.18); color: var(--teal); }
+  .mega-link::before {
+    content: attr(data-icon);
+    grid-column: 1; grid-row: 1 / 3;
+    width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.95rem; margin-top: 1px;
+    font-size: 0.95rem; background: var(--mega-icon-bg, rgba(91,82,216,0.18));
+    align-self: center;
   }
-  .mega-link-text { min-width: 0; }
-  .mega-link-title { font-weight: 700; font-size: 0.84rem; color: var(--white); margin-bottom: 2px; line-height: 1.2; }
-  .mega-link-desc  { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
-  .mega-link:hover .mega-link-title { color: var(--teal); }
+  .mega-link::after {
+    content: attr(data-desc);
+    grid-column: 2; grid-row: 2;
+    font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;
+    font-weight: 400;
+  }
 
   /* CTA strip inside mega */
   .mega-cta-strip {
@@ -654,26 +662,11 @@
           <div class="mega-section" style="grid-column:1/-1">
             <div class="mega-section-label">Our loan products</div>
           </div>
-          <a href="online-loans.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(91,82,216,0.18);">🌐</div>
-            <div class="mega-link-text"><div class="mega-link-title">Online Loans</div><div class="mega-link-desc">$500–$1,000 · fully online</div></div>
-          </a>
-          <a href="bad-credit-loans.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(255,107,138,0.12);">💳</div>
-            <div class="mega-link-text"><div class="mega-link-title">Bad Credit Loans</div><div class="mega-link-desc">Income-based · no judgment</div></div>
-          </a>
-          <a href="no-credit-check-loans.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(29,233,198,0.12);">🚫</div>
-            <div class="mega-link-text"><div class="mega-link-title">No Credit Check</div><div class="mega-link-desc">Zero credit inquiry · ever</div></div>
-          </a>
-          <a href="installment-loans.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(255,209,102,0.12);">📅</div>
-            <div class="mega-link-text"><div class="mega-link-title">Installment Loans</div><div class="mega-link-desc">Fixed payments · flexible schedule</div></div>
-          </a>
-          <a href="e-transfer-loans.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(0,229,255,0.1);">⚡</div>
-            <div class="mega-link-text"><div class="mega-link-title">e-Transfer Loans</div><div class="mega-link-desc">Funded in ~2 min · 24/7</div></div>
-          </a>
+          <a href="online-loans.html" class="mega-link" role="menuitem" data-icon="🌐" style="--mega-icon-bg:rgba(91,82,216,0.18);" data-desc="$500–$1,000 · fully online">Online Loans</a>
+          <a href="bad-credit-loans.html" class="mega-link" role="menuitem" data-icon="💳" style="--mega-icon-bg:rgba(255,107,138,0.12);" data-desc="Income-based · no judgment">Bad Credit Loans</a>
+          <a href="no-credit-check-loans.html" class="mega-link" role="menuitem" data-icon="🚫" style="--mega-icon-bg:rgba(29,233,198,0.12);" data-desc="Zero credit inquiry · ever">No Credit Check</a>
+          <a href="installment-loans.html" class="mega-link" role="menuitem" data-icon="📅" style="--mega-icon-bg:rgba(255,209,102,0.12);" data-desc="Fixed payments · flexible schedule">Installment Loans</a>
+          <a href="e-transfer-loans.html" class="mega-link" role="menuitem" data-icon="⚡" style="--mega-icon-bg:rgba(0,229,255,0.1);" data-desc="Funded in ~2 min · 24/7">e-Transfer Loans</a>
           <div class="mega-cta-strip">
             <div class="mega-cta-text"><strong>No credit check.</strong> Apply in 5 minutes.</div>
             <a href="apply.html" class="mega-cta-btn">Apply Now →</a>
@@ -691,30 +684,12 @@
           <div class="mega-section" style="grid-column:1/-1">
             <div class="mega-section-label">Who we are</div>
           </div>
-          <a href="about.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(160,154,245,0.14);">🏢</div>
-            <div class="mega-link-text"><div class="mega-link-title">About Us</div><div class="mega-link-desc">Our story, mission &amp; values</div></div>
-          </a>
-          <a href="why-waves.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">🌊</div>
-            <div class="mega-link-text"><div class="mega-link-title">Why Waves</div><div class="mega-link-desc">What sets us apart</div></div>
-          </a>
-          <a href="reviews.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(255,209,102,0.1);">⭐</div>
-            <div class="mega-link-text"><div class="mega-link-title">Reviews</div><div class="mega-link-desc">4.8★ · 340+ verified borrowers</div></div>
-          </a>
-          <a href="blog.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(91,82,216,0.14);">📝</div>
-            <div class="mega-link-text"><div class="mega-link-title">Blog</div><div class="mega-link-desc">Financial tips &amp; guides</div></div>
-          </a>
-          <a href="careers.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(0,229,255,0.08);">🚀</div>
-            <div class="mega-link-text"><div class="mega-link-title">Careers</div><div class="mega-link-desc">3 open roles · Granby, QC</div></div>
-          </a>
-          <a href="contact.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">💬</div>
-            <div class="mega-link-text"><div class="mega-link-title">Contact</div><div class="mega-link-desc">Real Canadians · no bots</div></div>
-          </a>
+          <a href="about.html" class="mega-link" role="menuitem" data-icon="🏢" style="--mega-icon-bg:rgba(160,154,245,0.14);" data-desc="Our story, mission &amp; values">About Us</a>
+          <a href="why-waves.html" class="mega-link" role="menuitem" data-icon="🌊" style="--mega-icon-bg:rgba(29,233,198,0.1);" data-desc="What sets us apart">Why Waves</a>
+          <a href="reviews.html" class="mega-link" role="menuitem" data-icon="⭐" style="--mega-icon-bg:rgba(255,209,102,0.1);" data-desc="4.8★ · 340+ verified borrowers">Reviews</a>
+          <a href="blog.html" class="mega-link" role="menuitem" data-icon="📝" style="--mega-icon-bg:rgba(91,82,216,0.14);" data-desc="Financial tips &amp; guides">Blog</a>
+          <a href="careers.html" class="mega-link" role="menuitem" data-icon="🚀" style="--mega-icon-bg:rgba(0,229,255,0.08);" data-desc="3 open roles · Granby, QC">Careers</a>
+          <a href="contact.html" class="mega-link" role="menuitem" data-icon="💬" style="--mega-icon-bg:rgba(29,233,198,0.1);" data-desc="Real Canadians · no bots">Contact</a>
         </div>
       </div>
 
@@ -728,30 +703,12 @@
           <div class="mega-section" style="grid-column:1/-1">
             <div class="mega-section-label">Help &amp; resources</div>
           </div>
-          <a href="how-it-works.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(91,82,216,0.14);">🗺️</div>
-            <div class="mega-link-text"><div class="mega-link-title">How It Works</div><div class="mega-link-desc">Apply to funded in 10 min</div></div>
-          </a>
-          <a href="faq.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(29,233,198,0.1);">❓</div>
-            <div class="mega-link-text"><div class="mega-link-title">FAQ</div><div class="mega-link-desc">Common questions answered</div></div>
-          </a>
-          <a href="online-payment.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(0,229,255,0.08);">💸</div>
-            <div class="mega-link-text"><div class="mega-link-title">Online Payment</div><div class="mega-link-desc">Make or confirm a payment</div></div>
-          </a>
-          <a href="contact.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(255,209,102,0.1);">📞</div>
-            <div class="mega-link-text"><div class="mega-link-title">Contact Support</div><div class="mega-link-desc">Mon–Sat · real humans</div></div>
-          </a>
-          <a href="privacy-policy.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(160,154,245,0.1);">🔒</div>
-            <div class="mega-link-text"><div class="mega-link-title">Privacy Policy</div><div class="mega-link-desc">How we protect your data</div></div>
-          </a>
-          <a href="terms-and-conditions.html" class="mega-link" role="menuitem">
-            <div class="mega-link-icon" style="background:rgba(91,82,216,0.1);">📄</div>
-            <div class="mega-link-text"><div class="mega-link-title">Terms &amp; Conditions</div><div class="mega-link-desc">Loan terms · 23% APR</div></div>
-          </a>
+          <a href="how-it-works.html" class="mega-link" role="menuitem" data-icon="🗺️" style="--mega-icon-bg:rgba(91,82,216,0.14);" data-desc="Apply to funded in 10 min">How It Works</a>
+          <a href="faq.html" class="mega-link" role="menuitem" data-icon="❓" style="--mega-icon-bg:rgba(29,233,198,0.1);" data-desc="Common questions answered">FAQ</a>
+          <a href="online-payment.html" class="mega-link" role="menuitem" data-icon="💸" style="--mega-icon-bg:rgba(0,229,255,0.08);" data-desc="Make or confirm a payment">Online Payment</a>
+          <a href="contact.html" class="mega-link" role="menuitem" data-icon="📞" style="--mega-icon-bg:rgba(255,209,102,0.1);" data-desc="Mon–Sat · real humans">Contact Support</a>
+          <a href="privacy-policy.html" class="mega-link" role="menuitem" data-icon="🔒" style="--mega-icon-bg:rgba(160,154,245,0.1);" data-desc="How we protect your data">Privacy Policy</a>
+          <a href="terms-and-conditions.html" class="mega-link" role="menuitem" data-icon="📄" style="--mega-icon-bg:rgba(91,82,216,0.1);" data-desc="Loan terms · 23% APR">Terms &amp; Conditions</a>
         </div>
       </div>
 
