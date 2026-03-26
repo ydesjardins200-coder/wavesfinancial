@@ -1731,6 +1731,14 @@ function fillDummyNew() {
   if (incSrc) { incSrc.value = 'employed'; toggleIncomeFields('n'); }
   const employer = document.getElementById('n-employer');
   if (employer) employer.value = 'Acme Corporation';
+  const workPhone = document.getElementById('n-work-phone');
+  if (workPhone) { workPhone.value = '(514) 555-0300'; fmtPhone(workPhone); }
+  const jobDesc = document.getElementById('n-job-desc');
+  if (jobDesc) jobDesc.value = 'Sales Associate';
+  const supervisor = document.getElementById('n-supervisor');
+  if (supervisor) supervisor.value = 'John Smith';
+  const hireDate = document.getElementById('n-hire-date');
+  if (hireDate) hireDate.value = '2021-03-01';
   const paidBy = document.querySelector('input[name="n-paid-by"][value="direct"]');
   if (paidBy) paidBy.checked = true;
   const payFreq = document.getElementById('n-pay-freq');
