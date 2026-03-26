@@ -2510,6 +2510,172 @@ function runScoringDemo() {
   renderDemoResult(result, bankData, requestedAmount, declaredIncome);
 }
 
+// Store the last scored result for comparison
+let _lastScoredResult = null;
+let _lastScoredBankData = null;
+let _lastScoredAmount = null;
+let _lastScoredDeclared = null;
+
+function runAtAmount(newAmount) {
+  // Read current payload fields
+  const bankData = {
+    verifiedIncome:   dpGet('dp-income',      2400),
+    declaredIncome:   dpGet('dp-declared',    2500),
+    fixedObligations: dpGet('dp-obligations', 400),
+    avgDailyBalance:  dpGet('dp-balance',     800),
+    nsfCount:         dpGet('dp-nsf',         0),
+    oppositionCount:  dpGet('dp-oppositions', 0),
+    accountAgeDays:   dpGet('dp-age',         365),
+    incomeRegularity: dpGet('dp-regularity',  'consistent'),
+  };
+  const originalAmount  = dpGet('dp-amount', loanAmount || 300);
+  const declaredIncome  = bankData.declaredIncome;
+
+  // Score at the new feasible amount
+  const newResult = demoScore(bankData, declaredIncome, newAmount);
+
+  // Score at the original requested amount (for comparison)
+  const origResult = demoScore(bankData, declaredIncome, originalAmount);
+
+  // Render comparison panel
+  renderFeasibilityComparison(origResult, newResult, originalAmount, newAmount, bankData);
+}
+
+function renderFeasibilityComparison(orig, newR, origAmount, newAmount, bankData) {
+  const panel = document.getElementById('feasibility-comparison');
+  if (!panel) return;
+
+  const origCol = TIER_COLORS[orig.tier];
+  const newCol  = TIER_COLORS[newR.tier];
+  const scoreDiff = orig.score - newR.score;
+  const tierImproved = orig.score > newR.score;
+
+  // Build improvement reasons
+  const reasons = [];
+  if (orig.signals && newR.signals) {
+    const origDTI = orig.signals.dtiRatio;
+    const newDTI  = newR.signals.dtiRatio;
+    if (newDTI < origDTI) {
+      reasons.push({
+        icon: '📉',
+        title: 'Lower DTI ratio',
+        detail: `DTI drops from <strong>${(origDTI*100).toFixed(1)}%</strong> to <strong>${(newDTI*100).toFixed(1)}%</strong> — the smaller payment is a smaller share of monthly income, reducing repayment pressure.`
+      });
+    }
+    const origDTIPts = orig.signals.dtiPts;
+    const newDTIPts  = newR.signals.dtiPts;
+    if (newDTIPts < origDTIPts) {
+      reasons.push({
+        icon: '⬇️',
+        title: `DTI risk points reduced`,
+        detail: `DTI signal drops from <strong>${origDTIPts} pts</strong> to <strong>${newDTIPts} pts</strong> — a direct reduction to the risk score.`
+      });
+    }
+    const origBalRatio = bankData.avgDailyBalance / origAmount;
+    const newBalRatio  = bankData.avgDailyBalance / newAmount;
+    if (newBalRatio > origBalRatio) {
+      reasons.push({
+        icon: '💰',
+        title: 'Better balance-to-loan ratio',
+        detail: `Client's average daily balance covers <strong>${(newBalRatio*100).toFixed(0)}%</strong> of the loan vs <strong>${(origBalRatio*100).toFixed(0)}%</strong> at $${origAmount} — more buffer means lower default risk on the first PAD.`
+      });
+    }
+    const origBalPts = orig.signals.balPts;
+    const newBalPts  = newR.signals.balPts;
+    if (newBalPts < origBalPts) {
+      reasons.push({
+        icon: '🛡️',
+        title: 'Balance cushion signal improved',
+        detail: `Balance cushion drops from <strong>${origBalPts} pts</strong> to <strong>${newBalPts} pts</strong> — the account has adequate runway to absorb the first repayment.`
+      });
+    }
+  }
+  const origMonthly = demoCalcPayment(origAmount) * 2;
+  const newMonthly  = demoCalcPayment(newAmount) * 2;
+  const paymentDiff = origMonthly - newMonthly;
+  if (paymentDiff > 0) {
+    reasons.push({
+      icon: '📅',
+      title: 'Lower monthly repayment obligation',
+      detail: `Monthly payment drops by <strong>$${paymentDiff.toFixed(0)}</strong> ($${newMonthly.toFixed(0)}/mo vs $${origMonthly.toFixed(0)}/mo) — smaller PADs are less likely to cause NSFs.`
+    });
+  }
+
+  const reasonsHtml = reasons.map(r => `
+    <div style="display:flex;gap:10px;padding:8px 12px;border-radius:8px;
+                background:rgba(29,233,198,0.05);border:1px solid rgba(29,233,198,0.1);
+                margin-bottom:6px;">
+      <span style="font-size:1rem;flex-shrink:0;">${r.icon}</span>
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;color:var(--white);margin-bottom:2px;">${r.title}</div>
+        <div style="font-size:0.7rem;color:var(--text-muted);line-height:1.5;">${r.detail}</div>
+      </div>
+    </div>`).join('');
+
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div style="border-radius:var(--r-lg);overflow:hidden;border:1px solid rgba(160,154,245,0.2);
+                animation:slideUp 0.3s ease;">
+      <!-- Header -->
+      <div style="padding:12px 16px;background:rgba(91,82,216,0.12);border-bottom:1px solid rgba(160,154,245,0.12);
+                  display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--periwinkle);">
+          🔬 Scenario Comparison — $${origAmount} vs $${newAmount}
+        </div>
+        <button onclick="document.getElementById('feasibility-comparison').style.display='none'"
+                style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.9rem;">✕</button>
+      </div>
+      <!-- Score comparison -->
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;background:rgba(8,6,20,0.5);">
+        <!-- Original -->
+        <div style="padding:16px;text-align:center;border-right:1px solid rgba(160,154,245,0.1);">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+                      color:var(--text-muted);margin-bottom:6px;">Requested — $${origAmount}</div>
+          <div style="font-size:2.2rem;font-weight:800;color:${origCol.text};line-height:1;">${orig.score}</div>
+          <div style="font-size:0.65rem;color:var(--text-muted);margin-bottom:6px;">/ 100 risk</div>
+          <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;
+                      background:${origCol.bg};border:1px solid ${origCol.border};
+                      font-size:0.65rem;font-weight:700;color:${origCol.text};">
+            ${{gold:'🥇',green:'🟢',blue:'🔵',yellow:'🟡',orange:'🟠',red:'🔴'}[orig.tier]}
+            ${orig.tier.charAt(0).toUpperCase()+orig.tier.slice(1)}
+          </div>
+        </div>
+        <!-- Arrow -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                    padding:0 16px;background:rgba(8,6,20,0.5);">
+          <div style="font-size:1.4rem;">→</div>
+          <div style="font-size:0.68rem;font-weight:700;margin-top:4px;
+                      color:${tierImproved?'#1DE9C6':'#FF9945'};">
+            ${tierImproved ? `▼ ${scoreDiff} pts` : scoreDiff === 0 ? '— same' : `▲ ${Math.abs(scoreDiff)} pts`}
+          </div>
+        </div>
+        <!-- New amount -->
+        <div style="padding:16px;text-align:center;border-left:1px solid rgba(160,154,245,0.1);">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+                      color:var(--text-muted);margin-bottom:6px;">Suggested — $${newAmount}</div>
+          <div style="font-size:2.2rem;font-weight:800;color:${newCol.text};line-height:1;">${newR.score}</div>
+          <div style="font-size:0.65rem;color:var(--text-muted);margin-bottom:6px;">/ 100 risk</div>
+          <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;
+                      background:${newCol.bg};border:1px solid ${newCol.border};
+                      font-size:0.65rem;font-weight:700;color:${newCol.text};">
+            ${{gold:'🥇',green:'🟢',blue:'🔵',yellow:'🟡',orange:'🟠',red:'🔴'}[newR.tier]}
+            ${newR.tier.charAt(0).toUpperCase()+newR.tier.slice(1)}
+          </div>
+        </div>
+      </div>
+      <!-- Why it's better -->
+      <div style="padding:14px 16px;">
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
+                    color:var(--periwinkle);margin-bottom:10px;">
+          Why $${newAmount} is a better risk for us
+        </div>
+        ${reasonsHtml || `<div style="font-size:0.72rem;color:var(--text-muted);">Score unchanged — the risk profile is similar at both amounts.</div>`}
+      </div>
+    </div>`;
+
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
 function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
   const el = document.getElementById('demo-result');
   const col = TIER_COLORS[r.tier];
@@ -2583,13 +2749,18 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
       const rowBg    = feasible ? 'rgba(29,233,198,0.06)' : 'rgba(255,107,138,0.04)';
       const rowBorder= feasible ? 'rgba(29,233,198,0.2)'  : 'rgba(255,107,138,0.1)';
       const amtColor = feasible ? '#1DE9C6'                : '#FF6B8A';
-      const badge    = feasible
-        ? `<span style="padding:2px 8px;border-radius:100px;background:rgba(29,233,198,0.15);color:#1DE9C6;font-size:0.62rem;font-weight:700;">✓ Feasible</span>`
+
+      // Badge + run button for feasible rows
+      const badge = feasible
+        ? `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+             <span style="padding:2px 8px;border-radius:100px;background:rgba(29,233,198,0.15);color:#1DE9C6;font-size:0.62rem;font-weight:700;">✓ Feasible</span>
+             <button onclick="runAtAmount(${amount})" style="padding:3px 10px;border-radius:6px;border:1px solid rgba(91,82,216,0.4);background:rgba(91,82,216,0.15);color:var(--periwinkle);font-family:var(--font);font-size:0.6rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.15s;" onmouseover="this.style.background='rgba(91,82,216,0.3)'" onmouseout="this.style.background='rgba(91,82,216,0.15)'">▶ Run at $${amount}</button>
+           </div>`
         : `<span style="padding:2px 8px;border-radius:100px;background:rgba(255,107,138,0.12);color:#FF6B8A;font-size:0.62rem;font-weight:700;">✗ Not feasible</span>`;
 
       // Reason chips for non-feasible
       const reasons = [];
-      if (!dtiPass) reasons.push(`DTI ${(dti*100).toFixed(0)}% ≥ 50%`);
+      if (!dtiPass) reasons.push(`DTI ${(dti*100).toFixed(0)}% ≥ 75%`);
       if (!balPass) reasons.push(`Balance ${(balRatio*100).toFixed(0)}% of loan`);
       const reasonHtml = reasons.length
         ? `<div style="font-size:0.6rem;color:#FF9945;margin-top:3px;">${reasons.join(' · ')}</div>`
@@ -2602,7 +2773,7 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
         : '';
 
       return `
-        <div style="display:grid;grid-template-columns:80px 1fr 90px 90px 100px;align-items:center;
+        <div style="display:grid;grid-template-columns:80px 1fr 90px 90px 120px;align-items:center;
                     gap:8px;padding:9px 14px;border-radius:8px;margin-bottom:4px;
                     background:${rowBg};border:1px solid ${rowBorder};">
           <div style="font-size:0.88rem;font-weight:800;color:${amtColor};">
@@ -2661,6 +2832,8 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
             and fixed obligations of <strong style="color:var(--white);">$${obligations.toLocaleString()}/mo</strong>.
           </span>
         </div>
+        <!-- Comparison panel — filled when analyst clicks Run at $X -->
+        <div id="feasibility-comparison" style="display:none;margin-top:12px;"></div>
       </div>`;
   }
 
