@@ -831,6 +831,7 @@
     .nav-hamburger { display: flex; }
   }
   /* END MEGA MENU NAV */
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 
 </style>
 </head>
@@ -1077,10 +1078,11 @@
           </div>
 
           <div class="slider-wrap">
+            <label for="loan-slider" class="sr-only">Loan amount</label>
             <div class="slider-labels">
               <span>$500</span><span>$1,000</span>
             </div>
-            <input type="range" id="loan-slider" min="500" max="1000" value="800" step="100">
+            <input type="range" id="loan-slider" min="500" max="1000" value="800" step="100" aria-label="Loan amount" aria-valuemin="500" aria-valuemax="1000" aria-valuenow="800" aria-valuetext="$750">
           </div>
 
           <div style="margin-bottom:14px;">
@@ -1474,6 +1476,8 @@
     const total = Math.round(val * 1.375 / 10) * 10;
     sumTotal.textContent = '~$' + total.toLocaleString();
     slider.style.background = `linear-gradient(to right, var(--iris) 0%, var(--iris) ${pct*100}%, rgba(160,154,245,0.2) ${pct*100}%, rgba(160,154,245,0.2) 100%)`;
+    slider.setAttribute('aria-valuenow', val);
+    slider.setAttribute('aria-valuetext', '$' + val.toLocaleString());
   }
 
   slider.addEventListener('input', updateCalc);
