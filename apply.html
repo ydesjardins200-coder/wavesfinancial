@@ -2307,7 +2307,7 @@ const DEMO_TIERS = [
   {name:'orange',label:'Orange',min:70, max:90,  decision:'manual_review'},
   {name:'red',   label:'Red',   min:90, max:101, decision:'auto_declined'},
 ];
-const DEMO_CANDIDATES = [500,400,300,200,100];
+const DEMO_CANDIDATES = [1000,900,800,700,600,500,400,300,200,100];
 const DEMO_MOCK_BANK = {
   gold:   {verifiedIncome:3000,fixedObligations:400,nsfCount:0,oppositionCount:0,accountAgeDays:365,avgDailyBalance:800,incomeRegularity:'consistent'},
   green:  {verifiedIncome:2200,fixedObligations:500,nsfCount:1,oppositionCount:0,accountAgeDays:180,avgDailyBalance:350,incomeRegularity:'consistent'},
@@ -2730,7 +2730,7 @@ function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
   // ── LOAN FEASIBILITY TABLE (manual_review only) ───────────────────────────
   let feasibilityHtml = '';
   if (r.decision === 'manual_review' && s) {
-    const ALL_AMOUNTS  = [500, 400, 300, 200, 100];
+    const ALL_AMOUNTS  = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100];
     const verIncome    = bankData.verifiedIncome;
     const obligations  = bankData.fixedObligations;
     const avgBalance   = bankData.avgDailyBalance;
