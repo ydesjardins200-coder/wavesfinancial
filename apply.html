@@ -391,6 +391,53 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 
 @media(max-width:500px) { .type-cards { grid-template-columns: 1fr; } }
 
+/* ── SCORING DEMO MODAL ─────────────────────────────────────────────────── */
+.demo-btn{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:11px 22px;border-radius:var(--r-md);border:1px solid rgba(255,209,102,0.35);background:rgba(255,209,102,0.08);color:var(--gold);font-family:var(--font);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.demo-btn:hover{background:rgba(255,209,102,0.15);border-color:rgba(255,209,102,0.6);transform:translateY(-1px);}
+.demo-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(5,4,18,0.85);backdrop-filter:blur(12px);overflow-y:auto;padding:24px 16px;}
+.demo-overlay.open{display:flex;align-items:flex-start;justify-content:center;}
+.demo-modal{width:100%;max-width:720px;background:rgba(14,11,32,0.98);border:1px solid rgba(160,154,245,0.2);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.7);animation:slideUp 0.35s cubic-bezier(0.34,1.4,0.64,1);}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.demo-header{padding:20px 24px 18px;border-bottom:1px solid rgba(160,154,245,0.12);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(59,53,176,0.25),rgba(29,233,198,0.06));}
+.demo-header-left{display:flex;align-items:center;gap:12px;}
+.demo-header-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.demo-header-title{font-size:1rem;font-weight:800;color:var(--white);}
+.demo-header-sub{font-size:0.72rem;color:var(--text-muted);margin-top:2px;}
+.demo-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.15s;}
+.demo-close:hover{background:rgba(255,255,255,0.06);color:var(--white);}
+.demo-body{padding:22px 24px;}
+.demo-scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
+@media(max-width:520px){.demo-scenarios{grid-template-columns:repeat(2,1fr);}}
+.scenario-btn{padding:10px 8px;border-radius:var(--r-md);border:2px solid transparent;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.18s;text-align:center;}
+.scenario-btn:hover{background:rgba(255,255,255,0.06);}
+.scenario-btn.selected{background:rgba(91,82,216,0.15);}
+.scenario-dot{width:12px;height:12px;border-radius:50%;margin:0 auto 7px;}
+.scenario-name{font-size:0.78rem;font-weight:700;color:var(--white);}
+.scenario-desc{font-size:0.65rem;color:var(--text-muted);margin-top:2px;line-height:1.4;}
+.demo-run-btn{width:100%;padding:13px;border-radius:var(--r-md);border:none;background:linear-gradient(135deg,var(--royal),var(--iris));color:var(--white);font-family:var(--font);font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;}
+.demo-run-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(91,82,216,0.5);}
+.demo-result{display:none;border-radius:var(--r-lg);overflow:hidden;border:1px solid rgba(160,154,245,0.15);}
+.demo-result.visible{display:block;animation:slideUp 0.3s ease;}
+.result-tier-banner{padding:18px 20px;display:flex;align-items:center;gap:14px;}
+.tier-badge{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.tier-name{font-size:1.2rem;font-weight:800;color:var(--white);}
+.tier-decision{font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:100px;display:inline-flex;align-items:center;gap:5px;margin-top:4px;}
+.tier-score-big{margin-left:auto;text-align:right;}
+.tier-score-num{font-size:2rem;font-weight:800;line-height:1;}
+.tier-score-label{font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;}
+.result-signals{padding:16px 20px;background:rgba(8,6,20,0.5);display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.result-signals{grid-template-columns:1fr;}}
+.signal-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);}
+.signal-label{font-size:0.72rem;color:var(--text-muted);font-weight:500;}
+.signal-val{font-size:0.78rem;font-weight:700;color:var(--white);}
+.signal-pts{font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;}
+.result-flags{padding:14px 20px;border-top:1px solid rgba(160,154,245,0.1);}
+.flags-title{font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;}
+.flag-item{display:flex;align-items:flex-start;gap:7px;font-size:0.75rem;color:var(--gold);margin-bottom:5px;line-height:1.45;}
+.result-approved{padding:14px 20px;border-top:1px solid rgba(160,154,245,0.1);display:flex;align-items:center;justify-content:space-between;}
+.approved-label{font-size:0.75rem;color:var(--text-muted);}
+.approved-val{font-size:1.1rem;font-weight:800;color:var(--white);}
+.hard-decline-box{padding:14px 20px;border-top:1px solid rgba(255,107,138,0.2);background:rgba(255,107,138,0.05);display:flex;gap:10px;font-size:0.78rem;color:rgba(255,107,138,0.9);line-height:1.55;}
 </style>
 </head>
 <body>
@@ -970,6 +1017,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
         <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
+      <div style="margin-top:14px;">
+        <button class="demo-btn" onclick="openScoringDemo()">🧪 Demo Lead Scoring — Board Presentation</button>
+      </div>
     </div>
 
     <!-- DECLINE -->
@@ -1448,9 +1498,72 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
         <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
+      <div style="margin-top:14px;">
+        <button class="demo-btn" onclick="openScoringDemo()">🧪 Demo Lead Scoring — Board Presentation</button>
+      </div>
     </div>
 
   </div><!-- /renewal-form -->
+
+<!-- ── SCORING DEMO MODAL ─────────────────────────────────────────────────── -->
+<div class="demo-overlay" id="demo-overlay" onclick="handleOverlayClick(event)">
+  <div class="demo-modal">
+    <div class="demo-header">
+      <div class="demo-header-left">
+        <div class="demo-header-icon">🧪</div>
+        <div>
+          <div class="demo-header-title">Lead Scoring Engine — Demo</div>
+          <div class="demo-header-sub">Board presentation · Simulated Flinks bank data</div>
+        </div>
+      </div>
+      <button class="demo-close" onclick="closeScoringDemo()">✕</button>
+    </div>
+    <div class="demo-body">
+      <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;line-height:1.6;">Select a risk profile below to simulate what the decisioning engine would return for a real applicant. Each scenario uses the loan amount and applicant data collected in the form.</p>
+      <div class="demo-scenarios" id="demo-scenarios">
+        <button class="scenario-btn selected" data-scenario="gold" onclick="selectScenario(this)">
+          <div class="scenario-dot" style="background:#FFD166;box-shadow:0 0 8px rgba(255,209,102,0.5);"></div>
+          <div class="scenario-name">🥇 Gold</div>
+          <div class="scenario-desc">Auto-approved<br>Score 0–15</div>
+        </button>
+        <button class="scenario-btn" data-scenario="green" onclick="selectScenario(this)">
+          <div class="scenario-dot" style="background:#1DE9C6;box-shadow:0 0 8px rgba(29,233,198,0.4);"></div>
+          <div class="scenario-name">🟢 Green</div>
+          <div class="scenario-desc">Good file<br>Score 15–30</div>
+        </button>
+        <button class="scenario-btn" data-scenario="blue" onclick="selectScenario(this)">
+          <div class="scenario-dot" style="background:#00E5FF;box-shadow:0 0 8px rgba(0,229,255,0.4);"></div>
+          <div class="scenario-name">🔵 Blue</div>
+          <div class="scenario-desc">OK file<br>Score 30–50</div>
+        </button>
+        <button class="scenario-btn" data-scenario="yellow" onclick="selectScenario(this)">
+          <div class="scenario-dot" style="background:#F5C542;box-shadow:0 0 8px rgba(245,197,66,0.4);"></div>
+          <div class="scenario-name">🟡 Yellow</div>
+          <div class="scenario-desc">Risky<br>Score 50–70</div>
+        </button>
+        <button class="scenario-btn" data-scenario="orange" onclick="selectScenario(this)">
+          <div class="scenario-dot" style="background:#FF9945;box-shadow:0 0 8px rgba(255,153,69,0.4);"></div>
+          <div class="scenario-name">🟠 Orange</div>
+          <div class="scenario-desc">Heavy debt<br>Score 70–90</div>
+        </button>
+        <button class="scenario-btn" data-scenario="red" onclick="selectScenario(this)">
+          <div class="scenario-dot" style="background:#FF6B8A;box-shadow:0 0 8px rgba(255,107,138,0.4);"></div>
+          <div class="scenario-name">🔴 Red</div>
+          <div class="scenario-desc">Auto-declined<br>Score 90–100</div>
+        </button>
+      </div>
+
+      <button class="demo-run-btn" onclick="runScoringDemo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 3l14 9-14 9V3z"/></svg>
+        Run Scoring Engine
+      </button>
+
+      <div class="demo-result" id="demo-result">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+</div>
 
 </main>
 
@@ -2074,6 +2187,240 @@ function genRef(prefix){return prefix+'-'+Math.floor(100000+Math.random()*900000
 
 // ─── MEGA MENU ────────────────────────────────────────────────────────
 // nav stripped — funnel mode
+// ── SCORING DEMO ENGINE ────────────────────────────────────────────────────
+// Self-contained port of scoringEngine.js for in-browser board demo
+const DEMO_APR = 0.23;
+const DEMO_TIERS = [
+  {name:'gold',  label:'Gold',  min:0,  max:15,  decision:'auto_approved'},
+  {name:'green', label:'Green', min:15, max:30,  decision:'manual_review'},
+  {name:'blue',  label:'Blue',  min:30, max:50,  decision:'manual_review'},
+  {name:'yellow',label:'Yellow',min:50, max:70,  decision:'manual_review'},
+  {name:'orange',label:'Orange',min:70, max:90,  decision:'manual_review'},
+  {name:'red',   label:'Red',   min:90, max:101, decision:'auto_declined'},
+];
+const DEMO_CANDIDATES = [500,400,300,200,100];
+const DEMO_MOCK_BANK = {
+  gold:   {verifiedIncome:3000,fixedObligations:400,nsfCount:0,oppositionCount:0,accountAgeDays:365,avgDailyBalance:800,incomeRegularity:'consistent'},
+  green:  {verifiedIncome:2200,fixedObligations:500,nsfCount:1,oppositionCount:0,accountAgeDays:180,avgDailyBalance:350,incomeRegularity:'consistent'},
+  blue:   {verifiedIncome:1800,fixedObligations:700,nsfCount:3,oppositionCount:0,accountAgeDays:120,avgDailyBalance:100,incomeRegularity:'variable'},
+  yellow: {verifiedIncome:1600,fixedObligations:900,nsfCount:5,oppositionCount:0,accountAgeDays:90, avgDailyBalance:60, incomeRegularity:'irregular'},
+  orange: {verifiedIncome:1800,fixedObligations:600,nsfCount:6,oppositionCount:1,accountAgeDays:200,avgDailyBalance:20, incomeRegularity:'irregular'},
+  red:    {verifiedIncome:1200,fixedObligations:1000,nsfCount:8,oppositionCount:2,accountAgeDays:300,avgDailyBalance:20,incomeRegularity:'irregular'},
+};
+const TIER_COLORS = {
+  gold:  {bg:'rgba(255,209,102,0.12)',border:'rgba(255,209,102,0.35)',text:'#FFD166'},
+  green: {bg:'rgba(29,233,198,0.1)', border:'rgba(29,233,198,0.3)',  text:'#1DE9C6'},
+  blue:  {bg:'rgba(0,229,255,0.08)', border:'rgba(0,229,255,0.25)',  text:'#00E5FF'},
+  yellow:{bg:'rgba(245,197,66,0.1)', border:'rgba(245,197,66,0.3)',  text:'#F5C542'},
+  orange:{bg:'rgba(255,153,69,0.1)', border:'rgba(255,153,69,0.3)',  text:'#FF9945'},
+  red:   {bg:'rgba(255,107,138,0.1)',border:'rgba(255,107,138,0.3)', text:'#FF6B8A'},
+};
+const DECISION_LABELS = {
+  auto_approved: {label:'✅ Auto-Approved',   bg:'rgba(29,233,198,0.15)',  color:'#1DE9C6'},
+  manual_review: {label:'🔍 Manual Review',   bg:'rgba(160,154,245,0.15)', color:'#A09AF5'},
+  auto_declined: {label:'❌ Auto-Declined',   bg:'rgba(255,107,138,0.15)', color:'#FF6B8A'},
+};
+
+function demoCalcPayment(p){return(p*(1+DEMO_APR*112/365))/8;}
+function demoResolveTier(s){return DEMO_TIERS.find(t=>s>=t.min&&s<t.max)||DEMO_TIERS[5];}
+function demoFeasible(obs,inc,req){
+  const cands=[req,...DEMO_CANDIDATES].filter(c=>c<=req);
+  cands.sort((a,b)=>b-a);
+  for(const c of cands){
+    if((obs+demoCalcPayment(c)*2)/inc<0.50) return c;
+  }
+  return 0;
+}
+
+function demoScore(bankData, declaredIncome, requestedAmount) {
+  const {verifiedIncome,fixedObligations,nsfCount,oppositionCount,accountAgeDays,avgDailyBalance,incomeRegularity} = bankData;
+
+  // Hard gates
+  if(!verifiedIncome||verifiedIncome<800) return {score:100,tier:'red',decision:'auto_declined',approvedAmount:0,feasibleAmount:0,hardDecline:verifiedIncome<800?`Verified income $${verifiedIncome}/mo below $800 minimum.`:'No verifiable income detected.',signals:null,flags:[]};
+  if(oppositionCount>=3) return {score:100,tier:'red',decision:'auto_declined',approvedAmount:0,feasibleAmount:0,hardDecline:`${oppositionCount} payment oppositions in 90 days.`,signals:null,flags:[]};
+  if(accountAgeDays<60) return {score:100,tier:'red',decision:'auto_declined',approvedAmount:0,feasibleAmount:0,hardDecline:`Account only ${accountAgeDays} days old (min 60 required).`,signals:null,flags:[]};
+
+  // NSF
+  let nsfPts=0;
+  if(nsfCount===0)nsfPts=0; else if(nsfCount<=2)nsfPts=8; else if(nsfCount<=5)nsfPts=16; else nsfPts=25;
+  // Oppositions
+  let oppPts=0;
+  if(oppositionCount===0)oppPts=0; else if(oppositionCount===1)oppPts=10; else oppPts=20;
+  // DTI
+  const monthlyPayment=demoCalcPayment(requestedAmount)*2;
+  const dtiRatio=(fixedObligations+monthlyPayment)/verifiedIncome;
+  let dtiPts=0;
+  if(dtiRatio<0.30)dtiPts=0; else if(dtiRatio<0.50)dtiPts=8; else if(dtiRatio<0.70)dtiPts=14; else dtiPts=20;
+  // Regularity
+  const regMap={consistent:0,variable:6,irregular:12,undetected:15};
+  const regPts=regMap[incomeRegularity]??15;
+  // Mismatch
+  let misPts=0,misRatio=null;
+  if(verifiedIncome>0){misRatio=Math.abs(declaredIncome-verifiedIncome)/declaredIncome;if(misRatio<0.15)misPts=0;else if(misRatio<0.35)misPts=5;else misPts=10;}else misPts=10;
+  // Balance
+  let balPts=0;
+  const balRatio=avgDailyBalance/requestedAmount;
+  if(balRatio>0.30)balPts=0;else if(balRatio>0.10)balPts=4;else balPts=10;
+
+  const totalScore=Math.min(100,nsfPts+oppPts+dtiPts+regPts+misPts+balPts);
+  const tier=demoResolveTier(totalScore);
+
+  let approvedAmount=requestedAmount, feasibleAmount=requestedAmount;
+  const flags=[];
+  if(nsfCount>=3) flags.push(`High NSF activity: ${nsfCount} in 90 days`);
+  if(oppositionCount>=1) flags.push(`Payment opposition(s) detected: ${oppositionCount}`);
+  if(dtiRatio>0.50) flags.push(`DTI elevated: ${(dtiRatio*100).toFixed(1)}%`);
+  if(misPts===10&&misRatio!==null) flags.push(`Income overstated by ${(misRatio*100).toFixed(1)}%`);
+  if(balPts===10) flags.push('Average daily balance critically low vs loan amount');
+  if(incomeRegularity==='irregular') flags.push('Income pattern irregular — manual verification recommended');
+
+  if(tier.name==='red'){approvedAmount=0;feasibleAmount=0;}
+  else if(tier.name==='orange'){
+    feasibleAmount=demoFeasible(fixedObligations,verifiedIncome,requestedAmount);
+    if(feasibleAmount===0){
+      flags.push('Orange escalated to Red — no feasible amount found');
+      return {score:95,tier:'red',decision:'auto_declined',approvedAmount:0,feasibleAmount:0,hardDecline:'No loan amount produces DTI below 50% with current obligations.',signals:{nsfCount,nsfPts,oppPts,dtiRatio,dtiPts,verifiedIncome,declaredIncome,misRatio,misPts,incomeRegularity,regPts,avgDailyBalance,balPts,accountAgeDays,fixedObligations},flags};
+    }
+    approvedAmount=feasibleAmount;
+    flags.push(`Feasible amount: $${feasibleAmount} (requested: $${requestedAmount})`);
+  }
+
+  return {
+    score:totalScore, tier:tier.name, decision:tier.decision,
+    approvedAmount, feasibleAmount,
+    hardDecline:null,
+    signals:{nsfCount,nsfPts,oppPts,dtiRatio,dtiPts,verifiedIncome,declaredIncome,misRatio,misPts,incomeRegularity,regPts,avgDailyBalance,balPts,accountAgeDays,fixedObligations},
+    flags,
+  };
+}
+
+// ── DEMO UI CONTROLLER ─────────────────────────────────────────────────────
+let demoSelectedScenario = 'gold';
+
+function openScoringDemo(){
+  document.getElementById('demo-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeScoringDemo(){
+  document.getElementById('demo-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleOverlayClick(e){if(e.target===document.getElementById('demo-overlay'))closeScoringDemo();}
+function selectScenario(btn){
+  document.querySelectorAll('.scenario-btn').forEach(b=>{
+    b.classList.remove('selected');
+    b.style.borderColor='transparent';
+  });
+  btn.classList.add('selected');
+  demoSelectedScenario=btn.dataset.scenario;
+  const col=TIER_COLORS[demoSelectedScenario];
+  btn.style.borderColor=col.border;
+  // Reset result
+  const res=document.getElementById('demo-result');
+  res.classList.remove('visible');
+  res.style.display='none';
+}
+
+function runScoringDemo(){
+  const bankData = DEMO_MOCK_BANK[demoSelectedScenario];
+  const requestedAmount = loanAmount || 300;
+  // Use a plausible declared income — slightly above verified for realism
+  const declaredIncome = Math.round(bankData.verifiedIncome * 1.08);
+  const result = demoScore(bankData, declaredIncome, requestedAmount);
+
+  renderDemoResult(result, bankData, requestedAmount, declaredIncome);
+}
+
+function renderDemoResult(r, bankData, requestedAmount, declaredIncome){
+  const el = document.getElementById('demo-result');
+  const col = TIER_COLORS[r.tier];
+  const dec = DECISION_LABELS[r.decision];
+  const s   = r.signals;
+
+  // Score bar width
+  const barW = Math.max(2, Math.min(100, r.score));
+  const barColor = col.text;
+
+  // Score gradient bar
+  const scoreBarHtml = `
+    <div style="padding:14px 20px 0;background:rgba(8,6,20,0.5);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Risk Score</span>
+        <span style="font-size:0.65rem;color:var(--text-muted);">0 = perfect · 100 = extreme risk</span>
+      </div>
+      <div style="height:8px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;margin-bottom:4px;">
+        <div style="height:100%;width:${barW}%;border-radius:4px;background:linear-gradient(90deg,#1DE9C6,${barColor});transition:width 0.8s cubic-bezier(0.34,1.2,0.64,1);"></div>
+      </div>
+    </div>`;
+
+  const signalsHtml = s ? `
+    <div class="result-signals">
+      ${signalRow('NSF Events (90d)', s.nsfCount, s.nsfPts, 25)}
+      ${signalRow('Payment Oppositions', s.oppPts===undefined?bankData.oppositionCount:bankData.oppositionCount, s.oppPts, 20)}
+      ${signalRow('Debt-to-Income', (s.dtiRatio*100).toFixed(1)+'%', s.dtiPts, 20)}
+      ${signalRow('Income Regularity', s.incomeRegularity, s.regPts, 15)}
+      ${signalRow('Income Mismatch', s.misRatio!==null?(s.misRatio*100).toFixed(1)+'%':'n/a', s.misPts, 10)}
+      ${signalRow('Balance Cushion', '$'+s.avgDailyBalance.toLocaleString(), s.balPts, 10)}
+    </div>
+  ` : '';
+
+  const flagsHtml = r.flags.length ? `
+    <div class="result-flags">
+      <div class="flags-title">⚑ Analyst Flags</div>
+      ${r.flags.map(f=>`<div class="flag-item"><span style="flex-shrink:0;">→</span>${f}</div>`).join('')}
+    </div>` : '';
+
+  const hardDeclineHtml = r.hardDecline ? `
+    <div class="hard-decline-box">
+      <span style="flex-shrink:0;font-size:1rem;">🚫</span>
+      <span><strong style="color:#FF6B8A;">Hard Decline Gate:</strong> ${r.hardDecline}</span>
+    </div>` : '';
+
+  const approvedHtml = `
+    <div class="result-approved">
+      <div><div class="approved-label">Requested Amount</div><div class="approved-val">$${requestedAmount.toLocaleString()}</div></div>
+      ${r.tier==='orange'?`<div style="text-align:center;"><div class="approved-label">Feasible Amount</div><div class="approved-val" style="color:${col.text};">$${r.feasibleAmount.toLocaleString()}</div><div style="font-size:0.62rem;color:var(--text-muted);margin-top:2px;">surfaced to analyst</div></div>`:''}
+      <div style="text-align:right;"><div class="approved-label">Decision</div><div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;background:${dec.bg};color:${dec.color};font-size:0.72rem;font-weight:700;margin-top:4px;">${dec.label}</div></div>
+    </div>`;
+
+  el.innerHTML = `
+    <div class="result-tier-banner" style="background:${col.bg};border-bottom:1px solid ${col.border};">
+      <div class="tier-badge" style="background:${col.bg};border:1px solid ${col.border};">
+        ${{gold:'🥇',green:'🟢',blue:'🔵',yellow:'🟡',orange:'🟠',red:'🔴'}[r.tier]}
+      </div>
+      <div>
+        <div class="tier-name" style="color:${col.text};">${r.tier.charAt(0).toUpperCase()+r.tier.slice(1)} Tier</div>
+        <div class="tier-decision" style="background:${dec.bg};color:${dec.color};">${dec.label}</div>
+      </div>
+      <div class="tier-score-big">
+        <div class="tier-score-num" style="color:${col.text};">${r.score}</div>
+        <div class="tier-score-label">/ 100 risk</div>
+      </div>
+    </div>
+    ${scoreBarHtml}
+    ${signalsHtml}
+    ${flagsHtml}
+    ${hardDeclineHtml}
+    ${approvedHtml}
+  `;
+
+  el.style.display='block';
+  setTimeout(()=>el.classList.add('visible'),10);
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function signalRow(label, val, pts, maxPts){
+  const pct = pts/maxPts;
+  const ptColor = pct===0?'#1DE9C6':pct<0.5?'#F5C542':'#FF6B8A';
+  return `<div class="signal-row">
+    <span class="signal-label">${label}</span>
+    <span style="display:flex;align-items:center;">
+      <span class="signal-val">${val}</span>
+      <span class="signal-pts" style="background:${ptColor}18;color:${ptColor};">${pts}pt</span>
+    </span>
+  </div>`;
+}
+
 </script>
 </body>
 </html>
