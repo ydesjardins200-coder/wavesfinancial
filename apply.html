@@ -2642,13 +2642,16 @@ async function submitNew() {
     setTimeout(()=>{box.style.borderColor='';box.style.boxShadow='';},2500);
     return;
   }
-  // Validate banking coordinates
-  const transit=gv('n-transit'); const instNum=gv('n-institution'); const acctNum=gv('n-account-num');
-  let bankOk=true;
-  if(!transit||transit.length!==5){setErr('n-transit',true,'Enter your 5-digit transit number');bankOk=false;}else clrErr('n-transit');
-  if(!instNum||instNum.length!==3){setErr('n-institution',true,'Enter your 3-digit institution number');bankOk=false;}else clrErr('n-institution');
-  if(!acctNum||acctNum.length<5){setErr('n-account-num',true,'Enter your account number');bankOk=false;}else clrErr('n-account-num');
-  if(!bankOk) return;
+  // Validate banking coordinates (only if the block is shown — i.e. Flinks connected)
+  const bankingBlock = document.getElementById('banking-coords-block');
+  if (bankingBlock && bankingBlock.style.display !== 'none') {
+    const transit=gv('n-transit'); const instNum=gv('n-institution'); const acctNum=gv('n-account-num');
+    let bankOk=true;
+    if(!transit||transit.length!==5){setErr('n-transit',true,'Enter your 5-digit transit number');bankOk=false;}else clrErr('n-transit');
+    if(!instNum||instNum.length!==3){setErr('n-institution',true,'Enter your 3-digit institution number');bankOk=false;}else clrErr('n-institution');
+    if(!acctNum||acctNum.length<5){setErr('n-account-num',true,'Enter your account number');bankOk=false;}else clrErr('n-account-num');
+    if(!bankOk) return;
+  }
 
   const pad = document.getElementById('c-pad');
   if(pad && !pad.checked){setErr('flinks-consent',true,'Please accept the PAD authorization to continue');return;}
