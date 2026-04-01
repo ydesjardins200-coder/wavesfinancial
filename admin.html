@@ -247,114 +247,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
   .sw{flex:0 0 180px;}
   .client-hero{grid-template-columns:1fr;}
 }
-
-/* ── LMS CLIENT PAGE ────────────────────────────────────────────────────────── */
-.lms-layout{display:grid;grid-template-columns:1fr 420px 260px;gap:0;height:calc(100vh - 108px);overflow:hidden;}
-.lms-left{overflow-y:auto;padding:12px;border-right:1px solid var(--border);}
-.lms-center{overflow-y:auto;padding:12px;border-right:1px solid var(--border);}
-.lms-right{overflow-y:auto;padding:12px;background:rgba(8,6,20,.4);}
-
-/* Section panels */
-.lms-section{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;}
-.lms-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:rgba(91,82,216,.08);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
-.lms-section-title{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--periwinkle);}
-.lms-section-hdr-right{display:flex;align-items:center;gap:6px;}
-.lms-section-body{padding:10px 12px;}
-.lms-section-body.collapsed{display:none;}
-.lms-chevron{font-size:.6rem;color:var(--muted);transition:transform .2s;}
-.lms-chevron.open{transform:rotate(90deg);}
-
-/* Field grid */
-.lms-fields{display:grid;gap:8px;}
-.lms-fields-2{grid-template-columns:1fr 1fr;}
-.lms-fields-3{grid-template-columns:1fr 1fr 1fr;}
-.lms-fields-4{grid-template-columns:1fr 1fr 1fr 1fr;}
-.lms-field{display:flex;flex-direction:column;gap:2px;}
-.lms-field.full{grid-column:1/-1;}
-.lms-field.span2{grid-column:span 2;}
-.lms-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
-.lms-input{width:100%;padding:5px 8px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;transition:border-color .15s;}
-.lms-input:focus{border-color:var(--iris);background:rgba(8,6,20,.9);}
-.lms-input:hover{border-color:rgba(160,154,245,.25);}
-.lms-select{width:100%;padding:5px 8px;background:rgba(8,6,20,.8);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;}
-.lms-select:focus{border-color:var(--iris);}
-.lms-textarea{width:100%;padding:6px 8px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;resize:vertical;min-height:52px;}
-.lms-textarea:focus{border-color:var(--iris);}
-
-/* Save button */
-.lms-save-btn{font-size:.65rem;font-weight:700;padding:3px 10px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:5px;color:var(--periwinkle);cursor:pointer;font-family:var(--font);transition:all .15s;}
-.lms-save-btn:hover{background:rgba(91,82,216,.35);}
-.lms-save-btn.saving{color:var(--teal);border-color:rgba(29,233,198,.4);}
-
-/* Loan switcher bar */
-.loan-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(16,14,46,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5;}
-.loan-bar-select{flex:1;padding:5px 10px;background:rgba(8,6,20,.8);border:1px solid var(--border);border-radius:6px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;}
-.loan-bar-select:focus{border-color:var(--iris);}
-.loan-btn{font-size:.7rem;font-weight:700;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font);}
-.loan-btn-new{background:rgba(29,233,198,.15);border:1px solid rgba(29,233,198,.3);color:var(--teal);}
-.loan-btn-del{background:rgba(255,107,138,.1);border:1px solid rgba(255,107,138,.25);color:var(--coral);}
-
-/* Payment calendar tables */
-.cal-table{width:100%;border-collapse:collapse;font-size:.7rem;}
-.cal-table th{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px;text-align:right;border-bottom:1px solid var(--border);}
-.cal-table th:first-child{text-align:left;}
-.cal-table td{padding:5px 8px;text-align:right;border-bottom:1px solid rgba(160,154,245,.05);font-size:.72rem;}
-.cal-table td:first-child{text-align:left;color:var(--muted);}
-.cal-table tr:last-child td{border-bottom:none;font-weight:700;color:var(--periwinkle);}
-.cal-table tr:hover td{background:rgba(91,82,216,.04);}
-.cal-paid td{color:rgba(29,233,198,.8)!important;}
-.cal-missed td{color:rgba(255,107,138,.8)!important;}
-.cal-overdue td:first-child{color:var(--coral)!important;}
-
-/* Loan summary grid */
-.loan-summary{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px;}
-.ls-cell{background:var(--card);padding:8px 12px;}
-.ls-label{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:2px;}
-.ls-val{font-size:.92rem;font-weight:800;}
-
-/* Score card */
-.score-card{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
-.score-signal{background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:6px;padding:8px 10px;}
-.ss-label{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:2px;}
-.ss-val{font-size:.85rem;font-weight:800;}
-.ss-pts{font-size:.6rem;margin-top:1px;}
-
-/* Right panel tabs */
-.msg-tabs{display:flex;gap:2px;margin-bottom:8px;}
-.msg-tab{padding:4px 10px;font-size:.65rem;font-weight:700;border-radius:5px;cursor:pointer;background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font);}
-.msg-tab.active{background:rgba(91,82,216,.2);border-color:rgba(91,82,216,.4);color:var(--periwinkle);}
-.msg-bubble{background:rgba(91,82,216,.08);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:.73rem;}
-.msg-bubble-meta{font-size:.6rem;color:var(--muted);margin-bottom:3px;}
-.msg-input-row{display:flex;gap:6px;margin-top:8px;}
-.msg-input{flex:1;padding:6px 10px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:6px;color:var(--white);font-family:var(--font);font-size:.75rem;outline:none;}
-.msg-input:focus{border-color:var(--iris);}
-.msg-send{padding:6px 12px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer;}
-
-/* Application history expandable */
-.app-hist-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:rgba(8,6,20,.4);margin-bottom:4px;cursor:pointer;transition:background .15s;}
-.app-hist-row:hover{background:rgba(91,82,216,.08);}
-.app-hist-body{display:none;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;background:rgba(8,6,20,.3);}
-.app-hist-body.open{display:block;}
-
-/* Status pill */
-.spill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:100px;font-size:.6rem;font-weight:700;}
-
-/* Dirty field indicator */
-.lms-input.dirty,.lms-select.dirty,.lms-textarea.dirty{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.04);}
-
-/* Fund method radios */
-.fund-radios{display:flex;flex-direction:column;gap:4px;}
-.fund-radio{display:flex;align-items:center;gap:6px;font-size:.75rem;cursor:pointer;}
-.fund-radio input{accent-color:var(--iris);}
-
-@media(max-width:1100px){
-  .lms-layout{grid-template-columns:1fr 380px;}
-  .lms-right{display:none;}
-}
-@media(max-width:800px){
-  .lms-layout{grid-template-columns:1fr;}
-  .lms-center,.lms-right{display:none;}
-}
 </style>
 </head>
 <body>
@@ -698,654 +590,214 @@ async function openClient(clientId, highlightRef){
 function renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef){
   const name=((client.first_name||'')+' '+(client.last_name||'')).trim()||'—';
   const memberSince=client.created_at?new Date(client.created_at).toLocaleDateString('en-CA',{month:'short',year:'numeric'}):'—';
-  const tc='t-'+(client.latest_tier||'green');
+  const activeLoans=loans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
 
-  document.getElementById('cp-title').textContent=name;
-  document.getElementById('cp-sub').textContent=client.email+' · '+(client.province||'')+(client.city?' · '+client.city:'')+(client.total_loans?' · '+client.total_loans+' loan(s)':'');
-  document.getElementById('cp-badges').innerHTML=
-    (client.latest_tier?`<span class="tb ${tc}">${client.latest_tier}</span>`:'')+
-    `<span style="font-size:.68rem;color:var(--muted);margin-left:4px">Member since ${memberSince}</span>`;
-
-  const activeLoan = loans.find(l=>l.status==='active'||l.status==='pending_disbursement') || loans[0];
+  // Find most recent application for scoring display
+  const latestApp=apps[0];
+  const s=latestApp?.signals||{};
 
   document.getElementById('cp-body').innerHTML=`
-    <div class="lms-layout" id="lms-layout">
-      <!-- ── LEFT COLUMN ── -->
-      <div class="lms-left" id="lms-left">
-        ${sectionClient(client)}
-        ${sectionAddress(client)}
-        ${sectionFinancialInstitution(client, apps)}
-        ${sectionBankruptcy(apps)}
-        ${sectionJobs(client)}
-        ${sectionContacts(client)}
-        ${sectionAuthorizedPersons(client)}
-        ${sectionDocuments(loans, contractMap)}
-        ${sectionAppHistory(apps, schedMap, contractMap, loans)}
-      </div>
-      <!-- ── CENTER COLUMN (LOAN) ── -->
-      <div class="lms-center" id="lms-center">
-        ${loanPanel(loans, schedMap, contractMap, apps, client)}
-      </div>
-      <!-- ── RIGHT COLUMN (MESSAGES) ── -->
-      <div class="lms-right" id="lms-right">
-        ${messagesPanel(client)}
-      </div>
-    </div>`;
-
-  // Init dirty tracking
-  initDirtyTracking();
-}
-
-/* ── SECTION: CLIENT INFORMATION ── */
-function sectionClient(c){
-  return lmsSection('CLIENT_INFO','Client Information',c.id,`
-    <div class="lms-fields lms-fields-2">
-      <div class="lms-field"><label class="lms-label">First Name</label><input class="lms-input" data-field="first_name" value="${esc(c.first_name)}"></div>
-      <div class="lms-field"><label class="lms-label">Last Name</label><input class="lms-input" data-field="last_name" value="${esc(c.last_name)}"></div>
-      <div class="lms-field"><label class="lms-label">Email</label><input class="lms-input" type="email" data-field="email" value="${esc(c.email)}"></div>
-      <div class="lms-field"><label class="lms-label">Date of Birth</label><input class="lms-input" type="date" data-field="dob" value="${esc(c.dob)}"></div>
-      <div class="lms-field"><label class="lms-label">Sex</label>
-        <select class="lms-select" data-field="sex">
-          <option value="">—</option>
-          <option value="male" ${c.sex==='male'?'selected':''}>Male</option>
-          <option value="female" ${c.sex==='female'?'selected':''}>Female</option>
-          <option value="other" ${c.sex==='other'?'selected':''}>Other</option>
-        </select>
-      </div>
-      <div class="lms-field"><label class="lms-label">Status</label>
-        <select class="lms-select" data-field="status">
-          <option value="active" ${c.status==='active'?'selected':''}>Active</option>
-          <option value="suspended" ${c.status==='suspended'?'selected':''}>Suspended</option>
-          <option value="blacklisted" ${c.status==='blacklisted'?'selected':''}>Blacklisted</option>
-        </select>
-      </div>
-      <div class="lms-field"><label class="lms-label">Cell Phone</label><input class="lms-input" data-field="cell_phone" value="${esc(c.cell_phone)}"></div>
-      <div class="lms-field"><label class="lms-label">Home Phone</label><input class="lms-input" data-field="home_phone" value="${esc(c.home_phone)}"></div>
-      <div class="lms-field"><label class="lms-label">Pay Frequency</label>
-        <select class="lms-select" data-field="pay_frequency">
-          <option value="">—</option>
-          ${['weekly','biweekly','semi-monthly','monthly'].map(v=>`<option value="${v}" ${c.pay_frequency===v?'selected':''}>${v}</option>`).join('')}
-        </select>
-      </div>
-      <div class="lms-field"><label class="lms-label">Declared Income / mo</label><input class="lms-input" type="number" data-field="declared_monthly_income" value="${c.declared_monthly_income||''}"></div>
-    </div>
-  `, 'clients');
-}
-
-/* ── SECTION: ADDRESS ── */
-function sectionAddress(c){
-  return lmsSection('ADDRESS','Address',c.id,`
-    <div class="lms-fields lms-fields-2">
-      <div class="lms-field full"><label class="lms-label">Street Address</label><input class="lms-input" data-field="address" value="${esc(c.address)}"></div>
-      <div class="lms-field"><label class="lms-label">City</label><input class="lms-input" data-field="city" value="${esc(c.city)}"></div>
-      <div class="lms-field"><label class="lms-label">Province</label>
-        <select class="lms-select" data-field="province">
-          <option value="">—</option>
-          ${['BC','AB','SK','MB','ON','QC','NB','NS','PE','NL'].map(p=>`<option value="${p}" ${c.province===p?'selected':''}>${p}</option>`).join('')}
-        </select>
-      </div>
-      <div class="lms-field"><label class="lms-label">Postal Code</label><input class="lms-input" data-field="postal" value="${esc(c.postal)}"></div>
-    </div>
-  `, 'clients');
-}
-
-/* ── SECTION: FINANCIAL INSTITUTION ── */
-function sectionFinancialInstitution(c, apps){
-  const latest=apps[0]||{};
-  return lmsSection('BANK','Financial Institution',null,`
-    <div class="lms-fields lms-fields-2">
-      <div class="lms-field"><label class="lms-label">Bank Name</label><input class="lms-input" value="${esc(latest.bank_name)}" readonly></div>
-      <div class="lms-field"><label class="lms-label">Account Age</label><input class="lms-input" value="${latest.account_age_days?latest.account_age_days+' days':''}" readonly></div>
-      <div class="lms-field"><label class="lms-label">Avg Daily Balance</label><input class="lms-input" value="${latest.avg_daily_balance?'$'+Math.round(latest.avg_daily_balance).toLocaleString():''}" readonly></div>
-      <div class="lms-field"><label class="lms-label">Income Regularity</label><input class="lms-input" value="${esc(latest.income_regularity)}" readonly></div>
-      <div class="lms-field"><label class="lms-label">NSF Count (90d)</label><input class="lms-input" value="${latest.nsf_count??''}" readonly style="color:${(latest.nsf_count||0)>0?'var(--coral)':'var(--teal)'}"></div>
-      <div class="lms-field"><label class="lms-label">Payment Oppositions</label><input class="lms-input" value="${latest.opposition_count??''}" readonly style="color:${(latest.opposition_count||0)>0?'var(--coral)':'var(--teal)'}"></div>
-      <div class="lms-field"><label class="lms-label">Verified Income / mo</label><input class="lms-input" value="${latest.verified_income?'$'+Math.round(latest.verified_income).toLocaleString():''}" readonly style="color:var(--teal)"></div>
-      <div class="lms-field"><label class="lms-label">Flinks Login ID</label><input class="lms-input" value="${esc(latest.flinks_login_id)}" readonly style="font-size:.65rem"></div>
-    </div>
-  `, null);
-}
-
-/* ── SECTION: BANKRUPTCY ── */
-function sectionBankruptcy(apps){
-  const latest=apps[0]||{};
-  return lmsSection('BANKRUPTCY','Bankruptcy',null,`
-    <div class="lms-fields lms-fields-2">
-      <div class="lms-field"><label class="lms-label">Currently Bankrupt</label>
-        <select class="lms-select" disabled><option>${latest.bankrupt_now||'—'}</option></select>
-      </div>
-      <div class="lms-field"><label class="lms-label">Past Bankruptcy</label>
-        <select class="lms-select" disabled><option>${latest.bankrupt_past||'—'}</option></select>
-      </div>
-      <div class="lms-field full"><label class="lms-label">Hard Decline Reason (if any)</label>
-        <input class="lms-input" value="${esc(latest.hard_decline)}" readonly style="color:var(--coral)">
-      </div>
-    </div>
-  `, null);
-}
-
-/* ── SECTION: JOBS ── */
-function sectionJobs(c){
-  return lmsSection('JOBS','Job(s)',c.id,`
-    <div class="lms-fields lms-fields-2">
-      <div class="lms-field"><label class="lms-label">Employment Status</label>
-        <select class="lms-select" data-field="employment_status">
-          <option value="">—</option>
-          ${['employed','self-employed','ei','disability','retirement','other'].map(v=>`<option value="${v}" ${c.employment_status===v?'selected':''}>${v}</option>`).join('')}
-        </select>
-      </div>
-      <div class="lms-field"><label class="lms-label">Employer</label><input class="lms-input" data-field="employer" value="${esc(c.employer)}"></div>
-    </div>
-  `, 'clients');
-}
-
-/* ── SECTION: CONTACTS ── */
-function sectionContacts(c){
-  return lmsSection('CONTACTS','Contacts',null,`
-    <div style="font-size:.72rem;color:var(--muted);padding:4px 0">Safety contacts are stored per application. View in Application History below.</div>
-  `, null);
-}
-
-/* ── SECTION: AUTHORIZED PERSONS ── */
-function sectionAuthorizedPersons(c){
-  return lmsSection('AUTH_PERSONS','Authorized Persons',null,`
-    <div style="font-size:.72rem;color:var(--muted);padding:4px 0">No authorized persons on file.</div>
-  `, null);
-}
-
-/* ── SECTION: DOCUMENTS ── */
-function sectionDocuments(loans, contractMap){
-  const docs=[];
-  loans.forEach(l=>{
-    const ct=contractMap[l.id];
-    if(ct) docs.push({name:'Signed Contract',loan:l.ref,date:ct.created_at,valid:true});
-    docs.push({name:'Loan Agreement',loan:l.ref,date:l.created_at,valid:!!ct});
-  });
-  if(!docs.length) return lmsSection('DOCUMENTS','Documents',null,'<div style="font-size:.72rem;color:var(--muted)">No documents on file.</div>',null);
-  return lmsSection('DOCUMENTS','Documents',null,`
-    <table style="width:100%;border-collapse:collapse;font-size:.72rem">
-      <thead><tr>
-        <th style="text-align:left;padding:4px 8px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Document</th>
-        <th style="padding:4px 8px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Loan</th>
-        <th style="padding:4px 8px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Date</th>
-        <th style="padding:4px 8px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Valid</th>
-      </tr></thead>
-      <tbody>${docs.map(d=>`<tr>
-        <td style="padding:5px 8px">${d.name}</td>
-        <td style="padding:5px 8px;color:var(--periwinkle)">${d.loan}</td>
-        <td style="padding:5px 8px;color:var(--muted)">${d.date?new Date(d.date).toLocaleDateString('en-CA'):'—'}</td>
-        <td style="padding:5px 8px"><span style="color:${d.valid?'var(--teal)':'var(--muted)'}">●</span></td>
-      </tr>`).join('')}</tbody>
-    </table>
-  `, null);
-}
-
-/* ── SECTION: APPLICATION HISTORY ── */
-function sectionAppHistory(apps, schedMap, contractMap, loans){
-  if(!apps.length) return lmsSection('APP_HIST','Application History',null,'<div style="font-size:.72rem;color:var(--muted)">No applications yet.</div>',null);
-  const rows=apps.map(a=>{
-    const s=a.signals||{};
-    const loan=loans.find(l=>l.ref===a.ref);
-    const sched=loan?schedMap[loan.id]||[]:[];
-    const tc='t-'+(a.tier||'green');
-    const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
-    const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
-    const sw=Math.max(2,Math.min(100,a.risk_score||0));
-    const sc=scoreColor(a.risk_score);
-
-    // Score signals
-    const sigHtml=s&&Object.keys(s).length?`
-      <div class="score-card">
-        ${scoreSignal('NSF Events',s.nsfCount??'—',s.nsfPts,25)}
-        ${scoreSignal('Oppositions',s.oppositionCount??'—',s.oppPts,20)}
-        ${scoreSignal('DTI Ratio',s.dtiRatio!=null?(s.dtiRatio*100).toFixed(1)+'%':'—',s.dtiPts,20)}
-        ${scoreSignal('Regularity',s.incomeRegularity||'—',s.regPts,15)}
-        ${scoreSignal('Mismatch',s.misRatio!=null?(s.misRatio*100).toFixed(1)+'%':'—',s.misPts,10)}
-        ${scoreSignal('Balance',s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—',s.balPts,10)}
-      </div>`:'';
-
-    // Payment calendar for this app's loan
-    const schedHtml=sched.length?`
-      <div style="margin-top:10px">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:6px">Capital Payments Calendar</div>
-        <table class="cal-table">
-          <thead><tr><th>Date</th><th>Penalty</th><th>Other Fees</th><th>Insurance</th><th>Trans. Fees</th><th>Brokerage</th><th>Capital</th><th>Payment</th></tr></thead>
-          <tbody>
-            ${sched.map(p=>{
-              const isOverdue=p.status==='scheduled'&&new Date(p.due_date)<new Date();
-              const rowCls=p.status==='paid'?'cal-paid':isOverdue?'cal-overdue':p.status==='missed'?'cal-missed':'';
-              return `<tr class="${rowCls}"><td>${p.due_date}</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$${Number(p.scheduled_amount).toFixed(2)}</td><td>$${Number(p.scheduled_amount).toFixed(2)}</td></tr>`;
-            }).join('')}
-            <tr style="font-weight:700;color:var(--periwinkle)"><td>Total</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$${sched.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0).toFixed(2)}</td><td>$${sched.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0).toFixed(2)}</td></tr>
-          </tbody>
-        </table>
-      </div>`:'';
-
-    // Safety contact
-    const scHtml=a.safety_contact_name?`
-      <div style="margin-top:8px;padding:8px;background:rgba(8,6,20,.4);border-radius:6px;font-size:.72rem">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Safety Contact</div>
-        <div>${a.safety_contact_name} · ${a.safety_contact_phone||'—'} · ${a.safety_contact_rel||'—'}</div>
-      </div>`:'';
-
-    // Analyst note
-    const noteHtml=`
-      <div style="margin-top:8px">
-        <textarea class="lms-textarea" id="ahnote-${a.id}" placeholder="Analyst notes for this application…" style="min-height:44px">${a.analyst_notes||''}</textarea>
-        <button class="lms-save-btn" style="margin-top:4px" onclick="saveAppNote('${a.id}')">Save Note</button>
-      </div>`;
-
-    return `
-      <div class="app-hist-row" onclick="toggleAppHist('ah-${a.id}')">
-        <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle);min-width:90px">${a.ref}</div>
-        <div style="font-size:.75rem;min-width:55px">${a.type==='renewal'?'Renewal':'New Loan'}</div>
-        <div style="font-size:.82rem;font-weight:700;min-width:55px">$${(a.requested_amount||0).toLocaleString()}</div>
-        <span class="tb ${tc}">${a.tier||'—'}</span>
-        <span class="db ${dc}">${dl}</span>
-        <div style="font-size:.65rem;color:${sc};font-weight:700;margin-left:auto">Score: ${a.risk_score??'—'}</div>
-        <div style="font-size:.65rem;color:var(--muted)">${a.submitted_at?timeAgo(a.submitted_at):''}</div>
-        <div style="font-size:.65rem;color:var(--muted)">▶</div>
-      </div>
-      <div class="app-hist-body" id="ah-${a.id}">
-        <!-- Score card -->
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
-          <div class="score-circle" style="border-color:${sc};color:${sc};width:52px;height:52px;flex-shrink:0">
-            <div class="score-num" style="font-size:1.1rem">${a.risk_score??'—'}</div>
-            <div class="score-lbl">/100</div>
-          </div>
-          <div style="flex:1">
-            <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--muted);margin-bottom:3px"><span>Risk Score</span><span>0 = perfect</span></div>
-            <div class="sbar-track"><div class="sbar-fill" style="width:${sw}%;background:linear-gradient(90deg,#1DE9C6,${sc})"></div></div>
-          </div>
+    <!-- CLIENT HERO -->
+    <div class="client-hero">
+      <div>
+        <div class="ch-name">${name}</div>
+        <div class="ch-email">${client.email}</div>
+        <div class="ch-meta">
+          <div class="ch-stat"><div class="ch-stat-val">${client.total_loans||0}</div><div class="ch-stat-label">Total Loans</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_borrowed||0).toLocaleString()}</div><div class="ch-stat-label">Total Borrowed</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_repaid||0).toLocaleString()}</div><div class="ch-stat-label">Total Repaid</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">${client.total_applications||0}</div><div class="ch-stat-label">Applications</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">${memberSince}</div><div class="ch-stat-label">Member Since</div></div>
         </div>
-        ${sigHtml}
-        ${a.flags&&a.flags.length?a.flags.map(f=>`<div class="flag-item" style="margin-bottom:4px">⚑ ${f}</div>`).join(''):''}
-        <!-- Bank account details -->
-        <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
-          ${bankDetailCell('Verified Income',a.verified_income?'$'+Math.round(a.verified_income).toLocaleString():'—','var(--teal)')}
-          ${bankDetailCell('Fixed Obligations',a.fixed_obligations?'$'+Math.round(a.fixed_obligations).toLocaleString():'—','')}
-          ${bankDetailCell('Avg Daily Balance',a.avg_daily_balance?'$'+Math.round(a.avg_daily_balance).toLocaleString():'—','')}
-          ${bankDetailCell('Account Age',a.account_age_days?a.account_age_days+'d':'—','')}
-          ${bankDetailCell('NSF Count',a.nsf_count??'—',(a.nsf_count||0)>0?'var(--coral)':'var(--teal)')}
-          ${bankDetailCell('Oppositions',a.opposition_count??'—',(a.opposition_count||0)>0?'var(--coral)':'var(--teal)')}
-          ${bankDetailCell('Income Regularity',a.income_regularity||'—','')}
-          ${bankDetailCell('Sandbox',a.is_sandbox?'Yes':'No','')}
+        <div class="ch-badges">
+          ${client.latest_tier?`<span class="tb t-${client.latest_tier}">${client.latest_tier} tier</span>`:''}
+          ${client.province?`<span style="font-size:.72rem;color:var(--muted);padding:3px 8px;border:1px solid var(--border);border-radius:100px">${client.province}</span>`:''}
+          ${client.status!=='active'?`<span class="tb t-red">${client.status}</span>`:''}
+          ${activeLoans.length?`<span style="font-size:.72rem;color:var(--teal);padding:3px 8px;border:1px solid rgba(29,233,198,.2);border-radius:100px">${activeLoans.length} active loan${activeLoans.length>1?'s':''}</span>`:''}
         </div>
-        ${schedHtml}
-        ${scHtml}
-        ${noteHtml}
-        ${a.decision==='manual_review'&&!a.reviewed_at?`
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="ca ca-approve" onclick="markDecision('${a.id}','approved')">✓ Approve</button>
-            <button class="ca ca-decline" onclick="markDecision('${a.id}','declined')">✗ Decline</button>
-          </div>`:''}
-      </div>`;
-  }).join('');
-  return lmsSection('APP_HIST','Application History ('+apps.length+')',null,rows,null,true);
-}
+      </div>
+      <div class="ch-actions">
+        <button class="ca ca-note" onclick="toggleNote('client-${client.id}')">📝 Note</button>
+        ${client.status==='active'?`<button class="ca ca-decline" onclick="suspendClient('${client.id}')">⛔ Suspend</button>`:
+          `<button class="ca ca-approve" onclick="activateClient('${client.id}')">✓ Activate</button>`}
+      </div>
+    </div>
+    <textarea class="notes-area" id="na-client-${client.id}" placeholder="Client-level notes…"></textarea>
+    <button class="save-note-btn" id="snb-client-${client.id}" onclick="saveClientNote('${client.id}')">Save Note</button>
 
-/* ── LOAN PANEL ── */
-function loanPanel(loans, schedMap, contractMap, apps, client){
-  if(!loans.length){
-    return `<div style="padding:20px;text-align:center;color:var(--muted);font-size:.8rem">
-      <div style="font-size:2rem;margin-bottom:8px">💳</div>
-      No loans yet.<br><br>
-      <button class="loan-btn loan-btn-new" onclick="createNewLoan('${client.id}')">+ New Loan</button>
-    </div>`;
+    <!-- CONTACT INFO + EMPLOYMENT -->
+    <div class="crm-row">
+      <div class="crm-sec">
+        <div class="crm-sec-title">Contact Information</div>
+        <div class="crm-fields">
+          <div class="crf full"><div class="crf-label">Full Name</div><div class="crf-val" style="font-size:1rem;font-weight:700">${name}</div></div>
+          <div class="crf"><div class="crf-label">Email</div><div class="crf-val">${client.email||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Cell Phone</div><div class="crf-val">${client.cell_phone||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Home Phone</div><div class="crf-val">${client.home_phone||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Date of Birth</div><div class="crf-val">${client.dob||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Province</div><div class="crf-val">${client.province||'—'}</div></div>
+          <div class="crf full"><div class="crf-label">Address</div><div class="crf-val">${[client.address,client.city,client.province,client.postal].filter(Boolean).join(', ')||'—'}</div></div>
+        </div>
+      </div>
+      <div class="crm-sec">
+        <div class="crm-sec-title">Employment (Latest)</div>
+        <div class="crm-fields">
+          <div class="crf"><div class="crf-label">Status</div><div class="crf-val">${client.employment_status||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Employer</div><div class="crf-val">${client.employer||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Pay Frequency</div><div class="crf-val">${client.pay_frequency||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Declared Income / mo</div><div class="crf-val hi">${client.declared_monthly_income?'$'+Number(client.declared_monthly_income).toLocaleString():'—'}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOAN HISTORY -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div class="crm-sec-title">Loan History (${loans.length})</div>
+      ${loans.length?loans.map(l=>loanHistoryCard(l,schedMap[l.id]||[],contractMap[l.id],client,apps,highlightRef)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No loans yet.</p>'}
+    </div>
+
+    <!-- APPLICATION HISTORY -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div class="crm-sec-title">Application History (${apps.length})</div>
+      ${apps.length?apps.map(a=>appHistoryRow(a)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No applications yet.</p>'}
+    </div>
+  `;
+
+  // Auto-expand the highlighted loan
+  if(highlightRef){
+    const loan=loans.find(l=>l.ref===highlightRef);
+    if(loan) toggleLoanBody('loan-'+loan.id);
+  } else if(activeLoans.length===1){
+    toggleLoanBody('loan-'+activeLoans[0].id);
   }
-
-  const loanOptionsHtml=loans.map(l=>`<option value="${l.id}">${l.ref} — $${Number(l.principal).toLocaleString()} — ${l.status}</option>`).join('');
-  const firstLoan=loans[0];
-
-  return `
-    <div class="loan-bar">
-      <select class="loan-bar-select" id="loan-switcher" onchange="switchLoanPanel(this.value)">${loanOptionsHtml}</select>
-      <button class="loan-btn loan-btn-new" onclick="createNewLoan('${client.id}')">+ New</button>
-      <button class="loan-btn loan-btn-del" onclick="deleteLoan('${firstLoan.id}')">Delete</button>
-    </div>
-    <div id="loan-panel-body">
-      ${renderLoanDetail(firstLoan, schedMap[firstLoan.id]||[], contractMap[firstLoan.id], apps, client)}
-    </div>`;
 }
 
-function renderLoanDetail(loan, schedule, contract, apps, client){
-  const app=apps.find(a=>a.ref===loan.ref)||{};
-  const s=app.signals||{};
+/* ── LOAN HISTORY CARD ── */
+function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
+  const lsCls={active:'ls-active',pending_disbursement:'ls-pending',paid_off:'ls-paid',defaulted:'ls-defaulted',cancelled:'ls-defaulted'}[loan.status]||'ls-pending';
+  const pct=loan.total_repayable?Math.round((loan.total_paid||0)/loan.total_repayable*100):0;
   const paidCount=schedule.filter(p=>p.status==='paid').length;
   const missedCount=schedule.filter(p=>p.status==='missed').length;
-  const pct=loan.total_repayable?Math.round((loan.total_paid||0)/loan.total_repayable*100):0;
-  const lsCls={active:'ls-active',pending_disbursement:'ls-pending',paid_off:'ls-paid',defaulted:'ls-defaulted',cancelled:'ls-defaulted'}[loan.status]||'ls-pending';
+  const app=apps.find(a=>a.ref===loan.ref);
+  const s=app?.signals||{};
 
-  // Surety fees calendar (flat $0 for now — will be populated when real data exists)
-  const suretyCalHtml=`
-    <table class="cal-table">
-      <thead><tr><th>Date</th><th>Penalty</th><th>Other Fees</th><th>Insurance</th><th>Trans. Fees</th><th>Brokerage</th><th>Payment</th></tr></thead>
-      <tbody>
-        ${schedule.map(p=>`<tr><td>${p.due_date}</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td></tr>`).join('')}
-        <tr><td>Total</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td></tr>
-      </tbody>
-    </table>`;
+  // Repayment schedule table
+  const schedRows=schedule.map(p=>{
+    const psCls={'paid':'ps-paid','missed':'ps-missed','partial':'ps-partial','waived':'ps-waived','scheduled':'ps-scheduled'}[p.status]||'ps-scheduled';
+    const isOverdue=p.status==='scheduled'&&new Date(p.due_date)<new Date();
+    return `<tr>
+      <td>${p.payment_number}</td>
+      <td>${p.due_date}</td>
+      <td>$${Number(p.scheduled_amount).toLocaleString()}</td>
+      <td><span class="pay-status ${isOverdue?'ps-missed':psCls}">${isOverdue?'overdue':p.status}</span></td>
+      <td>${p.paid_at?new Date(p.paid_at).toLocaleDateString('en-CA'):'—'}</td>
+      <td>${p.paid_amount?'$'+Number(p.paid_amount).toLocaleString():'—'}</td>
+    </tr>`;
+  }).join('');
 
-  // Capital payments calendar
-  const capitalCalHtml=`
-    <table class="cal-table">
-      <thead><tr><th>Date</th><th>Penalty</th><th>Other Fees</th><th>Insurance</th><th>Trans. Fees</th><th>Brokerage</th><th>Capital</th><th>Payment</th></tr></thead>
-      <tbody>
-        ${schedule.map(p=>{
-          const isOverdue=p.status==='scheduled'&&new Date(p.due_date)<new Date();
-          const rowCls=p.status==='paid'?'cal-paid':isOverdue?'cal-overdue':p.status==='missed'?'cal-missed':'';
-          return `<tr class="${rowCls}"><td>${p.due_date}</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$${Number(p.scheduled_amount).toFixed(2)}</td><td>$${Number(p.scheduled_amount).toFixed(2)}</td></tr>`;
-        }).join('')}
-        <tr><td>Total</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$${schedule.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0).toFixed(2)}</td><td>$${schedule.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0).toFixed(2)}</td></tr>
-      </tbody>
-    </table>`;
-
-  return `
-    <!-- Loan Fields -->
-    <div class="lms-section" style="margin:8px">
-      <div class="lms-section-hdr">
-        <div class="lms-section-title">Loan Details — ${loan.ref}</div>
-        <div class="lms-section-hdr-right">
-          <span class="loan-status ${lsCls}">${loan.status.replace('_',' ')}</span>
-          <button class="lms-save-btn" onclick="saveLoan('${loan.id}')">Save</button>
-        </div>
+  // Contract summary
+  const contractHtml=contract?`
+    <div style="padding:16px;border-top:1px solid var(--border)">
+      <div class="crm-sec-title">Contract</div>
+      <div class="contract-grid">
+        <div class="crf"><div class="crf-label">Principal</div><div class="crf-val">$${Number(contract.principal).toLocaleString()}</div></div>
+        <div class="crf"><div class="crf-label">APR</div><div class="crf-val">${(contract.apr*100).toFixed(1)}%</div></div>
+        <div class="crf"><div class="crf-label">Total Repayable</div><div class="crf-val hi">$${Number(contract.total_repayable).toLocaleString()}</div></div>
+        <div class="crf"><div class="crf-label">Payment Amount</div><div class="crf-val">$${Number(contract.payment_amount).toLocaleString()} × ${contract.payment_count}</div></div>
+        <div class="crf"><div class="crf-label">First Payment</div><div class="crf-val">${contract.first_payment_date||'—'}</div></div>
+        <div class="crf"><div class="crf-label">Final Payment</div><div class="crf-val">${contract.final_payment_date||'—'}</div></div>
+        <div class="crf"><div class="crf-label">Signed By</div><div class="crf-val">${contract.esig_name||'—'}</div></div>
+        <div class="crf"><div class="crf-label">Signed At</div><div class="crf-val">${contract.esig_timestamp?new Date(contract.esig_timestamp).toLocaleString('en-CA'):'—'}</div></div>
+        <div class="crf"><div class="crf-label">PAD Authorized</div><div class="crf-val ${contract.pad_authorized?'hi':'warn'}">${contract.pad_authorized?'Yes':'No'}</div></div>
       </div>
-      <div class="lms-section-body">
-        <div class="lms-fields lms-fields-2" style="margin-bottom:10px">
-          <div class="lms-field"><label class="lms-label">Status</label>
-            <select class="lms-select" id="loan-field-status" data-loan-field="status">
-              ${['pending_disbursement','active','paid_off','defaulted','cancelled'].map(v=>`<option value="${v}" ${loan.status===v?'selected':''}>${v.replace('_',' ')}</option>`).join('')}
-            </select>
-          </div>
-          <div class="lms-field"><label class="lms-label">Type</label>
-            <select class="lms-select" data-loan-field="type">
-              <option value="new" ${loan.type==='new'?'selected':''}>New Loan</option>
-              <option value="renewal" ${loan.type==='renewal'?'selected':''}>Renewal</option>
-            </select>
-          </div>
-          <div class="lms-field"><label class="lms-label">Principal ($)</label><input class="lms-input" type="number" data-loan-field="principal" value="${loan.principal||''}"></div>
-          <div class="lms-field"><label class="lms-label">APR (%)</label><input class="lms-input" type="number" step="0.01" data-loan-field="apr" value="${loan.apr?Number(loan.apr*100).toFixed(2):'23.00'}"></div>
-          <div class="lms-field"><label class="lms-label">Term (days)</label><input class="lms-input" type="number" data-loan-field="term_days" value="${loan.term_days||112}"></div>
-          <div class="lms-field"><label class="lms-label">Payment Count</label><input class="lms-input" type="number" data-loan-field="payment_count" value="${loan.payment_count||8}"></div>
-          <div class="lms-field"><label class="lms-label">Payment Frequency</label>
-            <select class="lms-select" data-loan-field="payment_frequency">
-              ${['weekly','biweekly','semi-monthly','monthly'].map(v=>`<option value="${v}" ${loan.payment_frequency===v?'selected':''}>${v}</option>`).join('')}
-            </select>
-          </div>
-          <div class="lms-field"><label class="lms-label">Province</label>
-            <select class="lms-select" data-loan-field="province">
-              <option value="">—</option>
-              ${['BC','AB','SK','MB','ON','QC','NB','NS','PE','NL'].map(p=>`<option value="${p}" ${client.province===p?'selected':''}>${p}</option>`).join('')}
-            </select>
-          </div>
-          <div class="lms-field"><label class="lms-label">Disbursed At</label><input class="lms-input" type="datetime-local" data-loan-field="disbursed_at" value="${loan.disbursed_at?loan.disbursed_at.slice(0,16):''}"></div>
-          <div class="lms-field"><label class="lms-label">Due Date</label><input class="lms-input" type="date" data-loan-field="due_date" value="${loan.due_date||''}"></div>
-          <div class="lms-field"><label class="lms-label">Next Pay Date</label><input class="lms-input" type="date" data-loan-field="next_pay_app" value="${app.next_pay_date||''}"></div>
-          <div class="lms-field"><label class="lms-label">Notes</label><input class="lms-input" data-loan-field="notes" value="${esc(loan.notes)}"></div>
+    </div>`:
+    `<div style="padding:12px 16px;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)">No contract on file (pending disbursement or manual review)</div>`;
+
+  // Scoring section
+  const scoreSection=app?`
+    <div style="padding:16px;border-top:1px solid var(--border)">
+      <div class="crm-sec-title">Risk Assessment</div>
+      <div class="score-hero">
+        <div class="score-circle" style="border-color:${scoreColor(app.risk_score)};color:${scoreColor(app.risk_score)}">
+          <div class="score-num">${app.risk_score??'—'}</div>
+          <div class="score-lbl">/100</div>
         </div>
-        <!-- Fund Method -->
-        <div style="margin-bottom:10px">
-          <div class="lms-label" style="margin-bottom:6px">Fund Method</div>
-          <div class="fund-radios">
-            ${['Paid by check','Paid by CI','Deposit the money with an Interac e-transfer','Deposit the money with an Interac Deposit'].map((label,i)=>{
-              const val=['check','ci','etransfer','interac_deposit'][i];
-              return `<label class="fund-radio"><input type="radio" name="fund-${loan.id}" value="${val}" ${loan.fund_method===val?'checked':''}> ${label}</label>`;
-            }).join('')}
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--muted);margin-bottom:3px"><span>Risk Score</span><span>lower = better</span></div>
+          <div class="sbar-track"><div class="sbar-fill" style="width:${Math.max(2,app.risk_score||0)}%;background:linear-gradient(90deg,#1DE9C6,${scoreColor(app.risk_score)})"></div></div>
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tb t-${app.tier}">${app.tier}</span>
+            ${app.hard_decline?`<span style="font-size:.68rem;color:var(--coral)">🚫 ${app.hard_decline}</span>`:''}
           </div>
         </div>
-        <!-- Payment Summary -->
-        <div class="loan-summary">
-          <div class="ls-cell"><div class="ls-label">Loan Payment</div><div class="ls-val">$${Number(loan.payment_amount||0).toFixed(2)}</div></div>
-          <div class="ls-cell"><div class="ls-label">Total Repayable</div><div class="ls-val">$${Number(loan.total_repayable||0).toFixed(2)}</div></div>
-          <div class="ls-cell"><div class="ls-label">Total Paid</div><div class="ls-val" style="color:var(--teal)">$${Number(loan.total_paid||0).toFixed(2)}</div></div>
-          <div class="ls-cell"><div class="ls-label">Remaining Balance</div><div class="ls-val" style="color:var(--gold)">$${Number(loan.remaining_balance||loan.total_repayable||0).toFixed(2)}</div></div>
-          <div class="ls-cell"><div class="ls-label">Payments Made</div><div class="ls-val">${paidCount} / ${loan.payment_count||8}</div></div>
-          <div class="ls-cell"><div class="ls-label">Missed Payments</div><div class="ls-val" style="color:${missedCount>0?'var(--coral)':'var(--teal)'}">${missedCount}</div></div>
-          <div class="ls-cell"><div class="ls-label">APR</div><div class="ls-val">${loan.apr?Number(loan.apr*100).toFixed(1)+'%':'23%'}</div></div>
-          <div class="ls-cell"><div class="ls-label">Repaid</div><div class="ls-val">${pct}%</div></div>
-        </div>
       </div>
-    </div>
+      ${s&&Object.keys(s).length?`<div class="sig-grid">
+        ${sig('NSF (90d)',s.nsfCount??'—',s.nsfPts,25)}
+        ${sig('Oppositions',s.oppositionCount??'—',s.oppPts,20)}
+        ${sig('DTI',s.dtiRatio!=null?(s.dtiRatio*100).toFixed(1)+'%':'—',s.dtiPts,20)}
+        ${sig('Regularity',s.incomeRegularity||'—',s.regPts,15)}
+        ${sig('Mismatch',s.misRatio!=null?(s.misRatio*100).toFixed(1)+'%':'—',s.misPts,10)}
+        ${sig('Balance',s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—',s.balPts,10)}
+      </div>`:''}
+      ${app.flags&&app.flags.length?app.flags.map(f=>`<div class="flag-item" style="margin-top:6px">⚑ ${f}</div>`).join(''):''}
+    </div>`:'';
 
-    <!-- Surety Fees Payment Calendar -->
-    <div class="lms-section" style="margin:8px">
-      <div class="lms-section-hdr" onclick="toggleSec('surety-cal-${loan.id}')">
-        <div class="lms-section-title">▸ Surety Fees Payment Calendar</div>
-        <div style="font-size:.6rem;color:var(--muted)">Last updated: ${new Date().toLocaleDateString('en-CA')}</div>
-      </div>
-      <div class="lms-section-body collapsed" id="surety-cal-${loan.id}">
-        ${suretyCalHtml}
-      </div>
+  // Analyst actions for this loan's application
+  const actionsHtml=app&&app.decision==='manual_review'&&!app.reviewed_at?`
+    <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap">
+      <button class="ca ca-approve" onclick="markDecision('${app.id}','approved')">✓ Approve</button>
+      <button class="ca ca-decline" onclick="markDecision('${app.id}','declined')">✗ Decline</button>
+      ${loan.status==='pending_disbursement'?`<button class="ca ca-disburse" onclick="markDisbursed('${loan.id}')">💸 Mark Disbursed</button>`:''}
+      <button class="ca ca-note" onclick="toggleNote('app-${app.id}')">📝 Note</button>
     </div>
+    <div style="padding:0 16px 12px">
+      <textarea class="notes-area" id="na-app-${app.id}" placeholder="Notes for this application…">${app.analyst_notes||''}</textarea>
+      <button class="save-note-btn" id="snb-app-${app.id}" onclick="saveAppNote('${app.id}')">Save Note</button>
+    </div>`:'';
 
-    <!-- Capital Payments Calendar -->
-    <div class="lms-section" style="margin:8px">
-      <div class="lms-section-hdr" onclick="toggleSec('cap-cal-${loan.id}')">
-        <div class="lms-section-title">▸ Capital Payments Calendar</div>
-        <div style="font-size:.6rem;color:var(--muted)">Last updated: ${new Date().toLocaleDateString('en-CA')}</div>
+  return `<div class="loan-history-card" id="lhc-${loan.id}">
+    <div class="lh-header" onclick="toggleLoanBody('loan-${loan.id}')">
+      <div class="lh-ref">${loan.ref}</div>
+      <div class="lh-amount">$${Number(loan.principal).toLocaleString()}</div>
+      <div class="lh-meta">
+        <span class="loan-status ${lsCls}">${loan.status.replace('_',' ')}</span>
+        <span style="font-size:.72rem;color:var(--muted)">${loan.disbursed_at?new Date(loan.disbursed_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</span>
+        <span style="font-size:.72rem;color:var(--muted)">${paidCount}/${loan.payment_count} payments</span>
+        ${missedCount?`<span style="font-size:.72rem;color:var(--coral)">${missedCount} missed</span>`:''}
+        <div style="width:80px"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+        <span style="font-size:.68rem;color:var(--muted)">${pct}%</span>
       </div>
-      <div class="lms-section-body" id="cap-cal-${loan.id}">
-        ${capitalCalHtml}
+      <div class="lh-chevron" id="chev-loan-${loan.id}">▶</div>
+    </div>
+    <div class="lh-body" id="loan-${loan.id}">
+      <!-- Repayment schedule -->
+      <div style="padding:16px">
+        <div class="crm-sec-title">Repayment Schedule</div>
+        ${schedule.length?`<table class="sched-table">
+          <thead><tr><th>#</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Paid On</th><th>Paid Amount</th></tr></thead>
+          <tbody>${schedRows}</tbody>
+        </table>`:'<p style="font-size:.75rem;color:var(--muted)">Schedule not yet generated.</p>'}
       </div>
+      ${contractHtml}
+      ${scoreSection}
+      ${actionsHtml}
     </div>
-
-    <!-- Contract -->
-    ${contract?`
-    <div class="lms-section" style="margin:8px">
-      <div class="lms-section-hdr" onclick="toggleSec('contract-${loan.id}')">
-        <div class="lms-section-title">▸ Contract</div>
-      </div>
-      <div class="lms-section-body" id="contract-${loan.id}">
-        <div class="lms-fields lms-fields-3">
-          ${[
-            ['Principal','$'+Number(contract.principal).toLocaleString()],
-            ['APR',(contract.apr*100).toFixed(1)+'%'],
-            ['Total Repayable','$'+Number(contract.total_repayable).toLocaleString()],
-            ['Payment Amount','$'+Number(contract.payment_amount).toFixed(2)+' × '+contract.payment_count],
-            ['First Payment',contract.first_payment_date||'—'],
-            ['Final Payment',contract.final_payment_date||'—'],
-            ['Fund Method',contract.fund_method||'—'],
-            ['PAD Authorized',contract.pad_authorized?'Yes':'No'],
-            ['PAD Institution',contract.pad_institution||'—'],
-            ['Signed By',contract.esig_name||'—'],
-            ['Signed At',contract.esig_timestamp?new Date(contract.esig_timestamp).toLocaleString('en-CA'):'—'],
-          ].map(([l,v])=>`<div class="lms-field"><div class="lms-label">${l}</div><div style="font-size:.78rem;font-weight:500">${v}</div></div>`).join('')}
-        </div>
-      </div>
-    </div>`:''}
-  `;
-}
-
-/* ── MESSAGES PANEL ── */
-function messagesPanel(client){
-  return `
-    <div style="font-size:.75rem;font-weight:800;margin-bottom:8px;color:var(--white)">Messages &amp; Notes — ${client.first_name||''}</div>
-    <div class="msg-tabs">
-      <button class="msg-tab active" onclick="switchMsgTab(this,'internal')">Internal</button>
-      <button class="msg-tab" onclick="switchMsgTab(this,'client')">Client</button>
-      <button class="msg-tab" onclick="switchMsgTab(this,'collection')">Collection</button>
-    </div>
-    <div id="msg-list">
-      <div style="font-size:.72rem;color:var(--muted);text-align:center;padding:20px 0">No messages yet.</div>
-    </div>
-    <div class="msg-input-row">
-      <input class="msg-input" id="msg-input" placeholder="Write a message or note…" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMsg('${client.id}')">
-      <button class="msg-send" onclick="sendMsg('${client.id}')">Send</button>
-    </div>
-  `;
-}
-
-/* ── HELPERS ── */
-function lmsSection(id, title, entityId, bodyHtml, table, startOpen=false){
-  const bodyId='lms-sec-'+id;
-  return `<div class="lms-section">
-    <div class="lms-section-hdr" onclick="toggleSec('${bodyId}')">
-      <div class="lms-section-title">${title}</div>
-      <div class="lms-section-hdr-right">
-        ${table&&entityId?`<button class="lms-save-btn" onclick="event.stopPropagation();saveSection('${bodyId}','${table}','${entityId}')">Save</button>`:''}
-        <span class="lms-chevron ${startOpen?'open':''}">▶</span>
-      </div>
-    </div>
-    <div class="lms-section-body ${startOpen?'':'collapsed'}" id="${bodyId}" data-entity-id="${entityId||''}" data-table="${table||''}">${bodyHtml}</div>
   </div>`;
 }
 
-function toggleSec(id){
-  const el=document.getElementById(id);
-  if(!el) return;
-  const chev=el.previousElementSibling?.querySelector('.lms-chevron');
-  const collapsed=el.classList.toggle('collapsed');
-  if(chev) chev.classList.toggle('open',!collapsed);
-}
-
-function toggleAppHist(id){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.classList.toggle('open');
-  // flip chevron in the row
-  const row=el.previousElementSibling;
-  if(row){
-    const chev=row.querySelector('div:last-child');
-    if(chev) chev.textContent=el.classList.contains('open')?'▼':'▶';
-  }
-}
-
-function bankDetailCell(label,value,color=''){
-  return `<div style="background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:6px;padding:7px 10px">
-    <div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:2px">${label}</div>
-    <div style="font-size:.82rem;font-weight:700${color?';color:'+color:''}">${value}</div>
+/* ── APP HISTORY ROW ── */
+function appHistoryRow(a){
+  const tc='t-'+(a.tier||'green');
+  const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
+  const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
+  return `<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:rgba(8,6,20,.4);margin-bottom:6px;cursor:default">
+    <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle);min-width:90px">${a.ref||'—'}</div>
+    <div style="font-size:.75rem;min-width:60px">${a.type==='renewal'?'Renewal':'New Loan'}</div>
+    <div style="font-size:.82rem;font-weight:700;min-width:55px">$${(a.requested_amount||0).toLocaleString()}</div>
+    <span class="tb ${tc}">${a.tier||'—'}</span>
+    <span class="db ${dc}">${dl}</span>
+    <div style="font-size:.68rem;color:var(--muted);margin-left:auto">${a.submitted_at?new Date(a.submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
   </div>`;
-}
-
-function scoreSignal(label,value,pts,maxPts){
-  const pct=(pts||0)/maxPts;
-  const c=pct===0?'var(--teal)':pct<0.5?'var(--gold)':'var(--coral)';
-  return `<div class="score-signal">
-    <div class="ss-label">${label}</div>
-    <div class="ss-val">${value}</div>
-    <div class="ss-pts" style="color:${c}">${pts??0}/${maxPts}pt</div>
-  </div>`;
-}
-
-function esc(v){return v==null?'':String(v).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-/* ── SAVE SECTION ── */
-async function saveSection(bodyId, table, entityId){
-  const body=document.getElementById(bodyId);
-  if(!body||!table||!entityId) return;
-  const updates={};
-  body.querySelectorAll('[data-field]').forEach(el=>{
-    updates[el.dataset.field]=el.value||null;
-  });
-  if(!Object.keys(updates).length) return;
-
-  // Mark button saving
-  const btn=body.previousElementSibling?.querySelector('.lms-save-btn');
-  if(btn){btn.classList.add('saving');btn.textContent='Saving…';}
-
-  const {error}=await sb.from(table).update(updates).eq('id',entityId);
-  if(error){showToast('Save failed: '+error.message,true);}
-  else{
-    showToast('✓ Saved');
-    // Update local cache
-    if(table==='clients'){const c=allClients.find(x=>x.id===entityId);if(c)Object.assign(c,updates);}
-    // Clear dirty
-    body.querySelectorAll('.dirty').forEach(el=>el.classList.remove('dirty'));
-  }
-  if(btn){btn.classList.remove('saving');btn.textContent='Save';}
-}
-
-/* ── SAVE LOAN ── */
-async function saveLoan(loanId){
-  const updates={};
-  document.querySelectorAll('[data-loan-field]').forEach(el=>{
-    let val=el.value||null;
-    if(el.dataset.loanField==='apr'&&val) val=parseFloat(val)/100;
-    updates[el.dataset.loanField]=val;
-  });
-  // Fund method
-  const fundEl=document.querySelector(`input[name^="fund-"]:checked`);
-  if(fundEl) updates.fund_method=fundEl.value;
-  delete updates.province; // province is on client, not loan
-  delete updates.next_pay_app; // not a loans column
-
-  const {error}=await sb.from('loans').update(updates).eq('id',loanId);
-  if(error){showToast('Save failed: '+error.message,true);return;}
-  const loan=allLoans.find(x=>x.id===loanId);
-  if(loan) Object.assign(loan,updates);
-  showToast('✓ Loan saved');
-}
-
-/* ── SWITCH LOAN PANEL ── */
-async function switchLoanPanel(loanId){
-  const clientId=allLoans.find(l=>l.id===loanId)?.client_id;
-  if(!clientId) return;
-  const loan=allLoans.find(l=>l.id===loanId);
-  const {data:sched}=await sb.from('repayment_schedule').select('*').eq('loan_id',loanId).order('payment_number');
-  const {data:contract}=await sb.from('contracts').select('*').eq('loan_id',loanId).single().catch(()=>({data:null}));
-  const apps=allApps.filter(a=>a.client_id===clientId);
-  const client=allClients.find(c=>c.id===clientId)||{};
-  document.getElementById('loan-panel-body').innerHTML=renderLoanDetail(loan,sched||[],contract,apps,client);
-  // Update delete button
-  document.querySelector('.loan-btn-del')?.setAttribute('onclick',`deleteLoan('${loanId}')`);
-}
-
-/* ── CREATE NEW LOAN ── */
-async function createNewLoan(clientId){
-  const client=allClients.find(c=>c.id===clientId);
-  if(!client){showToast('Client not found',true);return;}
-  const ref='WF-'+Math.floor(100000+Math.random()*900000);
-  const principal=800;
-  const payAmt=parseFloat(((principal*(1+0.23*112/365))/8).toFixed(2));
-  const {data,error}=await sb.from('loans').insert({
-    client_id:clientId,ref,type:'new',principal,apr:0.23,term_days:112,
-    payment_count:8,payment_frequency:'biweekly',
-    payment_amount:payAmt,total_repayable:parseFloat((payAmt*8).toFixed(2)),
-    remaining_balance:parseFloat((payAmt*8).toFixed(2)),
-    status:'pending_disbursement',fund_method:'etransfer',
-  }).select('*').single();
-  if(error){showToast('Failed to create loan: '+error.message,true);return;}
-  allLoans.unshift(data);
-  showToast('✓ New loan created: '+ref);
-  openClient(clientId);
-}
-
-/* ── DELETE LOAN ── */
-async function deleteLoan(loanId){
-  if(!confirm('Delete this loan? This cannot be undone.')) return;
-  const loan=allLoans.find(l=>l.id===loanId);
-  const {error}=await sb.from('loans').delete().eq('id',loanId);
-  if(error){showToast('Delete failed: '+error.message,true);return;}
-  allLoans=allLoans.filter(l=>l.id!==loanId);
-  showToast('Loan deleted');
-  if(loan?.client_id) openClient(loan.client_id);
-}
-
-/* ── MESSAGES ── */
-function switchMsgTab(btn,tab){
-  document.querySelectorAll('.msg-tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-}
-async function sendMsg(clientId){
-  const input=document.getElementById('msg-input');
-  if(!input||!input.value.trim()) return;
-  const msg=input.value.trim();
-  input.value='';
-  const box=document.getElementById('msg-list');
-  const bubble=document.createElement('div');
-  bubble.className='msg-bubble';
-  bubble.innerHTML=`<div class="msg-bubble-meta">Analyst · ${new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}</div>${msg}`;
-  box.appendChild(bubble);
-  box.scrollTop=box.scrollHeight;
-  showToast('Note added');
-}
-
-/* ── DIRTY TRACKING ── */
-function initDirtyTracking(){
-  document.querySelectorAll('.lms-input:not([readonly]),.lms-select,.lms-textarea').forEach(el=>{
-    el.addEventListener('input',()=>el.classList.add('dirty'));
-    el.addEventListener('change',()=>el.classList.add('dirty'));
-  });
 }
 
 /* ── TOGGLE LOAN BODY ── */
