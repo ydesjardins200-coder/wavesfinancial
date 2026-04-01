@@ -229,6 +229,12 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 /* CONTRACT SECTION */
 .contract-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
 
+/* EDITABLE CLIENT FIELDS */
+.crf-edit{width:100%;padding:5px 8px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none;transition:border-color .15s;}
+.crf-edit:focus{border-color:var(--iris);background:rgba(8,6,20,.9);}
+.crf-edit:hover{border-color:rgba(160,154,245,.25);}
+.crf-edit.dirty{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.03);}
+
 /* TOAST / SPINNER */
 .toast{position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:10px;font-size:.8rem;font-weight:700;background:rgba(29,233,198,.2);border:1px solid rgba(29,233,198,.4);color:var(--teal);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.2,.64,1);z-index:300;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -625,28 +631,89 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
     <textarea class="notes-area" id="na-client-${client.id}" placeholder="Client-level notes…"></textarea>
     <button class="save-note-btn" id="snb-client-${client.id}" onclick="saveClientNote('${client.id}')">Save Note</button>
 
-    <!-- CONTACT INFO + EMPLOYMENT -->
-    <div class="crm-row">
-      <div class="crm-sec">
-        <div class="crm-sec-title">Contact Information</div>
-        <div class="crm-fields">
-          <div class="crf full"><div class="crf-label">Full Name</div><div class="crf-val" style="font-size:1rem;font-weight:700">${name}</div></div>
-          <div class="crf"><div class="crf-label">Email</div><div class="crf-val">${client.email||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Cell Phone</div><div class="crf-val">${client.cell_phone||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Home Phone</div><div class="crf-val">${client.home_phone||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Date of Birth</div><div class="crf-val">${client.dob||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Province</div><div class="crf-val">${client.province||'—'}</div></div>
-          <div class="crf full"><div class="crf-label">Address</div><div class="crf-val">${[client.address,client.city,client.province,client.postal].filter(Boolean).join(', ')||'—'}</div></div>
-        </div>
+    <!-- SECTION 1: PERSONAL INFORMATION -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <div class="crm-sec-title" style="margin:0">Personal Information</div>
+        <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','personal')">💾 Save</button>
       </div>
-      <div class="crm-sec">
-        <div class="crm-sec-title">Employment (Latest)</div>
-        <div class="crm-fields">
-          <div class="crf"><div class="crf-label">Status</div><div class="crf-val">${client.employment_status||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Employer</div><div class="crf-val">${client.employer||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Pay Frequency</div><div class="crf-val">${client.pay_frequency||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Declared Income / mo</div><div class="crf-val hi">${client.declared_monthly_income?'$'+Number(client.declared_monthly_income).toLocaleString():'—'}</div></div>
+      <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="crf"><div class="crf-label">First Name</div><input class="crf-edit" data-client-field="first_name" value="${esc(client.first_name)}"></div>
+        <div class="crf"><div class="crf-label">Last Name</div><input class="crf-edit" data-client-field="last_name" value="${esc(client.last_name)}"></div>
+        <div class="crf"><div class="crf-label">Email</div><input class="crf-edit" type="email" data-client-field="email" value="${esc(client.email)}"></div>
+        <div class="crf"><div class="crf-label">Cell Phone</div><input class="crf-edit" data-client-field="cell_phone" value="${esc(client.cell_phone)}"></div>
+        <div class="crf"><div class="crf-label">Home Phone</div><input class="crf-edit" data-client-field="home_phone" value="${esc(client.home_phone)}"></div>
+        <div class="crf"><div class="crf-label">Date of Birth</div><input class="crf-edit" type="date" data-client-field="dob" value="${esc(client.dob)}"></div>
+        <div class="crf"><div class="crf-label">Sex</div>
+          <select class="crf-edit" data-client-field="sex">
+            <option value="">—</option>
+            <option value="male" ${client.sex==='male'?'selected':''}>Male</option>
+            <option value="female" ${client.sex==='female'?'selected':''}>Female</option>
+            <option value="other" ${client.sex==='other'?'selected':''}>Other</option>
+          </select>
         </div>
+        <div class="crf"><div class="crf-label">Status</div>
+          <select class="crf-edit" data-client-field="status">
+            <option value="active" ${client.status==='active'?'selected':''}>Active</option>
+            <option value="suspended" ${client.status==='suspended'?'selected':''}>Suspended</option>
+            <option value="blacklisted" ${client.status==='blacklisted'?'selected':''}>Blacklisted</option>
+          </select>
+        </div>
+        <div class="crf"><div class="crf-label">Member Since</div><div class="crf-val" style="padding:5px 0">${client.created_at?new Date(client.created_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div></div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: ADDRESS -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <div class="crm-sec-title" style="margin:0">Address</div>
+        <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','address')">💾 Save</button>
+      </div>
+      <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="crf" style="grid-column:1/3"><div class="crf-label">Street Address</div><input class="crf-edit" data-client-field="address" value="${esc(client.address)}"></div>
+        <div class="crf"><div class="crf-label">Apt / Unit</div><input class="crf-edit" data-client-field="apt" value="${esc(client.apt)}"></div>
+        <div class="crf"><div class="crf-label">City</div><input class="crf-edit" data-client-field="city" value="${esc(client.city)}"></div>
+        <div class="crf"><div class="crf-label">Province</div>
+          <select class="crf-edit" data-client-field="province">
+            <option value="">—</option>
+            ${['BC','AB','SK','MB','ON','QC','NB','NS','PE','NL'].map(p=>`<option value="${p}" ${client.province===p?'selected':''}>${p}</option>`).join('')}
+          </select>
+        </div>
+        <div class="crf"><div class="crf-label">Postal Code</div><input class="crf-edit" data-client-field="postal" value="${esc(client.postal)}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: EMPLOYMENT -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <div class="crm-sec-title" style="margin:0">Employment</div>
+        <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','employment')">💾 Save</button>
+      </div>
+      <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="crf"><div class="crf-label">Income Source</div>
+          <select class="crf-edit" data-client-field="employment_status">
+            <option value="">—</option>
+            ${['employed','self-employed','ei','disability','retirement','other'].map(v=>`<option value="${v}" ${client.employment_status===v?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+        <div class="crf"><div class="crf-label">Employer</div><input class="crf-edit" data-client-field="employer" value="${esc(client.employer)}"></div>
+        <div class="crf"><div class="crf-label">Work Phone</div><input class="crf-edit" data-client-field="work_phone" value="${esc(client.work_phone)}"></div>
+        <div class="crf"><div class="crf-label">Job Description</div><input class="crf-edit" data-client-field="job_desc" value="${esc(client.job_desc)}"></div>
+        <div class="crf"><div class="crf-label">Hire Date</div><input class="crf-edit" type="date" data-client-field="hire_date" value="${esc(client.hire_date)}"></div>
+        <div class="crf"><div class="crf-label">Paid By</div>
+          <select class="crf-edit" data-client-field="paid_by">
+            <option value="">—</option>
+            <option value="direct" ${client.paid_by==='direct'?'selected':''}>Direct Deposit</option>
+            <option value="cheque" ${client.paid_by==='cheque'?'selected':''}>Cheque</option>
+          </select>
+        </div>
+        <div class="crf"><div class="crf-label">Pay Frequency</div>
+          <select class="crf-edit" data-client-field="pay_frequency">
+            <option value="">—</option>
+            ${['weekly','biweekly','semi-monthly','monthly'].map(v=>`<option value="${v}" ${client.pay_frequency===v?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+        <div class="crf"><div class="crf-label">Declared Income / mo</div><input class="crf-edit" type="number" data-client-field="declared_monthly_income" value="${client.declared_monthly_income||''}"></div>
       </div>
     </div>
 
@@ -670,6 +737,8 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
   } else if(activeLoans.length===1){
     toggleLoanBody('loan-'+activeLoans[0].id);
   }
+  // Init dirty field tracking
+  initClientDirtyTracking();
 }
 
 /* ── LOAN HISTORY CARD ── */
@@ -790,14 +859,84 @@ function appHistoryRow(a){
   const tc='t-'+(a.tier||'green');
   const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
   const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
-  return `<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:rgba(8,6,20,.4);margin-bottom:6px;cursor:default">
-    <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle);min-width:90px">${a.ref||'—'}</div>
-    <div style="font-size:.75rem;min-width:60px">${a.type==='renewal'?'Renewal':'New Loan'}</div>
-    <div style="font-size:.82rem;font-weight:700;min-width:55px">$${(a.requested_amount||0).toLocaleString()}</div>
-    <span class="tb ${tc}">${a.tier||'—'}</span>
-    <span class="db ${dc}">${dl}</span>
-    <div style="font-size:.68rem;color:var(--muted);margin-left:auto">${a.submitted_at?new Date(a.submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+  const bodyId='ahr-'+a.id;
+
+  const detailHtml=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      ${ahrField('Ref',a.ref)}
+      ${ahrField('Type',a.type==='renewal'?'Renewal':'New Loan')}
+      ${ahrField('Submitted',a.submitted_at?new Date(a.submitted_at).toLocaleString('en-CA'):'')}
+      ${ahrField('Requested Amount',a.requested_amount?'$'+a.requested_amount.toLocaleString():'')}
+      ${ahrField('Approved Amount',a.approved_amount?'$'+a.approved_amount.toLocaleString():'—')}
+      ${ahrField('Fund Method',a.fund_method||'—')}
+      ${ahrField('Bankrupt Now',a.bankrupt_now||'—')}
+      ${ahrField('Bankrupt Past',a.bankrupt_past||'—')}
+      ${ahrField('Hard Decline',a.hard_decline||'—',a.hard_decline?'var(--coral)':'')}
+    </div>
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Employment at Application</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      ${ahrField('Income Source',a.employment_status||'—')}
+      ${ahrField('Employer',a.employer||'—')}
+      ${ahrField('Work Phone',a.work_phone||'—')}
+      ${ahrField('Job Description',a.job_desc||'—')}
+      ${ahrField('Supervisor',a.supervisor||'—')}
+      ${ahrField('Hire Date',a.hire_date||'—')}
+      ${ahrField('EI Start Date',a.ei_start_date||'—')}
+      ${ahrField('Paid By',a.paid_by||'—')}
+      ${ahrField('Other Income',a.other_income_type||'—')}
+      ${ahrField('Pay Frequency',a.pay_frequency||'—')}
+      ${ahrField('Next Pay Date',a.next_pay_date||'—')}
+      ${ahrField('Declared Income/mo',a.declared_monthly_income?'$'+Number(a.declared_monthly_income).toLocaleString():'')}
+    </div>
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Safety Contact</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      ${ahrField('First Name',a.safety_contact_first_name||a.safety_contact_name?.split(' ')[0]||'—')}
+      ${ahrField('Last Name',a.safety_contact_last_name||a.safety_contact_name?.split(' ').slice(1).join(' ')||'—')}
+      ${ahrField('Phone',a.safety_contact_phone||'—')}
+      ${ahrField('Relationship',a.safety_contact_rel||'—')}
+    </div>
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">E-Signature</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      ${ahrField('Signed By',a.esig_name||'—')}
+      ${ahrField('Timestamp',a.esig_timestamp?new Date(a.esig_timestamp).toLocaleString('en-CA'):'—')}
+    </div>
+    ${a.analyst_notes?`<div style="padding:8px 10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:6px;font-size:.75rem;color:var(--gold);margin-bottom:8px">📝 ${a.analyst_notes}</div>`:''}
+    ${!a.reviewed_at&&a.decision==='manual_review'?`<div style="display:flex;gap:8px;margin-top:8px">
+      <button class="ca ca-approve" onclick="markDecision('${a.id}','approved')">✓ Approve</button>
+      <button class="ca ca-decline" onclick="markDecision('${a.id}','declined')">✗ Decline</button>
+    </div>`:''}`;
+
+  return `
+    <div style="background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer" onclick="toggleAHR('${bodyId}')">
+        <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle);min-width:90px">${a.ref||'—'}</div>
+        <div style="font-size:.75rem;min-width:60px">${a.type==='renewal'?'Renewal':'New Loan'}</div>
+        <div style="font-size:.82rem;font-weight:700;min-width:55px">$${(a.requested_amount||0).toLocaleString()}</div>
+        <span class="tb ${tc}">${a.tier||'—'}</span>
+        <span class="db ${dc}">${dl}</span>
+        <div style="font-size:.68rem;color:var(--muted);margin-left:auto">${a.submitted_at?new Date(a.submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+        <div style="font-size:.65rem;color:var(--muted)" id="${bodyId}-chev">▶</div>
+      </div>
+      <div id="${bodyId}" style="display:none;padding:14px;border-top:1px solid var(--border)">
+        ${detailHtml}
+      </div>
+    </div>`;
+}
+
+function ahrField(label, value, color=''){
+  return `<div style="display:flex;flex-direction:column;gap:2px">
+    <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">${label}</div>
+    <div style="font-size:.78rem;font-weight:500${color?';color:'+color:''}">${value||'—'}</div>
   </div>`;
+}
+
+function toggleAHR(id){
+  const el=document.getElementById(id);
+  const chev=document.getElementById(id+'-chev');
+  if(!el) return;
+  const open=el.style.display==='block';
+  el.style.display=open?'none':'block';
+  if(chev) chev.textContent=open?'▶':'▼';
 }
 
 /* ── TOGGLE LOAN BODY ── */
@@ -1043,6 +1182,32 @@ function showToast(msg,isErr=false){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast'+(isErr?' err':'');t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
+}
+function esc(v){return v==null?'':String(v).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ── SAVE CLIENT SECTION ── */
+async function saveClientSection(clientId, section){
+  const updates={};
+  // Collect all [data-client-field] inputs in the page
+  document.querySelectorAll('[data-client-field]').forEach(el=>{
+    updates[el.dataset.clientField] = el.value.trim() || null;
+  });
+  if(!Object.keys(updates).length) return;
+  const {error}=await sb.from('clients').update(updates).eq('id',clientId);
+  if(error){showToast('Save failed: '+error.message,true);return;}
+  // Update local cache
+  const c=allClients.find(x=>x.id===clientId);
+  if(c) Object.assign(c,updates);
+  document.querySelectorAll('[data-client-field]').forEach(el=>el.classList.remove('dirty'));
+  showToast('✓ '+section.charAt(0).toUpperCase()+section.slice(1)+' saved');
+}
+
+/* ── INIT DIRTY TRACKING ── */
+function initClientDirtyTracking(){
+  document.querySelectorAll('[data-client-field]').forEach(el=>{
+    el.addEventListener('input',()=>el.classList.add('dirty'));
+    el.addEventListener('change',()=>el.classList.add('dirty'));
+  });
 }
 </script>
 </body>
