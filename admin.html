@@ -680,15 +680,15 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
       <!-- Tabs -->
       <div class="cp-tabs">
         <button class="cp-tab active" onclick="switchCpTab('tab-personal-${client.id}',this)">Personal</button>
-        <button class="cp-tab" onclick="switchCpTab('tab-address-${client.id}',this)">Address</button>
-        <button class="cp-tab" onclick="switchCpTab('tab-employment-${client.id}',this)">Employment</button>
         <button class="cp-tab" onclick="switchCpTab('tab-loans-${client.id}',this)">Loan History <span class="cp-tab-count">${loans.length}</span></button>
         <button class="cp-tab" onclick="switchCpTab('tab-apps-${client.id}',this)">Applications <span class="cp-tab-count">${apps.length}</span></button>
       </div>
 
-      <!-- TAB: Personal Information -->
+      <!-- TAB: Personal (Personal Info + Address + Employment) -->
       <div class="cp-panel active" id="tab-personal-${client.id}">
-        <div class="crm-sec">
+
+        <!-- Personal Information -->
+        <div class="crm-sec" style="margin-bottom:14px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
             <div class="crm-sec-title" style="margin:0">Personal Information</div>
             <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','personal')">💾 Save</button>
@@ -718,11 +718,9 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
             <div class="crf"><div class="crf-label">Member Since</div><div class="crf-val" style="padding:5px 0;font-size:.82rem">${memberSince}</div></div>
           </div>
         </div>
-      </div>
 
-      <!-- TAB: Address -->
-      <div class="cp-panel" id="tab-address-${client.id}">
-        <div class="crm-sec">
+        <!-- Address -->
+        <div class="crm-sec" style="margin-bottom:14px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
             <div class="crm-sec-title" style="margin:0">Address</div>
             <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','address')">💾 Save</button>
@@ -740,10 +738,8 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
             <div class="crf"><div class="crf-label">Postal Code</div><input class="crf-edit" data-client-field="postal" value="${esc(client.postal)}"></div>
           </div>
         </div>
-      </div>
 
-      <!-- TAB: Employment -->
-      <div class="cp-panel" id="tab-employment-${client.id}">
+        <!-- Employment -->
         <div class="crm-sec">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
             <div class="crm-sec-title" style="margin:0">Employment</div>
@@ -776,6 +772,7 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
             <div class="crf"><div class="crf-label">Declared Income / mo</div><input class="crf-edit" type="number" data-client-field="declared_monthly_income" value="${client.declared_monthly_income||''}"></div>
           </div>
         </div>
+
       </div>
 
       <!-- TAB: Loan History -->
