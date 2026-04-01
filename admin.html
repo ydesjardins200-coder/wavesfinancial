@@ -549,8 +549,9 @@ function renderList(){
     const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
     const email=c?.email||a.email||'';
     const tc='t-'+(a.tier||'green');
-    const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
-    const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
+    const resolved=a.reviewed_at&&a.final_decision?a.final_decision:a.decision;
+    const dc=resolved==='approved'||resolved==='auto_approved'?'d-approved':resolved==='declined'||resolved==='auto_declined'?'d-declined':'d-review';
+    const dl=resolved==='approved'?'✓ Approved':resolved==='auto_approved'?'✓ Auto-Approved':resolved==='declined'?'✗ Declined':resolved==='auto_declined'?'✗ Auto-Declined':a.reviewed_at?'✓ Reviewed':'🔍 Pending Review';
     return `<div class="arow" onclick="openClientByAppId('${a.id}')">
       <div class="aref">${a.ref||'—'}</div>
       <div><div class="aname">${name}</div><div class="aemail">${email}</div></div>
@@ -977,8 +978,17 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
 /* ── APP HISTORY ROW ── */
 function appHistoryRow(a, loans, schedMap){
   const tc='t-'+(a.tier||'green');
-  const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
-  const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
+  // Use analyst's final_decision if reviewed, otherwise engine's decision
+  const resolved = a.reviewed_at && a.final_decision ? a.final_decision : a.decision;
+  const dc = resolved==='approved'||resolved==='auto_approved' ? 'd-approved'
+           : resolved==='declined'||resolved==='auto_declined' ? 'd-declined'
+           : 'd-review';
+  const dl = resolved==='approved'    ? '✓ Approved'
+           : resolved==='auto_approved' ? '✓ Auto-Approved'
+           : resolved==='declined'    ? '✗ Declined'
+           : resolved==='auto_declined' ? '✗ Auto-Declined'
+           : a.reviewed_at            ? '✓ Reviewed'
+           : '🔍 Pending Review';
   const bodyId='ahr-'+a.id;
 
   // Find the loan associated with this application
@@ -1580,7 +1590,7 @@ async function doSearch(q){
         <div class="sri-meta">${r.email||''} · ${r.total_loans||0} loans · ${r.province||''}</div>
       </div>`;
     } else {
-      const dc=r.decision==='auto_approved'?'d-approved':r.decision==='auto_declined'?'d-declined':'d-review';
+      const dc=r.decision==='auto_approved'||r.final_decision==='approved'?'d-approved':r.decision==='auto_declined'||r.final_decision==='declined'?'d-declined':'d-review';
       return `<div class="sri" onclick="clearSearch();openClientByAppId('${r.id}')">
         <div class="sri-ref">APP <span class="db ${dc}" style="font-size:.55rem;padding:1px 6px">${r.decision}</span></div>
         <div class="sri-name">${r.ref}</div>
