@@ -1269,16 +1269,71 @@ function toggleLoanBody(id){
 
 /* ── ACTIONS ── */
 async function markDecision(appId, outcome){
-  const u={reviewed_at:new Date().toISOString(),reviewed_by:'analyst',final_decision:outcome};
-  const {error}=await sb.from('loan_applications').update(u).eq('id',appId);
-  if(error){showToast('Update failed: '+error.message,true);return;}
   const a=allApps.find(x=>x.id===appId);
-  if(a) Object.assign(a,u);
-  showToast(outcome==='approved'?'✓ Marked Approved':'✗ Marked Declined');
-  renderStats();
-  // Reload client page
-  const clientId=a?.client_id;
-  if(clientId) openClient(clientId);
+  if(!a) return;
+
+  // For approval — show the approved amount and ask for optional note
+  if(outcome==='approved'){
+    const approvedAmt = a.approved_amount || a.requested_amount;
+    const note = prompt(
+      `Approving ${a.ref} for $${approvedAmt?.toLocaleString()}\n\nOptional analyst note (leave blank to skip):`,
+      ''
+    );
+    if(note === null) return; // cancelled
+
+    const btn = document.querySelector(`button[onclick="markDecision('${appId}','approved')"]`);
+    if(btn){ btn.disabled=true; btn.textContent='Processing…'; }
+
+    try{
+      const resp = await fetch(RAILWAY_URL+'/api/approve', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ applicationId: appId, analystNote: note }),
+      });
+      const result = await resp.json();
+      if(!resp.ok) throw new Error(result.error||'Unknown error');
+
+      // Update local cache
+      Object.assign(a, { reviewed_at: new Date().toISOString(), final_decision:'approved', approved_amount: result.approvedAmount });
+      showToast(`✓ Approved $${result.approvedAmount.toLocaleString()} · ${result.scheduleCount} payments · first due ${result.firstPayment}`);
+      renderStats();
+      if(a.client_id) openClient(a.client_id);
+    } catch(err){
+      showToast('Approval failed: '+err.message, true);
+      if(btn){ btn.disabled=false; btn.textContent='✓ Approve'; }
+    }
+    return;
+  }
+
+  // For decline
+  if(outcome==='declined'){
+    const note = prompt(
+      `Declining ${a.ref}\n\nOptional decline reason (leave blank to skip):`,
+      ''
+    );
+    if(note === null) return; // cancelled
+
+    const btn = document.querySelector(`button[onclick="markDecision('${appId}','declined')"]`);
+    if(btn){ btn.disabled=true; btn.textContent='Processing…'; }
+
+    try{
+      const resp = await fetch(RAILWAY_URL+'/api/decline', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ applicationId: appId, analystNote: note }),
+      });
+      const result = await resp.json();
+      if(!resp.ok) throw new Error(result.error||'Unknown error');
+
+      Object.assign(a, { reviewed_at: new Date().toISOString(), final_decision:'declined' });
+      showToast('✗ Application declined');
+      renderStats();
+      if(a.client_id) openClient(a.client_id);
+    } catch(err){
+      showToast('Decline failed: '+err.message, true);
+      if(btn){ btn.disabled=false; btn.textContent='✗ Decline'; }
+    }
+  }
 }
 
 async function markDisbursed(loanId){
