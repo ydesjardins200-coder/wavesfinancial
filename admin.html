@@ -385,6 +385,7 @@ function initDash(){
   loadData();
   runHealthChecks();
   setInterval(runHealthChecks,60000);
+  checkURLOnLoad();
 }
 if(sessionStorage.getItem('wf_admin')==='1') initDash();
 
@@ -397,6 +398,11 @@ async function loadData(){
   renderStats();
   renderList();
   updateSummaryHealth();
+  // If page was loaded with a ?ref= in URL, open that client now
+  if (window._pendingRef) {
+    const a = allApps.find(x => x.ref === window._pendingRef);
+    if (a) { openClient(a.id); delete window._pendingRef; }
+  }
 }
 
 /* ── STATS ── */
@@ -599,11 +605,43 @@ function openClient(id){
   document.getElementById('client-page').style.display='block';
   document.getElementById('client-page').scrollTop=0;
   window.scrollTo(0,0);
+  // Update URL without reload
+  const ref = a.ref || id;
+  history.pushState({ref, id}, '', '/admin.html?ref=' + encodeURIComponent(ref));
 }
 
 function closeClient(){
   document.getElementById('client-page').style.display='none';
   document.getElementById('list-view').style.display='block';
+  history.pushState({}, '', '/admin.html');
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', e => {
+  if (e.state && e.state.ref) {
+    // navigated back to a client — find by ref or id
+    const a = allApps.find(x => x.ref === e.state.ref || x.id === e.state.id);
+    if (a) { openClient(a.id); return; }
+  }
+  // Back to list
+  document.getElementById('client-page').style.display='none';
+  document.getElementById('health-view').style.display='none';
+  document.getElementById('list-view').style.display='block';
+});
+
+// On page load — check if URL has a ?ref= param and open that client
+function checkURLOnLoad() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (!ref) return;
+  // Wait for data to load then open the client
+  const tryOpen = () => {
+    const a = allApps.find(x => x.ref === ref);
+    if (a) { openClient(a.id); }
+    // If not found yet, data is still loading — will be handled after loadData()
+  };
+  if (allApps.length) tryOpen();
+  else window._pendingRef = ref; // picked up after loadData completes
 }
 
 function toggleNote(id){
