@@ -23,15 +23,13 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
   background:radial-gradient(ellipse at 30% 20%,rgba(91,82,216,.18) 0%,transparent 60%),
              radial-gradient(ellipse at 80% 80%,rgba(29,233,198,.08) 0%,transparent 50%),var(--deep);}
 .lcard{width:100%;max-width:380px;background:rgba(16,14,46,.9);border:1px solid var(--border);border-radius:20px;padding:40px 36px;backdrop-filter:blur(20px);}
-.llogo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
 .lmark{width:36px;height:36px;border-radius:10px;background:rgba(91,82,216,.25);border:1px solid rgba(91,82,216,.5);display:flex;align-items:center;justify-content:center;}
 .ltitle{font-size:1.4rem;font-weight:800;margin-bottom:6px;}
 .lsub{font-size:.8rem;color:var(--muted);margin-bottom:24px;}
 .llabel{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;display:block;}
 .linput{width:100%;padding:11px 14px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.9rem;outline:none;transition:border-color .2s;margin-bottom:16px;}
 .linput:focus{border-color:var(--iris);}
-.lbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;}
-.lbtn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(91,82,216,.4);}
+.lbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;}
 .lerr{font-size:.75rem;color:var(--coral);margin-top:10px;text-align:center;}
 
 /* APP SHELL */
@@ -44,28 +42,24 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .tb-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.9rem;}
 .tb-mark{width:28px;height:28px;border-radius:7px;background:rgba(91,82,216,.25);border:1px solid rgba(91,82,216,.4);display:flex;align-items:center;justify-content:center;font-size:.75rem;}
 .tb-badge{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:100px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);color:var(--gold);}
-
-/* HEALTH DOTS */
 .hdots{display:flex;align-items:center;gap:5px;margin-left:6px;}
 .hdot{display:flex;align-items:center;gap:4px;font-size:.62rem;color:var(--muted);padding:3px 8px;border-radius:100px;background:rgba(255,255,255,.03);border:1px solid var(--border);cursor:pointer;transition:all .2s;}
 .hdot:hover{background:rgba(255,255,255,.06);}
 .hind{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .hind-ok{background:#1DE9C6;box-shadow:0 0 6px rgba(29,233,198,.5);}
 .hind-err{background:#FF6B8A;box-shadow:0 0 6px rgba(255,107,138,.5);}
-.hind-warn{background:#FFD166;box-shadow:0 0 6px rgba(255,209,102,.4);}
 .hind-grey{background:rgba(160,154,245,.3);}
 @keyframes dpulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.hind-checking{background:rgba(160,154,245,.3);animation:dpulse 1s ease infinite;}
-
+.hind-chk{background:rgba(160,154,245,.3);animation:dpulse 1s infinite;}
 .tb-spacer{flex:1;}
 
 /* SEARCH */
 .sw{position:relative;flex:0 0 300px;}
 .si{width:100%;padding:7px 32px 7px 32px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none;transition:all .2s;}
-.si:focus{border-color:var(--iris);background:rgba(8,6,20,.9);}
+.si:focus{border-color:var(--iris);}
 .si::placeholder{color:var(--muted);}
 .sicon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.72rem;pointer-events:none;}
-.sclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.8rem;cursor:pointer;display:none;background:none;border:none;}
+.sclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;display:none;background:none;border:none;font-size:.8rem;}
 .sresults{position:absolute;top:calc(100% + 4px);left:0;right:0;background:rgba(12,10,30,.98);border:1px solid var(--border);border-radius:10px;max-height:360px;overflow-y:auto;z-index:200;display:none;backdrop-filter:blur(20px);}
 .sresults.open{display:block;}
 .sri{padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(160,154,245,.06);}
@@ -75,11 +69,10 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .sri-name{font-size:.82rem;font-weight:600;}
 .sri-meta{font-size:.67rem;color:var(--muted);margin-top:1px;}
 .sno{padding:20px;text-align:center;font-size:.78rem;color:var(--muted);}
-
 .tb-logout{font-size:.75rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:var(--font);padding:4px 8px;border-radius:6px;transition:all .2s;}
 .tb-logout:hover{background:rgba(255,107,138,.1);color:var(--coral);}
 
-/* MAIN LAYOUT */
+/* MAIN */
 .main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
 .tabs{display:flex;gap:2px;padding:12px 20px 0;border-bottom:1px solid var(--border);background:rgba(16,14,46,.5);}
 .tab{padding:8px 16px;border-radius:8px 8px 0 0;font-size:.78rem;font-weight:600;cursor:pointer;background:none;border:none;color:var(--muted);font-family:var(--font);transition:all .2s;border-bottom:2px solid transparent;position:relative;bottom:-1px;}
@@ -94,30 +87,37 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .sc-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:6px;}
 .sc-value{font-size:1.6rem;font-weight:800;line-height:1;}
 
-/* APP LIST */
+/* LIST */
 .qhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .qtitle{font-size:.85rem;font-weight:800;}
-.qrefresh{font-size:.72rem;color:var(--periwinkle);background:none;border:1px solid rgba(160,154,245,.2);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.qrefresh{font-size:.72rem;color:var(--periwinkle);background:none;border:1px solid rgba(160,154,245,.2);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:var(--font);}
 .qrefresh:hover{background:rgba(160,154,245,.1);}
-.col-head{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 16px 8px;display:grid;grid-template-columns:110px 1fr 80px 80px 90px 100px 120px;gap:12px;}
-.arow{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:110px 1fr 80px 80px 90px 100px 120px;align-items:center;gap:12px;}
+.col-head{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 16px 8px;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;gap:12px;}
+.arow{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;align-items:center;gap:12px;}
 .arow:hover{border-color:rgba(160,154,245,.3);background:rgba(91,82,216,.06);transform:translateX(2px);}
 .aref{font-size:.75rem;font-weight:700;color:var(--periwinkle);}
 .aname{font-size:.82rem;font-weight:600;}
 .aemail{font-size:.67rem;color:var(--muted);margin-top:1px;}
-.tierbadge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;}
+
+/* BADGES */
+.tb{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;}
 .t-gold{background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.4);color:#FFD166;}
 .t-green{background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);color:#1DE9C6;}
 .t-blue{background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.3);color:#00E5FF;}
 .t-yellow{background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.3);color:#F5C542;}
 .t-orange{background:rgba(255,153,69,.12);border:1px solid rgba(255,153,69,.3);color:#FF9945;}
 .t-red{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.3);color:#FF6B8A;}
-.decbadge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:.62rem;font-weight:700;}
+.db{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:.62rem;font-weight:700;}
 .d-approved{background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);color:#1DE9C6;}
 .d-review{background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.3);color:#A09AF5;}
 .d-declined{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.3);color:#FF6B8A;}
+.loan-status{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:.62rem;font-weight:700;}
+.ls-active{background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);color:#1DE9C6;}
+.ls-pending{background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);color:#FFD166;}
+.ls-paid{background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.3);color:#A09AF5;}
+.ls-defaulted{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.3);color:#FF6B8A;}
 
-/* HEALTH TAB */
+/* HEALTH */
 .hgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:900px;}
 .hcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
 .hcard-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
@@ -132,7 +132,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .hstatus{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;}
 .hsdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .hs-ok{color:var(--teal);}  .hs-ok .hsdot{background:var(--teal);box-shadow:0 0 6px rgba(29,233,198,.4);}
-.hs-warn{color:var(--gold);}  .hs-warn .hsdot{background:var(--gold);}
+.hs-warn{color:var(--gold);} .hs-warn .hsdot{background:var(--gold);}
 .hs-err{color:var(--coral);} .hs-err .hsdot{background:var(--coral);}
 .hs-chk{color:var(--muted);} .hs-chk .hsdot{background:rgba(160,154,245,.3);animation:dpulse 1s infinite;}
 
@@ -147,7 +147,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
 /* CRM SECTIONS */
 .crm-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-.crm-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
 .crm-sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
 .crm-sec-title{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--iris);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
 .crm-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -156,52 +155,97 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .crf-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
 .crf-val{font-size:.82rem;font-weight:500;}
 .crf-val.mono{font-family:monospace;font-size:.75rem;}
+.crf-val.hi{color:var(--teal);font-weight:700;}
+.crf-val.warn{color:var(--coral);font-weight:700;}
 
-/* SCORE HERO */
-.score-hero{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
-.score-circle{width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:3px solid;}
-.score-num{font-size:1.4rem;font-weight:800;line-height:1;}
-.score-lbl{font-size:.5rem;font-weight:700;text-transform:uppercase;opacity:.7;}
-.sbar-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;}
-.sbar-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.34,1.2,.64,1);}
+/* CLIENT HERO */
+.client-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;}
+.ch-name{font-size:1.5rem;font-weight:800;margin-bottom:4px;}
+.ch-email{font-size:.82rem;color:var(--muted);margin-bottom:12px;}
+.ch-meta{display:flex;gap:16px;flex-wrap:wrap;}
+.ch-stat{display:flex;flex-direction:column;gap:2px;}
+.ch-stat-val{font-size:1.1rem;font-weight:800;}
+.ch-stat-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.ch-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.ch-actions{display:flex;flex-direction:column;gap:8px;}
+
+/* LOAN HISTORY CARD */
+.loan-history-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.lh-header{padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s;}
+.lh-header:hover{background:rgba(91,82,216,.06);}
+.lh-ref{font-size:.75rem;font-weight:700;color:var(--periwinkle);min-width:90px;}
+.lh-amount{font-size:.95rem;font-weight:800;min-width:60px;}
+.lh-meta{flex:1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.lh-chevron{color:var(--muted);font-size:.75rem;transition:transform .2s;margin-left:auto;}
+.lh-body{display:none;border-top:1px solid var(--border);}
+.lh-body.open{display:block;}
+
+/* REPAYMENT TABLE */
+.sched-table{width:100%;border-collapse:collapse;}
+.sched-table th{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);}
+.sched-table td{font-size:.78rem;padding:10px 16px;border-bottom:1px solid rgba(160,154,245,.05);}
+.sched-table tr:last-child td{border-bottom:none;}
+.sched-table tr:hover td{background:rgba(91,82,216,.04);}
+.pay-status{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:.62rem;font-weight:700;}
+.ps-scheduled{background:rgba(160,154,245,.1);color:var(--muted);}
+.ps-paid{background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.2);color:var(--teal);}
+.ps-missed{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.2);color:var(--coral);}
+.ps-partial{background:rgba(255,153,69,.12);border:1px solid rgba(255,153,69,.2);color:var(--orange);}
+.ps-waived{background:rgba(160,154,245,.1);color:var(--periwinkle);}
+
+/* PROGRESS BAR */
+.prog-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:4px;}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--iris),var(--teal));}
+
+/* SCORE */
+.score-hero{display:flex;align-items:center;gap:16px;margin-bottom:12px;}
+.score-circle{width:60px;height:60px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:3px solid;}
+.score-num{font-size:1.2rem;font-weight:800;line-height:1;}
+.score-lbl{font-size:.45rem;font-weight:700;text-transform:uppercase;opacity:.7;}
+.sbar-track{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;}
+.sbar-fill{height:100%;border-radius:3px;}
 
 /* SIGNAL GRID */
 .sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .sig-card{background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
-.sig-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;}
-.sig-val{font-size:.95rem;font-weight:800;}
-.sig-pts{font-size:.65rem;margin-top:1px;}
+.sig-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;}
+.sig-val{font-size:.9rem;font-weight:800;}
+.sig-pts{font-size:.62rem;margin-top:1px;}
 
 /* FLAGS */
 .flag-item{display:flex;gap:8px;font-size:.73rem;color:var(--gold);padding:6px 10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:6px;margin-bottom:5px;}
 
-/* CRM ACTIONS */
-.crm-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
-.ca{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;border:none;font-family:var(--font);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;}
+/* ACTIONS */
+.crm-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.ca{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;border:none;font-family:var(--font);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
 .ca-approve{background:rgba(29,233,198,.15);border:1px solid rgba(29,233,198,.3);color:var(--teal);}
-.ca-approve:hover{background:rgba(29,233,198,.25);}
 .ca-decline{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.3);color:var(--coral);}
-.ca-decline:hover{background:rgba(255,107,138,.22);}
 .ca-note{background:rgba(160,154,245,.1);border:1px solid var(--border);color:var(--periwinkle);}
-.ca-note:hover{background:rgba(160,154,245,.18);}
+.ca-disburse{background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);color:var(--gold);}
 .notes-area{width:100%;padding:10px 12px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.8rem;resize:vertical;min-height:80px;outline:none;transition:border-color .2s;margin-top:8px;display:none;}
 .notes-area:focus{border-color:var(--iris);}
 .save-note-btn{margin-top:6px;padding:7px 16px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.78rem;font-weight:700;cursor:pointer;display:none;}
 
-/* TOAST + SPINNER */
+/* CONTRACT SECTION */
+.contract-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+
+/* TOAST / SPINNER */
 .toast{position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:10px;font-size:.8rem;font-weight:700;background:rgba(29,233,198,.2);border:1px solid rgba(29,233,198,.4);color:var(--teal);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.2,.64,1);z-index:300;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.err{background:rgba(255,107,138,.15);border-color:rgba(255,107,138,.3);color:var(--coral);}
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(160,154,245,.2);border-top-color:var(--periwinkle);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:.82rem;}
-.empty-icon{font-size:2.5rem;margin-bottom:12px;}
+.loading-row{padding:32px;text-align:center;color:var(--muted);font-size:.8rem;}
+
 @media(max-width:900px){
   .stats-row{grid-template-columns:repeat(3,1fr);}
   .arow,.col-head{grid-template-columns:90px 1fr 70px 80px 100px;}
   .arow>*:nth-child(6),.arow>*:nth-child(7),.col-head>*:nth-child(6),.col-head>*:nth-child(7){display:none;}
-  .hgrid,.crm-row,.crm-row-3{grid-template-columns:1fr;}
+  .hgrid,.crm-row{grid-template-columns:1fr;}
+  .sig-grid,.contract-grid{grid-template-columns:1fr 1fr;}
   .sw{flex:0 0 180px;}
+  .client-hero{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -210,7 +254,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="lcard">
-    <div class="llogo">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">
       <div class="lmark">🌊</div>
       <div><div style="font-size:.95rem;font-weight:800;">Waves Financial</div><div style="font-size:.7rem;color:var(--muted);">Analyst Dashboard</div></div>
     </div>
@@ -225,12 +269,11 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
 <!-- APP -->
 <div id="app">
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="tb-logo"><div class="tb-mark">🌊</div>Waves Financial</div>
     <span class="tb-badge">Analyst</span>
-    <div class="hdots" id="hdots">
-      <div class="hdot" onclick="switchTab('health')" title="Railway API"><div class="hind hind-grey" id="dot-railway"></div>Railway</div>
+    <div class="hdots">
+      <div class="hdot" onclick="switchTab('health')" title="Railway"><div class="hind hind-grey" id="dot-railway"></div>Railway</div>
       <div class="hdot" onclick="switchTab('health')" title="Supabase"><div class="hind hind-grey" id="dot-supabase"></div>Supabase</div>
       <div class="hdot" onclick="switchTab('health')" title="DNS"><div class="hind hind-grey" id="dot-dns"></div>DNS</div>
     </div>
@@ -248,25 +291,27 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
     <div class="tabs">
       <button class="tab active" onclick="switchTab('queue')" id="tab-queue">Review Queue <span class="tcnt" id="qcnt">0</span></button>
       <button class="tab" onclick="switchTab('all')" id="tab-all">All Applications</button>
-      <button class="tab" onclick="switchTab('approved')" id="tab-approved">Approved</button>
-      <button class="tab" onclick="switchTab('declined')" id="tab-declined">Declined</button>
+      <button class="tab" onclick="switchTab('clients')" id="tab-clients">Clients</button>
+      <button class="tab" onclick="switchTab('loans')" id="tab-loans">Active Loans</button>
       <button class="tab" onclick="switchTab('health')" id="tab-health">⬡ System Health</button>
     </div>
 
     <!-- LIST VIEW -->
     <div class="content" id="list-view">
       <div class="stats-row">
-        <div class="sc"><div class="sc-label">Total</div><div class="sc-value" id="s-total">—</div></div>
+        <div class="sc"><div class="sc-label">Total Applications</div><div class="sc-value" id="s-total">—</div></div>
         <div class="sc"><div class="sc-label">Pending Review</div><div class="sc-value" style="color:var(--periwinkle)" id="s-review">—</div></div>
-        <div class="sc"><div class="sc-label">Auto-Approved</div><div class="sc-value" style="color:var(--teal)" id="s-approved">—</div></div>
-        <div class="sc"><div class="sc-label">Auto-Declined</div><div class="sc-value" style="color:var(--coral)" id="s-declined">—</div></div>
-        <div class="sc"><div class="sc-label">Avg Risk Score</div><div class="sc-value" style="color:var(--gold)" id="s-avg">—</div></div>
+        <div class="sc"><div class="sc-label">Unique Clients</div><div class="sc-value" style="color:var(--teal)" id="s-clients">—</div></div>
+        <div class="sc"><div class="sc-label">Active Loans</div><div class="sc-value" style="color:var(--gold)" id="s-loans">—</div></div>
+        <div class="sc"><div class="sc-label">Avg Risk Score</div><div class="sc-value" style="color:var(--coral)" id="s-avg">—</div></div>
       </div>
       <div class="qhdr">
         <div class="qtitle" id="qtitle">Review Queue</div>
         <button class="qrefresh" onclick="loadData()">↻ Refresh</button>
       </div>
-      <div class="col-head"><span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span></div>
+      <div class="col-head" id="col-head">
+        <span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>
+      </div>
       <div id="app-list"><div class="empty"><div class="spinner"></div><br>Loading…</div></div>
     </div>
 
@@ -274,68 +319,33 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
     <div class="content" id="health-view" style="display:none;">
       <div class="qhdr">
         <div class="qtitle">System Health</div>
-        <button class="qrefresh" onclick="runHealthChecks()">↻ Refresh now</button>
+        <button class="qrefresh" onclick="runHealthChecks()">↻ Refresh</button>
       </div>
       <div class="hgrid">
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🚂 Railway Backend</div><div class="hcard-time" id="htime-railway">—</div></div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🌐</div><div><div class="hitem-name">API Server</div><div class="hitem-detail">web-production-31ce.up.railway.app</div></div></div>
-            <div class="hstatus hs-chk" id="hs-api"><div class="hsdot"></div>Checking…</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">⚡</div><div><div class="hitem-name">Response Time</div><div class="hitem-detail" id="hd-latency">—</div></div></div>
-            <div class="hstatus hs-chk" id="hs-latency"><div class="hsdot"></div>—</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🔧</div><div><div class="hitem-name">Environment</div><div class="hitem-detail" id="hd-env">—</div></div></div>
-            <div class="hstatus hs-chk" id="hs-env"><div class="hsdot"></div>—</div>
-          </div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🌐</div><div><div class="hitem-name">API Server</div><div class="hitem-detail">web-production-31ce.up.railway.app</div></div></div><div class="hstatus hs-chk" id="hs-api"><div class="hsdot"></div>Checking…</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚡</div><div><div class="hitem-name">Response Time</div><div class="hitem-detail" id="hd-latency">—</div></div></div><div class="hstatus hs-chk" id="hs-latency"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔧</div><div><div class="hitem-name">Environment</div><div class="hitem-detail" id="hd-env">—</div></div></div><div class="hstatus hs-chk" id="hs-env"><div class="hsdot"></div>—</div></div>
         </div>
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🗄️ Supabase Database</div><div class="hcard-time" id="htime-supa">—</div></div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🔌</div><div><div class="hitem-name">Connection</div><div class="hitem-detail">rutupqpzvfeubzpnqujn.supabase.co</div></div></div>
-            <div class="hstatus hs-chk" id="hs-db"><div class="hsdot"></div>Checking…</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">📋</div><div><div class="hitem-name">Applications Table</div><div class="hitem-detail" id="hd-table">—</div></div></div>
-            <div class="hstatus hs-chk" id="hs-table"><div class="hsdot"></div>—</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🔐</div><div><div class="hitem-name">Row Level Security</div><div class="hitem-detail">RLS policies active</div></div></div>
-            <div class="hstatus hs-chk" id="hs-rls"><div class="hsdot"></div>—</div>
-          </div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔌</div><div><div class="hitem-name">Connection</div><div class="hitem-detail">rutupqpzvfeubzpnqujn.supabase.co</div></div></div><div class="hstatus hs-chk" id="hs-db"><div class="hsdot"></div>Checking…</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Clients Table</div><div class="hitem-detail" id="hd-clients-count">—</div></div></div><div class="hstatus hs-chk" id="hs-clients-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📋</div><div><div class="hitem-name">Applications Table</div><div class="hitem-detail" id="hd-apps-count">—</div></div></div><div class="hstatus hs-chk" id="hs-apps-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Loans Table</div><div class="hitem-detail" id="hd-loans-count">—</div></div></div><div class="hstatus hs-chk" id="hs-loans-tbl"><div class="hsdot"></div>—</div></div>
         </div>
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🌍 DNS &amp; Frontend</div><div class="hcard-time" id="htime-dns">—</div></div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🏠</div><div><div class="hitem-name">wavesfinancial.ca</div><div class="hitem-detail">Netlify CDN</div></div></div>
-            <div class="hstatus hs-chk" id="hs-site"><div class="hsdot"></div>Checking…</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply</div></div></div>
-            <div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🔒</div><div><div class="hitem-name">SSL Certificate</div><div class="hitem-detail">HTTPS / TLS</div></div></div>
-            <div class="hstatus hs-chk" id="hs-ssl"><div class="hsdot"></div>—</div>
-          </div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏠</div><div><div class="hitem-name">wavesfinancial.ca</div><div class="hitem-detail">Netlify CDN</div></div></div><div class="hstatus hs-chk" id="hs-site"><div class="hsdot"></div>Checking…</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply</div></div></div><div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔒</div><div><div class="hitem-name">SSL Certificate</div><div class="hitem-detail">HTTPS / TLS</div></div></div><div class="hstatus hs-chk" id="hs-ssl"><div class="hsdot"></div>—</div></div>
         </div>
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">📊 System Summary</div><div class="hcard-time" id="htime-sum">—</div></div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">📦</div><div><div class="hitem-name">Total Applications</div><div class="hitem-detail" id="hd-total">—</div></div></div>
-            <div class="hstatus hs-ok" id="hs-total" style="color:var(--periwinkle)"><div class="hsdot" style="background:var(--periwinkle)"></div>—</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">⏳</div><div><div class="hitem-name">Pending Review</div><div class="hitem-detail" id="hd-pending">—</div></div></div>
-            <div class="hstatus" id="hs-pending"><div class="hsdot"></div>—</div>
-          </div>
-          <div class="hitem">
-            <div class="hitem-l"><div class="hitem-icon">🕐</div><div><div class="hitem-name">Last Application</div><div class="hitem-detail" id="hd-last">—</div></div></div>
-            <div class="hstatus" id="hs-last" style="color:var(--muted)"><div class="hsdot" style="background:var(--muted)"></div>—</div>
-          </div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Total Clients</div><div class="hitem-detail" id="hd-sum-clients">—</div></div></div><div class="hstatus hs-ok" id="hs-sum-clients" style="color:var(--periwinkle)"><div class="hsdot" style="background:var(--periwinkle)"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Active Loans</div><div class="hitem-detail" id="hd-sum-loans">—</div></div></div><div class="hstatus" id="hs-sum-loans"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⏳</div><div><div class="hitem-name">Pending Review</div><div class="hitem-detail" id="hd-sum-pending">—</div></div></div><div class="hstatus" id="hs-sum-pending"><div class="hsdot"></div>—</div></div>
         </div>
       </div>
     </div>
@@ -350,7 +360,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         </div>
         <div style="margin-left:auto;display:flex;gap:8px;" id="cp-badges"></div>
       </div>
-      <div class="cp-body" id="cp-body"></div>
+      <div class="cp-body" id="cp-body"><div class="loading-row"><div class="spinner"></div> Loading client…</div></div>
     </div>
   </div>
 </div>
@@ -363,7 +373,7 @@ const SUPA_URL    = 'https://rutupqpzvfeubzpnqujn.supabase.co';
 const SUPA_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1dHVwcXB6dmZldWJ6cG5xdWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTA1MDMsImV4cCI6MjA5MDYyNjUwM30.2baR2r6bI7NJQlJhGhmsStvJu-2ZXA1ZILjIVqYa9TI';
 const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
 
-let sb=null, allApps=[], currentTab='queue', searchTmo=null;
+let sb=null, allApps=[], allClients=[], allLoans=[], currentTab='queue', searchTmo=null;
 
 /* ── LOGIN ── */
 function doLogin(){
@@ -389,64 +399,119 @@ function initDash(){
 }
 if(sessionStorage.getItem('wf_admin')==='1') initDash();
 
-/* ── DATA ── */
+/* ── LOAD DATA ── */
 async function loadData(){
   document.getElementById('app-list').innerHTML='<div class="empty"><div class="spinner"></div><br>Loading…</div>';
-  const {data,error}=await sb.from('applications').select('*').order('submitted_at',{ascending:false}).limit(500);
-  if(error){showToast('Load failed: '+error.message,true);return;}
-  allApps=data||[];
+  const [appsRes, clientsRes, loansRes] = await Promise.all([
+    sb.from('loan_applications').select('*').order('submitted_at',{ascending:false}).limit(500),
+    sb.from('clients').select('*').order('created_at',{ascending:false}).limit(500),
+    sb.from('loans').select('*').order('created_at',{ascending:false}).limit(200),
+  ]);
+  allApps    = appsRes.data   || [];
+  allClients = clientsRes.data || [];
+  allLoans   = loansRes.data  || [];
   renderStats();
   renderList();
   updateSummaryHealth();
-  // If page was loaded with a ?ref= in URL, open that client now
-  if (window._pendingRef) {
-    const a = allApps.find(x => x.ref === window._pendingRef);
-    if (a) { openClient(a.id); delete window._pendingRef; }
+  if(window._pendingRef){
+    const a=allApps.find(x=>x.ref===window._pendingRef);
+    const c=allClients.find(x=>x.id===window._pendingClientId);
+    if(a) openClientByAppId(a.id);
+    else if(c) openClient(c.id);
+    delete window._pendingRef; delete window._pendingClientId;
   }
 }
 
 /* ── STATS ── */
 function renderStats(){
-  const tot=allApps.length;
-  const rev=allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
-  const appr=allApps.filter(a=>a.decision==='auto_approved').length;
-  const decl=allApps.filter(a=>a.decision==='auto_declined').length;
-  const sc=allApps.filter(a=>a.risk_score!=null).map(a=>a.risk_score);
-  const avg=sc.length?Math.round(sc.reduce((a,b)=>a+b,0)/sc.length):'—';
-  document.getElementById('s-total').textContent=tot;
-  document.getElementById('s-review').textContent=rev;
-  document.getElementById('s-approved').textContent=appr;
-  document.getElementById('s-declined').textContent=decl;
-  document.getElementById('s-avg').textContent=avg;
-  document.getElementById('qcnt').textContent=rev;
+  const rev  = allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
+  const loans = allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement').length;
+  const sc   = allApps.filter(a=>a.risk_score!=null).map(a=>a.risk_score);
+  const avg  = sc.length?Math.round(sc.reduce((a,b)=>a+b,0)/sc.length):'—';
+  document.getElementById('s-total').textContent   = allApps.length;
+  document.getElementById('s-review').textContent  = rev;
+  document.getElementById('s-clients').textContent = allClients.length;
+  document.getElementById('s-loans').textContent   = loans;
+  document.getElementById('s-avg').textContent     = avg;
+  document.getElementById('qcnt').textContent      = rev;
 }
 
-/* ── LIST ── */
+/* ── RENDER LIST ── */
 function renderList(){
   let apps=[...allApps];
+  const isClientTab = currentTab==='clients';
+  const isLoanTab   = currentTab==='loans';
+
+  // Clients tab
+  if(isClientTab){
+    document.getElementById('col-head').innerHTML='<span>Client</span><span>Contact</span><span>Province</span><span>Loans</span><span>Borrowed</span><span>Latest Tier</span><span>Member Since</span>';
+    document.getElementById('qtitle').textContent='Clients ('+allClients.length+')';
+    if(!allClients.length){document.getElementById('app-list').innerHTML='<div class="empty">No clients yet.</div>';return;}
+    document.getElementById('app-list').innerHTML=allClients.map(c=>{
+      const tc='t-'+(c.latest_tier||'green');
+      return `<div class="arow" style="grid-template-columns:110px 1fr 90px 80px 90px 100px 110px" onclick="openClient('${c.id}')">
+        <div class="aref">${c.email?c.email.slice(0,14)+'…':'—'}</div>
+        <div><div class="aname">${((c.first_name||'')+' '+(c.last_name||'')).trim()||'—'}</div><div class="aemail">${c.email||''}</div></div>
+        <div style="font-size:.78rem">${c.province||'—'}</div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--teal)">${c.total_loans||0}</div>
+        <div style="font-size:.82rem;font-weight:700">$${Number(c.total_borrowed||0).toLocaleString()}</div>
+        <div>${c.latest_tier?`<span class="tb ${tc}">${c.latest_tier}</span>`:'—'}</div>
+        <div style="font-size:.68rem;color:var(--muted)">${c.created_at?timeAgo(c.created_at):'—'}</div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // Loans tab
+  if(isLoanTab){
+    document.getElementById('col-head').innerHTML='<span>Ref</span><span>Client</span><span>Principal</span><span>Paid</span><span>Status</span><span>Due Date</span><span>Progress</span>';
+    const active=allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
+    document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
+    if(!active.length){document.getElementById('app-list').innerHTML='<div class="empty">No active loans.</div>';return;}
+    document.getElementById('app-list').innerHTML=active.map(l=>{
+      const c=allClients.find(x=>x.id===l.client_id);
+      const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():'—';
+      const pct=l.total_repayable?Math.round((l.total_paid||0)/l.total_repayable*100):0;
+      const lsCls=l.status==='active'?'ls-active':'ls-pending';
+      return `<div class="arow" style="grid-template-columns:110px 1fr 90px 80px 90px 100px 110px" onclick="openClient('${l.client_id}')">
+        <div class="aref">${l.ref||'—'}</div>
+        <div><div class="aname">${name}</div><div class="aemail">${c?.email||''}</div></div>
+        <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
+        <div><span class="loan-status ${lsCls}">${l.status}</span></div>
+        <div style="font-size:.75rem;color:var(--muted)">${l.due_date||'—'}</div>
+        <div><div style="font-size:.65rem;color:var(--muted);margin-bottom:3px">${pct}% repaid</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // Applications tabs
+  document.getElementById('col-head').innerHTML='<span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>';
   if(currentTab==='queue')    apps=apps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at);
   if(currentTab==='approved') apps=apps.filter(a=>a.decision==='auto_approved');
   if(currentTab==='declined') apps=apps.filter(a=>a.decision==='auto_declined');
   if(currentTab==='queue'){const p={green:1,blue:2,yellow:3,orange:4};apps.sort((a,b)=>(p[a.tier]||9)-(p[b.tier]||9)||new Date(a.submitted_at)-new Date(b.submitted_at));}
   const titles={queue:'Review Queue',all:'All Applications',approved:'Approved',declined:'Declined'};
   document.getElementById('qtitle').textContent=(titles[currentTab]||'')+' ('+apps.length+')';
-  if(!apps.length){document.getElementById('app-list').innerHTML='<div class="empty"><div class="empty-icon">✓</div>Nothing here.</div>';return;}
-  document.getElementById('app-list').innerHTML=apps.map(a=>aRow(a)).join('');
-}
-function aRow(a){
-  const name=((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
-  const tc='t-'+(a.tier||'green');
-  const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
-  const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
-  return `<div class="arow" onclick="openClient('${a.id}')">
-    <div class="aref">${a.ref||'—'}</div>
-    <div><div class="aname">${name}</div><div class="aemail">${a.email||''}</div></div>
-    <div style="font-size:.85rem;font-weight:800">$${(a.requested_amount||0).toLocaleString()}</div>
-    <div style="font-size:.82rem;font-weight:700;color:${scoreColor(a.risk_score)}">${a.risk_score??'—'}</div>
-    <div><span class="tierbadge ${tc}">${a.tier||'—'}</span></div>
-    <div style="font-size:.68rem;color:var(--muted)">${a.submitted_at?timeAgo(a.submitted_at):'—'}</div>
-    <div><span class="decbadge ${dc}">${dl}</span></div>
-  </div>`;
+  if(!apps.length){document.getElementById('app-list').innerHTML='<div class="empty">Nothing here.</div>';return;}
+  document.getElementById('app-list').innerHTML=apps.map(a=>{
+    const c=allClients.find(x=>x.id===a.client_id);
+    const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
+    const email=c?.email||a.email||'';
+    const tc='t-'+(a.tier||'green');
+    const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
+    const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
+    return `<div class="arow" onclick="openClientByAppId('${a.id}')">
+      <div class="aref">${a.ref||'—'}</div>
+      <div><div class="aname">${name}</div><div class="aemail">${email}</div></div>
+      <div style="font-size:.85rem;font-weight:800">$${(a.requested_amount||0).toLocaleString()}</div>
+      <div style="font-size:.82rem;font-weight:700;color:${scoreColor(a.risk_score)}">${a.risk_score??'—'}</div>
+      <div><span class="tb ${tc}">${a.tier||'—'}</span></div>
+      <div style="font-size:.68rem;color:var(--muted)">${a.submitted_at?timeAgo(a.submitted_at):'—'}</div>
+      <div><span class="db ${dc}">${dl}</span></div>
+    </div>`;
+  }).join('');
 }
 
 /* ── TABS ── */
@@ -462,219 +527,381 @@ function switchTab(tab){
   else{document.getElementById('list-view').style.display='block';renderList();}
 }
 
-/* ── CLIENT PAGE ── */
-function openClient(id){
-  const a=allApps.find(x=>x.id===id);
+/* ── OPEN CLIENT PAGE ── */
+async function openClientByAppId(appId){
+  const a=allApps.find(x=>x.id===appId);
   if(!a) return;
-  const s=a.signals||{};
-  const name=((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
-  const sw=Math.max(2,Math.min(100,a.risk_score||0));
-  const sc=scoreColor(a.risk_score);
-  const tc='t-'+(a.tier||'green');
-  const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
-  const dl=a.decision==='auto_approved'?'✓ Auto-Approved':a.decision==='auto_declined'?'✗ Auto-Declined':'🔍 Manual Review';
+  if(a.client_id) openClient(a.client_id, a.ref);
+  else openClientFromApp(a);
+}
 
-  document.getElementById('cp-title').textContent=name;
-  document.getElementById('cp-sub').textContent=(a.ref||'')+(a.type==='renewal'?' · Renewal':' · New Loan')+(a.submitted_at?' · '+new Date(a.submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'');
-  document.getElementById('cp-badges').innerHTML=`<span class="tierbadge ${tc}">${a.tier}</span><span class="decbadge ${dc}">${dl}</span>`;
-
-  const sigsHtml=s&&Object.keys(s).length?`<div class="sig-grid">
-    ${sig('NSF Events (90d)',s.nsfCount??'—',s.nsfPts,25)}
-    ${sig('Payment Oppositions',s.oppositionCount??a.opposition_count??'—',s.oppPts,20)}
-    ${sig('DTI Ratio',s.dtiRatio!=null?(s.dtiRatio*100).toFixed(1)+'%':'—',s.dtiPts,20)}
-    ${sig('Income Regularity',s.incomeRegularity||'—',s.regPts,15)}
-    ${sig('Income Mismatch',s.misRatio!=null?(s.misRatio*100).toFixed(1)+'%':'—',s.misPts,10)}
-    ${sig('Balance Cushion',s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—',s.balPts,10)}
-  </div>`:'<p style="font-size:.75rem;color:var(--muted)">Signal data unavailable</p>';
-
-  const flagsHtml=(a.flags&&a.flags.length)?a.flags.map(f=>`<div class="flag-item">⚑ ${f}</div>`).join(''):'<p style="font-size:.75rem;color:var(--muted)">No flags</p>';
-  const hdHtml=a.hard_decline?`<div style="padding:10px 14px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:8px;font-size:.78rem;color:var(--coral);margin-bottom:12px">🚫 <strong>Hard Decline:</strong> ${a.hard_decline}</div>`:'';
-  const feasHtml=a.feasible_amount&&a.tier==='orange'?`<div style="padding:10px 14px;background:rgba(255,153,69,.08);border:1px solid rgba(255,153,69,.2);border-radius:8px;font-size:.78rem;color:var(--orange);margin-bottom:12px">💡 Feasible amount: <strong>$${a.feasible_amount.toLocaleString()}</strong></div>`:'';
-
-  document.getElementById('cp-body').innerHTML=`
-    <div class="crm-actions">
-      <button class="ca ca-approve" onclick="markDecision('${a.id}','approved')">✓ Approve</button>
-      <button class="ca ca-decline" onclick="markDecision('${a.id}','declined')">✗ Decline</button>
-      <button class="ca ca-note" onclick="toggleNote('${a.id}')">📝 Add Note</button>
-    </div>
-    <textarea class="notes-area" id="na-${a.id}" placeholder="Analyst notes…">${a.analyst_notes||''}</textarea>
-    <button class="save-note-btn" id="snb-${a.id}" onclick="saveNote('${a.id}')">Save Note</button>
-
-    <div class="crm-row" style="margin-top:16px">
-      <div class="crm-sec">
-        <div class="crm-sec-title">Decision &amp; Scoring</div>
-        ${hdHtml}${feasHtml}
-        <div class="score-hero">
-          <div class="score-circle" style="border-color:${sc};color:${sc}">
-            <div class="score-num">${a.risk_score??'—'}</div>
-            <div class="score-lbl">/ 100</div>
-          </div>
-          <div style="flex:1">
-            <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);margin-bottom:4px"><span>Risk Score</span><span>0 = perfect · 100 = extreme</span></div>
-            <div class="sbar-track"><div class="sbar-fill" style="width:${sw}%;background:linear-gradient(90deg,#1DE9C6,${sc})"></div></div>
-            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-              <span class="tierbadge ${tc}">${a.tier}</span>
-              <span class="decbadge ${dc}">${dl}</span>
-              ${a.reviewed_at?`<span style="font-size:.68rem;color:var(--muted);align-self:center">Reviewed ${timeAgo(a.reviewed_at)}</span>`:''}
-            </div>
-          </div>
-        </div>
-        <div class="crm-fields" style="margin-top:12px">
-          <div class="crf"><div class="crf-label">Requested</div><div class="crf-val">$${(a.requested_amount||0).toLocaleString()}</div></div>
-          <div class="crf"><div class="crf-label">Approved</div><div class="crf-val">${a.approved_amount?'$'+a.approved_amount.toLocaleString():'—'}</div></div>
-          <div class="crf"><div class="crf-label">Fund Method</div><div class="crf-val">${a.fund_method||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Type</div><div class="crf-val">${a.type==='renewal'?'Renewal':'New Loan'}</div></div>
-        </div>
-      </div>
-      <div class="crm-sec">
-        <div class="crm-sec-title">Applicant</div>
-        <div class="crm-fields">
-          <div class="crf full"><div class="crf-label">Full Name</div><div class="crf-val" style="font-size:1rem;font-weight:700">${name}</div></div>
-          <div class="crf"><div class="crf-label">Email</div><div class="crf-val">${a.email||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Cell Phone</div><div class="crf-val">${a.cell_phone||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Home Phone</div><div class="crf-val">${a.home_phone||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Date of Birth</div><div class="crf-val">${a.dob||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Province</div><div class="crf-val">${a.province||'—'}</div></div>
-          <div class="crf full"><div class="crf-label">Address</div><div class="crf-val">${[a.address,a.city,a.province,a.postal].filter(Boolean).join(', ')||'—'}</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="crm-row">
-      <div class="crm-sec">
-        <div class="crm-sec-title">Employment</div>
-        <div class="crm-fields">
-          <div class="crf"><div class="crf-label">Status</div><div class="crf-val">${a.employment_status||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Employer</div><div class="crf-val">${a.employer||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Pay Frequency</div><div class="crf-val">${a.pay_frequency||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Next Pay Date</div><div class="crf-val">${a.next_pay_date||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Declared Income / mo</div><div class="crf-val">${a.declared_monthly_income?'$'+Number(a.declared_monthly_income).toLocaleString():'—'}</div></div>
-          <div class="crf"><div class="crf-label">Verified Income / mo</div><div class="crf-val" style="color:var(--teal)">${a.verified_income?'$'+Math.round(a.verified_income).toLocaleString():'—'}</div></div>
-        </div>
-      </div>
-      <div class="crm-sec">
-        <div class="crm-sec-title">Scoring Signals</div>
-        ${sigsHtml}
-      </div>
-    </div>
-
-    <div class="crm-row">
-      <div class="crm-sec">
-        <div class="crm-sec-title">Bank Verification</div>
-        <div class="crm-fields">
-          <div class="crf"><div class="crf-label">Institution</div><div class="crf-val">${a.bank_name||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Account Age</div><div class="crf-val">${a.account_age_days?a.account_age_days+' days':'—'}</div></div>
-          <div class="crf"><div class="crf-label">Avg Daily Balance</div><div class="crf-val">${a.avg_daily_balance?'$'+Math.round(a.avg_daily_balance).toLocaleString():'—'}</div></div>
-          <div class="crf"><div class="crf-label">NSF Count (90d)</div><div class="crf-val" style="color:${(a.nsf_count||0)>0?'var(--coral)':'var(--teal)'}">${a.nsf_count??'—'}</div></div>
-          <div class="crf"><div class="crf-label">Oppositions</div><div class="crf-val" style="color:${(a.opposition_count||0)>0?'var(--coral)':'var(--teal)'}">${a.opposition_count??'—'}</div></div>
-          <div class="crf"><div class="crf-label">Income Regularity</div><div class="crf-val">${a.income_regularity||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Sandbox</div><div class="crf-val">${a.is_sandbox?'Yes':'No'}</div></div>
-          <div class="crf"><div class="crf-label">Flinks Login ID</div><div class="crf-val mono">${a.flinks_login_id||'—'}</div></div>
-        </div>
-      </div>
-      <div class="crm-sec">
-        <div class="crm-sec-title">Analyst Flags</div>
-        ${flagsHtml}
-        <div class="crm-sec-title" style="margin-top:16px">Notes</div>
-        ${a.analyst_notes?`<div style="font-size:.78rem;color:var(--muted);padding:8px 12px;background:rgba(8,6,20,.4);border-radius:8px;border:1px solid var(--border)">${a.analyst_notes}</div>`:'<p style="font-size:.75rem;color:var(--muted)">No notes yet.</p>'}
-      </div>
-    </div>
-
-    <div class="crm-row">
-      <div class="crm-sec">
-        <div class="crm-sec-title">E-Signature</div>
-        <div class="crm-fields">
-          <div class="crf"><div class="crf-label">Signed By</div><div class="crf-val">${a.esig_name||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Timestamp</div><div class="crf-val">${a.esig_timestamp||'—'}</div></div>
-        </div>
-      </div>
-      <div class="crm-sec">
-        <div class="crm-sec-title">Submission Record</div>
-        <div class="crm-fields">
-          <div class="crf"><div class="crf-label">Reference</div><div class="crf-val mono">${a.ref||'—'}</div></div>
-          <div class="crf"><div class="crf-label">Submitted At</div><div class="crf-val">${a.submitted_at?new Date(a.submitted_at).toLocaleString('en-CA'):'—'}</div></div>
-          <div class="crf"><div class="crf-label">Reviewed At</div><div class="crf-val">${a.reviewed_at?new Date(a.reviewed_at).toLocaleString('en-CA'):'Not yet reviewed'}</div></div>
-          <div class="crf"><div class="crf-label">Final Decision</div><div class="crf-val">${a.final_decision||'—'}</div></div>
-          <div class="crf full"><div class="crf-label">Internal ID</div><div class="crf-val mono" style="font-size:.65rem">${a.id}</div></div>
-        </div>
-      </div>
-    </div>`;
-
+async function openClient(clientId, highlightRef){
   document.getElementById('list-view').style.display='none';
   document.getElementById('health-view').style.display='none';
   document.getElementById('client-page').style.display='block';
-  document.getElementById('client-page').scrollTop=0;
+  document.getElementById('cp-body').innerHTML='<div class="loading-row"><div class="spinner"></div> Loading client…</div>';
   window.scrollTo(0,0);
-  // Update URL without reload
-  const ref = a.ref || id;
-  history.pushState({ref, id}, '', '/admin.html?ref=' + encodeURIComponent(ref));
+
+  // Load all client data in parallel
+  const [clientRes, appsRes, loansRes] = await Promise.all([
+    sb.from('clients').select('*').eq('id',clientId).single(),
+    sb.from('loan_applications').select('*').eq('client_id',clientId).order('submitted_at',{ascending:false}),
+    sb.from('loans').select('*').eq('client_id',clientId).order('created_at',{ascending:false}),
+  ]);
+
+  const client = clientRes.data;
+  const apps   = appsRes.data  || [];
+  const loans  = loansRes.data || [];
+
+  if(!client){ showToast('Client not found',true); closeClient(); return; }
+
+  // Update local cache
+  const ci=allClients.findIndex(x=>x.id===clientId);
+  if(ci>=0) allClients[ci]=client;
+
+  // Update URL
+  history.pushState({clientId, ref: highlightRef}, '', '/admin.html?client='+clientId);
+
+  const name=((client.first_name||'')+' '+(client.last_name||'')).trim()||'—';
+  document.getElementById('cp-title').textContent=name;
+  document.getElementById('cp-sub').textContent=client.email+' · '+( client.province||'')+(client.city?' · '+client.city:'');
+  const tc='t-'+(client.latest_tier||'green');
+  document.getElementById('cp-badges').innerHTML=
+    (client.latest_tier?`<span class="tb ${tc}">${client.latest_tier}</span>`:'')+
+    (client.status!=='active'?`<span class="tb t-red">${client.status}</span>`:'');
+
+  // Load schedules for all loans
+  const schedMap={};
+  for(const loan of loans){
+    const {data}=await sb.from('repayment_schedule').select('*').eq('loan_id',loan.id).order('payment_number',{ascending:true});
+    schedMap[loan.id]=data||[];
+  }
+
+  // Load contracts
+  const contractMap={};
+  for(const loan of loans){
+    const {data}=await sb.from('contracts').select('*').eq('loan_id',loan.id).single();
+    if(data) contractMap[loan.id]=data;
+  }
+
+  renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef);
+}
+
+function renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef){
+  const name=((client.first_name||'')+' '+(client.last_name||'')).trim()||'—';
+  const memberSince=client.created_at?new Date(client.created_at).toLocaleDateString('en-CA',{month:'short',year:'numeric'}):'—';
+  const activeLoans=loans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
+
+  // Find most recent application for scoring display
+  const latestApp=apps[0];
+  const s=latestApp?.signals||{};
+
+  document.getElementById('cp-body').innerHTML=`
+    <!-- CLIENT HERO -->
+    <div class="client-hero">
+      <div>
+        <div class="ch-name">${name}</div>
+        <div class="ch-email">${client.email}</div>
+        <div class="ch-meta">
+          <div class="ch-stat"><div class="ch-stat-val">${client.total_loans||0}</div><div class="ch-stat-label">Total Loans</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_borrowed||0).toLocaleString()}</div><div class="ch-stat-label">Total Borrowed</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_repaid||0).toLocaleString()}</div><div class="ch-stat-label">Total Repaid</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">${client.total_applications||0}</div><div class="ch-stat-label">Applications</div></div>
+          <div class="ch-stat"><div class="ch-stat-val">${memberSince}</div><div class="ch-stat-label">Member Since</div></div>
+        </div>
+        <div class="ch-badges">
+          ${client.latest_tier?`<span class="tb t-${client.latest_tier}">${client.latest_tier} tier</span>`:''}
+          ${client.province?`<span style="font-size:.72rem;color:var(--muted);padding:3px 8px;border:1px solid var(--border);border-radius:100px">${client.province}</span>`:''}
+          ${client.status!=='active'?`<span class="tb t-red">${client.status}</span>`:''}
+          ${activeLoans.length?`<span style="font-size:.72rem;color:var(--teal);padding:3px 8px;border:1px solid rgba(29,233,198,.2);border-radius:100px">${activeLoans.length} active loan${activeLoans.length>1?'s':''}</span>`:''}
+        </div>
+      </div>
+      <div class="ch-actions">
+        <button class="ca ca-note" onclick="toggleNote('client-${client.id}')">📝 Note</button>
+        ${client.status==='active'?`<button class="ca ca-decline" onclick="suspendClient('${client.id}')">⛔ Suspend</button>`:
+          `<button class="ca ca-approve" onclick="activateClient('${client.id}')">✓ Activate</button>`}
+      </div>
+    </div>
+    <textarea class="notes-area" id="na-client-${client.id}" placeholder="Client-level notes…"></textarea>
+    <button class="save-note-btn" id="snb-client-${client.id}" onclick="saveClientNote('${client.id}')">Save Note</button>
+
+    <!-- CONTACT INFO + EMPLOYMENT -->
+    <div class="crm-row">
+      <div class="crm-sec">
+        <div class="crm-sec-title">Contact Information</div>
+        <div class="crm-fields">
+          <div class="crf full"><div class="crf-label">Full Name</div><div class="crf-val" style="font-size:1rem;font-weight:700">${name}</div></div>
+          <div class="crf"><div class="crf-label">Email</div><div class="crf-val">${client.email||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Cell Phone</div><div class="crf-val">${client.cell_phone||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Home Phone</div><div class="crf-val">${client.home_phone||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Date of Birth</div><div class="crf-val">${client.dob||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Province</div><div class="crf-val">${client.province||'—'}</div></div>
+          <div class="crf full"><div class="crf-label">Address</div><div class="crf-val">${[client.address,client.city,client.province,client.postal].filter(Boolean).join(', ')||'—'}</div></div>
+        </div>
+      </div>
+      <div class="crm-sec">
+        <div class="crm-sec-title">Employment (Latest)</div>
+        <div class="crm-fields">
+          <div class="crf"><div class="crf-label">Status</div><div class="crf-val">${client.employment_status||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Employer</div><div class="crf-val">${client.employer||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Pay Frequency</div><div class="crf-val">${client.pay_frequency||'—'}</div></div>
+          <div class="crf"><div class="crf-label">Declared Income / mo</div><div class="crf-val hi">${client.declared_monthly_income?'$'+Number(client.declared_monthly_income).toLocaleString():'—'}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOAN HISTORY -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div class="crm-sec-title">Loan History (${loans.length})</div>
+      ${loans.length?loans.map(l=>loanHistoryCard(l,schedMap[l.id]||[],contractMap[l.id],client,apps,highlightRef)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No loans yet.</p>'}
+    </div>
+
+    <!-- APPLICATION HISTORY -->
+    <div class="crm-sec" style="margin-bottom:16px">
+      <div class="crm-sec-title">Application History (${apps.length})</div>
+      ${apps.length?apps.map(a=>appHistoryRow(a)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No applications yet.</p>'}
+    </div>
+  `;
+
+  // Auto-expand the highlighted loan
+  if(highlightRef){
+    const loan=loans.find(l=>l.ref===highlightRef);
+    if(loan) toggleLoanBody('loan-'+loan.id);
+  } else if(activeLoans.length===1){
+    toggleLoanBody('loan-'+activeLoans[0].id);
+  }
+}
+
+/* ── LOAN HISTORY CARD ── */
+function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
+  const lsCls={active:'ls-active',pending_disbursement:'ls-pending',paid_off:'ls-paid',defaulted:'ls-defaulted',cancelled:'ls-defaulted'}[loan.status]||'ls-pending';
+  const pct=loan.total_repayable?Math.round((loan.total_paid||0)/loan.total_repayable*100):0;
+  const paidCount=schedule.filter(p=>p.status==='paid').length;
+  const missedCount=schedule.filter(p=>p.status==='missed').length;
+  const app=apps.find(a=>a.ref===loan.ref);
+  const s=app?.signals||{};
+
+  // Repayment schedule table
+  const schedRows=schedule.map(p=>{
+    const psCls={'paid':'ps-paid','missed':'ps-missed','partial':'ps-partial','waived':'ps-waived','scheduled':'ps-scheduled'}[p.status]||'ps-scheduled';
+    const isOverdue=p.status==='scheduled'&&new Date(p.due_date)<new Date();
+    return `<tr>
+      <td>${p.payment_number}</td>
+      <td>${p.due_date}</td>
+      <td>$${Number(p.scheduled_amount).toLocaleString()}</td>
+      <td><span class="pay-status ${isOverdue?'ps-missed':psCls}">${isOverdue?'overdue':p.status}</span></td>
+      <td>${p.paid_at?new Date(p.paid_at).toLocaleDateString('en-CA'):'—'}</td>
+      <td>${p.paid_amount?'$'+Number(p.paid_amount).toLocaleString():'—'}</td>
+    </tr>`;
+  }).join('');
+
+  // Contract summary
+  const contractHtml=contract?`
+    <div style="padding:16px;border-top:1px solid var(--border)">
+      <div class="crm-sec-title">Contract</div>
+      <div class="contract-grid">
+        <div class="crf"><div class="crf-label">Principal</div><div class="crf-val">$${Number(contract.principal).toLocaleString()}</div></div>
+        <div class="crf"><div class="crf-label">APR</div><div class="crf-val">${(contract.apr*100).toFixed(1)}%</div></div>
+        <div class="crf"><div class="crf-label">Total Repayable</div><div class="crf-val hi">$${Number(contract.total_repayable).toLocaleString()}</div></div>
+        <div class="crf"><div class="crf-label">Payment Amount</div><div class="crf-val">$${Number(contract.payment_amount).toLocaleString()} × ${contract.payment_count}</div></div>
+        <div class="crf"><div class="crf-label">First Payment</div><div class="crf-val">${contract.first_payment_date||'—'}</div></div>
+        <div class="crf"><div class="crf-label">Final Payment</div><div class="crf-val">${contract.final_payment_date||'—'}</div></div>
+        <div class="crf"><div class="crf-label">Signed By</div><div class="crf-val">${contract.esig_name||'—'}</div></div>
+        <div class="crf"><div class="crf-label">Signed At</div><div class="crf-val">${contract.esig_timestamp?new Date(contract.esig_timestamp).toLocaleString('en-CA'):'—'}</div></div>
+        <div class="crf"><div class="crf-label">PAD Authorized</div><div class="crf-val ${contract.pad_authorized?'hi':'warn'}">${contract.pad_authorized?'Yes':'No'}</div></div>
+      </div>
+    </div>`:
+    `<div style="padding:12px 16px;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)">No contract on file (pending disbursement or manual review)</div>`;
+
+  // Scoring section
+  const scoreSection=app?`
+    <div style="padding:16px;border-top:1px solid var(--border)">
+      <div class="crm-sec-title">Risk Assessment</div>
+      <div class="score-hero">
+        <div class="score-circle" style="border-color:${scoreColor(app.risk_score)};color:${scoreColor(app.risk_score)}">
+          <div class="score-num">${app.risk_score??'—'}</div>
+          <div class="score-lbl">/100</div>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--muted);margin-bottom:3px"><span>Risk Score</span><span>lower = better</span></div>
+          <div class="sbar-track"><div class="sbar-fill" style="width:${Math.max(2,app.risk_score||0)}%;background:linear-gradient(90deg,#1DE9C6,${scoreColor(app.risk_score)})"></div></div>
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+            <span class="tb t-${app.tier}">${app.tier}</span>
+            ${app.hard_decline?`<span style="font-size:.68rem;color:var(--coral)">🚫 ${app.hard_decline}</span>`:''}
+          </div>
+        </div>
+      </div>
+      ${s&&Object.keys(s).length?`<div class="sig-grid">
+        ${sig('NSF (90d)',s.nsfCount??'—',s.nsfPts,25)}
+        ${sig('Oppositions',s.oppositionCount??'—',s.oppPts,20)}
+        ${sig('DTI',s.dtiRatio!=null?(s.dtiRatio*100).toFixed(1)+'%':'—',s.dtiPts,20)}
+        ${sig('Regularity',s.incomeRegularity||'—',s.regPts,15)}
+        ${sig('Mismatch',s.misRatio!=null?(s.misRatio*100).toFixed(1)+'%':'—',s.misPts,10)}
+        ${sig('Balance',s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—',s.balPts,10)}
+      </div>`:''}
+      ${app.flags&&app.flags.length?app.flags.map(f=>`<div class="flag-item" style="margin-top:6px">⚑ ${f}</div>`).join(''):''}
+    </div>`:'';
+
+  // Analyst actions for this loan's application
+  const actionsHtml=app&&app.decision==='manual_review'&&!app.reviewed_at?`
+    <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap">
+      <button class="ca ca-approve" onclick="markDecision('${app.id}','approved')">✓ Approve</button>
+      <button class="ca ca-decline" onclick="markDecision('${app.id}','declined')">✗ Decline</button>
+      ${loan.status==='pending_disbursement'?`<button class="ca ca-disburse" onclick="markDisbursed('${loan.id}')">💸 Mark Disbursed</button>`:''}
+      <button class="ca ca-note" onclick="toggleNote('app-${app.id}')">📝 Note</button>
+    </div>
+    <div style="padding:0 16px 12px">
+      <textarea class="notes-area" id="na-app-${app.id}" placeholder="Notes for this application…">${app.analyst_notes||''}</textarea>
+      <button class="save-note-btn" id="snb-app-${app.id}" onclick="saveAppNote('${app.id}')">Save Note</button>
+    </div>`:'';
+
+  return `<div class="loan-history-card" id="lhc-${loan.id}">
+    <div class="lh-header" onclick="toggleLoanBody('loan-${loan.id}')">
+      <div class="lh-ref">${loan.ref}</div>
+      <div class="lh-amount">$${Number(loan.principal).toLocaleString()}</div>
+      <div class="lh-meta">
+        <span class="loan-status ${lsCls}">${loan.status.replace('_',' ')}</span>
+        <span style="font-size:.72rem;color:var(--muted)">${loan.disbursed_at?new Date(loan.disbursed_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</span>
+        <span style="font-size:.72rem;color:var(--muted)">${paidCount}/${loan.payment_count} payments</span>
+        ${missedCount?`<span style="font-size:.72rem;color:var(--coral)">${missedCount} missed</span>`:''}
+        <div style="width:80px"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+        <span style="font-size:.68rem;color:var(--muted)">${pct}%</span>
+      </div>
+      <div class="lh-chevron" id="chev-loan-${loan.id}">▶</div>
+    </div>
+    <div class="lh-body" id="loan-${loan.id}">
+      <!-- Repayment schedule -->
+      <div style="padding:16px">
+        <div class="crm-sec-title">Repayment Schedule</div>
+        ${schedule.length?`<table class="sched-table">
+          <thead><tr><th>#</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Paid On</th><th>Paid Amount</th></tr></thead>
+          <tbody>${schedRows}</tbody>
+        </table>`:'<p style="font-size:.75rem;color:var(--muted)">Schedule not yet generated.</p>'}
+      </div>
+      ${contractHtml}
+      ${scoreSection}
+      ${actionsHtml}
+    </div>
+  </div>`;
+}
+
+/* ── APP HISTORY ROW ── */
+function appHistoryRow(a){
+  const tc='t-'+(a.tier||'green');
+  const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
+  const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
+  return `<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:rgba(8,6,20,.4);margin-bottom:6px;cursor:default">
+    <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle);min-width:90px">${a.ref||'—'}</div>
+    <div style="font-size:.75rem;min-width:60px">${a.type==='renewal'?'Renewal':'New Loan'}</div>
+    <div style="font-size:.82rem;font-weight:700;min-width:55px">$${(a.requested_amount||0).toLocaleString()}</div>
+    <span class="tb ${tc}">${a.tier||'—'}</span>
+    <span class="db ${dc}">${dl}</span>
+    <div style="font-size:.68rem;color:var(--muted);margin-left:auto">${a.submitted_at?new Date(a.submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+  </div>`;
+}
+
+/* ── TOGGLE LOAN BODY ── */
+function toggleLoanBody(id){
+  const body=document.getElementById(id);
+  const chev=document.getElementById('chev-'+id);
+  if(!body) return;
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  if(chev) chev.textContent=open?'▶':'▼';
+}
+
+/* ── ACTIONS ── */
+async function markDecision(appId, outcome){
+  const u={reviewed_at:new Date().toISOString(),reviewed_by:'analyst',final_decision:outcome};
+  const {error}=await sb.from('loan_applications').update(u).eq('id',appId);
+  if(error){showToast('Update failed: '+error.message,true);return;}
+  const a=allApps.find(x=>x.id===appId);
+  if(a) Object.assign(a,u);
+  showToast(outcome==='approved'?'✓ Marked Approved':'✗ Marked Declined');
+  renderStats();
+  // Reload client page
+  const clientId=a?.client_id;
+  if(clientId) openClient(clientId);
+}
+
+async function markDisbursed(loanId){
+  const {error}=await sb.from('loans').update({status:'active',disbursed_at:new Date().toISOString()}).eq('id',loanId);
+  if(error){showToast('Failed: '+error.message,true);return;}
+  showToast('💸 Marked as disbursed');
+  const loan=allLoans.find(x=>x.id===loanId);
+  if(loan){loan.status='active';const clientId=loan.client_id;if(clientId) openClient(clientId);}
+}
+
+async function suspendClient(clientId){
+  if(!confirm('Suspend this client?')) return;
+  await sb.from('clients').update({status:'suspended'}).eq('id',clientId);
+  showToast('Client suspended');
+  openClient(clientId);
+}
+
+async function activateClient(clientId){
+  await sb.from('clients').update({status:'active'}).eq('id',clientId);
+  showToast('Client activated');
+  openClient(clientId);
+}
+
+function toggleNote(key){
+  const a=document.getElementById('na-'+key),b=document.getElementById('snb-'+key);
+  if(!a) return;
+  const v=a.style.display==='block';
+  a.style.display=v?'none':'block';
+  if(b) b.style.display=v?'none':'inline-block';
+  if(!v) a.focus();
+}
+
+async function saveAppNote(appId){
+  const area=document.getElementById('na-app-'+appId);
+  if(!area) return;
+  await sb.from('loan_applications').update({analyst_notes:area.value.trim()}).eq('id',appId);
+  const a=allApps.find(x=>x.id===appId);
+  if(a) a.analyst_notes=area.value.trim();
+  showToast('Note saved');
+}
+
+async function saveClientNote(clientId){
+  const area=document.getElementById('na-client-'+clientId);
+  if(!area) return;
+  showToast('Note saved (client notes coming in next update)');
+}
+
+function openClientFromApp(a){
+  // No client_id — show just the application
+  const name=((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
+  document.getElementById('cp-title').textContent=name;
+  document.getElementById('cp-sub').textContent=(a.email||'')+(a.province?' · '+a.province:'');
+  document.getElementById('cp-badges').innerHTML=`<span class="tb t-${a.tier}">${a.tier}</span>`;
+  document.getElementById('list-view').style.display='none';
+  document.getElementById('client-page').style.display='block';
+  document.getElementById('cp-body').innerHTML=`<div class="crm-sec"><div class="crm-sec-title">Application — no client profile linked</div><div style="font-size:.78rem;color:var(--muted)">This application was submitted before client profiles were tracked. Ref: ${a.ref}</div></div>`;
+  history.pushState({ref:a.ref},'','/admin.html?ref='+a.ref);
 }
 
 function closeClient(){
   document.getElementById('client-page').style.display='none';
   document.getElementById('list-view').style.display='block';
-  history.pushState({}, '', '/admin.html');
+  history.pushState({},'','/admin.html');
 }
 
-// Handle browser back/forward
-window.addEventListener('popstate', e => {
-  if (e.state && e.state.ref) {
-    // navigated back to a client — find by ref or id
-    const a = allApps.find(x => x.ref === e.state.ref || x.id === e.state.id);
-    if (a) { openClient(a.id); return; }
-  }
-  // Back to list
+/* ── URL NAVIGATION ── */
+window.addEventListener('popstate',e=>{
+  if(e.state&&e.state.clientId){openClient(e.state.clientId,e.state.ref);return;}
+  if(e.state&&e.state.ref){const a=allApps.find(x=>x.ref===e.state.ref);if(a) openClientByAppId(a.id);return;}
   document.getElementById('client-page').style.display='none';
   document.getElementById('health-view').style.display='none';
   document.getElementById('list-view').style.display='block';
 });
 
-// On page load — check if URL has a ?ref= param and open that client
-function checkURLOnLoad() {
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref');
-  if (!ref) return;
-  // Wait for data to load then open the client
-  const tryOpen = () => {
-    const a = allApps.find(x => x.ref === ref);
-    if (a) { openClient(a.id); }
-    // If not found yet, data is still loading — will be handled after loadData()
-  };
-  if (allApps.length) tryOpen();
-  else window._pendingRef = ref; // picked up after loadData completes
-}
-
-function toggleNote(id){
-  const a=document.getElementById('na-'+id),b=document.getElementById('snb-'+id);
-  if(!a) return;
-  const v=a.style.display==='block';
-  a.style.display=v?'none':'block';
-  b.style.display=v?'none':'inline-block';
-  if(!v) a.focus();
-}
-
-/* ── ACTIONS ── */
-async function markDecision(id,outcome){
-  const u={reviewed_at:new Date().toISOString(),reviewed_by:'analyst',final_decision:outcome};
-  const {error}=await sb.from('applications').update(u).eq('id',id);
-  if(error){showToast('Update failed: '+error.message,true);return;}
-  const a=allApps.find(x=>x.id===id);
-  if(a) Object.assign(a,u);
-  showToast(outcome==='approved'?'✓ Marked Approved':'✗ Marked Declined');
-  renderStats();
-  closeClient();
-}
-
-async function saveNote(id){
-  const area=document.getElementById('na-'+id);
-  if(!area) return;
-  const note=area.value.trim();
-  const {error}=await sb.from('applications').update({analyst_notes:note}).eq('id',id);
-  if(error){showToast('Save failed: '+error.message,true);return;}
-  const a=allApps.find(x=>x.id===id);
-  if(a) a.analyst_notes=note;
-  showToast('Note saved');
-  openClient(id);
+function checkURLOnLoad(){
+  const p=new URLSearchParams(window.location.search);
+  const clientId=p.get('client');
+  const ref=p.get('ref');
+  if(clientId) window._pendingClientId=clientId;
+  if(ref) window._pendingRef=ref;
 }
 
 /* ── SEARCH ── */
@@ -686,39 +913,43 @@ function onSearchInput(){
   searchTmo=setTimeout(()=>doSearch(q),250);
 }
 function onSearchKey(e){if(e.key==='Escape')clearSearch();}
-function clearSearch(){
-  document.getElementById('search-input').value='';
-  document.getElementById('sclear').style.display='none';
-  closeSearch();
-}
-function closeSearch(){
-  const r=document.getElementById('sresults');
-  r.classList.remove('open');r.innerHTML='';
-}
+function clearSearch(){document.getElementById('search-input').value='';document.getElementById('sclear').style.display='none';closeSearch();}
+function closeSearch(){const r=document.getElementById('sresults');r.classList.remove('open');r.innerHTML='';}
+
 async function doSearch(q){
   const lo=q.toLowerCase();
-  let res=allApps.filter(a=>{
-    return [a.ref,a.first_name,a.last_name,a.email,a.cell_phone,a.home_phone,
-            a.address,a.city,a.province,a.postal,a.employer,a.bank_name,a.tier,a.decision]
-      .filter(Boolean).join(' ').toLowerCase().includes(lo);
-  }).slice(0,10);
-  if(res.length<3&&q.length>=3){
-    const {data}=await sb.from('applications')
-      .select('id,ref,first_name,last_name,email,tier,decision,requested_amount,submitted_at')
-      .or(`ref.ilike.%${q}%,first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%,employer.ilike.%${q}%,cell_phone.ilike.%${q}%,city.ilike.%${q}%`)
-      .limit(10);
-    if(data){const ids=new Set(res.map(r=>r.id));data.forEach(d=>{if(!ids.has(d.id))res.push(d);});}
+  // Search clients first
+  let clientResults=allClients.filter(c=>[c.email,c.first_name,c.last_name,c.cell_phone,c.home_phone,c.province,c.city,c.employer].filter(Boolean).join(' ').toLowerCase().includes(lo)).slice(0,5);
+  // Search applications by ref
+  let appResults=allApps.filter(a=>(a.ref||'').toLowerCase().includes(lo)||(a.flinks_login_id||'').toLowerCase().includes(lo)).slice(0,3);
+
+  // Remote search if needed
+  if(clientResults.length<3&&q.length>=3){
+    const {data}=await sb.from('clients').select('id,email,first_name,last_name,province,latest_tier,total_loans').or(`email.ilike.%${q}%,first_name.ilike.%${q}%,last_name.ilike.%${q}%,cell_phone.ilike.%${q}%,employer.ilike.%${q}%`).limit(8);
+    if(data){const ids=new Set(clientResults.map(r=>r.id));data.forEach(d=>{if(!ids.has(d.id))clientResults.push(d);});}
   }
+
   const box=document.getElementById('sresults');
-  if(!res.length){box.innerHTML=`<div class="sno">No results for "${q}"</div>`;box.classList.add('open');return;}
-  box.innerHTML=res.map(a=>{
-    const name=((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
-    const tc='t-'+(a.tier||'green');
-    return `<div class="sri" onclick="clearSearch();openClient('${a.id}')">
-      <div class="sri-ref">${a.ref||'—'} <span class="tierbadge ${tc}" style="font-size:.55rem;padding:1px 5px">${a.tier||''}</span></div>
-      <div class="sri-name">${name}</div>
-      <div class="sri-meta">${a.email||''} · $${(a.requested_amount||0).toLocaleString()} · ${a.submitted_at?timeAgo(a.submitted_at):''}</div>
-    </div>`;
+  const allResults=[...clientResults.map(c=>({...c,_type:'client'})),...appResults.map(a=>({...a,_type:'app'}))];
+  if(!allResults.length){box.innerHTML=`<div class="sno">No results for "${q}"</div>`;box.classList.add('open');return;}
+
+  box.innerHTML=allResults.map(r=>{
+    if(r._type==='client'){
+      const name=((r.first_name||'')+' '+(r.last_name||'')).trim()||'—';
+      const tc='t-'+(r.latest_tier||'green');
+      return `<div class="sri" onclick="clearSearch();openClient('${r.id}')">
+        <div class="sri-ref">CLIENT ${r.latest_tier?`<span class="tb ${tc}" style="font-size:.55rem;padding:1px 5px">${r.latest_tier}</span>`:''}</div>
+        <div class="sri-name">${name}</div>
+        <div class="sri-meta">${r.email||''} · ${r.total_loans||0} loans · ${r.province||''}</div>
+      </div>`;
+    } else {
+      const dc=r.decision==='auto_approved'?'d-approved':r.decision==='auto_declined'?'d-declined':'d-review';
+      return `<div class="sri" onclick="clearSearch();openClientByAppId('${r.id}')">
+        <div class="sri-ref">APP <span class="db ${dc}" style="font-size:.55rem;padding:1px 6px">${r.decision}</span></div>
+        <div class="sri-name">${r.ref}</div>
+        <div class="sri-meta">$${(r.requested_amount||0).toLocaleString()} · ${r.submitted_at?timeAgo(r.submitted_at):''}</div>
+      </div>`;
+    }
   }).join('');
   box.classList.add('open');
 }
@@ -727,9 +958,9 @@ document.addEventListener('click',e=>{if(!e.target.closest('.sw'))closeSearch();
 /* ── HEALTH CHECKS ── */
 async function runHealthChecks(){
   const t=new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  ['railway','supa','dns','sum'].forEach(k=>{ const el=document.getElementById('htime-'+k); if(el) el.textContent='Checked '+t; });
-  setDot('dot-railway','checking'); setDot('dot-supabase','checking'); setDot('dot-dns','checking');
-  checkRailway(); checkSupabase(); checkDNS();
+  ['railway','supa','dns','sum'].forEach(k=>{const el=document.getElementById('htime-'+k);if(el)el.textContent='Checked '+t;});
+  setDot('dot-railway','chk');setDot('dot-supabase','chk');setDot('dot-dns','chk');
+  checkRailway();checkSupabase();checkDNS();
 }
 
 async function checkRailway(){
@@ -737,86 +968,80 @@ async function checkRailway(){
   try{
     const t0=Date.now();
     const res=await fetch(RAILWAY_URL+'/health',{signal:AbortSignal.timeout(8000)});
-    const ms=Date.now()-t0;
-    const data=await res.json();
-    if(res.ok){
-      setHS('hs-api','ok','Online');
-      setHS('hs-latency',ms<300?'ok':ms<800?'warn':'err',ms+'ms',ms+'ms response time');
-      setHS('hs-env','ok',data.env||'—','NODE_ENV: '+(data.env||'—'));
-      setDot('dot-railway','ok');
-    } else { setHS('hs-api','err','HTTP '+res.status); setDot('dot-railway','err'); }
-  }catch(e){ setHS('hs-api','err','Unreachable'); setHS('hs-latency','err','—'); setHS('hs-env','err','—'); setDot('dot-railway','err'); }
+    const ms=Date.now()-t0,data=await res.json();
+    if(res.ok){setHS('hs-api','ok','Online');setHS('hs-latency',ms<300?'ok':ms<800?'warn':'err',ms+'ms',ms+'ms');setHS('hs-env','ok',data.env||'—');setDot('dot-railway','ok');}
+    else{setHS('hs-api','err','HTTP '+res.status);setDot('dot-railway','err');}
+  }catch{setHS('hs-api','err','Unreachable');setHS('hs-latency','err','—');setHS('hs-env','err','—');setDot('dot-railway','err');}
 }
 
 async function checkSupabase(){
   setHS('hs-db','chk','Checking…');
   try{
-    const {data,error,count}=await sb.from('applications').select('id',{count:'exact'}).limit(1);
-    if(error) throw error;
-    const total=count??(data?data.length:0);
+    const [c1,c2,c3]=await Promise.all([
+      sb.from('clients').select('id',{count:'exact'}).limit(1),
+      sb.from('loan_applications').select('id',{count:'exact'}).limit(1),
+      sb.from('loans').select('id',{count:'exact'}).limit(1),
+    ]);
+    if(c1.error) throw c1.error;
     setHS('hs-db','ok','Connected');
-    setHS('hs-table','ok',total+' rows',total+' applications total');
-    setHS('hs-rls','ok','Active');
+    setHS('hs-clients-tbl','ok',(c1.count||0)+' rows',(c1.count||0)+' clients');
+    setHS('hs-apps-tbl','ok',(c2.count||0)+' rows',(c2.count||0)+' applications');
+    setHS('hs-loans-tbl','ok',(c3.count||0)+' rows',(c3.count||0)+' loans');
     setDot('dot-supabase','ok');
-  }catch(e){ setHS('hs-db','err',e.message||'Error'); setHS('hs-table','err','—'); setHS('hs-rls','warn','Unknown'); setDot('dot-supabase','err'); }
+  }catch(e){setHS('hs-db','err',e.message||'Error');setDot('dot-supabase','err');}
 }
 
 async function checkDNS(){
   setHS('hs-site','chk','Checking…');
   try{
     await fetch('https://wavesfinancial.ca/',{mode:'no-cors',signal:AbortSignal.timeout(8000)});
-    setHS('hs-site','ok','Online'); setHS('hs-apply','ok','Reachable'); setHS('hs-ssl','ok','Valid');
+    setHS('hs-site','ok','Online');setHS('hs-apply','ok','Reachable');setHS('hs-ssl','ok','Valid');
     setDot('dot-dns','ok');
-  }catch(e){ setHS('hs-site','err','Unreachable'); setHS('hs-apply','err','—'); setHS('hs-ssl','warn','Unknown'); setDot('dot-dns','err'); }
+  }catch{setHS('hs-site','err','Unreachable');setHS('hs-apply','err','—');setHS('hs-ssl','warn','Unknown');setDot('dot-dns','err');}
 }
 
 function updateSummaryHealth(){
-  const tot=allApps.length;
   const pend=allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
-  const last=allApps.length?allApps[0]:null;
-  document.getElementById('hd-total').textContent=tot+' total';
-  document.getElementById('hs-total').innerHTML=`<div class="hsdot" style="background:var(--periwinkle)"></div>${tot}`;
-  document.getElementById('hd-pending').textContent=pend+' unreviewed';
-  const pel=document.getElementById('hs-pending');
-  pel.className='hstatus '+(pend===0?'hs-ok':pend<5?'hs-warn':'hs-err');
-  pel.innerHTML=`<div class="hsdot"></div>${pend}`;
-  if(last){
-    document.getElementById('hd-last').textContent=timeAgo(last.submitted_at);
-    document.getElementById('hs-last').innerHTML=`<div class="hsdot" style="background:var(--muted)"></div>${last.ref||'—'}`;
-  }
+  const active=allLoans.filter(l=>l.status==='active').length;
+  document.getElementById('hd-sum-clients').textContent=allClients.length+' total';
+  document.getElementById('hs-sum-clients').innerHTML=`<div class="hsdot" style="background:var(--periwinkle)"></div>${allClients.length}`;
+  document.getElementById('hd-sum-loans').textContent=active+' active';
+  document.getElementById('hs-sum-loans').className='hstatus '+(active>0?'hs-ok':'hs-chk');
+  document.getElementById('hs-sum-loans').innerHTML=`<div class="hsdot"></div>${active}`;
+  document.getElementById('hd-sum-pending').textContent=pend+' unreviewed';
+  document.getElementById('hs-sum-pending').className='hstatus '+(pend===0?'hs-ok':pend<5?'hs-warn':'hs-err');
+  document.getElementById('hs-sum-pending').innerHTML=`<div class="hsdot"></div>${pend}`;
 }
 
 /* ── HELPERS ── */
 function setHS(id,state,text,detail){
-  const el=document.getElementById(id); if(!el) return;
+  const el=document.getElementById(id);if(!el)return;
   const cls={ok:'hs-ok',warn:'hs-warn',err:'hs-err',chk:'hs-chk'}[state]||'hs-chk';
-  el.className='hstatus '+cls;
-  el.innerHTML='<div class="hsdot"></div>'+text;
-  if(detail){ const d=document.getElementById('hd-'+id.replace('hs-','')); if(d) d.textContent=detail; }
+  el.className='hstatus '+cls;el.innerHTML='<div class="hsdot"></div>'+text;
+  if(detail){const d=document.getElementById('hd-'+id.replace('hs-',''));if(d)d.textContent=detail;}
 }
 function setDot(id,state){
-  const el=document.getElementById(id); if(!el) return;
-  el.className='hind hind-'+(state==='ok'?'ok':state==='err'?'err':state==='warn'?'warn':'checking');
+  const el=document.getElementById(id);if(!el)return;
+  el.className='hind hind-'+(state==='ok'?'ok':state==='err'?'err':'chk');
 }
 function sig(label,value,pts,maxPts){
   const pct=(pts||0)/maxPts;
   const c=pct===0?'var(--teal)':pct<0.5?'var(--gold)':'var(--coral)';
-  return `<div class="sig-card"><div class="sig-label">${label}</div><div class="sig-val">${value}</div><div class="sig-pts" style="color:${c}">${pts??0}pt / ${maxPts}pt</div></div>`;
+  return `<div class="sig-card"><div class="sig-label">${label}</div><div class="sig-val">${value}</div><div class="sig-pts" style="color:${c}">${pts??0}pt/${maxPts}pt</div></div>`;
 }
 function scoreColor(s){
-  if(s==null) return 'var(--muted)';
-  if(s<=15) return '#FFD166'; if(s<=30) return '#1DE9C6';
-  if(s<=50) return '#00E5FF'; if(s<=70) return '#F5C542';
-  if(s<=90) return '#FF9945'; return '#FF6B8A';
+  if(s==null)return'var(--muted)';
+  if(s<=15)return'#FFD166';if(s<=30)return'#1DE9C6';if(s<=50)return'#00E5FF';
+  if(s<=70)return'#F5C542';if(s<=90)return'#FF9945';return'#FF6B8A';
 }
 function timeAgo(iso){
   const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000);
-  if(m<1) return 'just now'; if(m<60) return m+'m ago';
-  const h=Math.floor(m/60); if(h<24) return h+'h ago'; return Math.floor(h/24)+'d ago';
+  if(m<1)return'just now';if(m<60)return m+'m ago';
+  const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';
 }
 function showToast(msg,isErr=false){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast'+(isErr?' err':''); t.classList.add('show');
+  t.textContent=msg;t.className='toast'+(isErr?' err':'');t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
