@@ -1073,6 +1073,109 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
         </div>
       </div>
 
+      <!-- BANKING COORDINATES — shown after Flinks connects -->
+      <div id="banking-coords-block" style="display:none;margin-bottom:20px">
+        <div class="field-label" style="margin-bottom:12px">Enter your banking information</div>
+        <p class="step-sub" style="font-size:.8rem;margin-bottom:16px">Your funds will be deposited directly to this account. You can find these numbers on a void cheque or in your online banking.</p>
+
+        <!-- Cheque Specimen SVG -->
+        <div style="margin-bottom:18px;border-radius:12px;overflow:hidden;border:1px solid rgba(160,154,245,0.2)">
+          <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#f8f6ff">
+            <!-- Cheque body -->
+            <rect width="520" height="200" fill="#f8f6ff"/>
+            <!-- Top stripe -->
+            <rect width="520" height="6" fill="#5B52D8" opacity="0.7"/>
+            <!-- VOID watermark -->
+            <text x="260" y="115" font-family="Arial,sans-serif" font-size="62" font-weight="900" fill="#5B52D8" opacity="0.07" text-anchor="middle" letter-spacing="18">VOID</text>
+            <!-- Cheque lines -->
+            <line x1="20" y1="70" x2="370" y2="70" stroke="#bbb" stroke-width="0.8"/>
+            <line x1="20" y1="100" x2="500" y2="100" stroke="#bbb" stroke-width="0.8"/>
+            <!-- PAY TO label -->
+            <text x="22" y="64" font-family="Arial,sans-serif" font-size="8" fill="#888">PAY TO THE ORDER OF</text>
+            <line x1="22" y1="93" x2="360" y2="93" stroke="#ccc" stroke-width="0.6" stroke-dasharray="3,2"/>
+            <!-- Amount box -->
+            <rect x="375" y="58" width="120" height="24" rx="3" fill="none" stroke="#bbb" stroke-width="0.8"/>
+            <text x="435" y="74" font-family="Arial,sans-serif" font-size="8" fill="#888" text-anchor="middle">$ AMOUNT</text>
+            <!-- MICR line -->
+            <rect x="0" y="152" width="520" height="48" fill="#ede9ff" opacity="0.5"/>
+            <!-- MICR symbols and numbers -->
+            <text x="22" y="180" font-family="'Courier New',monospace" font-size="13" fill="#333" letter-spacing="1">⑆</text>
+            <!-- Transit bracket -->
+            <rect x="35" y="160" width="78" height="22" rx="3" fill="#5B52D8" opacity="0.12"/>
+            <text x="74" y="176" font-family="'Courier New',monospace" font-size="12" fill="#5B52D8" text-anchor="middle" font-weight="700">0 0 0 0 0</text>
+            <!-- Institution bracket -->
+            <rect x="120" y="160" width="52" height="22" rx="3" fill="#1DE9C6" opacity="0.15"/>
+            <text x="146" y="176" font-family="'Courier New',monospace" font-size="12" fill="#1DE9C6" text-anchor="middle" font-weight="700">0 0 0</text>
+            <text x="178" y="180" font-family="'Courier New',monospace" font-size="13" fill="#333">⑆</text>
+            <!-- Account bracket -->
+            <rect x="188" y="160" width="140" height="22" rx="3" fill="#A09AF5" opacity="0.15"/>
+            <text x="258" y="176" font-family="'Courier New',monospace" font-size="12" fill="#A09AF5" text-anchor="middle" font-weight="700">0 0 0 0 0 0 0</text>
+            <!-- Cheque number -->
+            <text x="350" y="176" font-family="'Courier New',monospace" font-size="11" fill="#aaa">⑇ 0 0 1 ⑇</text>
+            <!-- Labels -->
+            <text x="74" y="155" font-family="Arial,sans-serif" font-size="8.5" fill="#5B52D8" text-anchor="middle" font-weight="700">Transit (5 digits)</text>
+            <text x="146" y="155" font-family="Arial,sans-serif" font-size="8.5" fill="#1DE9C6" text-anchor="middle" font-weight="700">Institution (3)</text>
+            <text x="258" y="155" font-family="Arial,sans-serif" font-size="8.5" fill="#A09AF5" text-anchor="middle" font-weight="700">Account Number</text>
+            <!-- Bank logo area -->
+            <rect x="410" y="160" width="95" height="30" rx="4" fill="none" stroke="#bbb" stroke-width="0.6" stroke-dasharray="3,2"/>
+            <text x="457" y="178" font-family="Arial,sans-serif" font-size="8" fill="#aaa" text-anchor="middle">Bank Stamp</text>
+            <!-- Corner info -->
+            <text x="22" y="30" font-family="Arial,sans-serif" font-size="9" fill="#666">John Doe</text>
+            <text x="22" y="44" font-family="Arial,sans-serif" font-size="8" fill="#aaa">123 Main St, Montreal QC</text>
+            <text x="460" y="30" font-family="Arial,sans-serif" font-size="8" fill="#aaa" text-anchor="end">No. 001</text>
+            <text x="460" y="44" font-family="Arial,sans-serif" font-size="8" fill="#aaa" text-anchor="end">Date: __________</text>
+          </svg>
+        </div>
+
+        <!-- Input fields -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="field-group">
+            <label class="field-label" for="n-transit" style="color:#5B52D8">
+              Transit Number
+              <span class="field-req">*</span>
+            </label>
+            <input type="text" class="field-input" id="n-transit"
+              placeholder="00000"
+              maxlength="5"
+              inputmode="numeric"
+              pattern="[0-9]{5}"
+              style="border-color:rgba(91,82,216,.35);letter-spacing:.1em;font-family:monospace"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,5)">
+            <span class="field-hint">5-digit branch number</span>
+            <span class="field-err" id="err-n-transit">&#9888; Enter your 5-digit transit number</span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="n-institution" style="color:#1DE9C6">
+              Institution Number
+              <span class="field-req">*</span>
+            </label>
+            <input type="text" class="field-input" id="n-institution"
+              placeholder="000"
+              maxlength="3"
+              inputmode="numeric"
+              pattern="[0-9]{3}"
+              style="border-color:rgba(29,233,198,.35);letter-spacing:.1em;font-family:monospace"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,3)">
+            <span class="field-hint">3-digit bank code (Desjardins: 815)</span>
+            <span class="field-err" id="err-n-institution">&#9888; Enter your 3-digit institution number</span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="n-account-num" style="color:#A09AF5">
+              Account Number
+              <span class="field-req">*</span>
+            </label>
+            <input type="text" class="field-input" id="n-account-num"
+              placeholder="0000000"
+              maxlength="12"
+              inputmode="numeric"
+              style="border-color:rgba(160,154,245,.35);letter-spacing:.1em;font-family:monospace"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,12)">
+            <span class="field-hint">7–12 digits — no spaces or dashes</span>
+            <span class="field-err" id="err-n-account-num">&#9888; Enter your account number</span>
+          </div>
+        </div>
+      </div>
+
       <div class="consent-block" id="consent-block" style="display:none;">
         <label class="consent-row">
           <input type="checkbox" id="c-pad">
@@ -2422,6 +2525,9 @@ function onFlinksSuccess(d) {
   conn.style.display='block'; conn.style.animation='fadeIn 0.4s ease';
   document.getElementById('conn-bank').textContent=d.institution;
   document.getElementById('conn-acct').textContent=d.accountType+' '+d.accountMask;
+  // Show banking coordinates block
+  const bc=document.getElementById('banking-coords-block');
+  if(bc) bc.style.display='block';
   const cb=document.getElementById('consent-block');
   cb.style.display='flex';
   const btn=document.getElementById('n-submit-btn');
@@ -2433,6 +2539,8 @@ function resetFlinks() {
   flinksId=null; flinksData={};
   document.getElementById('flinks-placeholder').style.display='block';
   document.getElementById('flinks-connected').style.display='none';
+  const bc=document.getElementById('banking-coords-block');
+  if(bc) bc.style.display='none';
   document.getElementById('consent-block').style.display='none';
   const btn=document.getElementById('n-submit-btn');
   btn.disabled=true;
@@ -2534,6 +2642,14 @@ async function submitNew() {
     setTimeout(()=>{box.style.borderColor='';box.style.boxShadow='';},2500);
     return;
   }
+  // Validate banking coordinates
+  const transit=gv('n-transit'); const instNum=gv('n-institution'); const acctNum=gv('n-account-num');
+  let bankOk=true;
+  if(!transit||transit.length!==5){setErr('n-transit',true,'Enter your 5-digit transit number');bankOk=false;}else clrErr('n-transit');
+  if(!instNum||instNum.length!==3){setErr('n-institution',true,'Enter your 3-digit institution number');bankOk=false;}else clrErr('n-institution');
+  if(!acctNum||acctNum.length<5){setErr('n-account-num',true,'Enter your account number');bankOk=false;}else clrErr('n-account-num');
+  if(!bankOk) return;
+
   const pad = document.getElementById('c-pad');
   if(pad && !pad.checked){setErr('flinks-consent',true,'Please accept the PAD authorization to continue');return;}
   clrErr('flinks-consent');
@@ -2572,6 +2688,9 @@ async function submitNew() {
     },
     banking:{
       flinksLoginId:flinksId, institution:flinksData.institution||'', sandbox:!!flinksData.sandbox,
+      transitNumber:  gv('n-transit'),
+      institutionNumber: gv('n-institution'),
+      accountNumber:  gv('n-account-num'),
     },
   };
   await doSubmit(WEBHOOK_NEW, payload, ref, 'new');

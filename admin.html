@@ -517,21 +517,42 @@ function renderList(){
     document.getElementById('col-head').innerHTML='<span>Ref</span><span>Client</span><span>Principal</span><span>Paid</span><span>Status</span><span>Due Date</span><span>Progress</span>';
     document.getElementById('col-head').style.gridTemplateColumns='100px 1fr 90px 90px 130px 110px 140px';
     const active=allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
+    const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
-    if(!active.length){document.getElementById('app-list').innerHTML='<div class="empty">No active loans.</div>';return;}
-    document.getElementById('app-list').innerHTML=active.map(l=>{
+
+    // DRD action bar for pending disbursement loans
+    const drdBar = pendingDisb.length ? `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.2);border-radius:8px;flex-wrap:wrap">
+        <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} loan${pendingDisb.length>1?'s':''} pending disbursement</span>
+        <a href="${RAILWAY_URL}/api/eft/drd" target="_blank"
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.4);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
+          📁 Download DRD File (All)
+        </a>
+        <span style="font-size:.65rem;color:var(--muted)">Effective: ${nextBizDay()}</span>
+      </div>` : '';
+
+    if(!active.length){document.getElementById('app-list').innerHTML=drdBar+'<div class="empty">No active loans.</div>';return;}
+    document.getElementById('app-list').innerHTML=drdBar+active.map(l=>{
       const c=allClients.find(x=>x.id===l.client_id);
       const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():'—';
       const pct=l.total_repayable?Math.round((l.total_paid||0)/l.total_repayable*100):0;
       const lsCls=l.status==='active'?'ls-active':'ls-pending';
       const statusLabel=l.status==='active'?'Active':l.status==='pending_disbursement'?'Pending Disbursement':l.status.replace(/_/g,' ');
       const dueDate=l.due_date?new Date(l.due_date).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
+      const drdBtn=l.status==='pending_disbursement'?
+        `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
+            style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700;white-space:nowrap">
+            📁 DRD
+          </a>`:'';
       return `<div class="arow" style="grid-template-columns:100px 1fr 90px 90px 130px 110px 140px" onclick="openClient('${l.client_id}')">
         <div class="aref">${l.ref||'—'}</div>
         <div><div class="aname">${name}</div><div class="aemail">${c?.email||''}</div></div>
         <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
         <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
-        <div style="min-width:0"><span class="loan-status ${lsCls}" style="white-space:nowrap;font-size:.6rem">${statusLabel}</span></div>
+        <div style="min-width:0;display:flex;flex-direction:column;gap:4px">
+          <span class="loan-status ${lsCls}" style="white-space:nowrap;font-size:.6rem">${statusLabel}</span>
+          ${drdBtn}
+        </div>
         <div style="font-size:.72rem;color:var(--muted);white-space:nowrap">${dueDate}</div>
         <div><div style="font-size:.65rem;color:var(--muted);margin-bottom:3px">${pct}% repaid</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>
       </div>`;
@@ -1012,6 +1033,21 @@ function appHistoryRow(a, loans, schedMap){
       ${ahrField('Last Name',a.safety_contact_last_name||a.safety_contact_name?.split(' ').slice(1).join(' ')||'—')}
       ${ahrField('Phone',a.safety_contact_phone||'—')}
       ${ahrField('Relationship',a.safety_contact_rel||'—')}
+    </div>
+
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Banking Coordinates</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      ${ahrField('Bank Name',a.bank_name||'—')}
+      ${ahrField('Transit Number',a.bank_transit||'—',a.bank_transit?'var(--teal)':'')}
+      ${ahrField('Institution Number',a.bank_institution||'—',a.bank_institution?'var(--teal)':'')}
+      ${ahrField('Account Number',a.bank_account?'••••'+a.bank_account.slice(-4):'—',a.bank_account?'var(--teal)':'')}
+      ${ahrField('Fund Method',a.fund_method||'—')}
+      ${a.bank_transit&&a.bank_institution&&a.bank_account?
+        `<div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">DRD File</div>
+          <a href="${RAILWAY_URL}/api/eft/drd?loanIds=" target="_blank"
+             style="font-size:.75rem;font-weight:600;color:var(--gold);text-decoration:none">📁 Generate DRD</a>
+        </div>`:'<div style="font-size:.72rem;color:var(--coral)">⚠️ Banking coords missing</div>'}
     </div>
 
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">E-Signature</div>
@@ -1879,6 +1915,12 @@ function sig(label,value,pts,maxPts){
   const c=pct===0?'var(--teal)':pct<0.5?'var(--gold)':'var(--coral)';
   return `<div class="sig-card"><div class="sig-label">${label}</div><div class="sig-val">${value}</div><div class="sig-pts" style="color:${c}">${pts??0}pt/${maxPts}pt</div></div>`;
 }
+function nextBizDay(){
+  const d=new Date(); d.setDate(d.getDate()+1);
+  while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()+1);
+  return d.toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
+}
+
 function scoreColor(s){
   if(s==null)return'var(--muted)';
   if(s<=15)return'#FFD166';if(s<=30)return'#1DE9C6';if(s<=50)return'#00E5FF';
