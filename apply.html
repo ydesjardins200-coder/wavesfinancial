@@ -2288,7 +2288,7 @@ function simulateFlinks() {
   const banks=['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
   const bank=banks[Math.floor(Math.random()*banks.length)];
   const mask=String(Math.floor(1000+Math.random()*9000));
-  flinksId='sandbox-'+Math.random().toString(36).substr(2,9);
+  flinksId='sandbox-green-'+Math.random().toString(36).substr(2,9);
   flinksData={loginId:flinksId,institution:bank,sandbox:true};
   onFlinksSuccess({loginId:flinksId,institution:bank,accountType:'Chequing',accountMask:'\u2022\u2022\u2022\u2022'+mask});
 }
@@ -2551,7 +2551,7 @@ function rSimulateFlinks(){
   const banks=['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
   const bank=banks[Math.floor(Math.random()*banks.length)];
   const mask=String(Math.floor(1000+Math.random()*9000));
-  rFlinksId='sandbox-r-'+Math.random().toString(36).substr(2,9);
+  rFlinksId='sandbox-green-'+Math.random().toString(36).substr(2,9);
   rFlinksData={loginId:rFlinksId,institution:bank,sandbox:true};
   rOnFlinksSuccess({institution:bank,accountType:'Chequing',accountMask:'\u2022\u2022\u2022\u2022'+mask});
 }
