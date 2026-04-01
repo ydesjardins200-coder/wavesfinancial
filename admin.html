@@ -93,7 +93,8 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .qrefresh{font-size:.72rem;color:var(--periwinkle);background:none;border:1px solid rgba(160,154,245,.2);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:var(--font);}
 .qrefresh:hover{background:rgba(160,154,245,.1);}
 .col-head{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 16px 8px;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;gap:12px;}
-.arow{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;align-items:center;gap:12px;}
+.arow{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;align-items:center;gap:12px;overflow:hidden;}
+.arow>*{min-width:0;overflow:hidden;}
 .arow:hover{border-color:rgba(160,154,245,.3);background:rgba(91,82,216,.06);transform:translateX(2px);}
 .aref{font-size:.75rem;font-weight:700;color:var(--periwinkle);}
 .aname{font-size:.82rem;font-weight:600;}
@@ -514,6 +515,7 @@ function renderList(){
   // Loans tab
   if(isLoanTab){
     document.getElementById('col-head').innerHTML='<span>Ref</span><span>Client</span><span>Principal</span><span>Paid</span><span>Status</span><span>Due Date</span><span>Progress</span>';
+    document.getElementById('col-head').style.gridTemplateColumns='100px 1fr 90px 90px 130px 110px 140px';
     const active=allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
     if(!active.length){document.getElementById('app-list').innerHTML='<div class="empty">No active loans.</div>';return;}
@@ -522,13 +524,15 @@ function renderList(){
       const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():'—';
       const pct=l.total_repayable?Math.round((l.total_paid||0)/l.total_repayable*100):0;
       const lsCls=l.status==='active'?'ls-active':'ls-pending';
-      return `<div class="arow" style="grid-template-columns:110px 1fr 90px 80px 90px 100px 110px" onclick="openClient('${l.client_id}')">
+      const statusLabel=l.status==='active'?'Active':l.status==='pending_disbursement'?'Pending Disbursement':l.status.replace(/_/g,' ');
+      const dueDate=l.due_date?new Date(l.due_date).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
+      return `<div class="arow" style="grid-template-columns:100px 1fr 90px 90px 130px 110px 140px" onclick="openClient('${l.client_id}')">
         <div class="aref">${l.ref||'—'}</div>
         <div><div class="aname">${name}</div><div class="aemail">${c?.email||''}</div></div>
         <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
         <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
-        <div><span class="loan-status ${lsCls}">${l.status}</span></div>
-        <div style="font-size:.75rem;color:var(--muted)">${l.due_date||'—'}</div>
+        <div style="min-width:0"><span class="loan-status ${lsCls}" style="white-space:nowrap;font-size:.6rem">${statusLabel}</span></div>
+        <div style="font-size:.72rem;color:var(--muted);white-space:nowrap">${dueDate}</div>
         <div><div style="font-size:.65rem;color:var(--muted);margin-bottom:3px">${pct}% repaid</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>
       </div>`;
     }).join('');
