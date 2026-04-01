@@ -900,36 +900,6 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
       </div>`:''}
       ${app.flags&&app.flags.length?app.flags.map(f=>`<div class="flag-item" style="margin-top:6px">⚑ ${f}</div>`).join(''):''}
 
-      <!-- FEASIBILITY LIST -->
-      ${(()=>{
-        const fl=app.feasibility_list||[];
-        if(!fl.length) return '';
-        const maxAmt=fl[0]||0;
-        return `<div style="margin-top:14px">
-          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px">
-            💡 Feasible Amounts — Revenue Optimized
-            <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px">highest first · all within 75% DTI</span>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            ${fl.map((amt,i)=>{
-              const isMax=i===0;
-              const pct=app.requested_amount?Math.round(amt/app.requested_amount*100):100;
-              const bg=isMax?'rgba(29,233,198,.18)':'rgba(91,82,216,.12)';
-              const border=isMax?'rgba(29,233,198,.4)':'rgba(91,82,216,.25)';
-              const color=isMax?'var(--teal)':'var(--periwinkle)';
-              const payAmt=(amt*(1+0.23*112/365)/8).toFixed(2);
-              return `<div style="padding:8px 12px;background:${bg};border:1px solid ${border};border-radius:8px;cursor:pointer;transition:all .15s;text-align:center"
-                onclick="setApprovedAmount('${loan.id}',${amt})"
-                title="Click to set approved amount to $${amt}">
-                <div style="font-size:.85rem;font-weight:800;color:${color}">$${amt.toLocaleString()}</div>
-                <div style="font-size:.58rem;color:var(--muted);margin-top:1px">$${payAmt}/payment</div>
-                ${isMax?'<div style="font-size:.55rem;color:var(--teal);font-weight:700;margin-top:1px">⭐ MAX</div>':''}
-              </div>`;
-            }).join('')}
-          </div>
-          <div style="font-size:.65rem;color:var(--muted);margin-top:6px">Click any amount to set as the approved amount for this loan.</div>
-        </div>`;
-      })()}
     </div>`:'';
 
   // Analyst actions for this loan's application
@@ -1045,6 +1015,36 @@ function appHistoryRow(a, loans, schedMap){
       ${ahrField('Signed By',a.esig_name||'—')}
       ${ahrField('Timestamp',tsDisplay)}
     </div>
+
+    <!-- FEASIBILITY RIBBON -->
+    ${(()=>{
+      const fl=a.feasibility_list||[];
+      if(!fl.length) return '';
+      const currentAmt=a.approved_amount||a.requested_amount||0;
+      return `<div style="margin-bottom:14px">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+          💡 Feasible Amounts — Revenue Optimized
+          <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">highest first · click to select · regenerates calendar & contract</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${fl.map((amt,i)=>{
+            const isMax=i===0;
+            const isCurrent=amt===currentAmt;
+            const bg=isCurrent?'rgba(29,233,198,.22)':isMax?'rgba(29,233,198,.12)':'rgba(91,82,216,.10)';
+            const border=isCurrent?'rgba(29,233,198,.7)':isMax?'rgba(29,233,198,.35)':'rgba(91,82,216,.22)';
+            const color=isCurrent?'var(--teal)':isMax?'var(--teal)':'var(--periwinkle)';
+            const payAmt=(amt*(1+0.23*112/365)/8).toFixed(2);
+            return `<div style="padding:8px 12px;background:${bg};border:2px solid ${border};border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;min-width:80px"
+              onclick="selectFeasibleAmount('${a.id}','${loan?loan.id:''}',${amt},'${a.pay_frequency||'biweekly'}','${a.next_pay_date||''}')"
+              id="feaschip-${a.id}-${amt}">
+              <div style="font-size:.88rem;font-weight:800;color:${color}">$${amt.toLocaleString()}</div>
+              <div style="font-size:.58rem;color:var(--muted);margin-top:1px">$${payAmt}/pmt</div>
+              ${isCurrent?'<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">✓ SELECTED</div>':isMax?'<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">⭐ MAX</div>':''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    })()}
 
     <!-- PAYMENT CALENDAR -->
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">
@@ -1187,6 +1187,9 @@ async function savePaymentCalendar(loanId, appId){
   const tbody=document.getElementById('cal-body-'+appId);
   if(!tbody) return;
 
+  const loan=allLoans.find(l=>l.id===loanId);
+  const a=allApps.find(x=>x.id===appId);
+
   // Collect updates for existing schedule rows
   const updates=[];
   tbody.querySelectorAll('[data-sched-id]').forEach(el=>{
@@ -1199,7 +1202,7 @@ async function savePaymentCalendar(loanId, appId){
     existing[field]=val;
   });
 
-  // Collect new rows (generated from pay info)
+  // Collect new rows (generated from pay info — data-new-row)
   const newRows=[];
   const rowCount={};
   tbody.querySelectorAll('[data-new-row]').forEach(el=>{
@@ -1213,40 +1216,60 @@ async function savePaymentCalendar(loanId, appId){
   });
   Object.values(rowCount).forEach(r=>{
     newRows.push({
-      loan_id: loanId,
-      payment_number: r._idx+1,
-      due_date: r.due_date||null,
+      loan_id:          loanId,
+      client_id:        loan?.client_id,
+      payment_number:   r._idx+1,
+      due_date:         r.due_date||null,
       scheduled_amount: parseFloat(r.scheduled_amount||0),
-      status: r.status||'scheduled',
-      paid_at: r.paid_at||null,
-      notes: r.notes||null,
+      status:           r.status||'scheduled',
+      paid_at:          r.paid_at||null,
+      notes:            r.notes||null,
     });
   });
 
   let hasError=false;
 
-  // Update existing rows
-  for(const u of updates){
-    const {id,...fields}=u;
-    const {error}=await sb.from('repayment_schedule').update(fields).eq('id',id);
-    if(error){showToast('Update failed: '+error.message,true);hasError=true;}
+  // If we have new rows (regenerated from amount selection), delete old schedule and replace
+  if(newRows.length){
+    await sb.from('repayment_schedule').delete().eq('loan_id',loanId);
+    const {error}=await sb.from('repayment_schedule').insert(newRows);
+    if(error){showToast('Insert failed: '+error.message,true);hasError=true;}
+    // Update loan due_date to last payment
+    const finalDate=newRows[newRows.length-1].due_date;
+    if(finalDate) await sb.from('loans').update({due_date:finalDate}).eq('id',loanId);
+  } else {
+    // Update existing rows individually
+    for(const u of updates){
+      const {id,...fields}=u;
+      const {error}=await sb.from('repayment_schedule').update(fields).eq('id',id);
+      if(error){showToast('Update failed: '+error.message,true);hasError=true;}
+    }
   }
 
-  // Insert new rows (only if no existing schedule)
-  if(newRows.length&&!updates.length){
-    // Get client_id from loan
-    const loan=allLoans.find(l=>l.id===loanId);
-    if(loan){
-      newRows.forEach(r=>r.client_id=loan.client_id);
-      const {error}=await sb.from('repayment_schedule').insert(newRows);
-      if(error){showToast('Insert failed: '+error.message,true);hasError=true;}
+  // Sync loan payment_amount and total_repayable from first new row amount
+  if(!hasError&&loanId&&a){
+    const approvedAmt=a.approved_amount||a.requested_amount;
+    if(approvedAmt){
+      const APR=0.23,DAYS=112,N=8;
+      const payAmt=parseFloat(((approvedAmt*(1+APR*DAYS/365))/N).toFixed(2));
+      const totalRepayable=parseFloat((payAmt*N).toFixed(2));
+      await sb.from('loans').update({
+        principal:         approvedAmt,
+        payment_amount:    payAmt,
+        total_repayable:   totalRepayable,
+        remaining_balance: totalRepayable,
+      }).eq('id',loanId);
+      if(loan){
+        loan.principal=approvedAmt;
+        loan.payment_amount=payAmt;
+        loan.total_repayable=totalRepayable;
+        loan.remaining_balance=totalRepayable;
+      }
     }
   }
 
   if(!hasError){
-    showToast('✓ Payment calendar saved');
-    // Reload client page to show updated schedule
-    const loan=allLoans.find(l=>l.id===loanId);
+    showToast('✓ Calendar & loan amounts saved');
     if(loan?.client_id) openClient(loan.client_id);
   }
 }
@@ -1377,26 +1400,75 @@ function toggleNote(key){
 }
 
 /* ── NOTES FEED ── */
-async function setApprovedAmount(loanId, amount){
-  if(!loanId) return;
-  const loan=allLoans.find(l=>l.id===loanId);
+/* ── SELECT FEASIBLE AMOUNT — regenerates calendar + contract ── */
+async function selectFeasibleAmount(appId, loanId, amount, freq, nextPayDate){
+  const a = allApps.find(x=>x.id===appId);
+  if(!a) return;
 
-  // Update loan principal + balance (columns that exist on loans table)
-  const {error}=await sb.from('loans').update({
-    principal:         amount,
-    remaining_balance: amount,
-  }).eq('id',loanId);
-  if(error){showToast('Failed: '+error.message,true);return;}
+  const APR=0.23, DAYS=112, N=8;
+  const payAmt = parseFloat(((amount*(1+APR*DAYS/365))/N).toFixed(2));
+  const totalRepayable = parseFloat((payAmt*N).toFixed(2));
 
-  // Also stamp approved_amount on the linked application
-  if(loan?.ref){
-    await sb.from('loan_applications').update({approved_amount:amount}).eq('ref',loan.ref);
-    const a=allApps.find(x=>x.ref===loan.ref);
-    if(a) a.approved_amount=amount;
+  // 1. Update application approved_amount
+  await sb.from('loan_applications').update({approved_amount:amount}).eq('id',appId);
+  if(a) a.approved_amount=amount;
+
+  // 2. Update loan principal + balance if loan exists
+  if(loanId){
+    await sb.from('loans').update({
+      principal:         amount,
+      payment_amount:    payAmt,
+      total_repayable:   totalRepayable,
+      remaining_balance: totalRepayable,
+    }).eq('id',loanId);
+    const loan=allLoans.find(l=>l.id===loanId);
+    if(loan){ loan.principal=amount; loan.payment_amount=payAmt; loan.total_repayable=totalRepayable; loan.remaining_balance=totalRepayable; }
   }
 
-  if(loan){ loan.principal=amount; loan.remaining_balance=amount; }
-  showToast('✓ Approved amount set to $'+amount.toLocaleString());
+  // 3. Regenerate payment calendar in the DOM
+  const tbody=document.getElementById('cal-body-'+appId);
+  if(tbody){
+    // Patch the app object with new amount so generateCalendarFromPayInfo picks it up
+    const patchedApp={...a, requested_amount:amount};
+    tbody.innerHTML=generateCalendarFromPayInfo(freq||a.pay_frequency||'biweekly', nextPayDate||a.next_pay_date, amount);
+  }
+
+  // 4. Update all feasibility chips — highlight selected, clear others
+  document.querySelectorAll(`[id^="feaschip-${appId}-"]`).forEach(chip=>{
+    const chipAmt=parseInt(chip.id.split('-').pop());
+    const isSelected=(chipAmt===amount);
+    const isMax=(a.feasibility_list&&chipAmt===a.feasibility_list[0]);
+    chip.style.borderColor=isSelected?'rgba(29,233,198,.7)':isMax?'rgba(29,233,198,.35)':'rgba(91,82,216,.22)';
+    chip.style.background=isSelected?'rgba(29,233,198,.22)':isMax?'rgba(29,233,198,.12)':'rgba(91,82,216,.10)';
+    // Update sub-label
+    const label=chip.querySelector('div:last-child');
+    if(label){
+      if(isSelected) label.innerHTML='<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">✓ SELECTED</div>';
+      else if(isMax)  label.innerHTML='<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">⭐ MAX</div>';
+      else            label.innerHTML='';
+    }
+    // Update payment amount line
+    const payLine=chip.querySelector('div:nth-child(2)');
+    if(payLine){
+      const pa=(chipAmt*(1+0.23*112/365)/8).toFixed(2);
+      payLine.textContent='$'+pa+'/pmt';
+    }
+  });
+
+  showToast(`✓ $${amount.toLocaleString()} selected — calendar regenerated · save to persist`);
+}
+
+async function setApprovedAmount(loanId, amount){
+  // Legacy — redirect to selectFeasibleAmount if we can find the app
+  const loan=allLoans.find(l=>l.id===loanId);
+  const a=loan?allApps.find(x=>x.ref===loan.ref):null;
+  if(a) return selectFeasibleAmount(a.id, loanId, amount, a.pay_frequency, a.next_pay_date);
+
+  // Fallback: just update loan
+  const {error}=await sb.from('loans').update({principal:amount,remaining_balance:amount}).eq('id',loanId);
+  if(error){showToast('Failed: '+error.message,true);return;}
+  if(loan){loan.principal=amount;loan.remaining_balance=amount;}
+  showToast('✓ Amount set to $'+amount.toLocaleString());
 }
 
 function switchCpTab(panelId, btn){
