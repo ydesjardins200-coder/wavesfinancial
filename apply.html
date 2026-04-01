@@ -997,23 +997,69 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             <div class="hiw-item"><div class="hiw-icon">👁️</div><div class="hiw-text">Read-only &middot; can't move money</div></div>
             <div class="hiw-item"><div class="hiw-icon">⚡</div><div class="hiw-text">Under 60 seconds</div></div>
           </div>
-          <div class="flinks-dev-note">
-            <span style="font-size:1rem;flex-shrink:0;">⚙️</span>
-            <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.55;">
-              <strong style="color:var(--periwinkle);">Dev mode</strong> &mdash; Replace <code>YOUR_FLINKS_CLIENT_ID</code> in the source with your Flinks iframe URL to activate. Use the button below to simulate a successful connection for testing.
+          <div class="flinks-dev-note" id="sandbox-panel">
+            <div style="width:100%">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <span style="font-size:1rem;">⚙️</span>
+                <strong style="color:var(--periwinkle);font-size:.8rem;">Sandbox Testing Panel</strong>
+                <span style="font-size:.7rem;color:var(--text-muted);margin-left:4px">— select a tier to pre-fill signals, then customize</span>
+              </div>
+
+              <!-- Tier buttons -->
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+                <button type="button" onclick="loadSandboxTier('gold')"   id="stier-gold"   style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,209,102,.4);background:rgba(255,209,102,.1);color:#FFD166;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">⭐ Gold</button>
+                <button type="button" onclick="loadSandboxTier('green')"  id="stier-green"  style="padding:5px 12px;border-radius:6px;border:1px solid rgba(29,233,198,.3);background:rgba(29,233,198,.08);color:#1DE9C6;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🟢 Green</button>
+                <button type="button" onclick="loadSandboxTier('blue')"   id="stier-blue"   style="padding:5px 12px;border-radius:6px;border:1px solid rgba(0,229,255,.3);background:rgba(0,229,255,.08);color:#00E5FF;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🔵 Blue</button>
+                <button type="button" onclick="loadSandboxTier('yellow')" id="stier-yellow" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(245,197,66,.3);background:rgba(245,197,66,.08);color:#F5C542;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🟡 Yellow</button>
+                <button type="button" onclick="loadSandboxTier('orange')" id="stier-orange" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,153,69,.3);background:rgba(255,153,69,.08);color:#FF9945;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🟠 Orange</button>
+                <button type="button" onclick="loadSandboxTier('red')"    id="stier-red"    style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,107,138,.3);background:rgba(255,107,138,.08);color:#FF6B8A;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🔴 Red</button>
+                <button type="button" onclick="loadSandboxTier('hard_decline_no_income')"   style="padding:5px 12px;border-radius:6px;border:1px solid rgba(160,154,245,.2);background:rgba(160,154,245,.05);color:rgba(160,154,245,.7);font-size:.65rem;font-weight:700;cursor:pointer;font-family:var(--font)">No Income</button>
+                <button type="button" onclick="loadSandboxTier('hard_decline_new_account')" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(160,154,245,.2);background:rgba(160,154,245,.05);color:rgba(160,154,245,.7);font-size:.65rem;font-weight:700;cursor:pointer;font-family:var(--font)">New Acct</button>
+              </div>
+
+              <!-- Editable signal fields -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+                <div>
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Verified Income / mo ($)</div>
+                  <input type="number" id="sb-verifiedIncome" value="3000" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                </div>
+                <div>
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Fixed Obligations / mo ($)</div>
+                  <input type="number" id="sb-fixedObligations" value="400" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                </div>
+                <div>
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">NSF Count (90 days)</div>
+                  <input type="number" id="sb-nsfCount" value="0" min="0" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                </div>
+                <div>
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Payment Oppositions</div>
+                  <input type="number" id="sb-oppositionCount" value="0" min="0" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                </div>
+                <div>
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Avg Daily Balance ($)</div>
+                  <input type="number" id="sb-avgDailyBalance" value="800" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                </div>
+                <div>
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Account Age (days)</div>
+                  <input type="number" id="sb-accountAgeDays" value="365" min="0" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                </div>
+                <div style="grid-column:1/-1">
+                  <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Income Regularity</div>
+                  <select id="sb-incomeRegularity" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.8);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none">
+                    <option value="consistent">consistent</option>
+                    <option value="variable">variable</option>
+                    <option value="irregular">irregular</option>
+                    <option value="undetected">undetected</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" class="btn-demo" onclick="simulateFlinks()" style="width:100%;justify-content:center">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+                Connect with Sandbox Data
+              </button>
             </div>
           </div>
-          <!-- Real Flinks iframe — uncomment when ready:
-          <iframe id="flinks-iframe"
-            src="https://YOUR_FLINKS_CLIENT_ID-iframe.private.fin.ag/v2/?institutionFilterEnable=false&country=CA&language=en&innerRedirect=true&demo=false&backgroundColor=0D0B1F&foregroundColor1=ffffff&desktopLayout=true&headerEnable=false&progressMeterEnable=true"
-            style="width:100%;height:520px;border:none;border-radius:12px;"
-            allow="camera" title="Flinks Bank Connection">
-          </iframe>
-          -->
-          <button class="btn-demo" onclick="simulateFlinks()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
-            Simulate Bank Connection (Sandbox)
-          </button>
         </div>
         <div class="flinks-connected" id="flinks-connected">
           <div class="connected-check">&#9989;</div>
@@ -1514,23 +1560,36 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             <div class="hiw-item"><div class="hiw-icon">👁️</div><div class="hiw-text">Read-only &middot; can't move money</div></div>
             <div class="hiw-item"><div class="hiw-icon">⚡</div><div class="hiw-text">Under 60 seconds</div></div>
           </div>
-          <div class="flinks-dev-note">
-            <span style="font-size:1rem;flex-shrink:0;">⚙️</span>
-            <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.55;">
-              <strong style="color:var(--periwinkle);">Dev mode</strong> &mdash; Replace <code>YOUR_FLINKS_CLIENT_ID</code> with your Flinks iframe URL to activate. Use the button below for sandbox testing.
+          <div class="flinks-dev-note" id="r-sandbox-panel">
+            <div style="width:100%">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <span style="font-size:1rem;">⚙️</span>
+                <strong style="color:var(--periwinkle);font-size:.8rem;">Sandbox Testing Panel</strong>
+                <span style="font-size:.7rem;color:var(--text-muted);margin-left:4px">— select a tier to pre-fill signals, then customize</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+                <button type="button" onclick="loadSandboxTier('gold')"   style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,209,102,.4);background:rgba(255,209,102,.1);color:#FFD166;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">⭐ Gold</button>
+                <button type="button" onclick="loadSandboxTier('green')"  style="padding:5px 12px;border-radius:6px;border:1px solid rgba(29,233,198,.3);background:rgba(29,233,198,.08);color:#1DE9C6;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🟢 Green</button>
+                <button type="button" onclick="loadSandboxTier('blue')"   style="padding:5px 12px;border-radius:6px;border:1px solid rgba(0,229,255,.3);background:rgba(0,229,255,.08);color:#00E5FF;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🔵 Blue</button>
+                <button type="button" onclick="loadSandboxTier('yellow')" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(245,197,66,.3);background:rgba(245,197,66,.08);color:#F5C542;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🟡 Yellow</button>
+                <button type="button" onclick="loadSandboxTier('orange')" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,153,69,.3);background:rgba(255,153,69,.08);color:#FF9945;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🟠 Orange</button>
+                <button type="button" onclick="loadSandboxTier('red')"    style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,107,138,.3);background:rgba(255,107,138,.08);color:#FF6B8A;font-size:.72rem;font-weight:800;cursor:pointer;font-family:var(--font)">🔴 Red</button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+                <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Verified Income / mo ($)</div><input type="number" id="r-sb-verifiedIncome" value="3000" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"></div>
+                <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Fixed Obligations / mo ($)</div><input type="number" id="r-sb-fixedObligations" value="400" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"></div>
+                <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">NSF Count (90 days)</div><input type="number" id="r-sb-nsfCount" value="0" min="0" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"></div>
+                <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Payment Oppositions</div><input type="number" id="r-sb-oppositionCount" value="0" min="0" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"></div>
+                <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Avg Daily Balance ($)</div><input type="number" id="r-sb-avgDailyBalance" value="800" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"></div>
+                <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Account Age (days)</div><input type="number" id="r-sb-accountAgeDays" value="365" min="0" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"></div>
+                <div style="grid-column:1/-1"><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(160,154,245,.6);margin-bottom:3px">Income Regularity</div><select id="r-sb-incomeRegularity" style="width:100%;padding:6px 10px;background:rgba(8,6,20,.8);border:1px solid rgba(160,154,245,.2);border-radius:6px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none"><option value="consistent">consistent</option><option value="variable">variable</option><option value="irregular">irregular</option><option value="undetected">undetected</option></select></div>
+              </div>
+              <button type="button" class="btn-demo" onclick="rSimulateFlinks()" style="width:100%;justify-content:center">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+                Connect with Sandbox Data
+              </button>
             </div>
           </div>
-          <!-- Real Flinks iframe — uncomment when ready:
-          <iframe id="r-flinks-iframe"
-            src="https://YOUR_FLINKS_CLIENT_ID-iframe.private.fin.ag/v2/?institutionFilterEnable=false&country=CA&language=en&innerRedirect=true&demo=false&backgroundColor=0D0B1F&foregroundColor1=ffffff&desktopLayout=true&headerEnable=false&progressMeterEnable=true"
-            style="width:100%;height:520px;border:none;border-radius:12px;"
-            allow="camera" title="Flinks Bank Connection">
-          </iframe>
-          -->
-          <button class="btn-demo" onclick="rSimulateFlinks()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
-            Simulate Bank Connection (Sandbox)
-          </button>
         </div>
         <div class="flinks-connected" id="r-flinks-connected">
           <div class="connected-check">&#9989;</div>
@@ -2285,13 +2344,76 @@ window.addEventListener('message', function(e) {
   }
 });
 
+// ── SANDBOX MOCK SCENARIOS ────────────────────────────────────────────────────
+const SANDBOX_TIERS = {
+  gold:   { verifiedIncome:3000, fixedObligations:400,  nsfCount:0, oppositionCount:0, accountAgeDays:365, avgDailyBalance:800,  incomeRegularity:'consistent' },
+  green:  { verifiedIncome:2200, fixedObligations:500,  nsfCount:1, oppositionCount:0, accountAgeDays:180, avgDailyBalance:350,  incomeRegularity:'consistent' },
+  blue:   { verifiedIncome:1800, fixedObligations:700,  nsfCount:3, oppositionCount:0, accountAgeDays:120, avgDailyBalance:100,  incomeRegularity:'variable'   },
+  yellow: { verifiedIncome:1600, fixedObligations:900,  nsfCount:5, oppositionCount:0, accountAgeDays:90,  avgDailyBalance:60,   incomeRegularity:'irregular'  },
+  orange: { verifiedIncome:1800, fixedObligations:600,  nsfCount:6, oppositionCount:1, accountAgeDays:200, avgDailyBalance:20,   incomeRegularity:'irregular'  },
+  red:    { verifiedIncome:1200, fixedObligations:1000, nsfCount:8, oppositionCount:2, accountAgeDays:300, avgDailyBalance:20,   incomeRegularity:'irregular'  },
+  hard_decline_no_income:   { verifiedIncome:0,    fixedObligations:0,   nsfCount:0, oppositionCount:0, accountAgeDays:200, avgDailyBalance:50,   incomeRegularity:'undetected' },
+  hard_decline_new_account: { verifiedIncome:2500, fixedObligations:300, nsfCount:0, oppositionCount:0, accountAgeDays:30,  avgDailyBalance:400,  incomeRegularity:'consistent' },
+};
+
+let sandboxTier = 'gold'; // tracks which tier button is highlighted
+
+function loadSandboxTier(tier) {
+  const d = SANDBOX_TIERS[tier];
+  if (!d) return;
+  sandboxTier = tier;
+
+  // Set value helper
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.value=val; };
+
+  // Fill new loan panel fields
+  set('sb-verifiedIncome',    d.verifiedIncome);
+  set('sb-fixedObligations',  d.fixedObligations);
+  set('sb-nsfCount',          d.nsfCount);
+  set('sb-oppositionCount',   d.oppositionCount);
+  set('sb-avgDailyBalance',   d.avgDailyBalance);
+  set('sb-accountAgeDays',    d.accountAgeDays);
+  set('sb-incomeRegularity',  d.incomeRegularity);
+
+  // Fill renewal panel fields (same values, r- prefix)
+  set('r-sb-verifiedIncome',    d.verifiedIncome);
+  set('r-sb-fixedObligations',  d.fixedObligations);
+  set('r-sb-nsfCount',          d.nsfCount);
+  set('r-sb-oppositionCount',   d.oppositionCount);
+  set('r-sb-avgDailyBalance',   d.avgDailyBalance);
+  set('r-sb-accountAgeDays',    d.accountAgeDays);
+  set('r-sb-incomeRegularity',  d.incomeRegularity);
+
+  // Highlight active tier button (both panels share same IDs)
+  ['gold','green','blue','yellow','orange','red'].forEach(t => {
+    const btn = document.getElementById('stier-'+t);
+    if (btn) btn.style.outline = t===tier ? '2px solid currentColor' : 'none';
+  });
+}
+
 function simulateFlinks() {
-  const banks=['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
-  const bank=banks[Math.floor(Math.random()*banks.length)];
-  const mask=String(Math.floor(1000+Math.random()*9000));
-  flinksId='sandbox-green-'+Math.random().toString(36).substr(2,9);
-  flinksData={loginId:flinksId,institution:bank,sandbox:true};
-  onFlinksSuccess({loginId:flinksId,institution:bank,accountType:'Chequing',accountMask:'\u2022\u2022\u2022\u2022'+mask});
+  const banks = ['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
+  const bank  = banks[Math.floor(Math.random()*banks.length)];
+  const mask  = String(Math.floor(1000+Math.random()*9000));
+
+  // Read editable signal fields — encode into loginId for backend
+  const get = id => { const el=document.getElementById(id); return el?el.value:''; };
+  const signals = {
+    verifiedIncome:    parseFloat(get('sb-verifiedIncome'))   || 3000,
+    fixedObligations:  parseFloat(get('sb-fixedObligations')) || 400,
+    nsfCount:          parseInt(get('sb-nsfCount'))           || 0,
+    oppositionCount:   parseInt(get('sb-oppositionCount'))    || 0,
+    avgDailyBalance:   parseFloat(get('sb-avgDailyBalance'))  || 800,
+    accountAgeDays:    parseInt(get('sb-accountAgeDays'))     || 365,
+    incomeRegularity:  get('sb-incomeRegularity')             || 'consistent',
+  };
+
+  // Encode signals as base64 in the loginId so the backend can decode them
+  const encoded = btoa(JSON.stringify(signals));
+  flinksId = `sandbox-${sandboxTier}-${Math.random().toString(36).substr(2,6)}-${encoded}`;
+  flinksData = { loginId: flinksId, institution: bank, sandbox: true, signals };
+
+  onFlinksSuccess({ loginId: flinksId, institution: bank, accountType: 'Chequing', accountMask: '\u2022\u2022\u2022\u2022'+mask });
 }
 
 function onFlinksSuccess(d) {
@@ -2398,6 +2520,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if(esig)esig.addEventListener('input',()=>updateLineFill('line-2-fill',esig.value.trim().length>0?60:0));
   const rEsig=document.getElementById('r-esig');
   if(rEsig)rEsig.addEventListener('input',()=>updateLineFill('r-line-2-fill',rEsig.value.trim().length>0?60:0));
+
+  // Pre-load Gold tier signals on page load
+  loadSandboxTier('gold');
 });
 
 // ─── SUBMIT NEW LOAN ──────────────────────────────────────────────────
@@ -2553,8 +2678,20 @@ function rSimulateFlinks(){
   const banks=['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','National Bank'];
   const bank=banks[Math.floor(Math.random()*banks.length)];
   const mask=String(Math.floor(1000+Math.random()*9000));
-  rFlinksId='sandbox-green-'+Math.random().toString(36).substr(2,9);
-  rFlinksData={loginId:rFlinksId,institution:bank,sandbox:true};
+
+  const get = id => { const el=document.getElementById(id); return el?el.value:''; };
+  const signals = {
+    verifiedIncome:   parseFloat(get('r-sb-verifiedIncome'))   || 3000,
+    fixedObligations: parseFloat(get('r-sb-fixedObligations')) || 400,
+    nsfCount:         parseInt(get('r-sb-nsfCount'))           || 0,
+    oppositionCount:  parseInt(get('r-sb-oppositionCount'))    || 0,
+    avgDailyBalance:  parseFloat(get('r-sb-avgDailyBalance'))  || 800,
+    accountAgeDays:   parseInt(get('r-sb-accountAgeDays'))     || 365,
+    incomeRegularity: get('r-sb-incomeRegularity')             || 'consistent',
+  };
+  const encoded = btoa(JSON.stringify(signals));
+  rFlinksId=`sandbox-${sandboxTier}-${Math.random().toString(36).substr(2,6)}-${encoded}`;
+  rFlinksData={loginId:rFlinksId,institution:bank,sandbox:true,signals};
   rOnFlinksSuccess({institution:bank,accountType:'Chequing',accountMask:'\u2022\u2022\u2022\u2022'+mask});
 }
 
