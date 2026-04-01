@@ -1379,13 +1379,22 @@ function toggleNote(key){
 /* ── NOTES FEED ── */
 async function setApprovedAmount(loanId, amount){
   if(!loanId) return;
+  const loan=allLoans.find(l=>l.id===loanId);
+
+  // Update loan principal + balance (columns that exist on loans table)
   const {error}=await sb.from('loans').update({
     principal:         amount,
-    approved_amount:   amount,
     remaining_balance: amount,
   }).eq('id',loanId);
   if(error){showToast('Failed: '+error.message,true);return;}
-  const loan=allLoans.find(l=>l.id===loanId);
+
+  // Also stamp approved_amount on the linked application
+  if(loan?.ref){
+    await sb.from('loan_applications').update({approved_amount:amount}).eq('ref',loan.ref);
+    const a=allApps.find(x=>x.ref===loan.ref);
+    if(a) a.approved_amount=amount;
+  }
+
   if(loan){ loan.principal=amount; loan.remaining_balance=amount; }
   showToast('✓ Approved amount set to $'+amount.toLocaleString());
 }
