@@ -1736,7 +1736,7 @@ const WEBHOOK_RENEWAL = 'https://web-production-31ce.up.railway.app/api/apply/re
 // Set to false when you have real Flinks credentials and are ready for live traffic.
 // In sandbox mode: forms show dummy fill button, submission shows under-review screen
 // without calling the backend.
-const IS_SANDBOX_FORM = true; // ← change to false when going live
+const IS_SANDBOX_FORM = false; // live mode — submissions go to Railway backend
 
 if (IS_SANDBOX_FORM) {
   // Pre-check all checkboxes as soon as DOM is ready
