@@ -1738,156 +1738,182 @@ const WEBHOOK_RENEWAL = 'https://web-production-31ce.up.railway.app/api/apply/re
 // without calling the backend.
 const IS_SANDBOX_FORM = false; // live mode — submissions go to Railway backend
 
-if (IS_SANDBOX_FORM) {
-  // Pre-check all checkboxes as soon as DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    [
-      'n-read-contract','n-consent-terms','n-consent-contact',
-      'c-pad',
-      'r-read-contract','r-consent-terms','r-consent-contact',
-      'r-c-pad',
-    ].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.checked = true;
-    });
+// ── TESTING AIDS — remove before opening to real applicants ───────────────────
+// Pre-check all checkboxes on every load (speeds up testing)
+document.addEventListener('DOMContentLoaded', () => {
+  [
+    'n-read-contract','n-consent-terms','n-consent-contact',
+    'c-pad',
+    'r-read-contract','r-consent-terms','r-consent-contact',
+    'r-c-pad',
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = true;
   });
-} else {
-  // Hide sandbox-only UI in production
-  document.addEventListener('DOMContentLoaded', () => {
-    ['sandbox-fill-new','sandbox-fill-renewal'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-  });
+});
+
+// ── RANDOM DATA HELPERS ───────────────────────────────────────────────────────
+const RAND = {
+  pick: arr => arr[Math.floor(Math.random() * arr.length)],
+  int:  (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
+  firstNames: ['Marie','Jean','Sophie','Alexandre','Isabelle','Philippe','Nathalie','François','Émilie','Mathieu','Caroline','David','Stéphanie','Olivier','Mélanie','Patrick','Julie','Simon','Valérie','Maxime'],
+  lastNames:  ['Tremblay','Gagnon','Roy','Côté','Bouchard','Gauthier','Morin','Lavoie','Fortin','Gagné','Ouellet','Pelletier','Leblanc','Paradis','Bergeron','Lacroix','Girard','Thibault','Desrosiers','Savard'],
+  streets:    ['Rue Principale','Avenue du Parc','Boulevard René-Lévesque','Rue Saint-Denis','Avenue Laurier','Chemin des Érables','Rue des Pins','Boulevard Taschereau','Rue Sainte-Catherine','Avenue du Mont-Royal'],
+  cities:     [['Montreal','QC','H2X 1A1'],['Quebec City','QC','G1R 2J5'],['Toronto','ON','M5V 2T6'],['Ottawa','ON','K1A 0A6'],['Halifax','NS','B3J 1A1'],['Moncton','NB','E1C 1B1'],['Charlottetown','PE','C1A 1H1'],['St. John\'s','NL','A1C 5H7']],
+  employers:  ['Bombardier Inc.','Bell Canada','Hydro-Québec','Desjardins Group','CGI Group','Metro Inc.','Saputo Inc.','Couche-Tard','Air Canada','CN Rail','SNC-Lavalin','Telus','Rogers Communications','RBC Royal Bank','TD Canada Trust'],
+  jobs:       ['Customer Service Representative','Software Developer','Project Manager','Financial Analyst','Sales Associate','Operations Manager','Marketing Coordinator','Human Resources Advisor','IT Specialist','Administrative Assistant'],
+  relations:  ['spouse','parent','sibling','friend','colleague'],
+};
+
+function randEmail(fn, ln) {
+  const sep = RAND.pick(['.','_','']);
+  const domain = RAND.pick(['gmail.com','hotmail.com','outlook.com','yahoo.ca','icloud.com']);
+  return (fn + sep + ln).toLowerCase().replace(/[^a-z0-9._]/g,'') + RAND.int(1,99) + '@' + domain;
+}
+function randPhone() {
+  const area = RAND.pick(['514','438','450','418','819','613','416','647','902','506']);
+  return '(' + area + ') 555-' + String(RAND.int(1000,9999));
+}
+function randSIN() {
+  // Valid format only — not a real SIN
+  return RAND.int(100,999) + ' ' + RAND.int(100,999) + ' ' + RAND.int(100,999);
+}
+function nextPayDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + RAND.int(3, 14));
+  return d.toISOString().slice(0, 10);
+}
+function randHireDate() {
+  const y = RAND.int(2015, 2023);
+  const m = String(RAND.int(1,12)).padStart(2,'0');
+  return y + '-' + m + '-01';
 }
 
-// ── DUMMY DATA — NEW LOAN ─────────────────────────────────────────────────────
+// ── DUMMY DATA — NEW LOAN (randomised each click) ────────────────────────────
 function fillDummyNew() {
-  // Step 1 — Personal
-  document.getElementById('n-fn').value    = 'Marie';
-  document.getElementById('n-ln').value    = 'Tremblay';
-  document.getElementById('n-email').value = 'marie.tremblay@test.ca';
-  document.getElementById('n-dob').value   = '1990-04-15';
-  document.getElementById('n-hphone').value = '(514) 555-0100';
-  document.getElementById('n-cphone').value = '(514) 555-0123';
+  const fn  = RAND.pick(RAND.firstNames);
+  const ln  = RAND.pick(RAND.lastNames);
+  const loc = RAND.pick(RAND.cities);  // [city, prov, postal]
+  const emp = RAND.pick(RAND.employers);
+  const job = RAND.pick(RAND.jobs);
+  const sex = RAND.pick(['male','female']);
+  const freq= RAND.pick(['weekly','biweekly','monthly']);
+  const fullName = fn + ' ' + ln;
+
+  // Personal
+  document.getElementById('n-fn').value    = fn;
+  document.getElementById('n-ln').value    = ln;
+  document.getElementById('n-email').value = randEmail(fn, ln);
+  document.getElementById('n-dob').value   = RAND.int(1968,2000) + '-' + String(RAND.int(1,12)).padStart(2,'0') + '-' + String(RAND.int(1,28)).padStart(2,'0');
+  document.getElementById('n-hphone').value = randPhone();
+  document.getElementById('n-cphone').value = randPhone();
   fmtPhone(document.getElementById('n-hphone'));
   fmtPhone(document.getElementById('n-cphone'));
 
   // Sex
-  const sexMale = document.querySelector('input[name="n-sex"][value="male"]');
-  if (sexMale) sexMale.checked = true;
+  const sexEl = document.querySelector('input[name="n-sex"][value="'+sex+'"]');
+  if (sexEl) sexEl.checked = true;
 
   // SIN
   const sin = document.getElementById('n-sin');
-  if (sin) { sin.value = '046 454 286'; fmtSin(sin); }
+  if (sin) { sin.value = randSIN(); fmtSin(sin); }
 
   // Address
-  document.getElementById('n-addr').value   = '123 Rue Principale';
-  document.getElementById('n-city').value   = 'Montreal';
-  document.getElementById('n-prov').value   = 'QC';
-  document.getElementById('n-postal').value = 'H2X 1A1';
+  document.getElementById('n-addr').value   = RAND.int(1,9999) + ' ' + RAND.pick(RAND.streets);
+  document.getElementById('n-city').value   = loc[0];
+  document.getElementById('n-prov').value   = loc[1];
+  document.getElementById('n-postal').value = loc[2];
   fmtPostal(document.getElementById('n-postal'));
 
   // Employment
   const incSrc = document.getElementById('n-income-src');
   if (incSrc) { incSrc.value = 'employed'; toggleIncomeFields('n'); }
   const employer = document.getElementById('n-employer');
-  if (employer) employer.value = 'Acme Corporation';
+  if (employer) employer.value = emp;
   const workPhone = document.getElementById('n-work-phone');
-  if (workPhone) { workPhone.value = '(514) 555-0300'; fmtPhone(workPhone); }
+  if (workPhone) { workPhone.value = randPhone(); fmtPhone(workPhone); }
   const jobDesc = document.getElementById('n-job-desc');
-  if (jobDesc) jobDesc.value = 'Sales Associate';
+  if (jobDesc) jobDesc.value = job;
   const supervisor = document.getElementById('n-supervisor');
-  if (supervisor) supervisor.value = 'John Smith';
+  if (supervisor) supervisor.value = RAND.pick(RAND.firstNames) + ' ' + RAND.pick(RAND.lastNames);
   const hireDate = document.getElementById('n-hire-date');
-  if (hireDate) hireDate.value = '2021-03-01';
+  if (hireDate) hireDate.value = randHireDate();
   const paidBy = document.querySelector('input[name="n-paid-by"][value="direct"]');
   if (paidBy) paidBy.checked = true;
-  const payFreq = document.getElementById('n-pay-freq');
-  if (payFreq) payFreq.value = 'biweekly';
+  const payFreqEl = document.getElementById('n-pay-freq');
+  if (payFreqEl) payFreqEl.value = freq;
+  document.getElementById('n-next-pay').value = nextPayDate();
 
-  // Next pay date — next Friday
-  const nextFriday = new Date();
-  nextFriday.setDate(nextFriday.getDate() + ((5 - nextFriday.getDay() + 7) % 7 || 7));
-  document.getElementById('n-next-pay').value = nextFriday.toISOString().slice(0, 10);
-
-  // Bankruptcy radios
+  // Bankruptcy
   const bkNow  = document.querySelector('input[name="n-bankrupt-now"][value="no"]');
   const bkPast = document.querySelector('input[name="n-bankrupt-past"][value="no"]');
   if (bkNow)  bkNow.checked  = true;
   if (bkPast) bkPast.checked = true;
 
   // Safety contact
-  document.getElementById('n-sc-fn').value    = 'Jean';
-  document.getElementById('n-sc-ln').value    = 'Martin';
-  document.getElementById('n-sc-phone').value = '(514) 555-0199';
+  const scFn = RAND.pick(RAND.firstNames);
+  const scLn = RAND.pick(RAND.lastNames);
+  document.getElementById('n-sc-fn').value    = scFn;
+  document.getElementById('n-sc-ln').value    = scLn;
+  document.getElementById('n-sc-phone').value = randPhone();
   fmtPhone(document.getElementById('n-sc-phone'));
   const scRel = document.getElementById('n-sc-rel');
-  if (scRel) scRel.value = 'spouse';
+  if (scRel) scRel.value = RAND.pick(RAND.relations);
 
   // Checkboxes
   ['n-read-contract','n-consent-terms','n-consent-contact'].forEach(id => {
     const el = document.getElementById(id); if (el) el.checked = true;
   });
 
-  // E-signature (step 2) — pre-fill so it's ready when they get there
+  // E-signature
   const esig = document.getElementById('n-esig');
-  if (esig) {
-    esig.value = 'Marie Tremblay';
-    syncContractSummary();
-  }
+  if (esig) { esig.value = fullName; syncContractSummary(); }
 
-  // Trigger input events to clear any error states
+  // Trigger input events
   document.querySelectorAll('#step-1 .field-input, #step-1 .field-select').forEach(el => {
     el.dispatchEvent(new Event('input'));
     el.dispatchEvent(new Event('change'));
   });
 }
 
-// ── DUMMY DATA — RENEWAL ──────────────────────────────────────────────────────
+// ── DUMMY DATA — RENEWAL (randomised each click) ──────────────────────────────
 function fillDummyRenewal() {
+  const fn  = RAND.pick(RAND.firstNames);
+  const ln  = RAND.pick(RAND.lastNames);
+  const freq= RAND.pick(['weekly','biweekly','monthly']);
+  const fullName = fn + ' ' + ln;
+
   // Personal
-  document.getElementById('r-fn').value    = 'Jean';
-  document.getElementById('r-ln').value    = 'Bouchard';
-  document.getElementById('r-email').value = 'jean.bouchard@test.ca';
-  document.getElementById('r-dob').value   = '1985-08-22';
-  document.getElementById('r-cphone').value = '(418) 555-0200';
-  document.getElementById('r-hphone').value = '(418) 555-0201';
+  document.getElementById('r-fn').value    = fn;
+  document.getElementById('r-ln').value    = ln;
+  document.getElementById('r-email').value = randEmail(fn, ln);
+  document.getElementById('r-dob').value   = RAND.int(1968,2000) + '-' + String(RAND.int(1,12)).padStart(2,'0') + '-' + String(RAND.int(1,28)).padStart(2,'0');
+  document.getElementById('r-cphone').value = randPhone();
+  document.getElementById('r-hphone').value = randPhone();
   fmtPhone(document.getElementById('r-cphone'));
   fmtPhone(document.getElementById('r-hphone'));
 
-  // Address — no change
+  // No changes to address/job/banking
   const addrNo = document.querySelector('input[name="r-addr-changed"][value="no"]');
   if (addrNo) { addrNo.checked = true; toggleRenew('r-addr-fields', 'no'); }
-
-  // Employment — no change
   const jobNo = document.querySelector('input[name="r-job-changed"][value="no"]');
   if (jobNo) { jobNo.checked = true; toggleRenew('r-job-fields', 'no'); }
-
-  // Pay frequency
-  const payFreq = document.getElementById('r-pay-freq');
-  if (payFreq) payFreq.value = 'biweekly';
-
-  // Banking — no change
   const bankNo = document.querySelector('input[name="r-bank-changed"][value="no"]');
   if (bankNo) { bankNo.checked = true; toggleRenew('r-bank-fields', 'no'); }
 
-  // Next pay date
-  const nextFriday = new Date();
-  nextFriday.setDate(nextFriday.getDate() + ((5 - nextFriday.getDay() + 7) % 7 || 7));
-  document.getElementById('r-next-pay').value = nextFriday.toISOString().slice(0, 10);
+  // Pay frequency & next pay
+  const payFreqEl = document.getElementById('r-pay-freq');
+  if (payFreqEl) payFreqEl.value = freq;
+  document.getElementById('r-next-pay').value = nextPayDate();
 
   // Checkboxes
   ['r-read-contract','r-consent-terms','r-consent-contact'].forEach(id => {
     const el = document.getElementById(id); if (el) el.checked = true;
   });
 
-  // E-signature (step 2)
+  // E-signature
   const esig = document.getElementById('r-esig');
-  if (esig) {
-    esig.value = 'Jean Bouchard';
-    rSyncContractSummary();
-  }
+  if (esig) { esig.value = fullName; rSyncContractSummary(); }
 
   // Trigger input events
   document.querySelectorAll('#r-step-1 .field-input, #r-step-1 .field-select').forEach(el => {
@@ -1895,7 +1921,6 @@ function fillDummyRenewal() {
     el.dispatchEvent(new Event('change'));
   });
 }
-
 // ─── AMOUNT ──────────────────────────────────────────────────────────
 let loanAmount = 300;
 const APR = 0.23;
