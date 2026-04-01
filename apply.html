@@ -1729,13 +1729,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 </main>
 
 <script>
-const WEBHOOK_NEW     = 'https://YOUR_BACKEND_URL/api/apply/new';
-const WEBHOOK_RENEWAL = 'https://YOUR_BACKEND_URL/api/apply/renewal';
+const WEBHOOK_NEW     = 'https://web-production-31ce.up.railway.app/api/apply/new';
+const WEBHOOK_RENEWAL = 'https://web-production-31ce.up.railway.app/api/apply/renewal';
 
 // ── SANDBOX MODE ──────────────────────────────────────────────────────────────
-// Detected when webhooks are still placeholder URLs.
-// Remove the fillDummy* functions and sandbox-fill divs before go-live.
-const IS_SANDBOX_FORM = WEBHOOK_NEW.includes('YOUR_WEBHOOK');
+// Set to false when you have real Flinks credentials and are ready for live traffic.
+// In sandbox mode: forms show dummy fill button, submission shows under-review screen
+// without calling the backend.
+const IS_SANDBOX_FORM = true; // ← change to false when going live
 
 if (IS_SANDBOX_FORM) {
   // Pre-check all checkboxes as soon as DOM is ready
