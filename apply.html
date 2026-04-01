@@ -2434,7 +2434,7 @@ async function submitNew() {
       employer:gv('n-employer'), workPhone:gv('n-work-phone'),
       jobDesc:gv('n-job-desc'), supervisor:gv('n-supervisor'),
       hireDate:gv('n-hire-date'), eiStart:gv('n-ei-start'),
-      paidBy:gr('n-paid-by'), payFreq:gv('n-pay-freq'), nextPay:gv('n-next-pay'),
+      paidBy:gr('n-paid-by'), payFrequency:gv('n-pay-freq'), nextPay:gv('n-next-pay'),
     },
     loan:{
       amount:loanAmount, fundMethod:gr('n-fund-method'),
@@ -2617,7 +2617,7 @@ async function submitRenewal() {
       changed:gr('r-job-changed'),
       source:gv('r-income-src'), otherIncome:gv('r-other-income'),
       hireDate:gv('r-hire-date'), eiStart:gv('r-ei-start'),
-      payFreq:gv('r-pay-freq'),
+      payFrequency:gv('r-pay-freq'), nextPay:gv('r-next-pay'),
     },
     banking:{
       changed:gr('r-bank-changed'),
@@ -2627,7 +2627,7 @@ async function submitRenewal() {
     },
     loan:{
       amount:parseInt(document.getElementById('r-amount').value)||800,
-      nextPay:gv('r-next-pay'), fundMethod:gr('r-fund-method'),
+      fundMethod:gr('r-fund-method'),
     },
   };
   await doSubmit(WEBHOOK_RENEWAL, payload, ref, 'renewal');
