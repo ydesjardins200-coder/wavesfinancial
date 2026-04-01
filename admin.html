@@ -137,13 +137,13 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .hs-chk{color:var(--muted);} .hs-chk .hsdot{background:rgba(160,154,245,.3);animation:dpulse 1s infinite;}
 
 /* CLIENT PAGE */
-#client-page{display:none;flex:1;overflow-y:auto;}
+#client-page{display:none;flex:1;overflow:hidden;flex-direction:column;}
 .cp-header{background:rgba(16,14,46,.9);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);}
 .back-btn{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--periwinkle);background:rgba(91,82,216,.1);border:1px solid rgba(91,82,216,.25);border-radius:8px;padding:7px 14px;cursor:pointer;transition:all .2s;}
 .back-btn:hover{background:rgba(91,82,216,.2);}
 .cp-title{font-size:1rem;font-weight:800;}
 .cp-sub{font-size:.7rem;color:var(--muted);}
-.cp-body{padding:24px;max-width:1100px;margin:0 auto;}
+.cp-body{overflow:hidden;flex:1;display:flex;flex-direction:column;}
 
 /* CRM SECTIONS */
 .crm-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
@@ -228,6 +228,39 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
 /* CONTRACT SECTION */
 .contract-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+
+
+/* ── CLIENT PAGE TABS + SIDEBAR ────────────────────────────────────────────── */
+.cp-layout{display:grid;grid-template-columns:1fr 300px;gap:0;height:calc(100vh - 108px);overflow:hidden;}
+.cp-main{overflow-y:auto;display:flex;flex-direction:column;}
+.cp-sidebar{border-left:1px solid var(--border);background:rgba(8,6,20,.5);display:flex;flex-direction:column;overflow:hidden;}
+
+/* Client tabs */
+.cp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:rgba(16,14,46,.6);flex-shrink:0;}
+.cp-tab{padding:10px 16px;font-size:.73rem;font-weight:600;cursor:pointer;background:none;border:none;color:var(--muted);font-family:var(--font);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;}
+.cp-tab:hover{color:var(--white);}
+.cp-tab.active{color:var(--periwinkle);border-bottom-color:var(--iris);background:rgba(91,82,216,.06);}
+.cp-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;border-radius:8px;background:rgba(160,154,245,.15);color:var(--muted);font-size:.58rem;font-weight:800;margin-left:4px;padding:0 3px;}
+
+/* Tab panels */
+.cp-panel{display:none;padding:20px;flex:1;}
+.cp-panel.active{display:block;}
+
+/* Sidebar */
+.sidebar-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-title{font-size:.72rem;font-weight:800;color:var(--white);margin-bottom:2px;}
+.sidebar-sub{font-size:.62rem;color:var(--muted);}
+.sidebar-feed{flex:1;overflow-y:auto;padding:10px 12px;}
+.sidebar-compose{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;}
+.sidebar-textarea{width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.78rem;resize:none;height:64px;outline:none;transition:border-color .15s;}
+.sidebar-textarea:focus{border-color:var(--iris);}
+.sidebar-send{width:100%;margin-top:6px;padding:8px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.sidebar-send:hover{opacity:.9;}
+
+@media(max-width:1000px){
+  .cp-layout{grid-template-columns:1fr;}
+  .cp-sidebar{display:none;}
+}
 
 /* NOTES FEED */
 .note-entry{padding:9px 12px;border-radius:7px;background:rgba(8,6,20,.5);border:1px solid var(--border);margin-bottom:6px;}
@@ -554,7 +587,7 @@ async function openClientByAppId(appId){
 async function openClient(clientId, highlightRef){
   document.getElementById('list-view').style.display='none';
   document.getElementById('health-view').style.display='none';
-  document.getElementById('client-page').style.display='block';
+  document.getElementById('client-page').style.display='flex';
   document.getElementById('cp-body').innerHTML='<div class="loading-row"><div class="spinner"></div> Loading client…</div>';
   window.scrollTo(0,0);
 
@@ -610,141 +643,177 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
   const name=((client.first_name||'')+' '+(client.last_name||'')).trim()||'—';
   const memberSince=client.created_at?new Date(client.created_at).toLocaleDateString('en-CA',{month:'short',year:'numeric'}):'—';
   const activeLoans=loans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
-
-  // Find most recent application for scoring display
-  const latestApp=apps[0];
-  const s=latestApp?.signals||{};
+  const tc='t-'+(client.latest_tier||'green');
 
   document.getElementById('cp-body').innerHTML=`
-    <!-- CLIENT HERO -->
-    <div class="client-hero">
-      <div>
-        <div class="ch-name">${name}</div>
-        <div class="ch-email">${client.email}</div>
-        <div class="ch-meta">
-          <div class="ch-stat"><div class="ch-stat-val">${client.total_loans||0}</div><div class="ch-stat-label">Total Loans</div></div>
-          <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_borrowed||0).toLocaleString()}</div><div class="ch-stat-label">Total Borrowed</div></div>
-          <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_repaid||0).toLocaleString()}</div><div class="ch-stat-label">Total Repaid</div></div>
-          <div class="ch-stat"><div class="ch-stat-val">${client.total_applications||0}</div><div class="ch-stat-label">Applications</div></div>
-          <div class="ch-stat"><div class="ch-stat-val">${memberSince}</div><div class="ch-stat-label">Member Since</div></div>
+  <div class="cp-layout">
+
+    <!-- ── MAIN AREA ── -->
+    <div class="cp-main">
+
+      <!-- Client hero -->
+      <div class="client-hero" style="border-radius:0;border-left:none;border-right:none;border-top:none;flex-shrink:0">
+        <div>
+          <div class="ch-name">${name}</div>
+          <div class="ch-email">${client.email}</div>
+          <div class="ch-meta">
+            <div class="ch-stat"><div class="ch-stat-val">${client.total_loans||0}</div><div class="ch-stat-label">Loans</div></div>
+            <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_borrowed||0).toLocaleString()}</div><div class="ch-stat-label">Borrowed</div></div>
+            <div class="ch-stat"><div class="ch-stat-val">$${Number(client.total_repaid||0).toLocaleString()}</div><div class="ch-stat-label">Repaid</div></div>
+            <div class="ch-stat"><div class="ch-stat-val">${client.total_applications||0}</div><div class="ch-stat-label">Applications</div></div>
+            <div class="ch-stat"><div class="ch-stat-val">${memberSince}</div><div class="ch-stat-label">Member Since</div></div>
+          </div>
+          <div class="ch-badges">
+            ${client.latest_tier?`<span class="tb ${tc}">${client.latest_tier} tier</span>`:''}
+            ${client.province?`<span style="font-size:.72rem;color:var(--muted);padding:3px 8px;border:1px solid var(--border);border-radius:100px">${client.province}</span>`:''}
+            ${client.status!=='active'?`<span class="tb t-red">${client.status}</span>`:''}
+            ${activeLoans.length?`<span style="font-size:.72rem;color:var(--teal);padding:3px 8px;border:1px solid rgba(29,233,198,.2);border-radius:100px">${activeLoans.length} active loan${activeLoans.length>1?'s':''}</span>`:''}
+          </div>
         </div>
-        <div class="ch-badges">
-          ${client.latest_tier?`<span class="tb t-${client.latest_tier}">${client.latest_tier} tier</span>`:''}
-          ${client.province?`<span style="font-size:.72rem;color:var(--muted);padding:3px 8px;border:1px solid var(--border);border-radius:100px">${client.province}</span>`:''}
-          ${client.status!=='active'?`<span class="tb t-red">${client.status}</span>`:''}
-          ${activeLoans.length?`<span style="font-size:.72rem;color:var(--teal);padding:3px 8px;border:1px solid rgba(29,233,198,.2);border-radius:100px">${activeLoans.length} active loan${activeLoans.length>1?'s':''}</span>`:''}
+        <div class="ch-actions">
+          ${client.status==='active'?
+            `<button class="ca ca-decline" onclick="suspendClient('${client.id}')">⛔ Suspend</button>`:
+            `<button class="ca ca-approve" onclick="activateClient('${client.id}')">✓ Activate</button>`}
         </div>
       </div>
-      <div class="ch-actions">
-        <button class="ca ca-note" onclick="toggleNote('client-${client.id}')">📝 Note</button>
-        ${client.status==='active'?`<button class="ca ca-decline" onclick="suspendClient('${client.id}')">⛔ Suspend</button>`:
-          `<button class="ca ca-approve" onclick="activateClient('${client.id}')">✓ Activate</button>`}
+
+      <!-- Tabs -->
+      <div class="cp-tabs">
+        <button class="cp-tab active" onclick="switchCpTab('tab-personal-${client.id}',this)">Personal</button>
+        <button class="cp-tab" onclick="switchCpTab('tab-address-${client.id}',this)">Address</button>
+        <button class="cp-tab" onclick="switchCpTab('tab-employment-${client.id}',this)">Employment</button>
+        <button class="cp-tab" onclick="switchCpTab('tab-loans-${client.id}',this)">Loan History <span class="cp-tab-count">${loans.length}</span></button>
+        <button class="cp-tab" onclick="switchCpTab('tab-apps-${client.id}',this)">Applications <span class="cp-tab-count">${apps.length}</span></button>
       </div>
-    </div>
-    <!-- NOTES FEED -->
-    <div id="client-notes-feed-${client.id}" style="margin-bottom:10px;max-height:280px;overflow-y:auto"></div>
-    <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="na-client-${client.id}" placeholder="Add a note…" style="flex:1;padding:8px 10px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;resize:none;height:60px;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--iris)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-      <button onclick="saveClientNote('${client.id}')" style="padding:9px 16px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:7px;color:var(--periwinkle);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;height:60px">💾 Add Note</button>
+
+      <!-- TAB: Personal Information -->
+      <div class="cp-panel active" id="tab-personal-${client.id}">
+        <div class="crm-sec">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            <div class="crm-sec-title" style="margin:0">Personal Information</div>
+            <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','personal')">💾 Save</button>
+          </div>
+          <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="crf"><div class="crf-label">First Name</div><input class="crf-edit" data-client-field="first_name" value="${esc(client.first_name)}"></div>
+            <div class="crf"><div class="crf-label">Last Name</div><input class="crf-edit" data-client-field="last_name" value="${esc(client.last_name)}"></div>
+            <div class="crf"><div class="crf-label">Email</div><input class="crf-edit" type="email" data-client-field="email" value="${esc(client.email)}"></div>
+            <div class="crf"><div class="crf-label">Cell Phone</div><input class="crf-edit" data-client-field="cell_phone" value="${esc(client.cell_phone)}"></div>
+            <div class="crf"><div class="crf-label">Home Phone</div><input class="crf-edit" data-client-field="home_phone" value="${esc(client.home_phone)}"></div>
+            <div class="crf"><div class="crf-label">Date of Birth</div><input class="crf-edit" type="date" data-client-field="dob" value="${esc(client.dob)}"></div>
+            <div class="crf"><div class="crf-label">Sex</div>
+              <select class="crf-edit" data-client-field="sex">
+                <option value="">—</option>
+                <option value="male" ${client.sex==='male'?'selected':''}>Male</option>
+                <option value="female" ${client.sex==='female'?'selected':''}>Female</option>
+                <option value="other" ${client.sex==='other'?'selected':''}>Other</option>
+              </select>
+            </div>
+            <div class="crf"><div class="crf-label">Status</div>
+              <select class="crf-edit" data-client-field="status">
+                <option value="active" ${client.status==='active'?'selected':''}>Active</option>
+                <option value="suspended" ${client.status==='suspended'?'selected':''}>Suspended</option>
+                <option value="blacklisted" ${client.status==='blacklisted'?'selected':''}>Blacklisted</option>
+              </select>
+            </div>
+            <div class="crf"><div class="crf-label">Member Since</div><div class="crf-val" style="padding:5px 0;font-size:.82rem">${memberSince}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Address -->
+      <div class="cp-panel" id="tab-address-${client.id}">
+        <div class="crm-sec">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            <div class="crm-sec-title" style="margin:0">Address</div>
+            <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','address')">💾 Save</button>
+          </div>
+          <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="crf" style="grid-column:1/3"><div class="crf-label">Street Address</div><input class="crf-edit" data-client-field="address" value="${esc(client.address)}"></div>
+            <div class="crf"><div class="crf-label">Apt / Unit</div><input class="crf-edit" data-client-field="apt" value="${esc(client.apt)}"></div>
+            <div class="crf"><div class="crf-label">City</div><input class="crf-edit" data-client-field="city" value="${esc(client.city)}"></div>
+            <div class="crf"><div class="crf-label">Province</div>
+              <select class="crf-edit" data-client-field="province">
+                <option value="">—</option>
+                ${['BC','AB','SK','MB','ON','QC','NB','NS','PE','NL'].map(p=>`<option value="${p}" ${client.province===p?'selected':''}>${p}</option>`).join('')}
+              </select>
+            </div>
+            <div class="crf"><div class="crf-label">Postal Code</div><input class="crf-edit" data-client-field="postal" value="${esc(client.postal)}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Employment -->
+      <div class="cp-panel" id="tab-employment-${client.id}">
+        <div class="crm-sec">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            <div class="crm-sec-title" style="margin:0">Employment</div>
+            <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','employment')">💾 Save</button>
+          </div>
+          <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="crf"><div class="crf-label">Income Source</div>
+              <select class="crf-edit" data-client-field="employment_status">
+                <option value="">—</option>
+                ${['employed','self-employed','ei','disability','retirement','other'].map(v=>`<option value="${v}" ${client.employment_status===v?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </div>
+            <div class="crf"><div class="crf-label">Employer</div><input class="crf-edit" data-client-field="employer" value="${esc(client.employer)}"></div>
+            <div class="crf"><div class="crf-label">Work Phone</div><input class="crf-edit" data-client-field="work_phone" value="${esc(client.work_phone)}"></div>
+            <div class="crf"><div class="crf-label">Job Description</div><input class="crf-edit" data-client-field="job_desc" value="${esc(client.job_desc)}"></div>
+            <div class="crf"><div class="crf-label">Hire Date</div><input class="crf-edit" type="date" data-client-field="hire_date" value="${esc(client.hire_date)}"></div>
+            <div class="crf"><div class="crf-label">Paid By</div>
+              <select class="crf-edit" data-client-field="paid_by">
+                <option value="">—</option>
+                <option value="direct" ${client.paid_by==='direct'?'selected':''}>Direct Deposit</option>
+                <option value="cheque" ${client.paid_by==='cheque'?'selected':''}>Cheque</option>
+              </select>
+            </div>
+            <div class="crf"><div class="crf-label">Pay Frequency</div>
+              <select class="crf-edit" data-client-field="pay_frequency">
+                <option value="">—</option>
+                ${['weekly','biweekly','semi-monthly','monthly'].map(v=>`<option value="${v}" ${client.pay_frequency===v?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </div>
+            <div class="crf"><div class="crf-label">Declared Income / mo</div><input class="crf-edit" type="number" data-client-field="declared_monthly_income" value="${client.declared_monthly_income||''}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Loan History -->
+      <div class="cp-panel" id="tab-loans-${client.id}">
+        ${loans.length?loans.map(l=>loanHistoryCard(l,schedMap[l.id]||[],contractMap[l.id],client,apps,highlightRef)).join(''):`
+          <div style="text-align:center;padding:40px 20px;color:var(--muted)">
+            <div style="font-size:2rem;margin-bottom:10px">💳</div>
+            No loans on file yet.
+          </div>`}
+      </div>
+
+      <!-- TAB: Application History -->
+      <div class="cp-panel" id="tab-apps-${client.id}">
+        ${apps.length?apps.map(a=>appHistoryRow(a,loans,schedMap)).join(''):`
+          <div style="text-align:center;padding:40px 20px;color:var(--muted)">
+            <div style="font-size:2rem;margin-bottom:10px">📋</div>
+            No applications yet.
+          </div>`}
+      </div>
+
+    </div><!-- /cp-main -->
+
+    <!-- ── SIDEBAR: NOTES ── -->
+    <div class="cp-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">📝 Notes</div>
+        <div class="sidebar-sub">${name} · incremental log</div>
+      </div>
+      <div class="sidebar-feed" id="client-notes-feed-${client.id}">
+        <div class="note-empty">Loading notes…</div>
+      </div>
+      <div class="sidebar-compose">
+        <textarea class="sidebar-textarea" id="na-client-${client.id}" placeholder="Add a note — visible to all agents…" onkeydown="if(event.key==='Enter'&&event.ctrlKey)saveClientNote('${client.id}')"></textarea>
+        <button class="sidebar-send" onclick="saveClientNote('${client.id}')">Add Note (Ctrl+Enter)</button>
+      </div>
     </div>
 
-    <!-- SECTION 1: PERSONAL INFORMATION -->
-    <div class="crm-sec" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
-        <div class="crm-sec-title" style="margin:0">Personal Information</div>
-        <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','personal')">💾 Save</button>
-      </div>
-      <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="crf"><div class="crf-label">First Name</div><input class="crf-edit" data-client-field="first_name" value="${esc(client.first_name)}"></div>
-        <div class="crf"><div class="crf-label">Last Name</div><input class="crf-edit" data-client-field="last_name" value="${esc(client.last_name)}"></div>
-        <div class="crf"><div class="crf-label">Email</div><input class="crf-edit" type="email" data-client-field="email" value="${esc(client.email)}"></div>
-        <div class="crf"><div class="crf-label">Cell Phone</div><input class="crf-edit" data-client-field="cell_phone" value="${esc(client.cell_phone)}"></div>
-        <div class="crf"><div class="crf-label">Home Phone</div><input class="crf-edit" data-client-field="home_phone" value="${esc(client.home_phone)}"></div>
-        <div class="crf"><div class="crf-label">Date of Birth</div><input class="crf-edit" type="date" data-client-field="dob" value="${esc(client.dob)}"></div>
-        <div class="crf"><div class="crf-label">Sex</div>
-          <select class="crf-edit" data-client-field="sex">
-            <option value="">—</option>
-            <option value="male" ${client.sex==='male'?'selected':''}>Male</option>
-            <option value="female" ${client.sex==='female'?'selected':''}>Female</option>
-            <option value="other" ${client.sex==='other'?'selected':''}>Other</option>
-          </select>
-        </div>
-        <div class="crf"><div class="crf-label">Status</div>
-          <select class="crf-edit" data-client-field="status">
-            <option value="active" ${client.status==='active'?'selected':''}>Active</option>
-            <option value="suspended" ${client.status==='suspended'?'selected':''}>Suspended</option>
-            <option value="blacklisted" ${client.status==='blacklisted'?'selected':''}>Blacklisted</option>
-          </select>
-        </div>
-        <div class="crf"><div class="crf-label">Member Since</div><div class="crf-val" style="padding:5px 0">${client.created_at?new Date(client.created_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div></div>
-      </div>
-    </div>
-
-    <!-- SECTION 2: ADDRESS -->
-    <div class="crm-sec" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
-        <div class="crm-sec-title" style="margin:0">Address</div>
-        <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','address')">💾 Save</button>
-      </div>
-      <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="crf" style="grid-column:1/3"><div class="crf-label">Street Address</div><input class="crf-edit" data-client-field="address" value="${esc(client.address)}"></div>
-        <div class="crf"><div class="crf-label">Apt / Unit</div><input class="crf-edit" data-client-field="apt" value="${esc(client.apt)}"></div>
-        <div class="crf"><div class="crf-label">City</div><input class="crf-edit" data-client-field="city" value="${esc(client.city)}"></div>
-        <div class="crf"><div class="crf-label">Province</div>
-          <select class="crf-edit" data-client-field="province">
-            <option value="">—</option>
-            ${['BC','AB','SK','MB','ON','QC','NB','NS','PE','NL'].map(p=>`<option value="${p}" ${client.province===p?'selected':''}>${p}</option>`).join('')}
-          </select>
-        </div>
-        <div class="crf"><div class="crf-label">Postal Code</div><input class="crf-edit" data-client-field="postal" value="${esc(client.postal)}"></div>
-      </div>
-    </div>
-
-    <!-- SECTION 3: EMPLOYMENT -->
-    <div class="crm-sec" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">
-        <div class="crm-sec-title" style="margin:0">Employment</div>
-        <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','employment')">💾 Save</button>
-      </div>
-      <div class="crm-fields" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="crf"><div class="crf-label">Income Source</div>
-          <select class="crf-edit" data-client-field="employment_status">
-            <option value="">—</option>
-            ${['employed','self-employed','ei','disability','retirement','other'].map(v=>`<option value="${v}" ${client.employment_status===v?'selected':''}>${v}</option>`).join('')}
-          </select>
-        </div>
-        <div class="crf"><div class="crf-label">Employer</div><input class="crf-edit" data-client-field="employer" value="${esc(client.employer)}"></div>
-        <div class="crf"><div class="crf-label">Work Phone</div><input class="crf-edit" data-client-field="work_phone" value="${esc(client.work_phone)}"></div>
-        <div class="crf"><div class="crf-label">Job Description</div><input class="crf-edit" data-client-field="job_desc" value="${esc(client.job_desc)}"></div>
-        <div class="crf"><div class="crf-label">Hire Date</div><input class="crf-edit" type="date" data-client-field="hire_date" value="${esc(client.hire_date)}"></div>
-        <div class="crf"><div class="crf-label">Paid By</div>
-          <select class="crf-edit" data-client-field="paid_by">
-            <option value="">—</option>
-            <option value="direct" ${client.paid_by==='direct'?'selected':''}>Direct Deposit</option>
-            <option value="cheque" ${client.paid_by==='cheque'?'selected':''}>Cheque</option>
-          </select>
-        </div>
-        <div class="crf"><div class="crf-label">Pay Frequency</div>
-          <select class="crf-edit" data-client-field="pay_frequency">
-            <option value="">—</option>
-            ${['weekly','biweekly','semi-monthly','monthly'].map(v=>`<option value="${v}" ${client.pay_frequency===v?'selected':''}>${v}</option>`).join('')}
-          </select>
-        </div>
-        <div class="crf"><div class="crf-label">Declared Income / mo</div><input class="crf-edit" type="number" data-client-field="declared_monthly_income" value="${client.declared_monthly_income||''}"></div>
-      </div>
-    </div>
-
-    <!-- LOAN HISTORY -->
-    <div class="crm-sec" style="margin-bottom:16px">
-      <div class="crm-sec-title">Loan History (${loans.length})</div>
-      ${loans.length?loans.map(l=>loanHistoryCard(l,schedMap[l.id]||[],contractMap[l.id],client,apps,highlightRef)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No loans yet.</p>'}
-    </div>
-
-    <!-- APPLICATION HISTORY -->
-    <div class="crm-sec" style="margin-bottom:16px">
-      <div class="crm-sec-title">Application History (${apps.length})</div>
-      ${apps.length?apps.map(a=>appHistoryRow(a,loans,schedMap)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No applications yet.</p>'}
-    </div>
+  </div><!-- /cp-layout -->
   `;
 
   // Auto-expand the highlighted loan
@@ -1259,6 +1328,14 @@ async function setApprovedAmount(loanId, amount){
   showToast('✓ Approved amount set to $'+amount.toLocaleString());
 }
 
+function switchCpTab(panelId, btn){
+  // Hide all panels in the same client page
+  document.querySelectorAll('.cp-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.cp-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(panelId)?.classList.add('active');
+  btn.classList.add('active');
+}
+
 function renderNotesFeed(clientId, notes){
   const feed=document.getElementById('client-notes-feed-'+clientId);
   if(!feed) return;
@@ -1384,7 +1461,7 @@ function openClientFromApp(a){
   document.getElementById('cp-sub').textContent=(a.email||'')+(a.province?' · '+a.province:'');
   document.getElementById('cp-badges').innerHTML=`<span class="tb t-${a.tier}">${a.tier}</span>`;
   document.getElementById('list-view').style.display='none';
-  document.getElementById('client-page').style.display='block';
+  document.getElementById('client-page').style.display='flex';
   document.getElementById('cp-body').innerHTML=`<div class="crm-sec"><div class="crm-sec-title">Application — no client profile linked</div><div style="font-size:.78rem;color:var(--muted)">This application was submitted before client profiles were tracked. Ref: ${a.ref}</div></div>`;
   history.pushState({ref:a.ref},'','/admin.html?ref='+a.ref);
 }
