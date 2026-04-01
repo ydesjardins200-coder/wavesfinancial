@@ -1055,7 +1055,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
     <!-- SUCCESS -->
     <div id="success-screen" style="display:none;">
       <div class="success-wave">🌊</div>
-      <div class="success-title">Application Submitted!</div>
+      <div class="success-title">Application Under Review</div>
       <p class="success-sub">Your signed application and bank verification are in. Our team will review your file and contact you quickly during business hours.</p>
       <div class="success-ref">Reference # <strong id="ref-num">WF-000000</strong></div>
       <div class="success-next">
@@ -1064,6 +1064,30 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
         <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
+      <div style="margin-top:14px;">
+        <button class="demo-btn" onclick="openScoringDemo()">🧪 Demo Lead Scoring — Board Presentation</button>
+      </div>
+    </div>
+
+    <!-- AUTO-APPROVED -->
+    <div id="approved-screen" style="display:none;text-align:center;padding:16px 0;">
+      <div class="success-wave">✅</div>
+      <div class="success-title" style="color:var(--teal);">You're Approved!</div>
+      <p class="success-sub">Congratulations — your application has been approved. Your funds are on the way.</p>
+      <div class="success-ref">Reference # <strong id="approved-ref-num">WF-000000</strong></div>
+      <div style="display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:var(--r-md);background:rgba(29,233,198,0.12);border:1px solid rgba(29,233,198,0.3);margin-bottom:24px;">
+        <span style="font-size:1.5rem;">💸</span>
+        <div style="text-align:left;">
+          <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Approved Amount</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--teal);" id="approved-amount">$300</div>
+        </div>
+      </div>
+      <div class="success-next">
+        <div class="success-next-item"><span class="success-step-badge" style="background:rgba(29,233,198,0.2);color:var(--teal);">1</span>Your loan agreement has been countersigned electronically.</div>
+        <div class="success-next-item"><span class="success-step-badge" style="background:rgba(29,233,198,0.2);color:var(--teal);">2</span>Funds are being sent via your chosen method now.</div>
+        <div class="success-next-item"><span class="success-step-badge" style="background:rgba(29,233,198,0.2);color:var(--teal);">3</span>Check your email for your confirmation and repayment schedule.</div>
+      </div>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(29,233,198,0.15);border:1px solid rgba(29,233,198,0.3);border-radius:var(--r-md);color:var(--teal);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
       <div style="margin-top:14px;">
         <button class="demo-btn" onclick="openScoringDemo()">🧪 Demo Lead Scoring — Board Presentation</button>
       </div>
@@ -1545,10 +1569,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       </div>
     </div><!-- /r-step-3 -->
 
-    <!-- RENEWAL SUCCESS -->
+    <!-- RENEWAL UNDER REVIEW -->
     <div id="renewal-success" style="display:none;text-align:center;padding:16px 0;">
       <div class="success-wave">🔄</div>
-      <div class="success-title">Renewal Submitted!</div>
+      <div class="success-title">Renewal Under Review</div>
       <p class="success-sub">Your signed renewal and bank verification are in. Our team will review your file and contact you quickly during business hours.</p>
       <div class="success-ref">Reference # <strong id="r-ref-num">WF-R-000000</strong></div>
       <div class="success-next">
@@ -1557,6 +1581,30 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
         <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
+      <div style="margin-top:14px;">
+        <button class="demo-btn" onclick="openScoringDemo()">🧪 Demo Lead Scoring — Board Presentation</button>
+      </div>
+    </div>
+
+    <!-- RENEWAL AUTO-APPROVED -->
+    <div id="renewal-approved" style="display:none;text-align:center;padding:16px 0;">
+      <div class="success-wave">✅</div>
+      <div class="success-title" style="color:var(--teal);">Renewal Approved!</div>
+      <p class="success-sub">Congratulations — your renewal has been approved. Your funds are on the way.</p>
+      <div class="success-ref">Reference # <strong id="r-approved-ref-num">WF-R-000000</strong></div>
+      <div style="display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:var(--r-md);background:rgba(29,233,198,0.12);border:1px solid rgba(29,233,198,0.3);margin-bottom:24px;">
+        <span style="font-size:1.5rem;">💸</span>
+        <div style="text-align:left;">
+          <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Approved Amount</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--teal);" id="r-approved-amount">$800</div>
+        </div>
+      </div>
+      <div class="success-next">
+        <div class="success-next-item"><span class="success-step-badge" style="background:rgba(29,233,198,0.2);color:var(--teal);">1</span>Your renewal agreement has been countersigned electronically.</div>
+        <div class="success-next-item"><span class="success-step-badge" style="background:rgba(29,233,198,0.2);color:var(--teal);">2</span>Funds are being sent via your chosen method now.</div>
+        <div class="success-next-item"><span class="success-step-badge" style="background:rgba(29,233,198,0.2);color:var(--teal);">3</span>Check your email for your confirmation and repayment schedule.</div>
+      </div>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(29,233,198,0.15);border:1px solid rgba(29,233,198,0.3);border-radius:var(--r-md);color:var(--teal);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
       <div style="margin-top:14px;">
         <button class="demo-btn" onclick="openScoringDemo()">🧪 Demo Lead Scoring — Board Presentation</button>
       </div>
@@ -1681,8 +1729,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 </main>
 
 <script>
-const WEBHOOK_NEW     = 'https://YOUR_WEBHOOK_NEW_LOAN_HERE';
-const WEBHOOK_RENEWAL = 'https://YOUR_WEBHOOK_RENEWAL_HERE';
+const WEBHOOK_NEW     = 'https://YOUR_BACKEND_URL/api/apply/new';
+const WEBHOOK_RENEWAL = 'https://YOUR_BACKEND_URL/api/apply/renewal';
 
 // ── SANDBOX MODE ──────────────────────────────────────────────────────────────
 // Detected when webhooks are still placeholder URLs.
@@ -2560,41 +2608,94 @@ async function submitRenewal() {
 }
 
 async function doSubmit(url, payload, ref, type) {
+  const btn     = document.getElementById(type === 'new' ? 'n-submit-btn'  : 'r-submit-btn');
+  const lbl     = document.getElementById(type === 'new' ? 'n-submit-lbl'  : 'r-submit-lbl');
+  const spinner = document.getElementById(type === 'new' ? 'n-spinner'     : 'r-spinner');
+  const arrow   = document.getElementById(type === 'new' ? 'n-arrow'       : 'r-arrow');
+
+  // Sandbox mode — show under-review screen immediately, no backend call
+  if (IS_SANDBOX_FORM) {
+    showOutcome(ref, type, 'manual_review', null);
+    return;
+  }
+
+  // Live mode — update button to processing state
+  lbl.textContent = 'Analyzing your application…';
+  const msgTimer = setTimeout(() => {
+    if (spinner.style.display !== 'none') lbl.textContent = 'Verifying bank data…';
+  }, 3000);
+
   try {
-    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(res.ok||url.includes('YOUR_WEBHOOK')){showOutcome(ref,type,'success');}
-    else throw new Error('Server error');
-  } catch(err) {
-    if(url.includes('YOUR_WEBHOOK')){showOutcome(ref,type,'success');return;}
-    const lbl=document.getElementById(type==='new'?'n-submit-lbl':'r-submit-lbl');
-    const btn=document.getElementById(type==='new'?'n-submit-btn':'r-submit-btn');
-    const spinner=document.getElementById(type==='new'?'n-spinner':'r-spinner');
-    const arrow=document.getElementById(type==='new'?'n-arrow':'r-arrow');
-    btn.disabled=false; lbl.textContent=type==='new'?'Submit Application':'Submit Renewal';
-    spinner.style.display='none'; arrow.style.display='inline';
+    const res = await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+
+    clearTimeout(msgTimer);
+    if (!res.ok) throw new Error('Server error ' + res.status);
+
+    const decision = await res.json();
+    showOutcome(decision.ref || ref, type, decision.decision, decision);
+
+  } catch (err) {
+    clearTimeout(msgTimer);
+    console.error('[submit] Error:', err.message);
+    btn.disabled = false;
+    lbl.textContent = type === 'new' ? 'Submit Application' : 'Submit Renewal';
+    spinner.style.display = 'none';
+    arrow.style.display   = 'inline';
     alert('There was an issue submitting. Please try again or call us at 1-800-123-4567.');
   }
 }
 
-function showOutcome(ref, type, outcome) {
-  if(type==='new') {
-    for(let i=1;i<=3;i++){const p=document.getElementById('step-'+i);if(p)p.style.display='none';}
-    document.getElementById('progress-wrap').style.display='none';
-    document.getElementById('trust-bar').style.display='none';
-    if(outcome==='success'){
-      document.getElementById('ref-num').textContent=ref;
-      document.getElementById('success-screen').style.display='block';
+function hideFormUI(type) {
+  const prefix = type === 'new' ? '' : 'r-';
+  for (let i = 1; i <= 3; i++) {
+    const p = document.getElementById(prefix + 'step-' + i);
+    if (p) p.style.display = 'none';
+  }
+  document.getElementById(prefix + 'progress-wrap').style.display = 'none';
+  document.getElementById('trust-bar').style.display = 'none';
+}
+
+function showOutcome(ref, type, decision, data) {
+  hideFormUI(type);
+
+  if (type === 'new') {
+    switch (decision) {
+      case 'auto_approved':
+        document.getElementById('approved-ref-num').textContent = ref;
+        document.getElementById('approved-amount').textContent  =
+          '$' + (data && data.approvedAmount ? data.approvedAmount : loanAmount || 300).toLocaleString();
+        document.getElementById('approved-screen').style.display = 'block';
+        break;
+      case 'auto_declined':
+        document.getElementById('decline-screen').style.display = 'block';
+        break;
+      default: // manual_review
+        document.getElementById('ref-num').textContent          = ref;
+        document.getElementById('success-screen').style.display = 'block';
     }
   } else {
-    for(let i=1;i<=3;i++){const p=document.getElementById('r-step-'+i);if(p)p.style.display='none';}
-    document.getElementById('r-progress-wrap').style.display='none';
-    document.getElementById('trust-bar').style.display='none';
-    if(outcome==='success'){
-      document.getElementById('r-ref-num').textContent=ref;
-      document.getElementById('renewal-success').style.display='block';
+    const amt = data && data.approvedAmount ? data.approvedAmount :
+                parseInt(document.getElementById('r-amount') && document.getElementById('r-amount').value) || 800;
+    switch (decision) {
+      case 'auto_approved':
+        document.getElementById('r-approved-ref-num').textContent = ref;
+        document.getElementById('r-approved-amount').textContent  = '$' + amt.toLocaleString();
+        document.getElementById('renewal-approved').style.display = 'block';
+        break;
+      case 'auto_declined':
+        document.getElementById('decline-screen').style.display = 'block';
+        break;
+      default: // manual_review
+        document.getElementById('r-ref-num').textContent          = ref;
+        document.getElementById('renewal-success').style.display  = 'block';
     }
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function resetAll(){
