@@ -628,8 +628,8 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
           `<button class="ca ca-approve" onclick="activateClient('${client.id}')">✓ Activate</button>`}
       </div>
     </div>
-    <textarea class="notes-area" id="na-client-${client.id}" placeholder="Client-level notes…"></textarea>
-    <button class="save-note-btn" id="snb-client-${client.id}" onclick="saveClientNote('${client.id}')">Save Note</button>
+    <textarea class="notes-area" id="na-client-${client.id}" placeholder="Client-level notes…" style="display:block;margin-top:0;min-height:70px">${client.notes||''}</textarea>
+    <button class="save-note-btn" id="snb-client-${client.id}" onclick="saveClientNote('${client.id}')" style="display:inline-block;margin-top:6px">💾 Save Note</button>
 
     <!-- SECTION 1: PERSONAL INFORMATION -->
     <div class="crm-sec" style="margin-bottom:16px">
@@ -767,7 +767,13 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
   // Contract summary
   const contractHtml=contract?`
     <div style="padding:16px;border-top:1px solid var(--border)">
-      <div class="crm-sec-title">Contract</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="crm-sec-title" style="margin:0">Contract</div>
+        <a href="${RAILWAY_URL}/api/pdf/contract/${loan.id}" target="_blank"
+           style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);text-decoration:none;font-size:.72rem;font-weight:700">
+          📄 Download Contract PDF
+        </a>
+      </div>
       <div class="contract-grid">
         <div class="crf"><div class="crf-label">Principal</div><div class="crf-val">$${Number(contract.principal).toLocaleString()}</div></div>
         <div class="crf"><div class="crf-label">APR</div><div class="crf-val">${(contract.apr*100).toFixed(1)}%</div></div>
@@ -900,8 +906,19 @@ function appHistoryRow(a){
       ${ahrField('Signed By',a.esig_name||'—')}
       ${ahrField('Timestamp',a.esig_timestamp?new Date(a.esig_timestamp).toLocaleString('en-CA'):'—')}
     </div>
-    ${a.analyst_notes?`<div style="padding:8px 10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:6px;font-size:.75rem;color:var(--gold);margin-bottom:8px">📝 ${a.analyst_notes}</div>`:''}
-    ${!a.reviewed_at&&a.decision==='manual_review'?`<div style="display:flex;gap:8px;margin-top:8px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <a href="${RAILWAY_URL}/api/pdf/bank-report/${a.id}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:6px;color:#00E5FF;text-decoration:none;font-size:.72rem;font-weight:700">
+        🏦 Bank Verification Report PDF
+      </a>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Analyst Notes</div>
+      <textarea id="anote-${a.id}" style="width:100%;padding:7px 10px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:6px;color:var(--white);font-family:var(--font);font-size:.78rem;resize:vertical;min-height:60px;outline:none" placeholder="Add analyst notes for this application…">${a.analyst_notes||''}</textarea>
+      <button onclick="saveAppNoteInline('${a.id}')" style="margin-top:5px;padding:5px 12px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">💾 Save Note</button>
+      ${a.analyst_notes?`<div style="margin-top:6px;padding:6px 10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:6px;font-size:.73rem;color:var(--gold)">📝 ${a.analyst_notes}</div>`:''}
+    </div>
+    ${!a.reviewed_at&&a.decision==='manual_review'?`<div style="display:flex;gap:8px;margin-top:4px">
       <button class="ca ca-approve" onclick="markDecision('${a.id}','approved')">✓ Approve</button>
       <button class="ca ca-decline" onclick="markDecision('${a.id}','declined')">✗ Decline</button>
     </div>`:''}`;
@@ -1002,10 +1019,26 @@ async function saveAppNote(appId){
   showToast('Note saved');
 }
 
+async function saveAppNoteInline(appId){
+  const area=document.getElementById('anote-'+appId);
+  if(!area) return;
+  const note=area.value.trim();
+  const {error}=await sb.from('loan_applications').update({analyst_notes:note}).eq('id',appId);
+  if(error){showToast('Save failed: '+error.message,true);return;}
+  const a=allApps.find(x=>x.id===appId);
+  if(a) a.analyst_notes=note;
+  showToast('✓ Note saved');
+}
+
 async function saveClientNote(clientId){
   const area=document.getElementById('na-client-'+clientId);
   if(!area) return;
-  showToast('Note saved (client notes coming in next update)');
+  const note=area.value.trim();
+  const {error}=await sb.from('clients').update({notes:note}).eq('id',clientId);
+  if(error){showToast('Save failed: '+error.message,true);return;}
+  const c=allClients.find(x=>x.id===clientId);
+  if(c) c.notes=note;
+  showToast('✓ Client note saved');
 }
 
 function openClientFromApp(a){
