@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waves — Analyst Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --deep:        #0D0B1F;
+  --navy:        #100E2E;
+  --card:        #13112a;
+  --card2:       #16143000;
+  --border:      rgba(160,154,245,0.13);
+  --iris:        #5B52D8;
+  --royal:       #3B35B0;
+  --teal:        #1DE9C6;
+  --cyan:        #00E5FF;
+  --periwinkle:  #A09AF5;
+  --lavender:    #7B74F0;
+  --gold:        #FFD166;
+  --coral:       #FF6B8A;
+  --orange:      #FF9945;
+  --white:       #FFFFFF;
+  --muted:       rgba(160,154,245,0.55);
+  --font:        'Plus Jakarta Sans', sans-serif;
+  --r:           12px;
+}
+html, body { height: 100%; background: var(--deep); color: var(--white); font-family: var(--font); }
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ── LOGIN SCREEN ────────────────────────────────────────────────────── */
+#login-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 30% 20%, rgba(91,82,216,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 80%, rgba(29,233,198,0.08) 0%, transparent 50%),
+              var(--deep);
+}
+.login-card {
+  width: 100%; max-width: 380px;
+  background: rgba(16,14,46,0.9);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 36px;
+  backdrop-filter: blur(20px);
+}
+.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-logo-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(91,82,216,0.25); border: 1px solid rgba(91,82,216,0.5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.login-logo-text { font-size: 0.95rem; font-weight: 800; }
+.login-logo-sub { font-size: 0.7rem; color: var(--muted); }
+.login-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+.login-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 24px; }
+.login-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; display: block; }
+.login-input {
+  width: 100%; padding: 11px 14px;
+  background: rgba(8,6,20,0.7);
+  border: 1px solid var(--border);
+  border-radius: 8px; color: var(--white);
+  font-family: var(--font); font-size: 0.9rem;
+  outline: none; transition: border-color 0.2s;
+  margin-bottom: 16px;
+}
+.login-input:focus { border-color: var(--iris); }
+.login-btn {
+  width: 100%; padding: 12px;
+  background: linear-gradient(135deg, var(--royal), var(--iris));
+  border: none; border-radius: 8px; color: var(--white);
+  font-family: var(--font); font-size: 0.9rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(91,82,216,0.4); }
+.login-error { font-size: 0.75rem; color: var(--coral); margin-top: 10px; text-align: center; }
+
+/* ── APP SHELL ───────────────────────────────────────────────────────── */
+#app { display: none; height: 100vh; display: flex; flex-direction: column; }
+#app.visible { display: flex; }
+
+/* Top bar */
+.topbar {
+  height: 56px; flex-shrink: 0;
+  background: rgba(16,14,46,0.95);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 20px;
+  backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.9rem; }
+.topbar-logo-mark {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(91,82,216,0.25); border: 1px solid rgba(91,82,216,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+}
+.topbar-badge {
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; padding: 2px 8px; border-radius: 100px;
+  background: rgba(255,209,102,0.12); border: 1px solid rgba(255,209,102,0.3);
+  color: var(--gold);
+}
+.topbar-spacer { flex: 1; }
+.topbar-env {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted);
+}
+.topbar-logout {
+  font-size: 0.75rem; color: var(--muted); background: none; border: none;
+  cursor: pointer; font-family: var(--font); padding: 4px 8px;
+  border-radius: 6px; transition: all 0.2s;
+}
+.topbar-logout:hover { background: rgba(255,107,138,0.1); color: var(--coral); }
+
+/* Main layout */
+.main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 2px; padding: 12px 20px 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(16,14,46,0.5);
+}
+.tab {
+  padding: 8px 16px; border-radius: 8px 8px 0 0;
+  font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  background: none; border: none; color: var(--muted);
+  font-family: var(--font); transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  position: relative; bottom: -1px;
+}
+.tab:hover { color: var(--white); }
+.tab.active { color: var(--periwinkle); border-bottom-color: var(--iris); background: rgba(91,82,216,0.08); }
+.tab-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(255,107,138,0.2); color: var(--coral);
+  font-size: 0.6rem; font-weight: 800; margin-left: 5px;
+}
+
+/* Content area */
+.content { flex: 1; overflow-y: auto; padding: 20px; }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px;
+}
+.stat-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+.stat-value { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+.stat-sub { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+
+/* Queue table */
+.queue-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.queue-title { font-size: 0.85rem; font-weight: 800; }
+.queue-refresh {
+  font-size: 0.72rem; color: var(--periwinkle); background: none;
+  border: 1px solid rgba(160,154,245,0.2); border-radius: 6px;
+  padding: 5px 10px; cursor: pointer; font-family: var(--font);
+  transition: all 0.2s;
+}
+.queue-refresh:hover { background: rgba(160,154,245,0.1); }
+
+.app-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: grid;
+  grid-template-columns: 110px 1fr 80px 80px 90px 100px 120px;
+  align-items: center;
+  gap: 12px;
+}
+.app-row:hover { border-color: rgba(160,154,245,0.3); background: rgba(91,82,216,0.06); transform: translateX(2px); }
+.app-row.selected { border-color: var(--iris); background: rgba(91,82,216,0.1); }
+.col-head {
+  font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--muted); padding: 0 16px 8px;
+  display: grid;
+  grid-template-columns: 110px 1fr 80px 80px 90px 100px 120px;
+  gap: 12px;
+}
+
+.app-ref { font-size: 0.75rem; font-weight: 700; color: var(--periwinkle); }
+.app-name { font-size: 0.82rem; font-weight: 600; }
+.app-email { font-size: 0.67rem; color: var(--muted); margin-top: 1px; }
+.app-amount { font-size: 0.85rem; font-weight: 800; }
+.app-score { font-size: 0.82rem; font-weight: 700; }
+.app-time { font-size: 0.68rem; color: var(--muted); }
+
+/* Tier badges */
+.tier-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 100px;
+  font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.tier-gold   { background: rgba(255,209,102,0.15); border: 1px solid rgba(255,209,102,0.4); color: #FFD166; }
+.tier-green  { background: rgba(29,233,198,0.12);  border: 1px solid rgba(29,233,198,0.3);  color: #1DE9C6; }
+.tier-blue   { background: rgba(0,229,255,0.12);   border: 1px solid rgba(0,229,255,0.3);   color: #00E5FF; }
+.tier-yellow { background: rgba(245,197,66,0.12);  border: 1px solid rgba(245,197,66,0.3);  color: #F5C542; }
+.tier-orange { background: rgba(255,153,69,0.12);  border: 1px solid rgba(255,153,69,0.3);  color: #FF9945; }
+.tier-red    { background: rgba(255,107,138,0.12); border: 1px solid rgba(255,107,138,0.3); color: #FF6B8A; }
+
+.decision-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 100px;
+  font-size: 0.62rem; font-weight: 700;
+}
+.dec-approved { background: rgba(29,233,198,0.12); border: 1px solid rgba(29,233,198,0.3); color: #1DE9C6; }
+.dec-review   { background: rgba(160,154,245,0.12); border: 1px solid rgba(160,154,245,0.3); color: #A09AF5; }
+.dec-declined { background: rgba(255,107,138,0.12); border: 1px solid rgba(255,107,138,0.3); color: #FF6B8A; }
+
+/* Detail panel */
+.detail-panel {
+  position: fixed; top: 56px; right: 0; bottom: 0;
+  width: 480px; background: var(--navy);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.1,0.64,1);
+  z-index: 50;
+}
+.detail-panel.open { transform: translateX(0); }
+.detail-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  color: var(--muted); font-size: 0.8rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.detail-close:hover { background: rgba(255,107,138,0.15); color: var(--coral); }
+.detail-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
+.detail-ref { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+.detail-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+.detail-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.detail-body { padding: 16px 20px; }
+
+/* Signal rows */
+.signal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.signal-card {
+  background: rgba(8,6,20,0.5);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.signal-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 3px; }
+.signal-value { font-size: 0.95rem; font-weight: 800; }
+.signal-pts { font-size: 0.65rem; color: var(--muted); margin-top: 1px; }
+
+/* Score bar */
+.score-bar-wrap { margin-bottom: 16px; }
+.score-bar-labels { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--muted); margin-bottom: 4px; }
+.score-bar-track { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1); }
+
+/* Flags */
+.flag-item {
+  display: flex; gap: 8px; align-items: flex-start;
+  font-size: 0.73rem; color: var(--gold);
+  padding: 6px 10px;
+  background: rgba(255,209,102,0.06);
+  border: 1px solid rgba(255,209,102,0.15);
+  border-radius: 6px;
+  margin-bottom: 5px;
+}
+
+/* Actions */
+.action-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
+.action-btn {
+  padding: 10px 8px; border-radius: 8px; border: none;
+  font-family: var(--font); font-size: 0.75rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.action-approve { background: rgba(29,233,198,0.15); border: 1px solid rgba(29,233,198,0.3); color: var(--teal); }
+.action-approve:hover { background: rgba(29,233,198,0.25); }
+.action-decline { background: rgba(255,107,138,0.12); border: 1px solid rgba(255,107,138,0.3); color: var(--coral); }
+.action-decline:hover { background: rgba(255,107,138,0.22); }
+.action-note { background: rgba(160,154,245,0.1); border: 1px solid var(--border); color: var(--periwinkle); }
+.action-note:hover { background: rgba(160,154,245,0.18); }
+
+.notes-area {
+  width: 100%; padding: 10px 12px; margin-top: 10px;
+  background: rgba(8,6,20,0.7); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--white); font-family: var(--font);
+  font-size: 0.8rem; resize: vertical; min-height: 70px;
+  outline: none; transition: border-color 0.2s; display: none;
+}
+.notes-area:focus { border-color: var(--iris); }
+.save-note-btn {
+  margin-top: 6px; padding: 7px 14px;
+  background: rgba(91,82,216,0.2); border: 1px solid rgba(91,82,216,0.4);
+  border-radius: 6px; color: var(--periwinkle); font-family: var(--font);
+  font-size: 0.75rem; font-weight: 700; cursor: pointer; display: none;
+}
+
+/* Section headers in detail */
+.section-hdr {
+  font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--iris);
+  margin: 16px 0 8px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Applicant info grid */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.info-item { font-size: 0.73rem; }
+.info-item-label { color: var(--muted); font-size: 0.62rem; margin-bottom: 1px; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  padding: 10px 18px; border-radius: 10px;
+  font-size: 0.8rem; font-weight: 700;
+  background: rgba(29,233,198,0.2); border: 1px solid rgba(29,233,198,0.4);
+  color: var(--teal);
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  z-index: 200;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.error { background: rgba(255,107,138,0.15); border-color: rgba(255,107,138,0.3); color: var(--coral); }
+
+/* Loading spinner */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(160,154,245,0.2); border-top-color: var(--periwinkle); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 0.82rem; }
+.empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .stats-row { grid-template-columns: repeat(3, 1fr); }
+  .detail-panel { width: 100%; }
+  .app-row, .col-head { grid-template-columns: 90px 1fr 70px 80px 100px; }
+  .app-row > *:nth-child(5),
+  .col-head > *:nth-child(5) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ──────────────────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">🌊</div>
+      <div>
+        <div class="login-logo-text">Waves Financial</div>
+        <div class="login-logo-sub">Analyst Dashboard</div>
+      </div>
+    </div>
+    <div class="login-title">Sign in</div>
+    <div class="login-sub">Internal access only</div>
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="login-pw" placeholder="Enter password"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-error" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ── APP ────────────────────────────────────────────────────────────── -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-mark">🌊</div>
+      Waves Financial
+    </div>
+    <span class="topbar-badge">Analyst Dashboard</span>
+    <div class="topbar-spacer"></div>
+    <span class="topbar-env" id="env-label">Loading…</span>
+    <button class="topbar-logout" onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('queue')" id="tab-queue">
+        Review Queue <span class="tab-count" id="queue-count">0</span>
+      </button>
+      <button class="tab" onclick="switchTab('all')" id="tab-all">All Applications</button>
+      <button class="tab" onclick="switchTab('approved')" id="tab-approved">Approved</button>
+      <button class="tab" onclick="switchTab('declined')" id="tab-declined">Declined</button>
+    </div>
+
+    <div class="content" id="main-content">
+      <!-- Stats -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Applications</div><div class="stat-value" id="stat-total">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Review</div><div class="stat-value" style="color:var(--periwinkle);" id="stat-review">—</div></div>
+        <div class="stat-card"><div class="stat-label">Auto-Approved</div><div class="stat-value" style="color:var(--teal);" id="stat-approved">—</div></div>
+        <div class="stat-card"><div class="stat-label">Auto-Declined</div><div class="stat-value" style="color:var(--coral);" id="stat-declined">—</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Risk Score</div><div class="stat-value" style="color:var(--gold);" id="stat-avg-score">—</div></div>
+      </div>
+
+      <!-- Queue -->
+      <div class="queue-header">
+        <div class="queue-title" id="queue-title">Review Queue</div>
+        <button class="queue-refresh" onclick="loadData()">↻ Refresh</button>
+      </div>
+
+      <div class="col-head">
+        <span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>
+      </div>
+
+      <div id="app-list">
+        <div class="empty-state"><div class="spinner"></div><br>Loading applications…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DETAIL PANEL ───────────────────────────────────────────────────── -->
+<div class="detail-panel" id="detail-panel">
+  <button class="detail-close" onclick="closeDetail()">✕</button>
+  <div id="detail-content"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const ADMIN_PASSWORD  = 'Eliteness11!';
+const SUPABASE_URL    = 'YOUR_SUPABASE_URL';     // ← replaced by deploy script
+const SUPABASE_ANON   = 'YOUR_SUPABASE_ANON_KEY'; // ← anon key (read-only from browser)
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let sb = null;
+let allApps = [];
+let currentTab = 'queue';
+let selectedId = null;
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('login-pw').value;
+  if (pw !== ADMIN_PASSWORD) {
+    document.getElementById('login-err').textContent = 'Incorrect password.';
+    return;
+  }
+  sessionStorage.setItem('wf_admin', '1');
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  initDashboard();
+}
+
+function doLogout() {
+  sessionStorage.removeItem('wf_admin');
+  location.reload();
+}
+
+// Auto-login if session exists
+if (sessionStorage.getItem('wf_admin') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+function initDashboard() {
+  // Init Supabase client with anon key (read + RLS)
+  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    document.getElementById('env-label').textContent = 'Connected to Supabase';
+  } else {
+    document.getElementById('env-label').textContent = '⚠ Supabase not configured';
+  }
+  loadData();
+}
+
+if (sessionStorage.getItem('wf_admin') === '1') initDashboard();
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+async function loadData() {
+  document.getElementById('app-list').innerHTML =
+    '<div class="empty-state"><div class="spinner"></div><br>Loading…</div>';
+
+  if (!sb) {
+    loadMockData();
+    return;
+  }
+
+  const { data, error } = await sb
+    .from('applications')
+    .select('*')
+    .order('submitted_at', { ascending: false })
+    .limit(200);
+
+  if (error) {
+    showToast('Failed to load: ' + error.message, true);
+    loadMockData();
+    return;
+  }
+
+  allApps = data || [];
+  renderStats();
+  renderList();
+}
+
+function loadMockData() {
+  // Demo data when Supabase isn't configured
+  allApps = [
+    { id:'1', ref:'WF-TEST01', first_name:'Marie', last_name:'Tremblay', email:'marie@test.ca',
+      decision:'manual_review', tier:'green', risk_score:22, requested_amount:500,
+      approved_amount:null, submitted_at: new Date().toISOString(), province:'QC',
+      flags:['DTI elevated: 52.1%'], signals:{ nsfCount:0, nsfPts:0, dtiRatio:0.52, dtiPts:8, verifiedIncome:2400, avgDailyBalance:800, balPts:0, misRatio:0.08, misPts:4, incomeRegularity:'consistent', regPts:0 }, reviewed_at:null },
+    { id:'2', ref:'WF-TEST02', first_name:'Jean', last_name:'Bouchard', email:'jean@test.ca',
+      decision:'auto_approved', tier:'gold', risk_score:6, requested_amount:300,
+      approved_amount:300, submitted_at: new Date(Date.now()-3600000).toISOString(), province:'ON',
+      flags:[], signals:{ nsfCount:0, nsfPts:0, dtiRatio:0.28, dtiPts:0, verifiedIncome:3200, avgDailyBalance:1200, balPts:0, misRatio:0.03, misPts:2, incomeRegularity:'consistent', regPts:0 }, reviewed_at:null },
+    { id:'3', ref:'WF-TEST03', first_name:'Sophie', last_name:'Gagnon', email:'sophie@test.ca',
+      decision:'manual_review', tier:'orange', risk_score:78, requested_amount:800,
+      approved_amount:null, feasible_amount:300, submitted_at: new Date(Date.now()-7200000).toISOString(), province:'BC',
+      flags:['DTI elevated: 71.2%','High NSF activity: 3 in 90 days'], signals:{ nsfCount:3, nsfPts:15, dtiRatio:0.71, dtiPts:14, verifiedIncome:1800, avgDailyBalance:220, balPts:10, misRatio:0.18, misPts:8, incomeRegularity:'variable', regPts:6 }, reviewed_at:null },
+    { id:'4', ref:'WF-TEST04', first_name:'Alexandre', last_name:'Roy', email:'alex@test.ca',
+      decision:'auto_declined', tier:'red', risk_score:95, requested_amount:500,
+      approved_amount:0, submitted_at: new Date(Date.now()-86400000).toISOString(), province:'NS',
+      hard_decline:'Verified income $650/mo below $800 minimum.',
+      flags:[], signals:null, reviewed_at:null },
+  ];
+  renderStats();
+  renderList();
+  showToast('Showing demo data — configure Supabase to see real applications');
+}
+
+// ── RENDER STATS ──────────────────────────────────────────────────────────────
+function renderStats() {
+  const total    = allApps.length;
+  const review   = allApps.filter(a => a.decision === 'manual_review' && !a.reviewed_at).length;
+  const approved = allApps.filter(a => a.decision === 'auto_approved').length;
+  const declined = allApps.filter(a => a.decision === 'auto_declined').length;
+  const scores   = allApps.filter(a => a.risk_score != null).map(a => a.risk_score);
+  const avgScore = scores.length ? Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) : '—';
+
+  document.getElementById('stat-total').textContent    = total;
+  document.getElementById('stat-review').textContent   = review;
+  document.getElementById('stat-approved').textContent = approved;
+  document.getElementById('stat-declined').textContent = declined;
+  document.getElementById('stat-avg-score').textContent = avgScore;
+  document.getElementById('queue-count').textContent   = review;
+}
+
+// ── RENDER LIST ───────────────────────────────────────────────────────────────
+function renderList() {
+  let apps = [...allApps];
+
+  if (currentTab === 'queue')    apps = apps.filter(a => a.decision === 'manual_review' && !a.reviewed_at);
+  if (currentTab === 'approved') apps = apps.filter(a => a.decision === 'auto_approved');
+  if (currentTab === 'declined') apps = apps.filter(a => a.decision === 'auto_declined');
+
+  // Sort queue by tier priority
+  if (currentTab === 'queue') {
+    const p = { green:1, blue:2, yellow:3, orange:4 };
+    apps.sort((a,b) => (p[a.tier]||9) - (p[b.tier]||9) || new Date(a.submitted_at) - new Date(b.submitted_at));
+  }
+
+  const titles = { queue:'Review Queue', all:'All Applications', approved:'Approved', declined:'Declined' };
+  document.getElementById('queue-title').textContent = titles[currentTab] + ' (' + apps.length + ')';
+
+  if (!apps.length) {
+    document.getElementById('app-list').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">✓</div>No applications in this view.</div>';
+    return;
+  }
+
+  document.getElementById('app-list').innerHTML = apps.map(a => {
+    const name    = (a.first_name || '') + ' ' + (a.last_name || '');
+    const time    = a.submitted_at ? timeAgo(a.submitted_at) : '—';
+    const tierCls = 'tier-' + (a.tier || 'green');
+    const decCls  = a.decision === 'auto_approved' ? 'dec-approved' : a.decision === 'auto_declined' ? 'dec-declined' : 'dec-review';
+    const decLabel = a.decision === 'auto_approved' ? '✓ Approved' : a.decision === 'auto_declined' ? '✗ Declined' : '🔍 Review';
+    const selected = a.id === selectedId ? ' selected' : '';
+    return `<div class="app-row${selected}" onclick="openDetail('${a.id}')">
+      <div class="app-ref">${a.ref || '—'}</div>
+      <div><div class="app-name">${name.trim() || '—'}</div><div class="app-email">${a.email || ''}</div></div>
+      <div class="app-amount">$${(a.requested_amount||0).toLocaleString()}</div>
+      <div class="app-score" style="color:${scoreColor(a.risk_score)}">${a.risk_score ?? '—'}</div>
+      <div><span class="tier-badge ${tierCls}">${a.tier || '—'}</span></div>
+      <div class="app-time">${time}</div>
+      <div><span class="decision-badge ${decCls}">${decLabel}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ── DETAIL PANEL ──────────────────────────────────────────────────────────────
+function openDetail(id) {
+  selectedId = id;
+  renderList(); // update selected state
+  const a = allApps.find(x => x.id === id);
+  if (!a) return;
+
+  const s = a.signals || {};
+  const tierCls = 'tier-' + (a.tier || 'green');
+  const scoreW  = Math.max(2, Math.min(100, a.risk_score || 0));
+  const scoreC  = scoreColor(a.risk_score);
+
+  const signalRows = s ? `
+    <div class="signal-grid">
+      ${sigCard('NSF Events (90d)', s.nsfCount ?? '—', s.nsfPts, 25)}
+      ${sigCard('Payment Oppositions', s.oppositionCount ?? '—', s.oppPts, 20)}
+      ${sigCard('DTI Ratio', s.dtiRatio != null ? (s.dtiRatio*100).toFixed(1)+'%' : '—', s.dtiPts, 20)}
+      ${sigCard('Income Regularity', s.incomeRegularity || '—', s.regPts, 15)}
+      ${sigCard('Income Mismatch', s.misRatio != null ? (s.misRatio*100).toFixed(1)+'%' : '—', s.misPts, 10)}
+      ${sigCard('Avg Daily Balance', s.avgDailyBalance != null ? '$'+Math.round(s.avgDailyBalance).toLocaleString() : '—', s.balPts, 10)}
+    </div>` : '<p style="font-size:0.75rem;color:var(--muted);">Signal data unavailable</p>';
+
+  const flagsHtml = (a.flags && a.flags.length) ? a.flags.map(f =>
+    `<div class="flag-item">⚑ ${f}</div>`).join('') : '';
+
+  const hardDeclineHtml = a.hard_decline ?
+    `<div style="padding:10px 12px;background:rgba(255,107,138,0.08);border:1px solid rgba(255,107,138,0.2);border-radius:8px;font-size:0.75rem;color:var(--coral);margin-bottom:12px;">
+      🚫 <strong>Hard Decline:</strong> ${a.hard_decline}
+    </div>` : '';
+
+  const feasibleHtml = a.feasible_amount && a.tier === 'orange' ?
+    `<div style="padding:8px 12px;background:rgba(255,153,69,0.08);border:1px solid rgba(255,153,69,0.2);border-radius:8px;font-size:0.75rem;color:var(--orange);margin-bottom:12px;">
+      💡 Feasible amount surfaced: <strong>$${a.feasible_amount.toLocaleString()}</strong>
+    </div>` : '';
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-ref">${a.ref || ''} · ${a.type === 'renewal' ? 'Renewal' : 'New Loan'}</div>
+      <div class="detail-name">${(a.first_name||'')} ${(a.last_name||'')}</div>
+      <div class="detail-meta">
+        <span class="tier-badge ${tierCls}">${a.tier}</span>
+        <span style="font-size:0.72rem;color:var(--muted);">Score: <strong style="color:${scoreC}">${a.risk_score ?? '—'}/100</strong></span>
+        <span style="font-size:0.72rem;color:var(--muted);">${a.province || ''}</span>
+      </div>
+    </div>
+    <div class="detail-body">
+
+      <!-- Score bar -->
+      <div class="score-bar-wrap">
+        <div class="score-bar-labels"><span>Risk Score</span><span>0 = perfect · 100 = extreme</span></div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill" style="width:${scoreW}%;background:linear-gradient(90deg,#1DE9C6,${scoreC});"></div>
+        </div>
+      </div>
+
+      ${hardDeclineHtml}
+      ${feasibleHtml}
+
+      <!-- Applicant info -->
+      <div class="section-hdr">Applicant</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Email</div>${a.email || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Cell Phone</div>${a.cell_phone || '—'}</div>
+        <div class="info-item"><div class="info-item-label">DOB</div>${a.dob || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Province</div>${a.province || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Address</div>${a.address || '—'}</div>
+        <div class="info-item"><div class="info-item-label">City / Postal</div>${a.city || '—'} ${a.postal || ''}</div>
+      </div>
+
+      <!-- Employment & Loan -->
+      <div class="section-hdr">Employment & Loan</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Employment</div>${a.employment_status || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Employer</div>${a.employer || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Pay Frequency</div>${a.pay_frequency || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Next Pay Date</div>${a.next_pay_date || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Declared Income/mo</div>${a.declared_monthly_income ? '$'+Number(a.declared_monthly_income).toLocaleString() : '—'}</div>
+        <div class="info-item"><div class="info-item-label">Verified Income/mo</div>${a.verified_income ? '$'+Math.round(a.verified_income).toLocaleString() : '—'}</div>
+        <div class="info-item"><div class="info-item-label">Requested Amount</div><strong>$${(a.requested_amount||0).toLocaleString()}</strong></div>
+        <div class="info-item"><div class="info-item-label">Fund Method</div>${a.fund_method || '—'}</div>
+      </div>
+
+      <!-- Scoring signals -->
+      <div class="section-hdr">Scoring Signals</div>
+      ${signalRows}
+
+      <!-- Analyst flags -->
+      ${flagsHtml ? `<div class="section-hdr">Analyst Flags</div>${flagsHtml}` : ''}
+
+      <!-- Bank -->
+      <div class="section-hdr">Bank Verification</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Institution</div>${a.bank_name || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Account Age</div>${a.account_age_days ? a.account_age_days + ' days' : '—'}</div>
+        <div class="info-item"><div class="info-item-label">Avg Daily Balance</div>${a.avg_daily_balance ? '$'+Math.round(a.avg_daily_balance).toLocaleString() : '—'}</div>
+        <div class="info-item"><div class="info-item-label">NSF Count (90d)</div>${a.nsf_count ?? '—'}</div>
+        <div class="info-item"><div class="info-item-label">Oppositions</div>${a.opposition_count ?? '—'}</div>
+        <div class="info-item"><div class="info-item-label">Sandbox</div>${a.is_sandbox ? 'Yes' : 'No'}</div>
+      </div>
+
+      <!-- Signature -->
+      <div class="section-hdr">E-Signature</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Signed By</div>${a.esig_name || '—'}</div>
+        <div class="info-item"><div class="info-item-label">Timestamp</div>${a.esig_timestamp || '—'}</div>
+      </div>
+
+      <!-- Existing notes -->
+      ${a.analyst_notes ? `<div class="section-hdr">Analyst Notes</div><div style="font-size:0.78rem;color:var(--muted);padding:8px 12px;background:rgba(8,6,20,0.4);border-radius:8px;border:1px solid var(--border);">${a.analyst_notes}</div>` : ''}
+
+      <!-- Actions -->
+      <div class="section-hdr">Actions</div>
+      <div class="action-row">
+        <button class="action-btn action-approve" onclick="markDecision('${a.id}','approved')">✓ Approve</button>
+        <button class="action-btn action-decline" onclick="markDecision('${a.id}','declined')">✗ Decline</button>
+        <button class="action-btn action-note" onclick="toggleNotes('${a.id}')">📝 Note</button>
+      </div>
+      <textarea class="notes-area" id="notes-${a.id}" placeholder="Add analyst notes…"></textarea>
+      <button class="save-note-btn" id="save-note-${a.id}" onclick="saveNote('${a.id}')">Save Note</button>
+
+      <div style="font-size:0.65rem;color:var(--muted);margin-top:16px;">
+        Submitted: ${a.submitted_at ? new Date(a.submitted_at).toLocaleString('en-CA') : '—'}
+        ${a.reviewed_at ? ' · Reviewed: ' + new Date(a.reviewed_at).toLocaleString('en-CA') : ''}
+      </div>
+    </div>`;
+
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function closeDetail() {
+  selectedId = null;
+  document.getElementById('detail-panel').classList.remove('open');
+  renderList();
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+async function markDecision(id, outcome) {
+  const a = allApps.find(x => x.id === id);
+  if (!a) return;
+
+  const update = {
+    reviewed_at:    new Date().toISOString(),
+    reviewed_by:    'analyst',
+    final_decision: outcome,
+  };
+
+  if (sb) {
+    const { error } = await sb.from('applications').update(update).eq('id', id);
+    if (error) { showToast('Update failed: ' + error.message, true); return; }
+  }
+
+  // Update local state
+  Object.assign(a, update);
+  showToast(outcome === 'approved' ? '✓ Marked as Approved' : '✗ Marked as Declined');
+  renderStats();
+  renderList();
+  closeDetail();
+}
+
+function toggleNotes(id) {
+  const area = document.getElementById('notes-' + id);
+  const btn  = document.getElementById('save-note-' + id);
+  if (!area) return;
+  const visible = area.style.display === 'block';
+  area.style.display = visible ? 'none' : 'block';
+  btn.style.display  = visible ? 'none' : 'inline-block';
+  if (!visible) area.focus();
+}
+
+async function saveNote(id) {
+  const area = document.getElementById('notes-' + id);
+  if (!area) return;
+  const note = area.value.trim();
+  if (!note) return;
+
+  if (sb) {
+    const { error } = await sb.from('applications')
+      .update({ analyst_notes: note })
+      .eq('id', id);
+    if (error) { showToast('Save failed: ' + error.message, true); return; }
+  }
+
+  const a = allApps.find(x => x.id === id);
+  if (a) a.analyst_notes = note;
+  showToast('Note saved');
+  openDetail(id); // re-render detail
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  renderList();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function sigCard(label, value, pts, maxPts) {
+  const pct   = (pts || 0) / maxPts;
+  const color = pct === 0 ? 'var(--teal)' : pct < 0.5 ? 'var(--gold)' : 'var(--coral)';
+  return `<div class="signal-card">
+    <div class="signal-label">${label}</div>
+    <div class="signal-value">${value}</div>
+    <div class="signal-pts" style="color:${color}">${pts ?? 0}pt / ${maxPts}pt</div>
+  </div>`;
+}
+
+function scoreColor(score) {
+  if (score == null) return 'var(--muted)';
+  if (score <= 15)  return '#FFD166';
+  if (score <= 30)  return '#1DE9C6';
+  if (score <= 50)  return '#00E5FF';
+  if (score <= 70)  return '#F5C542';
+  if (score <= 90)  return '#FF9945';
+  return '#FF6B8A';
+}
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1)   return 'just now';
+  if (mins < 60)  return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)   return hrs + 'h ago';
+  return Math.floor(hrs / 24) + 'd ago';
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
