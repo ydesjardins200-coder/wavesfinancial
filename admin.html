@@ -726,7 +726,7 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
     <!-- APPLICATION HISTORY -->
     <div class="crm-sec" style="margin-bottom:16px">
       <div class="crm-sec-title">Application History (${apps.length})</div>
-      ${apps.length?apps.map(a=>appHistoryRow(a)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No applications yet.</p>'}
+      ${apps.length?apps.map(a=>appHistoryRow(a,loans,schedMap)).join(''):'<p style="font-size:.78rem;color:var(--muted)">No applications yet.</p>'}
     </div>
   `;
 
@@ -861,24 +861,37 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
 }
 
 /* ── APP HISTORY ROW ── */
-function appHistoryRow(a){
+function appHistoryRow(a, loans, schedMap){
   const tc='t-'+(a.tier||'green');
   const dc=a.decision==='auto_approved'?'d-approved':a.decision==='auto_declined'?'d-declined':'d-review';
   const dl=a.decision==='auto_approved'?'✓ Approved':a.decision==='auto_declined'?'✗ Declined':'🔍 Review';
   const bodyId='ahr-'+a.id;
+
+  // Find the loan associated with this application
+  const loan=(loans||[]).find(l=>l.ref===a.ref);
+  const sched=loan&&schedMap?schedMap[loan.id]||[]:[];
+
+  // Fix timestamp display
+  const tsDisplay=a.esig_timestamp?
+    (()=>{ try{ return new Date(a.esig_timestamp).toLocaleString('en-CA'); } catch(e){ return a.esig_timestamp; } })()
+    :'—';
+
+  // Editable payment calendar rows
+  const calRows = buildCalendarRows(a, loan, sched);
 
   const detailHtml=`
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
       ${ahrField('Ref',a.ref)}
       ${ahrField('Type',a.type==='renewal'?'Renewal':'New Loan')}
       ${ahrField('Submitted',a.submitted_at?new Date(a.submitted_at).toLocaleString('en-CA'):'')}
-      ${ahrField('Requested Amount',a.requested_amount?'$'+a.requested_amount.toLocaleString():'')}
+      ${ahrField('Requested Amount',a.requested_amount?'$'+a.requested_amount.toLocaleString():'—')}
       ${ahrField('Approved Amount',a.approved_amount?'$'+a.approved_amount.toLocaleString():'—')}
       ${ahrField('Fund Method',a.fund_method||'—')}
       ${ahrField('Bankrupt Now',a.bankrupt_now||'—')}
       ${ahrField('Bankrupt Past',a.bankrupt_past||'—')}
       ${ahrField('Hard Decline',a.hard_decline||'—',a.hard_decline?'var(--coral)':'')}
     </div>
+
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Employment at Application</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
       ${ahrField('Income Source',a.employment_status||'—')}
@@ -894,6 +907,7 @@ function appHistoryRow(a){
       ${ahrField('Next Pay Date',a.next_pay_date||'—')}
       ${ahrField('Declared Income/mo',a.declared_monthly_income?'$'+Number(a.declared_monthly_income).toLocaleString():'')}
     </div>
+
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Safety Contact</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
       ${ahrField('First Name',a.safety_contact_first_name||a.safety_contact_name?.split(' ')[0]||'—')}
@@ -901,24 +915,58 @@ function appHistoryRow(a){
       ${ahrField('Phone',a.safety_contact_phone||'—')}
       ${ahrField('Relationship',a.safety_contact_rel||'—')}
     </div>
+
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">E-Signature</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
       ${ahrField('Signed By',a.esig_name||'—')}
-      ${ahrField('Timestamp',a.esig_timestamp?new Date(a.esig_timestamp).toLocaleString('en-CA'):'—')}
+      ${ahrField('Timestamp',tsDisplay)}
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+
+    <!-- PAYMENT CALENDAR -->
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+      Payment Calendar
+      <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:.65rem;margin-left:8px">
+        based on ${a.pay_frequency||'biweekly'} frequency · next pay ${a.next_pay_date||'—'}
+      </span>
+    </div>
+    <div style="overflow-x:auto;margin-bottom:10px">
+      <table style="width:100%;border-collapse:collapse;font-size:.72rem">
+        <thead>
+          <tr style="background:rgba(30,25,70,.8)">
+            <th style="padding:6px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">#</th>
+            <th style="padding:6px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Due Date</th>
+            <th style="padding:6px 10px;text-align:right;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Amount</th>
+            <th style="padding:6px 10px;text-align:center;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Status</th>
+            <th style="padding:6px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Paid On</th>
+            <th style="padding:6px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="cal-body-${a.id}">${calRows}</tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      ${loan?`<button onclick="savePaymentCalendar('${loan.id}','${a.id}')" style="padding:6px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">💾 Save Calendar Changes</button>`:''}
+      <button onclick="regenerateCalendar('${a.id}','${a.pay_frequency||'biweekly'}','${a.next_pay_date||''}','${loan?loan.id:''}')" style="padding:6px 14px;background:rgba(160,154,245,.1);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">↻ Regenerate from Pay Date</button>
+    </div>
+
+    <!-- PDF DOWNLOADS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      ${loan?`<a href="${RAILWAY_URL}/api/pdf/contract/${loan.id}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);text-decoration:none;font-size:.72rem;font-weight:700">
+        📄 Signed Contract PDF
+      </a>`:''}
       <a href="${RAILWAY_URL}/api/pdf/bank-report/${a.id}" target="_blank"
          style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:6px;color:#00E5FF;text-decoration:none;font-size:.72rem;font-weight:700">
         🏦 Bank Verification Report PDF
       </a>
     </div>
-    <div style="margin-bottom:10px">
-      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Analyst Notes</div>
-      <textarea id="anote-${a.id}" style="width:100%;padding:7px 10px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:6px;color:var(--white);font-family:var(--font);font-size:.78rem;resize:vertical;min-height:60px;outline:none" placeholder="Add analyst notes for this application…">${a.analyst_notes||''}</textarea>
-      <button onclick="saveAppNoteInline('${a.id}')" style="margin-top:5px;padding:5px 12px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">💾 Save Note</button>
-      ${a.analyst_notes?`<div style="margin-top:6px;padding:6px 10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:6px;font-size:.73rem;color:var(--gold)">📝 ${a.analyst_notes}</div>`:''}
-    </div>
-    ${!a.reviewed_at&&a.decision==='manual_review'?`<div style="display:flex;gap:8px;margin-top:4px">
+
+    <!-- ANALYST NOTES -->
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Analyst Notes</div>
+    <textarea id="anote-${a.id}" style="width:100%;padding:7px 10px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:6px;color:var(--white);font-family:var(--font);font-size:.78rem;resize:vertical;min-height:60px;outline:none" placeholder="Add analyst notes…">${a.analyst_notes||''}</textarea>
+    <button onclick="saveAppNoteInline('${a.id}')" style="margin-top:5px;padding:5px 12px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">💾 Save Note</button>
+
+    ${!a.reviewed_at&&a.decision==='manual_review'?`<div style="display:flex;gap:8px;margin-top:10px">
       <button class="ca ca-approve" onclick="markDecision('${a.id}','approved')">✓ Approve</button>
       <button class="ca ca-decline" onclick="markDecision('${a.id}','declined')">✗ Decline</button>
     </div>`:''}`;
@@ -938,6 +986,145 @@ function appHistoryRow(a){
         ${detailHtml}
       </div>
     </div>`;
+}
+
+/* ── BUILD CALENDAR ROWS ── */
+function buildCalendarRows(a, loan, sched){
+  // Use existing schedule if we have one
+  if(sched && sched.length > 0){
+    return sched.map(p=>{
+      const isOverdue = p.status==='scheduled' && new Date(p.due_date) < new Date();
+      const statusColor = p.status==='paid'?'var(--teal)':isOverdue?'var(--coral)':p.status==='missed'?'var(--coral)':'var(--muted)';
+      const statusLabel = isOverdue ? 'overdue' : p.status;
+      return `<tr style="border-bottom:1px solid rgba(160,154,245,.05)">
+        <td style="padding:5px 10px;color:var(--muted)">${p.payment_number}</td>
+        <td style="padding:5px 10px"><input type="date" value="${p.due_date||''}" data-sched-id="${p.id}" data-field="due_date" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--white);font-family:var(--font);font-size:.72rem;padding:2px 4px;width:130px" onchange="markSchedDirty(this)"></td>
+        <td style="padding:5px 10px;text-align:right"><input type="number" step="0.01" value="${parseFloat(p.scheduled_amount||0).toFixed(2)}" data-sched-id="${p.id}" data-field="scheduled_amount" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--white);font-family:var(--font);font-size:.72rem;padding:2px 4px;width:80px;text-align:right" onchange="markSchedDirty(this)"></td>
+        <td style="padding:5px 10px;text-align:center">
+          <select data-sched-id="${p.id}" data-field="status" style="background:rgba(8,6,20,.8);border:1px solid transparent;border-radius:4px;color:${statusColor};font-family:var(--font);font-size:.68rem;padding:2px" onchange="markSchedDirty(this)">
+            ${['scheduled','paid','missed','partial','waived'].map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+        <td style="padding:5px 10px"><input type="date" value="${p.paid_at?p.paid_at.slice(0,10):''}" data-sched-id="${p.id}" data-field="paid_at" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:120px" onchange="markSchedDirty(this)"></td>
+        <td style="padding:5px 10px"><input type="text" value="${p.notes||''}" data-sched-id="${p.id}" data-field="notes" placeholder="—" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:100%" onchange="markSchedDirty(this)"></td>
+      </tr>`;
+    }).join('');
+  }
+  // Generate from pay frequency + next pay date
+  return generateCalendarFromPayInfo(a.pay_frequency, a.next_pay_date, a.requested_amount);
+}
+
+function generateCalendarFromPayInfo(freq, nextPayDate, principal){
+  const APR=0.23, DAYS=112, N=8;
+  const payAmt = nextPayDate && principal
+    ? parseFloat(((principal*(1+APR*DAYS/365))/N).toFixed(2))
+    : 0;
+  const intervalDays = freq==='weekly'?7:freq==='monthly'?30:freq==='semi-monthly'?15:14;
+  let rows='';
+  let d = nextPayDate ? new Date(nextPayDate) : new Date();
+  if(isNaN(d.getTime())) d = new Date();
+  // Push start to future if needed
+  const today=new Date();
+  if(d<=today) d=new Date(today.getTime()+intervalDays*86400000);
+  for(let i=0;i<N;i++){
+    const dateStr=d.toISOString().slice(0,10);
+    const isOverdue=d<today;
+    rows+=`<tr style="border-bottom:1px solid rgba(160,154,245,.05)">
+      <td style="padding:5px 10px;color:var(--muted)">${i+1}</td>
+      <td style="padding:5px 10px"><input type="date" value="${dateStr}" data-new-row="${i}" data-field="due_date" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--white);font-family:var(--font);font-size:.72rem;padding:2px 4px;width:130px" onchange="markSchedDirty(this)"></td>
+      <td style="padding:5px 10px;text-align:right"><input type="number" step="0.01" value="${payAmt.toFixed(2)}" data-new-row="${i}" data-field="scheduled_amount" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--white);font-family:var(--font);font-size:.72rem;padding:2px 4px;width:80px;text-align:right" onchange="markSchedDirty(this)"></td>
+      <td style="padding:5px 10px;text-align:center">
+        <select data-new-row="${i}" data-field="status" style="background:rgba(8,6,20,.8);border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px">
+          ${['scheduled','paid','missed','partial','waived'].map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </td>
+      <td style="padding:5px 10px"><input type="date" value="" data-new-row="${i}" data-field="paid_at" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:120px" onchange="markSchedDirty(this)"></td>
+      <td style="padding:5px 10px"><input type="text" value="" data-new-row="${i}" data-field="notes" placeholder="—" style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:100%" onchange="markSchedDirty(this)"></td>
+    </tr>`;
+    d=new Date(d.getTime()+intervalDays*86400000);
+  }
+  return rows;
+}
+
+function markSchedDirty(el){
+  el.style.borderColor='rgba(255,209,102,.5)';
+  el.style.background='rgba(255,209,102,.04)';
+}
+
+function regenerateCalendar(appId, freq, nextPayDate, loanId){
+  const a=allApps.find(x=>x.id===appId);
+  const tbody=document.getElementById('cal-body-'+appId);
+  if(!tbody||!a) return;
+  tbody.innerHTML=generateCalendarFromPayInfo(freq, nextPayDate, a.requested_amount);
+  showToast('Calendar regenerated — click Save to persist');
+}
+
+async function savePaymentCalendar(loanId, appId){
+  const tbody=document.getElementById('cal-body-'+appId);
+  if(!tbody) return;
+
+  // Collect updates for existing schedule rows
+  const updates=[];
+  tbody.querySelectorAll('[data-sched-id]').forEach(el=>{
+    const schedId=el.dataset.schedId;
+    const field=el.dataset.field;
+    let val=el.value||null;
+    if(field==='paid_at'&&val) val=new Date(val).toISOString();
+    let existing=updates.find(u=>u.id===schedId);
+    if(!existing){existing={id:schedId};updates.push(existing);}
+    existing[field]=val;
+  });
+
+  // Collect new rows (generated from pay info)
+  const newRows=[];
+  const rowCount={};
+  tbody.querySelectorAll('[data-new-row]').forEach(el=>{
+    const idx=el.dataset.newRow;
+    const field=el.dataset.field;
+    if(!rowCount[idx]) rowCount[idx]={};
+    let val=el.value||null;
+    if(field==='paid_at'&&val) val=new Date(val).toISOString();
+    rowCount[idx][field]=val;
+    rowCount[idx]._idx=parseInt(idx);
+  });
+  Object.values(rowCount).forEach(r=>{
+    newRows.push({
+      loan_id: loanId,
+      payment_number: r._idx+1,
+      due_date: r.due_date||null,
+      scheduled_amount: parseFloat(r.scheduled_amount||0),
+      status: r.status||'scheduled',
+      paid_at: r.paid_at||null,
+      notes: r.notes||null,
+    });
+  });
+
+  let hasError=false;
+
+  // Update existing rows
+  for(const u of updates){
+    const {id,...fields}=u;
+    const {error}=await sb.from('repayment_schedule').update(fields).eq('id',id);
+    if(error){showToast('Update failed: '+error.message,true);hasError=true;}
+  }
+
+  // Insert new rows (only if no existing schedule)
+  if(newRows.length&&!updates.length){
+    // Get client_id from loan
+    const loan=allLoans.find(l=>l.id===loanId);
+    if(loan){
+      newRows.forEach(r=>r.client_id=loan.client_id);
+      const {error}=await sb.from('repayment_schedule').insert(newRows);
+      if(error){showToast('Insert failed: '+error.message,true);hasError=true;}
+    }
+  }
+
+  if(!hasError){
+    showToast('✓ Payment calendar saved');
+    // Reload client page to show updated schedule
+    const loan=allLoans.find(l=>l.id===loanId);
+    if(loan?.client_id) openClient(loan.client_id);
+  }
 }
 
 function ahrField(label, value, color=''){

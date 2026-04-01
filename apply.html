@@ -2271,6 +2271,7 @@ function syncContractSummary() {
   document.getElementById('sig-timestamp').textContent = now.toLocaleString('en-CA',{
     year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'
   });
+  document.getElementById('sig-timestamp').dataset.iso = now.toISOString();
 }
 
 // ─── FLINKS STATE ─────────────────────────────────────────────────────
@@ -2421,7 +2422,7 @@ async function submitNew() {
   const ref=genRef('WF');
   const payload={
     formType:'new_loan', ref, submittedAt:new Date().toISOString(), loanAmount,
-    signature:{ fullName:gv('n-esig'), timestamp:document.getElementById('sig-timestamp').textContent },
+    signature:{ fullName:gv('n-esig'), timestamp:document.getElementById('sig-timestamp').dataset.iso||new Date().toISOString() },
     personal:{
       firstName:gv('n-fn'), lastName:gv('n-ln'), email:gv('n-email'), dob:gv('n-dob'),
       homePhone:gv('n-hphone'), cellPhone:gv('n-cphone'),
@@ -2542,6 +2543,7 @@ function rSyncContractSummary() {
   document.getElementById('r-sig-timestamp').textContent=now.toLocaleString('en-CA',{
     year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'
   });
+  document.getElementById('r-sig-timestamp').dataset.iso=now.toISOString();
 }
 
 // ─── RENEWAL FLINKS ───────────────────────────────────────────────────
@@ -2603,7 +2605,7 @@ async function submitRenewal() {
   const ref=genRef('WF-R');
   const payload={
     formType:'renewal', ref, submittedAt:new Date().toISOString(),
-    signature:{ fullName:gv('r-esig'), timestamp:document.getElementById('r-sig-timestamp').textContent },
+    signature:{ fullName:gv('r-esig'), timestamp:document.getElementById('r-sig-timestamp').dataset.iso||new Date().toISOString() },
     personal:{
       firstName:gv('r-fn'), lastName:gv('r-ln'), dob:gv('r-dob'),
       email:gv('r-email'), cellPhone:gv('r-cphone'), homePhone:gv('r-hphone'),
