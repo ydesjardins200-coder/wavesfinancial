@@ -891,12 +891,12 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
         </div>
       </div>
       ${s&&Object.keys(s).length?`<div class="sig-grid">
-        ${sig('NSF (90d)',s.nsfCount??'—',s.nsfPts,25)}
-        ${sig('Oppositions',s.oppositionCount??'—',s.oppPts,20)}
-        ${sig('DTI',s.dtiRatio!=null?(s.dtiRatio*100).toFixed(1)+'%':'—',s.dtiPts,20)}
-        ${sig('Regularity',s.incomeRegularity||'—',s.regPts,15)}
-        ${sig('Mismatch',s.misRatio!=null?(s.misRatio*100).toFixed(1)+'%':'—',s.misPts,10)}
-        ${sig('Balance',s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—',s.balPts,10)}
+        ${sig('NSF (90d)',      s.nsfCount??'—',          s.nsfPoints??s.nsfPts,        25)}
+        ${sig('Oppositions',   s.oppositionCount??'—',    s.oppositionPoints??s.oppPts, 20)}
+        ${sig('DTI',           s.dtiRatio!=null?(s.dtiRatio*100).toFixed(1)+'%':'—', s.dtiPoints??s.dtiPts, 20)}
+        ${sig('Regularity',    s.incomeRegularity||'—',   s.regularityPoints??s.regPts, 15)}
+        ${sig('Mismatch',      s.mismatchRatio!=null?(s.mismatchRatio*100).toFixed(1)+'%':s.misRatio!=null?(s.misRatio*100).toFixed(1)+'%':'—', s.mismatchPoints??s.misPts, 10)}
+        ${sig('Balance',       s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—', s.balancePoints??s.balPts, 10)}
       </div>`:''}
       ${app.flags&&app.flags.length?app.flags.map(f=>`<div class="flag-item" style="margin-top:6px">⚑ ${f}</div>`).join(''):''}
 
@@ -1016,33 +1016,94 @@ function appHistoryRow(a, loans, schedMap){
       ${ahrField('Timestamp',tsDisplay)}
     </div>
 
-    <!-- FEASIBILITY RIBBON -->
+    <!-- FEASIBILITY RIBBON + EDITABLE SIGNALS -->
     ${(()=>{
       const fl=a.feasibility_list||[];
-      if(!fl.length) return '';
+      const s=a.signals||{};
       const currentAmt=a.approved_amount||a.requested_amount||0;
+      const verInc   = s.verifiedIncome   ?? a.verified_income   ?? '';
+      const fixedObl = s.fixedObligations ?? a.fixed_obligations ?? '';
+      const nsfC     = s.nsfCount         ?? a.nsf_count         ?? 0;
+      const oppC     = s.oppositionCount  ?? a.opposition_count  ?? 0;
+      const balance  = s.avgDailyBalance  ?? a.avg_daily_balance ?? '';
+      const ageD     = s.accountAgeDays   ?? a.account_age_days  ?? '';
+      const reg      = s.incomeRegularity ?? a.income_regularity ?? 'consistent';
+
+      const chipHtml = fl.length ? fl.map((amt,i)=>{
+        const isMax=i===0;
+        const isCurrent=amt===currentAmt;
+        const bg=isCurrent?'rgba(29,233,198,.22)':isMax?'rgba(29,233,198,.12)':'rgba(91,82,216,.10)';
+        const border=isCurrent?'rgba(29,233,198,.7)':isMax?'rgba(29,233,198,.35)':'rgba(91,82,216,.22)';
+        const color=isCurrent?'var(--teal)':isMax?'var(--teal)':'var(--periwinkle)';
+        const payAmt=(amt*(1+0.23*112/365)/8).toFixed(2);
+        return `<div style="padding:8px 12px;background:${bg};border:2px solid ${border};border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;min-width:80px"
+          onclick="selectFeasibleAmount('${a.id}','${loan?loan.id:''}',${amt},'${a.pay_frequency||'biweekly'}','${a.next_pay_date||''}')"
+          id="feaschip-${a.id}-${amt}">
+          <div style="font-size:.88rem;font-weight:800;color:${color}">$${amt.toLocaleString()}</div>
+          <div style="font-size:.58rem;color:var(--muted);margin-top:1px">$${payAmt}/pmt</div>
+          ${isCurrent?'<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">✓ SELECTED</div>':isMax?'<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">⭐ MAX</div>':''}
+        </div>`;
+      }).join('') : `<div style="font-size:.75rem;color:var(--muted);padding:8px 0">No feasibility list — resubmit or recalculate below.</div>`;
+
       return `<div style="margin-bottom:14px">
         <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;display:flex;align-items:center;gap:8px">
           💡 Feasible Amounts — Revenue Optimized
-          <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">highest first · click to select · regenerates calendar & contract</span>
+          <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">highest first · click to select</span>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${fl.map((amt,i)=>{
-            const isMax=i===0;
-            const isCurrent=amt===currentAmt;
-            const bg=isCurrent?'rgba(29,233,198,.22)':isMax?'rgba(29,233,198,.12)':'rgba(91,82,216,.10)';
-            const border=isCurrent?'rgba(29,233,198,.7)':isMax?'rgba(29,233,198,.35)':'rgba(91,82,216,.22)';
-            const color=isCurrent?'var(--teal)':isMax?'var(--teal)':'var(--periwinkle)';
-            const payAmt=(amt*(1+0.23*112/365)/8).toFixed(2);
-            return `<div style="padding:8px 12px;background:${bg};border:2px solid ${border};border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;min-width:80px"
-              onclick="selectFeasibleAmount('${a.id}','${loan?loan.id:''}',${amt},'${a.pay_frequency||'biweekly'}','${a.next_pay_date||''}')"
-              id="feaschip-${a.id}-${amt}">
-              <div style="font-size:.88rem;font-weight:800;color:${color}">$${amt.toLocaleString()}</div>
-              <div style="font-size:.58rem;color:var(--muted);margin-top:1px">$${payAmt}/pmt</div>
-              ${isCurrent?'<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">✓ SELECTED</div>':isMax?'<div style="font-size:.52rem;color:var(--teal);font-weight:700;margin-top:1px">⭐ MAX</div>':''}
-            </div>`;
-          }).join('')}
+
+        <!-- Amount chips -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="feaschips-${a.id}">
+          ${chipHtml}
         </div>
+
+        <!-- Editable scoring signals -->
+        <details style="margin-bottom:8px">
+          <summary style="font-size:.65rem;font-weight:700;color:var(--periwinkle);cursor:pointer;padding:6px 0;user-select:none;list-style:none;display:flex;align-items:center;gap:6px">
+            <span>⚙️ Edit Scoring Signals</span>
+            <span style="font-weight:400;color:var(--muted)">— override bank data then recalculate</span>
+          </summary>
+          <div style="margin-top:10px;padding:12px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+              <div>
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Verified Income / mo ($)</div>
+                <input type="number" id="sig-verifiedIncome-${a.id}" value="${verInc}" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+              </div>
+              <div>
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Fixed Obligations / mo ($)</div>
+                <input type="number" id="sig-fixedObligations-${a.id}" value="${fixedObl}" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+              </div>
+              <div>
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">NSF Count (90d)</div>
+                <input type="number" id="sig-nsfCount-${a.id}" value="${nsfC}" min="0" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+              </div>
+              <div>
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Payment Oppositions</div>
+                <input type="number" id="sig-oppositionCount-${a.id}" value="${oppC}" min="0" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+              </div>
+              <div>
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Avg Daily Balance ($)</div>
+                <input type="number" id="sig-avgDailyBalance-${a.id}" value="${balance}" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+              </div>
+              <div>
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Account Age (days)</div>
+                <input type="number" id="sig-accountAgeDays-${a.id}" value="${ageD}" min="0" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.7);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+              </div>
+              <div style="grid-column:1/-1">
+                <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Income Regularity</div>
+                <select id="sig-incomeRegularity-${a.id}" style="width:100%;padding:5px 8px;background:rgba(8,6,20,.8);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+                  <option value="consistent"  ${reg==='consistent' ?'selected':''}>consistent</option>
+                  <option value="variable"    ${reg==='variable'   ?'selected':''}>variable</option>
+                  <option value="irregular"   ${reg==='irregular'  ?'selected':''}>irregular</option>
+                  <option value="undetected"  ${reg==='undetected' ?'selected':''}>undetected</option>
+                </select>
+              </div>
+            </div>
+            <button onclick="recalcFeasibility('${a.id}','${a.requested_amount||800}')"
+              style="padding:7px 16px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:6px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+              ↻ Recalculate Feasibility
+            </button>
+          </div>
+        </details>
       </div>`;
     })()}
 
@@ -1456,6 +1517,63 @@ async function selectFeasibleAmount(appId, loanId, amount, freq, nextPayDate){
   });
 
   showToast(`✓ $${amount.toLocaleString()} selected — calendar regenerated · save to persist`);
+}
+
+/* ── RECALCULATE FEASIBILITY FROM EDITED SIGNALS ── */
+function recalcFeasibility(appId, requestedAmount){
+  const get = id => { const el=document.getElementById(id); return el?el.value:''; };
+  const verifiedIncome   = parseFloat(get('sig-verifiedIncome-'+appId))   || 0;
+  const fixedObligations = parseFloat(get('sig-fixedObligations-'+appId)) || 0;
+  const nsfCount         = parseInt(get('sig-nsfCount-'+appId))           || 0;
+  const oppositionCount  = parseInt(get('sig-oppositionCount-'+appId))    || 0;
+  const avgDailyBalance  = parseFloat(get('sig-avgDailyBalance-'+appId))  || 0;
+  const accountAgeDays   = parseInt(get('sig-accountAgeDays-'+appId))     || 0;
+  const incomeRegularity = get('sig-incomeRegularity-'+appId)             || 'consistent';
+
+  const APR=0.23, DAYS=112, N=8, DTI_LIMIT=0.75;
+  const CANDIDATES=[1000,900,800,700,600,500,400,300,200,100];
+
+  // Recalculate feasibility list
+  const newList = verifiedIncome > 0
+    ? CANDIDATES.filter(amt=>{
+        const monthlyPmt = (amt*(1+APR*DAYS/365)/N)*2; // biweekly × 2
+        return (fixedObligations + monthlyPmt) / verifiedIncome < DTI_LIMIT;
+      })
+    : [];
+
+  // Update chips container
+  const container = document.getElementById('feaschips-'+appId);
+  if(!container) return;
+
+  const a = allApps.find(x=>x.id===appId);
+  const loan = a ? allLoans.find(l=>l.ref===a.ref) : null;
+  const currentAmt = a?.approved_amount || a?.requested_amount || 0;
+
+  if(!newList.length){
+    container.innerHTML=`<div style="font-size:.75rem;color:var(--coral);padding:8px 0">⚑ No feasible amount — income too low or obligations too high at these signal values.</div>`;
+    return;
+  }
+
+  container.innerHTML = newList.map((amt,i)=>{
+    const isMax=i===0;
+    const isCurrent=amt===currentAmt;
+    const bg=isCurrent?'rgba(29,233,198,.22)':isMax?'rgba(29,233,198,.12)':'rgba(91,82,216,.10)';
+    const border=isCurrent?'rgba(29,233,198,.7)':isMax?'rgba(29,233,198,.35)':'rgba(91,82,216,.22)';
+    const color=isCurrent?'var(--teal)':isMax?'var(--teal)':'var(--periwinkle)';
+    const payAmt=(amt*(1+APR*DAYS/365)/N).toFixed(2);
+    const dti=((fixedObligations+(amt*(1+APR*DAYS/365)/N)*2)/verifiedIncome*100).toFixed(0);
+    return `<div style="padding:8px 12px;background:${bg};border:2px solid ${border};border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;min-width:80px"
+      onclick="selectFeasibleAmount('${appId}','${loan?loan.id:''}',${amt},'${a?.pay_frequency||'biweekly'}','${a?.next_pay_date||''}')"
+      id="feaschip-${appId}-${amt}">
+      <div style="font-size:.88rem;font-weight:800;color:${color}">$${amt.toLocaleString()}</div>
+      <div style="font-size:.58rem;color:var(--muted);margin-top:1px">$${payAmt}/pmt</div>
+      <div style="font-size:.52rem;color:var(--muted);margin-top:1px">DTI ${dti}%</div>
+      ${isCurrent?'<div style="font-size:.52rem;color:var(--teal);font-weight:700">✓ SELECTED</div>':isMax?'<div style="font-size:.52rem;color:var(--teal);font-weight:700">⭐ MAX</div>':''}
+    </div>`;
+  }).join('');
+
+  // Also show a quick score summary
+  showToast(`↻ Recalculated — ${newList.length} feasible amounts · max $${newList[0].toLocaleString()}`);
 }
 
 async function setApprovedAmount(loanId, amount){
