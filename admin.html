@@ -229,6 +229,16 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 /* CONTRACT SECTION */
 .contract-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
 
+/* NOTES FEED */
+.note-entry{padding:9px 12px;border-radius:7px;background:rgba(8,6,20,.5);border:1px solid var(--border);margin-bottom:6px;}
+.note-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.note-agent{font-size:.65rem;font-weight:700;color:var(--periwinkle);}
+.note-time{font-size:.62rem;color:var(--muted);}
+.note-delete{margin-left:auto;font-size:.6rem;color:var(--muted);background:none;border:none;cursor:pointer;padding:1px 5px;border-radius:3px;}
+.note-delete:hover{background:rgba(255,107,138,.1);color:var(--coral);}
+.note-text{font-size:.78rem;line-height:1.5;color:var(--white);}
+.note-empty{font-size:.75rem;color:var(--muted);text-align:center;padding:12px 0;}
+
 /* EDITABLE CLIENT FIELDS */
 .crf-edit{width:100%;padding:5px 8px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:5px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none;transition:border-color .15s;}
 .crf-edit:focus{border-color:var(--iris);background:rgba(8,6,20,.9);}
@@ -549,10 +559,11 @@ async function openClient(clientId, highlightRef){
   window.scrollTo(0,0);
 
   // Load all client data in parallel
-  const [clientRes, appsRes, loansRes] = await Promise.all([
+  const [clientRes, appsRes, loansRes, notesRes] = await Promise.all([
     sb.from('clients').select('*').eq('id',clientId).single(),
     sb.from('loan_applications').select('*').eq('client_id',clientId).order('submitted_at',{ascending:false}),
     sb.from('loans').select('*').eq('client_id',clientId).order('created_at',{ascending:false}),
+    sb.from('client_notes').select('*').eq('client_id',clientId).order('created_at',{ascending:false}).limit(50),
   ]);
 
   const client = clientRes.data;
@@ -591,6 +602,8 @@ async function openClient(clientId, highlightRef){
   }
 
   renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef);
+  // Render notes feed after DOM is ready
+  renderNotesFeed(clientId, notesRes.data||[]);
 }
 
 function renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef){
@@ -628,8 +641,12 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
           `<button class="ca ca-approve" onclick="activateClient('${client.id}')">✓ Activate</button>`}
       </div>
     </div>
-    <textarea class="notes-area" id="na-client-${client.id}" placeholder="Client-level notes…" style="display:block;margin-top:0;min-height:70px">${client.notes||''}</textarea>
-    <button class="save-note-btn" id="snb-client-${client.id}" onclick="saveClientNote('${client.id}')" style="display:inline-block;margin-top:6px">💾 Save Note</button>
+    <!-- NOTES FEED -->
+    <div id="client-notes-feed-${client.id}" style="margin-bottom:10px;max-height:280px;overflow-y:auto"></div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <textarea id="na-client-${client.id}" placeholder="Add a note…" style="flex:1;padding:8px 10px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;resize:none;height:60px;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--iris)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <button onclick="saveClientNote('${client.id}')" style="padding:9px 16px;background:rgba(91,82,216,.2);border:1px solid rgba(91,82,216,.4);border-radius:7px;color:var(--periwinkle);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;height:60px">💾 Add Note</button>
+    </div>
 
     <!-- SECTION 1: PERSONAL INFORMATION -->
     <div class="crm-sec" style="margin-bottom:16px">
@@ -815,6 +832,37 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
         ${sig('Balance',s.avgDailyBalance!=null?'$'+Math.round(s.avgDailyBalance).toLocaleString():'—',s.balPts,10)}
       </div>`:''}
       ${app.flags&&app.flags.length?app.flags.map(f=>`<div class="flag-item" style="margin-top:6px">⚑ ${f}</div>`).join(''):''}
+
+      <!-- FEASIBILITY LIST -->
+      ${(()=>{
+        const fl=app.feasibility_list||[];
+        if(!fl.length) return '';
+        const maxAmt=fl[0]||0;
+        return `<div style="margin-top:14px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px">
+            💡 Feasible Amounts — Revenue Optimized
+            <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px">highest first · all within 75% DTI</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${fl.map((amt,i)=>{
+              const isMax=i===0;
+              const pct=app.requested_amount?Math.round(amt/app.requested_amount*100):100;
+              const bg=isMax?'rgba(29,233,198,.18)':'rgba(91,82,216,.12)';
+              const border=isMax?'rgba(29,233,198,.4)':'rgba(91,82,216,.25)';
+              const color=isMax?'var(--teal)':'var(--periwinkle)';
+              const payAmt=(amt*(1+0.23*112/365)/8).toFixed(2);
+              return `<div style="padding:8px 12px;background:${bg};border:1px solid ${border};border-radius:8px;cursor:pointer;transition:all .15s;text-align:center"
+                onclick="setApprovedAmount('${loan.id}',${amt})"
+                title="Click to set approved amount to $${amt}">
+                <div style="font-size:.85rem;font-weight:800;color:${color}">$${amt.toLocaleString()}</div>
+                <div style="font-size:.58rem;color:var(--muted);margin-top:1px">$${payAmt}/payment</div>
+                ${isMax?'<div style="font-size:.55rem;color:var(--teal);font-weight:700;margin-top:1px">⭐ MAX</div>':''}
+              </div>`;
+            }).join('')}
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:6px">Click any amount to set as the approved amount for this loan.</div>
+        </div>`;
+      })()}
     </div>`:'';
 
   // Analyst actions for this loan's application
@@ -1197,36 +1245,137 @@ function toggleNote(key){
   if(!v) a.focus();
 }
 
-async function saveAppNote(appId){
-  const area=document.getElementById('na-app-'+appId);
-  if(!area) return;
-  await sb.from('loan_applications').update({analyst_notes:area.value.trim()}).eq('id',appId);
-  const a=allApps.find(x=>x.id===appId);
-  if(a) a.analyst_notes=area.value.trim();
-  showToast('Note saved');
+/* ── NOTES FEED ── */
+async function setApprovedAmount(loanId, amount){
+  if(!loanId) return;
+  const {error}=await sb.from('loans').update({
+    principal:         amount,
+    approved_amount:   amount,
+    remaining_balance: amount,
+  }).eq('id',loanId);
+  if(error){showToast('Failed: '+error.message,true);return;}
+  const loan=allLoans.find(l=>l.id===loanId);
+  if(loan){ loan.principal=amount; loan.remaining_balance=amount; }
+  showToast('✓ Approved amount set to $'+amount.toLocaleString());
 }
 
-async function saveAppNoteInline(appId){
-  const area=document.getElementById('anote-'+appId);
-  if(!area) return;
-  const note=area.value.trim();
-  const {error}=await sb.from('loan_applications').update({analyst_notes:note}).eq('id',appId);
-  if(error){showToast('Save failed: '+error.message,true);return;}
-  const a=allApps.find(x=>x.id===appId);
-  if(a) a.analyst_notes=note;
-  showToast('✓ Note saved');
+function renderNotesFeed(clientId, notes){
+  const feed=document.getElementById('client-notes-feed-'+clientId);
+  if(!feed) return;
+  if(!notes||!notes.length){
+    feed.innerHTML='<div class="note-empty">No notes yet. Be the first to add one.</div>';
+    return;
+  }
+  feed.innerHTML=notes.map(n=>`
+    <div class="note-entry" id="note-entry-${n.id}">
+      <div class="note-meta">
+        <span class="note-agent">👤 ${n.agent||'analyst'}</span>
+        <span class="note-time">${timeAgo(n.created_at)} · ${new Date(n.created_at).toLocaleString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+        ${n.context?`<span style="font-size:.6rem;padding:1px 6px;border-radius:100px;background:rgba(91,82,216,.15);color:var(--periwinkle)">${n.context}</span>`:''}
+        <button class="note-delete" onclick="deleteClientNote('${n.id}','${clientId}')" title="Delete note">✕</button>
+      </div>
+      <div class="note-text">${n.note.replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
 }
 
 async function saveClientNote(clientId){
   const area=document.getElementById('na-client-'+clientId);
-  if(!area) return;
+  if(!area||!area.value.trim()) return;
   const note=area.value.trim();
-  const {error}=await sb.from('clients').update({notes:note}).eq('id',clientId);
+
+  const {data,error}=await sb.from('client_notes').insert({
+    client_id: clientId,
+    agent:     'analyst',
+    note,
+    context:   'general',
+  }).select('*').single();
+
   if(error){showToast('Save failed: '+error.message,true);return;}
-  const c=allClients.find(x=>x.id===clientId);
-  if(c) c.notes=note;
-  showToast('✓ Client note saved');
+
+  // Prepend to feed immediately
+  const feed=document.getElementById('client-notes-feed-'+clientId);
+  if(feed){
+    const empty=feed.querySelector('.note-empty');
+    if(empty) empty.remove();
+    const entry=document.createElement('div');
+    entry.className='note-entry';
+    entry.id='note-entry-'+data.id;
+    entry.innerHTML=`
+      <div class="note-meta">
+        <span class="note-agent">👤 analyst</span>
+        <span class="note-time">just now</span>
+        <button class="note-delete" onclick="deleteClientNote('${data.id}','${clientId}')" title="Delete note">✕</button>
+      </div>
+      <div class="note-text">${note.replace(/\n/g,'<br>')}</div>`;
+    feed.insertBefore(entry, feed.firstChild);
+  }
+
+  area.value='';
+  showToast('✓ Note added');
 }
+
+async function deleteClientNote(noteId, clientId){
+  if(!confirm('Delete this note?')) return;
+  const {error}=await sb.from('client_notes').delete().eq('id',noteId);
+  if(error){showToast('Delete failed: '+error.message,true);return;}
+  document.getElementById('note-entry-'+noteId)?.remove();
+  showToast('Note deleted');
+}
+
+async function saveAppNote(appId){
+  const area=document.getElementById('na-app-'+appId);
+  if(!area||!area.value.trim()) return;
+  const note=area.value.trim();
+  const a=allApps.find(x=>x.id===appId);
+  const {data,error}=await sb.from('application_notes').insert({
+    application_id: appId,
+    client_id:      a?.client_id||null,
+    agent:          'analyst',
+    note,
+  }).select('*').single();
+  if(error){showToast('Save failed: '+error.message,true);return;}
+  area.value='';
+  showToast('✓ Note added');
+}
+
+async function saveAppNoteInline(appId){
+  const area=document.getElementById('anote-'+appId);
+  if(!area||!area.value.trim()) return;
+  const note=area.value.trim();
+  const a=allApps.find(x=>x.id===appId);
+
+  const {data,error}=await sb.from('application_notes').insert({
+    application_id: appId,
+    client_id:      a?.client_id||null,
+    agent:          'analyst',
+    note,
+  }).select('*').single();
+
+  if(error){showToast('Save failed: '+error.message,true);return;}
+
+  // Append note below textarea immediately
+  const feedId='appnote-feed-'+appId;
+  let feed=document.getElementById(feedId);
+  if(!feed){
+    feed=document.createElement('div');
+    feed.id=feedId;
+    feed.style.marginTop='8px';
+    area.parentNode.insertBefore(feed, area.nextSibling?.nextSibling||null);
+  }
+  const entry=document.createElement('div');
+  entry.className='note-entry';
+  entry.style.marginBottom='4px';
+  entry.innerHTML=`
+    <div class="note-meta">
+      <span class="note-agent">👤 analyst</span>
+      <span class="note-time">just now</span>
+    </div>
+    <div class="note-text">${note.replace(/\n/g,'<br>')}</div>`;
+  feed.insertBefore(entry, feed.firstChild);
+  area.value='';
+  showToast('✓ Note added');
+}
+
 
 function openClientFromApp(a){
   // No client_id — show just the application
