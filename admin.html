@@ -520,15 +520,24 @@ function renderList(){
     const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
 
-    // DRD action bar for pending disbursement loans
-    const drdBar = pendingDisb.length ? `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.2);border-radius:8px;flex-wrap:wrap">
-        <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} loan${pendingDisb.length>1?'s':''} pending disbursement</span>
+    // DRD + PAD action bar
+    const drdBar = pendingDisb.length || true ? `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
+        ${pendingDisb.length?`
+        <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
         <a href="${RAILWAY_URL}/api/eft/drd" target="_blank"
-           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.4);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
-          📁 Download DRD File (All)
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
+          📁 DRD — Disbursements
+        </a>`:''}
+        <a href="${RAILWAY_URL}/api/eft/pad" target="_blank"
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);text-decoration:none;font-size:.72rem;font-weight:700">
+          📁 PAD — Collections (next 5 days)
         </a>
-        <span style="font-size:.65rem;color:var(--muted)">Effective: ${nextBizDay()}</span>
+        <a href="${RAILWAY_URL}/api/eft/pad?days=14" target="_blank"
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);text-decoration:none;font-size:.72rem;font-weight:700">
+          📁 PAD — 14 days
+        </a>
+        <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Effective: ${nextBizDay()}</span>
       </div>` : '';
 
     if(!active.length){document.getElementById('app-list').innerHTML=drdBar+'<div class="empty">No active loans.</div>';return;}
