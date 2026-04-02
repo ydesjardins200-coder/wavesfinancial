@@ -2137,27 +2137,39 @@ async function previewRetries(){
     const data=await resp.json();
 
     if(!data.count){
-      box.innerHTML='<div style="font-size:.78rem;color:var(--muted)">✓ No NSF retries due today.</div>';
+      box.innerHTML='<div style="font-size:.78rem;color:var(--muted)">✓ No NSF retries or outstanding fees due today.</div>';
       return;
     }
 
-    const rows=data.payments.map(p=>`
-      <tr style="border-bottom:1px solid rgba(160,154,245,.06)">
+    const rows=data.payments.map(p=>{
+      const isRetry = p.type==='retry';
+      const isFee   = p.type==='nsf_fee';
+      const rowBg   = isFee ? 'rgba(255,107,138,.04)' : '';
+      return `<tr style="border-bottom:1px solid rgba(160,154,245,.06);background:${rowBg}">
         <td style="padding:5px 10px;font-size:.72rem;color:var(--periwinkle)">${p.ref}</td>
         <td style="padding:5px 10px;font-size:.72rem">${p.borrowerName}</td>
-        <td style="padding:5px 10px;font-size:.72rem">P${String(p.paymentNumber).padStart(2,'0')}</td>
-        <td style="padding:5px 10px;font-size:.72rem;font-weight:700;color:var(--gold)">$${parseFloat(p.amount).toFixed(2)}</td>
-        <td style="padding:5px 10px;font-size:.72rem;color:var(--muted)">${p.retryDate}</td>
-        <td style="padding:5px 10px;font-size:.72rem;color:var(--coral)">Retry #${p.retryCount}</td>
+        <td style="padding:5px 10px;font-size:.72rem">
+          ${isRetry
+            ? `<span style="color:var(--teal)">P${String(p.paymentNumber).padStart(2,'0')} retry</span>`
+            : `<span style="color:var(--coral)">$45 NSF fee</span>`}
+        </td>
+        <td style="padding:5px 10px;font-size:.72rem;font-weight:800;color:${isFee?'var(--coral)':'var(--gold)'}">$${parseFloat(p.amount).toFixed(2)}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--muted)">${p.retryDate||'—'}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--muted)">${isRetry?`Attempt #${p.retryCount}`:'Fee collection'}</td>
         <td style="padding:5px 10px">${p.hasBankingCoords?'<span style="color:var(--teal);font-size:.65rem">✓</span>':'<span style="color:var(--coral);font-size:.65rem">⚠ missing</span>'}</td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
     window._retryPreview=data;
     box.innerHTML=`
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
         <div>
-          <div style="font-size:.75rem;font-weight:800;color:var(--white)">${data.count} NSF retry${data.count>1?'s':''} due · $${data.totalAmount}</div>
-          <div style="font-size:.65rem;color:var(--muted);margin-top:2px">These will be stamped — cannot be retried again from this run.</div>
+          <div style="font-size:.75rem;font-weight:800;color:var(--white)">
+            ${data.retryCount} payment retry${data.retryCount!==1?'s':''} ($${data.retryTotal})
+            + ${data.feeCount} NSF fee${data.feeCount!==1?'s':''} ($${data.feeTotal})
+            = <span style="color:var(--teal)">$${data.totalAmount} total</span>
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:2px">Separate D records per item — atomic stamp on generate.</div>
         </div>
         <div style="display:flex;gap:8px">
           <button onclick="document.getElementById('retry-preview-box').style.display='none';window._retryPreview=null"
@@ -2172,13 +2184,18 @@ async function previewRetries(){
         <thead><tr style="background:rgba(30,25,70,.8)">
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Loan</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Borrower</th>
-          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Pmt</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Type</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Amount</th>
-          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Retry Date</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Date</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Attempt</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Bank</th>
         </tr></thead>
         <tbody>${rows}</tbody>
+        <tr style="background:rgba(91,82,216,.12)">
+          <td colspan="3" style="padding:7px 10px;font-size:.75rem;font-weight:800;color:var(--white)">Total</td>
+          <td style="padding:7px 10px;font-size:.75rem;font-weight:800;color:var(--teal)">$${data.totalAmount}</td>
+          <td colspan="3"></td>
+        </tr>
       </table>`;
 
   }catch(err){
