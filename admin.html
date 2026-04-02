@@ -92,6 +92,53 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .qtitle{font-size:.85rem;font-weight:800;}
 .qrefresh{font-size:.72rem;color:var(--periwinkle);background:none;border:1px solid rgba(160,154,245,.2);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:var(--font);}
 .qrefresh:hover{background:rgba(160,154,245,.1);}
+
+/* ── TOOLBAR INPUTS / SELECTS ── */
+#list-toolbar input,
+#list-toolbar select{
+  padding:7px 10px;
+  background:#131628;
+  border:1px solid rgba(160,154,245,.2);
+  border-radius:8px;
+  color:#e0e6ff;
+  font-family:var(--font);
+  font-size:.78rem;
+  outline:none;
+  cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
+}
+#list-toolbar input{
+  flex:1;min-width:160px;max-width:260px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7db3' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  padding-right:30px;
+  cursor:text;
+}
+#list-toolbar select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7db3' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  padding-right:28px;
+}
+#list-toolbar input:focus,
+#list-toolbar select:focus{border-color:rgba(160,154,245,.55);background:#17193a;}
+#list-toolbar input::placeholder{color:#4a5580;}
+#list-toolbar select option{background:#131628;color:#e0e6ff;}
+#list-toolbar button{
+  padding:7px 12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(160,154,245,.2);
+  border-radius:8px;
+  color:#6b7db3;
+  font-family:var(--font);
+  font-size:.78rem;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .18s;
+}
+#list-toolbar button:hover{background:rgba(255,92,115,.08);border-color:rgba(255,92,115,.3);color:var(--coral);}
 .col-head{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 16px 8px;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;gap:12px;}
 .arow{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;align-items:center;gap:12px;overflow:hidden;}
 .arow>*{min-width:0;overflow:hidden;}
@@ -362,34 +409,19 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
       <!-- Sort + Filter toolbar -->
       <div id="list-toolbar" style="display:flex;align-items:center;gap:8px;padding:8px 0;flex-wrap:wrap">
-        <!-- Search -->
-        <input id="filter-search" type="text" placeholder="Search name, email, ref…"
-          oninput="applyFilters()"
-          style="flex:1;min-width:160px;max-width:260px;padding:7px 12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
-
-        <!-- Loan type filter -->
-        <select id="filter-type" onchange="applyFilters()"
-          style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
+        <input id="filter-search" type="text" placeholder="🔍 Search name, email, ref…" oninput="applyFilters()">
+        <select id="filter-type" onchange="applyFilters()">
           <option value="">All Types</option>
           <option value="new">New Loan</option>
           <option value="renewal">Renewal</option>
         </select>
-
-        <!-- Province filter -->
-        <select id="filter-province" onchange="applyFilters()"
-          style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
+        <select id="filter-province" onchange="applyFilters()">
           <option value="">All Provinces</option>
-          <option value="BC">BC</option>
-          <option value="ON">ON</option>
-          <option value="NS">NS</option>
-          <option value="NB">NB</option>
-          <option value="PE">PE</option>
-          <option value="NL">NL</option>
+          <option value="BC">BC</option><option value="ON">ON</option>
+          <option value="NS">NS</option><option value="NB">NB</option>
+          <option value="PE">PE</option><option value="NL">NL</option>
         </select>
-
-        <!-- Sort -->
-        <select id="sort-by" onchange="applyFilters()"
-          style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
+        <select id="sort-by" onchange="applyFilters()">
           <option value="date_desc">Newest First</option>
           <option value="date_asc">Oldest First</option>
           <option value="amount_desc">Amount ↓</option>
@@ -398,12 +430,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           <option value="score_desc">Risk Score ↓</option>
           <option value="name_asc">Name A→Z</option>
         </select>
-
-        <!-- Clear filters -->
-        <button onclick="clearFilters()"
-          style="padding:7px 12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:.78rem;cursor:pointer;white-space:nowrap">
-          ✕ Clear
-        </button>
+        <button onclick="clearFilters()">✕ Clear</button>
       </div>
 
       <div class="col-head" id="col-head">
