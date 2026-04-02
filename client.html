@@ -486,14 +486,36 @@ body::before{
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
-            ${['Payment History','Credit Utilization','Account Age','Credit Mix','New Inquiries','Public Records'].map((f,i)=>`
             <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">${f}</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden">
-                <div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .${i}s" class="eq-placeholder-bar"></div>
-              </div>
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Payment History</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease 0s" class="eq-placeholder-bar"></div></div>
               <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>`).join('')}
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Credit Utilization</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .1s" class="eq-placeholder-bar"></div></div>
+              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Account Age</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .2s" class="eq-placeholder-bar"></div></div>
+              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Credit Mix</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .3s" class="eq-placeholder-bar"></div></div>
+              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">New Inquiries</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .4s" class="eq-placeholder-bar"></div></div>
+              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Public Records</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .5s" class="eq-placeholder-bar"></div></div>
+              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
+            </div>
           </div>
         </div>
 
