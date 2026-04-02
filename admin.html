@@ -954,21 +954,64 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
   const app=apps.find(a=>a.ref===loan.ref);
   const s=app?.signals||{};
 
-  // Repayment schedule table
-  const schedRows=schedule.map(p=>{
-    const psCls={'paid':'ps-paid','missed':'ps-missed','partial':'ps-partial','waived':'ps-waived','scheduled':'ps-scheduled'}[p.status]||'ps-scheduled';
-    const isOverdue=p.status==='scheduled'&&new Date(p.due_date)<new Date();
-    const eftStatus=p.eft_submitted_at
-      ?`<span style="font-size:.6rem;color:var(--periwinkle)" title="${p.eft_file||''}">📤 ${new Date(p.eft_submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric'})}</span>`
-      :'<span style="font-size:.6rem;color:var(--muted)">—</span>';
-    return `<tr>
-      <td>${p.payment_number}</td>
-      <td>${p.due_date}</td>
-      <td>$${Number(p.scheduled_amount).toLocaleString()}</td>
-      <td><span class="pay-status ${isOverdue?'ps-missed':psCls}">${isOverdue?'overdue':p.status}</span></td>
-      <td>${p.paid_at?new Date(p.paid_at).toLocaleDateString('en-CA'):'—'}</td>
-      <td>${p.paid_amount?'$'+Number(p.paid_amount).toLocaleString():'—'}</td>
-      <td>${eftStatus}</td>
+  // Repayment schedule table — fully editable
+  const schedRows = schedule.map((p,i) => {
+    const isOverdue = p.status==='scheduled' && new Date(p.due_date) < new Date();
+    const effStatus = isOverdue ? 'overdue' : p.status;
+    const statusCfg = {
+      paid:      { cls:'ps-paid',      color:'var(--teal)',       icon:'✓' },
+      missed:    { cls:'ps-missed',    color:'var(--coral)',      icon:'✕' },
+      failed:    { cls:'ps-missed',    color:'var(--coral)',      icon:'✕' },
+      cancelled: { cls:'ps-missed',    color:'var(--coral)',      icon:'—' },
+      overdue:   { cls:'ps-missed',    color:'var(--coral)',      icon:'!' },
+      partial:   { cls:'ps-partial',   color:'var(--gold)',       icon:'~' },
+      waived:    { cls:'ps-waived',    color:'var(--periwinkle)', icon:'○' },
+      scheduled: { cls:'ps-scheduled', color:'var(--muted)',      icon:'·' },
+    };
+    const cfg = statusCfg[effStatus] || statusCfg.scheduled;
+
+    const eftBadge = p.eft_submitted_at
+      ? `<span style="font-size:.58rem;color:var(--periwinkle)" title="File: ${p.eft_file||''}">📤 ${new Date(p.eft_submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric'})}</span>`
+      : '';
+    const retryBadge = p.eft_retry_at
+      ? `<span style="font-size:.58rem;color:var(--gold)"> 🔄 retry</span>` : '';
+    const returnBadge = p.return_code
+      ? `<span style="font-size:.58rem;color:var(--coral)" title="${p.return_reason||''}"> ↩ ${p.return_code}</span>` : '';
+    const nsfBadge = p.nsf_fee_charged
+      ? `<span style="font-size:.58rem;color:var(--coral)"> $45</span>` : '';
+
+    return `<tr id="lh-row-${p.id}" style="border-bottom:1px solid rgba(160,154,245,.05);transition:background .15s">
+      <td style="padding:6px 10px;color:var(--muted);font-size:.72rem;font-weight:700">${p.payment_number}</td>
+      <td style="padding:6px 10px;font-size:.72rem">${p.due_date}</td>
+      <td style="padding:6px 10px;font-size:.78rem;font-weight:800">$${parseFloat(p.scheduled_amount||0).toFixed(2)}</td>
+      <td style="padding:6px 10px">
+        <select id="lh-status-${p.id}"
+          onchange="onLHStatusChange('${p.id}','${loan.id}')"
+          style="padding:3px 6px;background:rgba(8,6,20,.8);border:1px solid ${cfg.color}33;border-radius:5px;color:${cfg.color};font-family:var(--font);font-size:.68rem;font-weight:700;cursor:pointer;outline:none">
+          ${['scheduled','paid','missed','partial','waived','failed','cancelled'].map(s=>
+            `<option value="${s}" ${(p.status===s||effStatus===s)?'selected':''}>${s}</option>`
+          ).join('')}
+        </select>
+      </td>
+      <td style="padding:6px 10px">
+        <input type="date" id="lh-paidat-${p.id}" value="${p.paid_at?p.paid_at.slice(0,10):''}"
+          style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:120px"
+          onchange="document.getElementById('lh-row-${p.id}').style.background='rgba(255,209,102,.04)'">
+      </td>
+      <td style="padding:6px 10px">
+        <input type="text" id="lh-notes-${p.id}" value="${(p.notes||'').replace(/"/g,'&quot;')}" placeholder="—"
+          style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:100%"
+          onchange="document.getElementById('lh-row-${p.id}').style.background='rgba(255,209,102,.04)'">
+      </td>
+      <td style="padding:6px 10px;font-size:.6rem">
+        ${eftBadge}${retryBadge}${returnBadge}${nsfBadge}
+      </td>
+      <td style="padding:6px 10px">
+        <button onclick="saveLHRow('${p.id}','${loan.id}','${client.id}')"
+          style="padding:3px 10px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.25);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer;white-space:nowrap">
+          💾 Save
+        </button>
+      </td>
     </tr>`;
   }).join('');
 
@@ -1056,11 +1099,27 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
     <div class="lh-body" id="loan-${loan.id}">
       <!-- Repayment schedule -->
       <div style="padding:16px">
-        <div class="crm-sec-title">Repayment Schedule</div>
-        ${schedule.length?`<table class="sched-table">
-          <thead><tr><th>#</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Paid On</th><th>Paid Amount</th><th>PAD Sent</th></tr></thead>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="crm-sec-title" style="margin:0">Repayment Schedule</div>
+          ${schedule.length?`
+          <button onclick="saveAllLHRows('${loan.id}','${client.id}',[${schedule.map(p=>`'${p.id}'`).join(',')}])"
+            style="padding:5px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
+            💾 Save All Changes
+          </button>`:''}
+        </div>
+        ${schedule.length?`<div style="overflow-x:auto"><table class="sched-table" style="table-layout:fixed;width:100%">
+          <thead><tr>
+            <th style="width:32px">#</th>
+            <th style="width:90px">Due Date</th>
+            <th style="width:80px">Amount</th>
+            <th style="width:110px">Status</th>
+            <th style="width:110px">Paid On</th>
+            <th>Notes</th>
+            <th style="width:90px">EFT / NSF</th>
+            <th style="width:60px"></th>
+          </tr></thead>
           <tbody>${schedRows}</tbody>
-        </table>`:'<p style="font-size:.75rem;color:var(--muted)">Schedule not yet generated.</p>'}
+        </table></div>`:'<p style="font-size:.75rem;color:var(--muted)">Schedule not yet generated.</p>'}
       </div>
       ${contractHtml}
       ${scoreSection}
@@ -2245,6 +2304,66 @@ async function confirmClear(){
     showToast('Error: '+err.message,true);
     if(box) box.innerHTML=`<div style="font-size:.78rem;color:var(--coral)">Error: ${err.message}</div>`;
   }
+}
+
+
+/* ── LOAN HISTORY SCHEDULE EDIT ── */
+function onLHStatusChange(schedId){
+  const sel    = document.getElementById('lh-status-'+schedId);
+  const paidAt = document.getElementById('lh-paidat-'+schedId);
+  const row    = document.getElementById('lh-row-'+schedId);
+  if(row) row.style.background='rgba(255,209,102,.04)';
+  if(['paid','partial','waived'].includes(sel.value) && paidAt && !paidAt.value)
+    paidAt.value = new Date().toISOString().slice(0,10);
+  const colors = {paid:'var(--teal)',partial:'var(--gold)',waived:'var(--periwinkle)',
+    missed:'var(--coral)',failed:'var(--coral)',cancelled:'var(--coral)',scheduled:'var(--muted)'};
+  sel.style.color = colors[sel.value]||'var(--muted)';
+  sel.style.borderColor = (colors[sel.value]||'var(--muted)')+'33';
+}
+
+async function saveLHRow(schedId, loanId, clientId){
+  const status = document.getElementById('lh-status-'+schedId)?.value;
+  const paidAt = document.getElementById('lh-paidat-'+schedId)?.value;
+  const notes  = document.getElementById('lh-notes-'+schedId)?.value;
+  const row    = document.getElementById('lh-row-'+schedId);
+  const updates = { status, paid_at: paidAt ? new Date(paidAt).toISOString() : null, notes: notes||null };
+  const { error } = await sb.from('repayment_schedule').update(updates).eq('id', schedId);
+  if(error){ showToast('Save failed: '+error.message, true); return; }
+  if(row){ row.style.background=''; }
+  await recalcLoanTotals(loanId);
+  showToast('✓ Payment saved');
+}
+
+async function saveAllLHRows(loanId, clientId, schedIds){
+  let saved=0, failed=0;
+  for(const schedId of schedIds){
+    const status = document.getElementById('lh-status-'+schedId)?.value;
+    const paidAt = document.getElementById('lh-paidat-'+schedId)?.value;
+    const notes  = document.getElementById('lh-notes-'+schedId)?.value;
+    if(!status) continue;
+    const updates = { status, paid_at: paidAt?new Date(paidAt).toISOString():null, notes:notes||null };
+    const { error } = await sb.from('repayment_schedule').update(updates).eq('id', schedId);
+    if(error){ failed++; }
+    else { saved++; const row=document.getElementById('lh-row-'+schedId); if(row) row.style.background=''; }
+  }
+  await recalcLoanTotals(loanId);
+  showToast(failed ? `⚠ ${saved} saved, ${failed} failed` : `✓ All ${saved} payments saved`);
+}
+
+async function recalcLoanTotals(loanId){
+  const { data: rows } = await sb.from('repayment_schedule').select('scheduled_amount,status').eq('loan_id', loanId);
+  if(!rows) return;
+  const totalPaid = rows.filter(r=>['paid','partial','waived'].includes(r.status))
+    .reduce((s,r)=>s+parseFloat(r.scheduled_amount||0), 0);
+  const { data: loan } = await sb.from('loans').select('total_repayable,status').eq('id',loanId).single();
+  if(!loan) return;
+  const remaining = Math.max(0, parseFloat(loan.total_repayable||0) - totalPaid);
+  const allDone   = rows.every(r=>['paid','waived','cancelled'].includes(r.status));
+  const newStatus = allDone ? 'paid_off' : loan.status==='paid_off' ? 'active' : loan.status;
+  await sb.from('loans').update({ total_paid:totalPaid, remaining_balance:remaining, status:newStatus }).eq('id',loanId);
+  const l=allLoans.find(x=>x.id===loanId);
+  if(l){ l.total_paid=totalPaid; l.remaining_balance=remaining; l.status=newStatus; }
+  if(allDone && newStatus==='paid_off') showToast('🎉 Loan fully paid off!');
 }
 
 
