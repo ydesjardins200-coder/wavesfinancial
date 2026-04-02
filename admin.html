@@ -580,8 +580,10 @@ function clearFilters(){
   renderList();
 }
 
-function loanTypeBadge(formType){
-  const isRenewal = (formType||'').toLowerCase().includes('renew');
+function loanTypeBadge(refOrType){
+  // WF-R-XXXXXX = renewal, WF-XXXXXX = new
+  const s = (refOrType||'').toString().toUpperCase();
+  const isRenewal = s.includes('-R-') || s.includes('RENEW');
   return isRenewal
     ? `<span style="display:inline-block;padding:2px 8px;border-radius:100px;font-size:.6rem;font-weight:700;background:rgba(162,155,254,.12);border:1px solid rgba(162,155,254,.3);color:#A29BFE;white-space:nowrap">🔄 Renewal</span>`
     : `<span style="display:inline-block;padding:2px 8px;border-radius:100px;font-size:.6rem;font-weight:700;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:var(--teal);white-space:nowrap">✦ New</span>`;
@@ -615,7 +617,8 @@ function matchesFilters(item, client){
   }
   // Loan type
   if(filterType){
-    const isRenewal=(item.form_type||'').toLowerCase().includes('renew');
+    const ref = (item.ref||item.form_type||'').toString().toUpperCase();
+    const isRenewal = ref.includes('-R-')||ref.includes('RENEW');
     if(filterType==='renewal'&&!isRenewal) return false;
     if(filterType==='new'&&isRenewal) return false;
   }
@@ -729,12 +732,10 @@ function renderList(){
         `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
             style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700">📁 DRD</a>`:'';
       // Determine loan type from form_type or whether client has prior loans
-      const clientPriorLoans = allLoans.filter(x=>x.client_id===l.client_id&&x.created_at<l.created_at).length;
-      const lType = (l.form_type||'').toLowerCase().includes('renew')||clientPriorLoans>0 ? 'renewal':'new';
       return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
         <div class="aref">${l.ref||'—'}</div>
         <div><div class="aname">${name}</div><div class="aemail">${c?.email||''}</div></div>
-        <div>${loanTypeBadge(lType)}</div>
+        <div>${loanTypeBadge(l.ref)}</div>
         <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
         <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
         <div style="min-width:0;display:flex;flex-direction:column;gap:4px">
@@ -781,7 +782,7 @@ function renderList(){
     return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClientByAppId('${a.id}')">
       <div class="aref">${a.ref||'—'}</div>
       <div><div class="aname">${name}</div><div class="aemail">${email}</div></div>
-      <div>${loanTypeBadge(a.form_type||'new')}</div>
+      <div>${loanTypeBadge(a.ref||a.form_type||'new')}</div>
       <div style="font-size:.85rem;font-weight:800">$${(a.requested_amount||0).toLocaleString()}</div>
       <div style="font-size:.82rem;font-weight:700;color:${scoreColor(a.risk_score)}">${a.risk_score??'—'}</div>
       <div><span class="tb ${tc}">${a.tier||'—'}</span></div>
