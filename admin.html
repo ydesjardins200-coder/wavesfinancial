@@ -140,6 +140,11 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 }
 #list-toolbar button:hover{background:rgba(255,92,115,.08);border-color:rgba(255,92,115,.3);color:var(--coral);}
 .col-head{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 16px 8px;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;gap:12px;}
+.col-head span[data-sort]{cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:4px;transition:color .15s;}
+.col-head span[data-sort]:hover{color:#a0b4e0;}
+.col-head span[data-sort].sort-active{color:#A29BFE;}
+.sort-arrow{font-size:.55rem;opacity:.4;transition:opacity .15s;}
+.sort-arrow.active{opacity:1;color:#A29BFE;}
 .arow{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:110px 1fr 90px 80px 90px 100px 110px;align-items:center;gap:12px;overflow:hidden;}
 .arow>*{min-width:0;overflow:hidden;}
 .arow:hover{border-color:rgba(160,154,245,.3);background:rgba(91,82,216,.06);transform:translateX(2px);}
@@ -421,20 +426,11 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           <option value="NS">NS</option><option value="NB">NB</option>
           <option value="PE">PE</option><option value="NL">NL</option>
         </select>
-        <select id="sort-by" onchange="applyFilters()">
-          <option value="date_desc">Newest First</option>
-          <option value="date_asc">Oldest First</option>
-          <option value="amount_desc">Amount ↓</option>
-          <option value="amount_asc">Amount ↑</option>
-          <option value="score_asc">Risk Score ↑</option>
-          <option value="score_desc">Risk Score ↓</option>
-          <option value="name_asc">Name A→Z</option>
-        </select>
         <button onclick="clearFilters()">✕ Clear</button>
       </div>
 
       <div class="col-head" id="col-head">
-        <span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>
+        <span>Ref</span><span>Applicant</span><span>Type</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>
       </div>
       <div id="app-list"><div class="empty"><div class="spinner"></div><br>Loading…</div></div>
     </div>
@@ -563,20 +559,37 @@ function renderStats(){
 /* ── FILTER STATE ── */
 let filterSearch='', filterType='', filterProvince='', sortBy='date_desc';
 
+function sortCol(key){
+  // Toggle asc/desc if same column, else default to desc for dates/numbers, asc for text
+  const descKeys = ['date_desc','amount_desc','score_desc'];
+  if(sortBy === key+'_desc') sortBy = key+'_asc';
+  else if(sortBy === key+'_asc') sortBy = key+'_desc';
+  else sortBy = ['name','tier','type'].includes(key) ? key+'_asc' : key+'_desc';
+  renderList();
+}
+
+// Build a sortable col-head span
+function th(label, key){
+  if(!key) return `<span>${label}</span>`;
+  const active = sortBy.startsWith(key);
+  const asc    = sortBy === key+'_asc';
+  return `<span data-sort="${key}" class="${active?'sort-active':''}" onclick="sortCol('${key}')">${label} <span class="sort-arrow ${active?'active':''}">${active?(asc?'▲':'▼'):'⇅'}</span></span>`;
+}
+
 function applyFilters(){
   filterSearch   = document.getElementById('filter-search')?.value.toLowerCase().trim()||'';
   filterType     = document.getElementById('filter-type')?.value||'';
   filterProvince = document.getElementById('filter-province')?.value||'';
-  sortBy         = document.getElementById('sort-by')?.value||'date_desc';
   renderList();
 }
 
 function clearFilters(){
   filterSearch=''; filterType=''; filterProvince=''; sortBy='date_desc';
-  ['filter-search','filter-type','filter-province','sort-by'].forEach(id=>{
+  ['filter-search','filter-type','filter-province'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.value = id==='sort-by'?'date_desc':'';
+    if(el) el.value='';
   });
+  sortBy='date_desc';
   renderList();
 }
 
@@ -592,16 +605,20 @@ function loanTypeBadge(refOrType){
 function sortItems(items, key='submitted_at'){
   const k = sortBy;
   return [...items].sort((a,b)=>{
+    const refA=(a.ref||a.form_type||'').toUpperCase(), refB=(b.ref||b.form_type||'').toUpperCase();
     if(k==='date_desc') return new Date(b[key]||b.created_at||0)-new Date(a[key]||a.created_at||0);
     if(k==='date_asc')  return new Date(a[key]||a.created_at||0)-new Date(b[key]||b.created_at||0);
     if(k==='amount_desc') return (b.requested_amount||b.principal||0)-(a.requested_amount||a.principal||0);
     if(k==='amount_asc')  return (a.requested_amount||a.principal||0)-(b.requested_amount||b.principal||0);
     if(k==='score_asc')  return (a.risk_score??999)-(b.risk_score??999);
     if(k==='score_desc') return (b.risk_score??-1)-(a.risk_score??-1);
-    if(k==='name_asc'){
+    if(k==='tier_asc'||k==='tier_desc'){const p={gold:1,green:2,blue:3,yellow:4,orange:5,red:6};const diff=(p[a.tier]||9)-(p[b.tier]||9);return k==='tier_asc'?diff:-diff;}
+    if(k==='type_asc') return (refA.includes('-R-')?1:0)-(refB.includes('-R-')?1:0);
+    if(k==='type_desc') return (refB.includes('-R-')?1:0)-(refA.includes('-R-')?1:0);
+    if(k==='name_asc'||k==='name_desc'){
       const na=((a.first_name||'')+' '+(a.last_name||'')).trim().toLowerCase();
       const nb=((b.first_name||'')+' '+(b.last_name||'')).trim().toLowerCase();
-      return na.localeCompare(nb);
+      return k==='name_asc'?na.localeCompare(nb):nb.localeCompare(na);
     }
     return 0;
   });
@@ -646,7 +663,7 @@ function renderList(){
   if(isClientTab){
     const cols='130px 1fr 80px 70px 90px 90px 100px 110px';
     document.getElementById('col-head').style.gridTemplateColumns=cols;
-    document.getElementById('col-head').innerHTML='<span>Client</span><span>Contact</span><span>Province</span><span>Loans</span><span>Type</span><span>Borrowed</span><span>Tier</span><span>Member Since</span>';
+    document.getElementById('col-head').innerHTML=th('Client')+th('Contact')+th('Province')+th('Loans')+th('Type','type')+th('Borrowed','amount')+th('Tier','tier')+th('Member Since','date');
     document.getElementById('qtitle').textContent='Clients ('+allClients.length+')';
 
     let items = allClients.filter(c=>matchesFilters(c,c));
@@ -674,7 +691,7 @@ function renderList(){
   if(isLoanTab){
     const cols='100px 1fr 80px 90px 90px 90px 110px 130px';
     document.getElementById('col-head').style.gridTemplateColumns=cols;
-    document.getElementById('col-head').innerHTML='<span>Ref</span><span>Client</span><span>Type</span><span>Principal</span><span>Paid</span><span>Status</span><span>Due Date</span><span>Progress</span>';
+    document.getElementById('col-head').innerHTML=th('Ref')+th('Client')+th('Type','type')+th('Principal','amount')+th('Paid')+th('Status')+th('Due Date','date')+th('Progress');
     const active=allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
     const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
@@ -752,7 +769,7 @@ function renderList(){
   // ── APPLICATIONS TABS (queue / all / approved / declined) ────────────────────
   const cols='100px 1fr 80px 90px 90px 80px 90px 130px';
   document.getElementById('col-head').style.gridTemplateColumns=cols;
-  document.getElementById('col-head').innerHTML='<span>Ref</span><span>Applicant</span><span>Type</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>';
+  document.getElementById('col-head').innerHTML=th('Ref')+th('Applicant','name')+th('Type','type')+th('Amount','amount')+th('Score','score')+th('Tier','tier')+th('Submitted','date')+th('Decision');
 
   let apps=[...allApps];
   if(currentTab==='queue')    apps=apps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at);
