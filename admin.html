@@ -359,6 +359,53 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="qtitle" id="qtitle">Review Queue</div>
         <button class="qrefresh" onclick="loadData()">↻ Refresh</button>
       </div>
+
+      <!-- Sort + Filter toolbar -->
+      <div id="list-toolbar" style="display:flex;align-items:center;gap:8px;padding:8px 0;flex-wrap:wrap">
+        <!-- Search -->
+        <input id="filter-search" type="text" placeholder="Search name, email, ref…"
+          oninput="applyFilters()"
+          style="flex:1;min-width:160px;max-width:260px;padding:7px 12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none">
+
+        <!-- Loan type filter -->
+        <select id="filter-type" onchange="applyFilters()"
+          style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
+          <option value="">All Types</option>
+          <option value="new">New Loan</option>
+          <option value="renewal">Renewal</option>
+        </select>
+
+        <!-- Province filter -->
+        <select id="filter-province" onchange="applyFilters()"
+          style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
+          <option value="">All Provinces</option>
+          <option value="BC">BC</option>
+          <option value="ON">ON</option>
+          <option value="NS">NS</option>
+          <option value="NB">NB</option>
+          <option value="PE">PE</option>
+          <option value="NL">NL</option>
+        </select>
+
+        <!-- Sort -->
+        <select id="sort-by" onchange="applyFilters()"
+          style="padding:7px 10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
+          <option value="date_desc">Newest First</option>
+          <option value="date_asc">Oldest First</option>
+          <option value="amount_desc">Amount ↓</option>
+          <option value="amount_asc">Amount ↑</option>
+          <option value="score_asc">Risk Score ↑</option>
+          <option value="score_desc">Risk Score ↓</option>
+          <option value="name_asc">Name A→Z</option>
+        </select>
+
+        <!-- Clear filters -->
+        <button onclick="clearFilters()"
+          style="padding:7px 12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:.78rem;cursor:pointer;white-space:nowrap">
+          ✕ Clear
+        </button>
+      </div>
+
       <div class="col-head" id="col-head">
         <span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>
       </div>
@@ -486,24 +533,105 @@ function renderStats(){
   document.getElementById('qcnt').textContent      = rev;
 }
 
+/* ── FILTER STATE ── */
+let filterSearch='', filterType='', filterProvince='', sortBy='date_desc';
+
+function applyFilters(){
+  filterSearch   = document.getElementById('filter-search')?.value.toLowerCase().trim()||'';
+  filterType     = document.getElementById('filter-type')?.value||'';
+  filterProvince = document.getElementById('filter-province')?.value||'';
+  sortBy         = document.getElementById('sort-by')?.value||'date_desc';
+  renderList();
+}
+
+function clearFilters(){
+  filterSearch=''; filterType=''; filterProvince=''; sortBy='date_desc';
+  ['filter-search','filter-type','filter-province','sort-by'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value = id==='sort-by'?'date_desc':'';
+  });
+  renderList();
+}
+
+function loanTypeBadge(formType){
+  const isRenewal = (formType||'').toLowerCase().includes('renew');
+  return isRenewal
+    ? `<span style="display:inline-block;padding:2px 8px;border-radius:100px;font-size:.6rem;font-weight:700;background:rgba(162,155,254,.12);border:1px solid rgba(162,155,254,.3);color:#A29BFE;white-space:nowrap">🔄 Renewal</span>`
+    : `<span style="display:inline-block;padding:2px 8px;border-radius:100px;font-size:.6rem;font-weight:700;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:var(--teal);white-space:nowrap">✦ New</span>`;
+}
+
+function sortItems(items, key='submitted_at'){
+  const k = sortBy;
+  return [...items].sort((a,b)=>{
+    if(k==='date_desc') return new Date(b[key]||b.created_at||0)-new Date(a[key]||a.created_at||0);
+    if(k==='date_asc')  return new Date(a[key]||a.created_at||0)-new Date(b[key]||b.created_at||0);
+    if(k==='amount_desc') return (b.requested_amount||b.principal||0)-(a.requested_amount||a.principal||0);
+    if(k==='amount_asc')  return (a.requested_amount||a.principal||0)-(b.requested_amount||b.principal||0);
+    if(k==='score_asc')  return (a.risk_score??999)-(b.risk_score??999);
+    if(k==='score_desc') return (b.risk_score??-1)-(a.risk_score??-1);
+    if(k==='name_asc'){
+      const na=((a.first_name||'')+' '+(a.last_name||'')).trim().toLowerCase();
+      const nb=((b.first_name||'')+' '+(b.last_name||'')).trim().toLowerCase();
+      return na.localeCompare(nb);
+    }
+    return 0;
+  });
+}
+
+function matchesFilters(item, client){
+  // Search: name, email, ref
+  if(filterSearch){
+    const name  = ((client?.first_name||item.first_name||'')+' '+(client?.last_name||item.last_name||'')).toLowerCase();
+    const email = (client?.email||item.email||'').toLowerCase();
+    const ref   = (item.ref||'').toLowerCase();
+    if(!name.includes(filterSearch)&&!email.includes(filterSearch)&&!ref.includes(filterSearch)) return false;
+  }
+  // Loan type
+  if(filterType){
+    const isRenewal=(item.form_type||'').toLowerCase().includes('renew');
+    if(filterType==='renewal'&&!isRenewal) return false;
+    if(filterType==='new'&&isRenewal) return false;
+  }
+  // Province
+  if(filterProvince){
+    const prov = client?.province||item.province||'';
+    if(prov!==filterProvince) return false;
+  }
+  return true;
+}
+
 /* ── RENDER LIST ── */
 function renderList(){
-  let apps=[...allApps];
   const isClientTab = currentTab==='clients';
   const isLoanTab   = currentTab==='loans';
 
-  // Clients tab
+  // Show/hide toolbar elements based on tab
+  const typeFilter = document.getElementById('filter-type');
+  const provFilter = document.getElementById('filter-province');
+  const sortSel    = document.getElementById('sort-by');
+  if(typeFilter) typeFilter.style.display = isLoanTab ? 'none' : '';
+  if(provFilter) provFilter.style.display = isClientTab ? '' : 'none';
+
+  // ── CLIENTS TAB ──────────────────────────────────────────────────────────────
   if(isClientTab){
-    document.getElementById('col-head').innerHTML='<span>Client</span><span>Contact</span><span>Province</span><span>Loans</span><span>Borrowed</span><span>Latest Tier</span><span>Member Since</span>';
+    const cols='130px 1fr 80px 70px 90px 90px 100px 110px';
+    document.getElementById('col-head').style.gridTemplateColumns=cols;
+    document.getElementById('col-head').innerHTML='<span>Client</span><span>Contact</span><span>Province</span><span>Loans</span><span>Type</span><span>Borrowed</span><span>Tier</span><span>Member Since</span>';
     document.getElementById('qtitle').textContent='Clients ('+allClients.length+')';
-    if(!allClients.length){document.getElementById('app-list').innerHTML='<div class="empty">No clients yet.</div>';return;}
-    document.getElementById('app-list').innerHTML=allClients.map(c=>{
+
+    let items = allClients.filter(c=>matchesFilters(c,c));
+    items = sortItems(items, 'created_at');
+
+    if(!items.length){document.getElementById('app-list').innerHTML='<div class="empty">No clients match filters.</div>';return;}
+    document.getElementById('app-list').innerHTML=items.map(c=>{
       const tc='t-'+(c.latest_tier||'green');
-      return `<div class="arow" style="grid-template-columns:110px 1fr 90px 80px 90px 100px 110px" onclick="openClient('${c.id}')">
+      const isRenewal=(c.total_loans||0)>1;
+      return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${c.id}')">
         <div class="aref">${c.email?c.email.slice(0,14)+'…':'—'}</div>
         <div><div class="aname">${((c.first_name||'')+' '+(c.last_name||'')).trim()||'—'}</div><div class="aemail">${c.email||''}</div></div>
         <div style="font-size:.78rem">${c.province||'—'}</div>
         <div style="font-size:.85rem;font-weight:800;color:var(--teal)">${c.total_loans||0}</div>
+        <div>${isRenewal?loanTypeBadge('renewal'):loanTypeBadge('new')}</div>
         <div style="font-size:.82rem;font-weight:700">$${Number(c.total_borrowed||0).toLocaleString()}</div>
         <div>${c.latest_tier?`<span class="tb ${tc}">${c.latest_tier}</span>`:'—'}</div>
         <div style="font-size:.68rem;color:var(--muted)">${c.created_at?timeAgo(c.created_at):'—'}</div>
@@ -512,18 +640,18 @@ function renderList(){
     return;
   }
 
-  // Loans tab
+  // ── LOANS TAB ────────────────────────────────────────────────────────────────
   if(isLoanTab){
-    document.getElementById('col-head').innerHTML='<span>Ref</span><span>Client</span><span>Principal</span><span>Paid</span><span>Status</span><span>Due Date</span><span>Progress</span>';
-    document.getElementById('col-head').style.gridTemplateColumns='100px 1fr 90px 90px 130px 110px 140px';
+    const cols='100px 1fr 80px 90px 90px 90px 110px 130px';
+    document.getElementById('col-head').style.gridTemplateColumns=cols;
+    document.getElementById('col-head').innerHTML='<span>Ref</span><span>Client</span><span>Type</span><span>Principal</span><span>Paid</span><span>Status</span><span>Due Date</span><span>Progress</span>';
     const active=allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
     const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
 
     // DRD + PAD + Returns action bar
-    const drdBar = `
+    const drdBar=`
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-
         <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
           ${pendingDisb.length?`
           <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
@@ -531,39 +659,39 @@ function renderList(){
              style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
             📁 DRD — Disbursements
           </a>`:''}
-          <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-            📋 Preview PAD — 5 days
-          </button>
-          <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-            📋 Preview PAD — 14 days
-          </button>
+          <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 5 days</button>
+          <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 14 days</button>
           <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ${nextBizDay()}</span>
         </div>
-
         <div id="pad-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px"></div>
-
         <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
           <span style="font-size:.72rem;font-weight:700;color:var(--muted)">Returns &amp; NSF</span>
           <label style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:6px;color:var(--coral);font-size:.72rem;font-weight:700;cursor:pointer">
-            📥 Import Return File
-            <input type="file" accept=".txt" style="display:none" onchange="importReturnFile(this)">
+            📥 Import Return File<input type="file" accept=".txt" style="display:none" onchange="importReturnFile(this)">
           </label>
-          <button onclick="previewRetries()" style="padding:7px 14px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-            🔄 NSF Retries Due Today
-          </button>
-          <button onclick="previewClearable()" style="padding:7px 14px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.25);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-            ✓ Mark Payments Cleared
-          </button>
+          <button onclick="previewRetries()" style="padding:7px 14px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">🔄 NSF Retries Due Today</button>
+          <button onclick="previewClearable()" style="padding:7px 14px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.25);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">✓ Mark Payments Cleared</button>
         </div>
-
         <div id="return-results-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(255,107,138,.2);border-radius:8px"></div>
         <div id="retry-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(255,209,102,.2);border-radius:8px"></div>
         <div id="clear-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(29,233,198,.2);border-radius:8px"></div>
-
       </div>`;
 
-    if(!active.length){document.getElementById('app-list').innerHTML=drdBar+'<div class="empty">No active loans.</div>';return;}
-    document.getElementById('app-list').innerHTML=drdBar+active.map(l=>{
+    let items = sortItems(active, 'created_at');
+    // Apply search filter
+    items = items.filter(l=>{
+      const c=allClients.find(x=>x.id===l.client_id);
+      if(filterSearch){
+        const name=((c?.first_name||'')+' '+(c?.last_name||'')).toLowerCase();
+        const email=(c?.email||'').toLowerCase();
+        const ref=(l.ref||'').toLowerCase();
+        if(!name.includes(filterSearch)&&!email.includes(filterSearch)&&!ref.includes(filterSearch)) return false;
+      }
+      return true;
+    });
+
+    if(!items.length){document.getElementById('app-list').innerHTML=drdBar+'<div class="empty">No active loans match filters.</div>';return;}
+    document.getElementById('app-list').innerHTML=drdBar+items.map(l=>{
       const c=allClients.find(x=>x.id===l.client_id);
       const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():'—';
       const pct=l.total_repayable?Math.round((l.total_paid||0)/l.total_repayable*100):0;
@@ -572,12 +700,14 @@ function renderList(){
       const dueDate=l.due_date?new Date(l.due_date).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
       const drdBtn=l.status==='pending_disbursement'?
         `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
-            style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700;white-space:nowrap">
-            📁 DRD
-          </a>`:'';
-      return `<div class="arow" style="grid-template-columns:100px 1fr 90px 90px 130px 110px 140px" onclick="openClient('${l.client_id}')">
+            style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700">📁 DRD</a>`:'';
+      // Determine loan type from form_type or whether client has prior loans
+      const clientPriorLoans = allLoans.filter(x=>x.client_id===l.client_id&&x.created_at<l.created_at).length;
+      const lType = (l.form_type||'').toLowerCase().includes('renew')||clientPriorLoans>0 ? 'renewal':'new';
+      return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
         <div class="aref">${l.ref||'—'}</div>
         <div><div class="aname">${name}</div><div class="aemail">${c?.email||''}</div></div>
+        <div>${loanTypeBadge(lType)}</div>
         <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
         <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
         <div style="min-width:0;display:flex;flex-direction:column;gap:4px">
@@ -591,15 +721,28 @@ function renderList(){
     return;
   }
 
-  // Applications tabs
-  document.getElementById('col-head').innerHTML='<span>Ref</span><span>Applicant</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>';
+  // ── APPLICATIONS TABS (queue / all / approved / declined) ────────────────────
+  const cols='100px 1fr 80px 90px 90px 80px 90px 130px';
+  document.getElementById('col-head').style.gridTemplateColumns=cols;
+  document.getElementById('col-head').innerHTML='<span>Ref</span><span>Applicant</span><span>Type</span><span>Amount</span><span>Score</span><span>Tier</span><span>Submitted</span><span>Decision</span>';
+
+  let apps=[...allApps];
   if(currentTab==='queue')    apps=apps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at);
   if(currentTab==='approved') apps=apps.filter(a=>a.decision==='auto_approved');
   if(currentTab==='declined') apps=apps.filter(a=>a.decision==='auto_declined');
   if(currentTab==='queue'){const p={green:1,blue:2,yellow:3,orange:4};apps.sort((a,b)=>(p[a.tier]||9)-(p[b.tier]||9)||new Date(a.submitted_at)-new Date(b.submitted_at));}
+
+  // Apply filters
+  apps = apps.filter(a=>{
+    const c=allClients.find(x=>x.id===a.client_id);
+    return matchesFilters(a,c);
+  });
+  if(currentTab!=='queue') apps=sortItems(apps,'submitted_at');
+
   const titles={queue:'Review Queue',all:'All Applications',approved:'Approved',declined:'Declined'};
   document.getElementById('qtitle').textContent=(titles[currentTab]||'')+' ('+apps.length+')';
-  if(!apps.length){document.getElementById('app-list').innerHTML='<div class="empty">Nothing here.</div>';return;}
+  if(!apps.length){document.getElementById('app-list').innerHTML='<div class="empty">Nothing matches filters.</div>';return;}
+
   document.getElementById('app-list').innerHTML=apps.map(a=>{
     const c=allClients.find(x=>x.id===a.client_id);
     const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
@@ -608,9 +751,10 @@ function renderList(){
     const resolved=a.reviewed_at&&a.final_decision?a.final_decision:a.decision;
     const dc=resolved==='approved'||resolved==='auto_approved'?'d-approved':resolved==='declined'||resolved==='auto_declined'?'d-declined':'d-review';
     const dl=resolved==='approved'?'✓ Approved':resolved==='auto_approved'?'✓ Auto-Approved':resolved==='declined'?'✗ Declined':resolved==='auto_declined'?'✗ Auto-Declined':a.reviewed_at?'✓ Reviewed':'🔍 Pending Review';
-    return `<div class="arow" onclick="openClientByAppId('${a.id}')">
+    return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClientByAppId('${a.id}')">
       <div class="aref">${a.ref||'—'}</div>
       <div><div class="aname">${name}</div><div class="aemail">${email}</div></div>
+      <div>${loanTypeBadge(a.form_type||'new')}</div>
       <div style="font-size:.85rem;font-weight:800">$${(a.requested_amount||0).toLocaleString()}</div>
       <div style="font-size:.82rem;font-weight:700;color:${scoreColor(a.risk_score)}">${a.risk_score??'—'}</div>
       <div><span class="tb ${tc}">${a.tier||'—'}</span></div>
