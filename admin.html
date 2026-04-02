@@ -441,32 +441,73 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="qtitle">System Health</div>
         <button class="qrefresh" onclick="runHealthChecks()">↻ Refresh</button>
       </div>
+
+      <!-- Summary bar -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--periwinkle)" id="hsum-clients">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Active Loans</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--teal)" id="hsum-loans">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Review Queue</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-queue">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">NSF Outstanding</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--coral)" id="hsum-nsf">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Pending Disburse</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-disburse">—</div>
+        </div>
+      </div>
+
       <div class="hgrid">
+
+        <!-- Railway Backend -->
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🚂 Railway Backend</div><div class="hcard-time" id="htime-railway">—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🌐</div><div><div class="hitem-name">API Server</div><div class="hitem-detail">web-production-31ce.up.railway.app</div></div></div><div class="hstatus hs-chk" id="hs-api"><div class="hsdot"></div>Checking…</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚡</div><div><div class="hitem-name">Response Time</div><div class="hitem-detail" id="hd-latency">—</div></div></div><div class="hstatus hs-chk" id="hs-latency"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔧</div><div><div class="hitem-name">Environment</div><div class="hitem-detail" id="hd-env">—</div></div></div><div class="hstatus hs-chk" id="hs-env"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏦</div><div><div class="hitem-name">Equifax Token</div><div class="hitem-detail" id="hd-efx">—</div></div></div><div class="hstatus hs-chk" id="hs-efx"><div class="hsdot"></div>—</div></div>
         </div>
+
+        <!-- Supabase -->
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🗄️ Supabase Database</div><div class="hcard-time" id="htime-supa">—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔌</div><div><div class="hitem-name">Connection</div><div class="hitem-detail">rutupqpzvfeubzpnqujn.supabase.co</div></div></div><div class="hstatus hs-chk" id="hs-db"><div class="hsdot"></div>Checking…</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Clients Table</div><div class="hitem-detail" id="hd-clients-count">—</div></div></div><div class="hstatus hs-chk" id="hs-clients-tbl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📋</div><div><div class="hitem-name">Applications Table</div><div class="hitem-detail" id="hd-apps-count">—</div></div></div><div class="hstatus hs-chk" id="hs-apps-tbl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Loans Table</div><div class="hitem-detail" id="hd-loans-count">—</div></div></div><div class="hstatus hs-chk" id="hs-loans-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Clients</div><div class="hitem-detail" id="hd-clients-count">—</div></div></div><div class="hstatus hs-chk" id="hs-clients-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📋</div><div><div class="hitem-name">Applications</div><div class="hitem-detail" id="hd-apps-count">—</div></div></div><div class="hstatus hs-chk" id="hs-apps-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Loans</div><div class="hitem-detail" id="hd-loans-count">—</div></div></div><div class="hstatus hs-chk" id="hs-loans-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📅</div><div><div class="hitem-name">Repayment Schedule</div><div class="hitem-detail" id="hd-sched-count">—</div></div></div><div class="hstatus hs-chk" id="hs-sched-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚠️</div><div><div class="hitem-name">NSF Fees</div><div class="hitem-detail" id="hd-nsf-count">—</div></div></div><div class="hstatus hs-chk" id="hs-nsf-tbl"><div class="hsdot"></div>—</div></div>
         </div>
+
+        <!-- EFT Endpoints -->
         <div class="hcard">
-          <div class="hcard-hdr"><div class="hcard-title">🌍 DNS &amp; Frontend</div><div class="hcard-time" id="htime-dns">—</div></div>
+          <div class="hcard-hdr"><div class="hcard-title">🏛️ EFT System</div><div class="hcard-time" id="htime-eft">—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💸</div><div><div class="hitem-name">DRD Disbursements</div><div class="hitem-detail">/api/eft/drd</div></div></div><div class="hstatus hs-chk" id="hs-drd"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📤</div><div><div class="hitem-name">PAD Preview</div><div class="hitem-detail">/api/eft/pads/preview</div></div></div><div class="hstatus hs-chk" id="hs-pad"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">↩️</div><div><div class="hitem-name">Returns Processor</div><div class="hitem-detail">/api/eft/returns</div></div></div><div class="hstatus hs-chk" id="hs-ret"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔄</div><div><div class="hitem-name">NSF Retry Queue</div><div class="hitem-detail">/api/eft/retries/preview</div></div></div><div class="hstatus hs-chk" id="hs-retry"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">✓</div><div><div class="hitem-name">Clearable Payments</div><div class="hitem-detail">/api/eft/clearable</div></div></div><div class="hstatus hs-chk" id="hs-clear"><div class="hsdot"></div>—</div></div>
+        </div>
+
+        <!-- Frontend + Apply -->
+        <div class="hcard">
+          <div class="hcard-hdr"><div class="hcard-title">🌍 Frontend & Apply</div><div class="hcard-time" id="htime-dns">—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏠</div><div><div class="hitem-name">wavesfinancial.ca</div><div class="hitem-detail">Netlify CDN</div></div></div><div class="hstatus hs-chk" id="hs-site"><div class="hsdot"></div>Checking…</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply</div></div></div><div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👤</div><div><div class="hitem-name">Client Portal</div><div class="hitem-detail">wavesfinancial.ca/client</div></div></div><div class="hstatus hs-chk" id="hs-client-portal"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔒</div><div><div class="hitem-name">SSL Certificate</div><div class="hitem-detail">HTTPS / TLS</div></div></div><div class="hstatus hs-chk" id="hs-ssl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔗</div><div><div class="hitem-name">Flinks IBV</div><div class="hitem-detail">Sandbox active · Prod pending</div></div></div><div class="hstatus hs-warn" id="hs-flinks"><div class="hsdot"></div>Sandbox</div></div>
         </div>
-        <div class="hcard">
-          <div class="hcard-hdr"><div class="hcard-title">📊 System Summary</div><div class="hcard-time" id="htime-sum">—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Total Clients</div><div class="hitem-detail" id="hd-sum-clients">—</div></div></div><div class="hstatus hs-ok" id="hs-sum-clients" style="color:var(--periwinkle)"><div class="hsdot" style="background:var(--periwinkle)"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Active Loans</div><div class="hitem-detail" id="hd-sum-loans">—</div></div></div><div class="hstatus" id="hs-sum-loans"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⏳</div><div><div class="hitem-name">Pending Review</div><div class="hitem-detail" id="hd-sum-pending">—</div></div></div><div class="hstatus" id="hs-sum-pending"><div class="hsdot"></div>—</div></div>
-        </div>
+
       </div>
     </div>
 
@@ -2275,10 +2316,13 @@ document.addEventListener('click',e=>{if(!e.target.closest('.sw'))closeSearch();
 
 /* ── HEALTH CHECKS ── */
 async function runHealthChecks(){
-  const t=new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  ['railway','supa','dns','sum'].forEach(k=>{const el=document.getElementById('htime-'+k);if(el)el.textContent='Checked '+t;});
-  setDot('dot-railway','chk');setDot('dot-supabase','chk');setDot('dot-dns','chk');
-  checkRailway();checkSupabase();checkDNS();
+  const now = new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  ['htime-railway','htime-supa','htime-eft','htime-dns'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='Checked '+now;
+  });
+  setDot('dot-railway','chk'); setDot('dot-supabase','chk'); setDot('dot-dns','chk');
+  updateSummaryHealth();
+  await Promise.all([checkRailway(), checkSupabase(), checkEFT(), checkDNS()]);
 }
 
 async function checkRailway(){
@@ -2286,49 +2330,123 @@ async function checkRailway(){
   try{
     const t0=Date.now();
     const res=await fetch(RAILWAY_URL+'/health',{signal:AbortSignal.timeout(8000)});
-    const ms=Date.now()-t0,data=await res.json();
-    if(res.ok){setHS('hs-api','ok','Online');setHS('hs-latency',ms<300?'ok':ms<800?'warn':'err',ms+'ms',ms+'ms');setHS('hs-env','ok',data.env||'—');setDot('dot-railway','ok');}
-    else{setHS('hs-api','err','HTTP '+res.status);setDot('dot-railway','err');}
-  }catch{setHS('hs-api','err','Unreachable');setHS('hs-latency','err','—');setHS('hs-env','err','—');setDot('dot-railway','err');}
+    const ms=Date.now()-t0, data=await res.json();
+    if(res.ok){
+      setHS('hs-api','ok','Online');
+      setHS('hs-latency',ms<300?'ok':ms<800?'warn':'err',ms+'ms',ms+'ms');
+      setHS('hs-env','ok',data.env||'production',data.env||'—');
+      setDot('dot-railway','ok');
+    } else { setHS('hs-api','err','HTTP '+res.status); setDot('dot-railway','err'); }
+  } catch { setHS('hs-api','err','Unreachable'); setHS('hs-latency','err','timeout'); setDot('dot-railway','err'); }
+
+  // Equifax token check
+  setHS('hs-efx','chk','Checking…');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/credit/token-test',{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    if(data.ok){
+      setHS('hs-efx','ok',data.mode==='sandbox-static'?'Sandbox ✓':'OAuth ✓', data.message||'—');
+    } else {
+      setHS('hs-efx','warn','Token expired — refresh in Railway','Update EQUIFAX_STATIC_TOKEN');
+    }
+  } catch { setHS('hs-efx','err','Unreachable'); }
 }
 
 async function checkSupabase(){
   setHS('hs-db','chk','Checking…');
   try{
-    const [c1,c2,c3]=await Promise.all([
-      sb.from('clients').select('id',{count:'exact'}).limit(1),
-      sb.from('loan_applications').select('id',{count:'exact'}).limit(1),
-      sb.from('loans').select('id',{count:'exact'}).limit(1),
+    const [c1,c2,c3,c4,c5]=await Promise.all([
+      sb.from('clients').select('id',{count:'exact',head:true}),
+      sb.from('loan_applications').select('id',{count:'exact',head:true}),
+      sb.from('loans').select('id',{count:'exact',head:true}),
+      sb.from('repayment_schedule').select('id',{count:'exact',head:true}),
+      sb.from('nsf_fees').select('id',{count:'exact',head:true}),
     ]);
     if(c1.error) throw c1.error;
-    setHS('hs-db','ok','Connected');
-    setHS('hs-clients-tbl','ok',(c1.count||0)+' rows',(c1.count||0)+' clients');
-    setHS('hs-apps-tbl','ok',(c2.count||0)+' rows',(c2.count||0)+' applications');
-    setHS('hs-loans-tbl','ok',(c3.count||0)+' rows',(c3.count||0)+' loans');
-    setDot('dot-supabase','ok');
-  }catch(e){setHS('hs-db','err',e.message||'Error');setDot('dot-supabase','err');}
+    setHS('hs-db','ok','Connected'); setDot('dot-supabase','ok');
+    setHS('hs-clients-tbl','ok',(c1.count||0)+' records',(c1.count||0)+' clients');
+    setHS('hs-apps-tbl','ok',(c2.count||0)+' records',(c2.count||0)+' applications');
+    setHS('hs-loans-tbl','ok',(c3.count||0)+' records',(c3.count||0)+' loans');
+    setHS('hs-sched-tbl','ok',(c4.count||0)+' records',(c4.count||0)+' payments scheduled');
+    const nsfOut=(await sb.from('nsf_fees').select('id',{count:'exact',head:true}).eq('status','outstanding')).count||0;
+    setHS('hs-nsf-tbl',nsfOut>0?'warn':'ok',(c5.count||0)+' total · '+nsfOut+' outstanding',(c5.count||0)+' NSF fees');
+  } catch(e){ setHS('hs-db','err',e.message||'Error'); setDot('dot-supabase','err'); }
+}
+
+async function checkEFT(){
+  // DRD
+  setHS('hs-drd','chk','Checking…');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/eft/pending',{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    const count=Array.isArray(data)?data.length:(data.loans?.length||0);
+    setHS('hs-drd','ok',count+' pending disbursement'+(count!==1?'s':''));
+  } catch { setHS('hs-drd','err','Unreachable'); }
+
+  // PAD preview
+  setHS('hs-pad','chk','Checking…');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/eft/pads/preview?days=14',{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    const count=Array.isArray(data?.payments)?data.payments.length:0;
+    setHS('hs-pad','ok',count+' payment'+(count!==1?'s':'')+' in next 14 days');
+  } catch { setHS('hs-pad','err','Unreachable'); }
+
+  // Returns processor — just check endpoint responds
+  setHS('hs-ret','chk','Checking…');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/eft/returns',{method:'POST',headers:{'Content-Type':'text/plain'},body:'',signal:AbortSignal.timeout(8000)});
+    setHS('hs-ret',res.status===400?'ok':'warn',res.status===400?'Ready (POST endpoint)':'HTTP '+res.status);
+  } catch { setHS('hs-ret','err','Unreachable'); }
+
+  // NSF Retry queue
+  setHS('hs-retry','chk','Checking…');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/eft/retries/preview',{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    const count=Array.isArray(data?.retries)?data.retries.length:0;
+    setHS('hs-retry',count>0?'warn':'ok',count>0?count+' retry'+(count!==1?'s':'')+' due':'No retries due');
+  } catch { setHS('hs-retry','err','Unreachable'); }
+
+  // Clearable payments
+  setHS('hs-clear','chk','Checking…');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/eft/clearable?days=5',{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    const count=Array.isArray(data?.payments)?data.payments.length:0;
+    setHS('hs-clear',count>0?'warn':'ok',count>0?count+' payment'+(count!==1?'s':'')+' ready to clear':'None ready');
+  } catch { setHS('hs-clear','err','Unreachable'); }
 }
 
 async function checkDNS(){
   setHS('hs-site','chk','Checking…');
   try{
     await fetch('https://wavesfinancial.ca/',{mode:'no-cors',signal:AbortSignal.timeout(8000)});
-    setHS('hs-site','ok','Online');setHS('hs-apply','ok','Reachable');setHS('hs-ssl','ok','Valid');
+    setHS('hs-site','ok','Online'); setHS('hs-apply','ok','Reachable');
+    setHS('hs-client-portal','ok','Reachable'); setHS('hs-ssl','ok','Valid');
     setDot('dot-dns','ok');
-  }catch{setHS('hs-site','err','Unreachable');setHS('hs-apply','err','—');setHS('hs-ssl','warn','Unknown');setDot('dot-dns','err');}
+  } catch { setHS('hs-site','err','Unreachable'); setHS('hs-apply','err','—'); setHS('hs-ssl','warn','Unknown'); setDot('dot-dns','err'); }
 }
 
 function updateSummaryHealth(){
-  const pend=allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
-  const active=allLoans.filter(l=>l.status==='active').length;
-  document.getElementById('hd-sum-clients').textContent=allClients.length+' total';
-  document.getElementById('hs-sum-clients').innerHTML=`<div class="hsdot" style="background:var(--periwinkle)"></div>${allClients.length}`;
-  document.getElementById('hd-sum-loans').textContent=active+' active';
-  document.getElementById('hs-sum-loans').className='hstatus '+(active>0?'hs-ok':'hs-chk');
-  document.getElementById('hs-sum-loans').innerHTML=`<div class="hsdot"></div>${active}`;
-  document.getElementById('hd-sum-pending').textContent=pend+' unreviewed';
-  document.getElementById('hs-sum-pending').className='hstatus '+(pend===0?'hs-ok':pend<5?'hs-warn':'hs-err');
-  document.getElementById('hs-sum-pending').innerHTML=`<div class="hsdot"></div>${pend}`;
+  const pend    = allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
+  const active  = allLoans.filter(l=>l.status==='active').length;
+  const disburse= allLoans.filter(l=>l.status==='pending_disbursement').length;
+  const el=(id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
+  el('hsum-clients', allClients.length);
+  el('hsum-loans',   active);
+  el('hsum-queue',   pend);
+  el('hsum-disburse',disburse);
+  el('hsum-nsf',     '—'); // loaded by checkSupabase
+  // Old IDs (keep for compat)
+  const hd=(id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
+  hd('hd-sum-clients', allClients.length+' total');
+  hd('hd-sum-loans',   active+' active');
+  hd('hd-sum-pending', pend+' unreviewed');
+  const hs=(id,cls,val)=>{ const e=document.getElementById(id); if(e){ e.className='hstatus '+cls; e.innerHTML='<div class="hsdot"></div>'+val; }};
+  hs('hs-sum-clients','hs-ok',allClients.length);
+  hs('hs-sum-loans',active>0?'hs-ok':'hs-chk',active);
+  hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
 }
 
 /* ── HELPERS ── */
