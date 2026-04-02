@@ -649,16 +649,18 @@ async function openClient(clientId, highlightRef){
   window.scrollTo(0,0);
 
   // Load all client data in parallel
-  const [clientRes, appsRes, loansRes, notesRes] = await Promise.all([
+  const [clientRes, appsRes, loansRes, notesRes, nsfRes] = await Promise.all([
     sb.from('clients').select('*').eq('id',clientId).single(),
     sb.from('loan_applications').select('*').eq('client_id',clientId).order('submitted_at',{ascending:false}),
     sb.from('loans').select('*').eq('client_id',clientId).order('created_at',{ascending:false}),
     sb.from('client_notes').select('*').eq('client_id',clientId).order('created_at',{ascending:false}).limit(50),
+    sb.from('nsf_fees').select('*').eq('client_id',clientId).order('created_at',{ascending:false}),
   ]);
 
-  const client = clientRes.data;
-  const apps   = appsRes.data  || [];
-  const loans  = loansRes.data || [];
+  const client  = clientRes.data;
+  const apps    = appsRes.data  || [];
+  const loans   = loansRes.data || [];
+  const nsfFees = nsfRes.data   || [];
 
   if(!client){ showToast('Client not found',true); closeClient(); return; }
 
@@ -691,12 +693,12 @@ async function openClient(clientId, highlightRef){
     if(data) contractMap[loan.id]=data;
   }
 
-  renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef);
+  renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef, nsfFees);
   // Render notes feed after DOM is ready
   renderNotesFeed(clientId, notesRes.data||[]);
 }
 
-function renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef){
+function renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef, nsfFees=[]){
   const name=((client.first_name||'')+' '+(client.last_name||'')).trim()||'—';
   const memberSince=client.created_at?new Date(client.created_at).toLocaleDateString('en-CA',{month:'short',year:'numeric'}):'—';
   const activeLoans=loans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
@@ -739,6 +741,7 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
         <button class="cp-tab active" onclick="switchCpTab('tab-personal-${client.id}',this)">Personal</button>
         <button class="cp-tab" onclick="switchCpTab('tab-loans-${client.id}',this)">Loan History <span class="cp-tab-count">${loans.length}</span></button>
         <button class="cp-tab" onclick="switchCpTab('tab-apps-${client.id}',this)">Applications <span class="cp-tab-count">${apps.length}</span></button>
+        ${nsfFees.length?`<button class="cp-tab" onclick="switchCpTab('tab-nsf-${client.id}',this)" style="color:${nsfFees.some(f=>f.status==='outstanding')?'var(--coral)':'var(--muted)'}">NSF Fees <span class="cp-tab-count" style="${nsfFees.some(f=>f.status==='outstanding')?'background:rgba(255,107,138,.2);color:var(--coral)':''}">${nsfFees.length}</span></button>`:''}
       </div>
 
       <!-- TAB: Personal (Personal Info + Address + Employment) -->
@@ -913,6 +916,84 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
             No applications yet.
           </div>`}
       </div>
+
+      <!-- TAB: NSF Fees -->
+      ${nsfFees.length?`<div class="cp-panel" id="tab-nsf-${client.id}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:4px">NSF Fee Log</div>
+            <div style="font-size:.78rem;color:var(--muted)">
+              ${nsfFees.filter(f=>f.status==='outstanding').length} outstanding ·
+              <span style="color:var(--coral);font-weight:700">$${(nsfFees.filter(f=>f.status==='outstanding').reduce((s,f)=>s+parseFloat(f.amount||0),0)).toFixed(2)}</span>
+              &nbsp;·&nbsp;
+              ${nsfFees.filter(f=>f.status==='collected').length} collected ·
+              <span style="color:var(--teal)">$${(nsfFees.filter(f=>f.status==='collected').reduce((s,f)=>s+parseFloat(f.amount||0),0)).toFixed(2)}</span>
+            </div>
+          </div>
+          <button onclick="addManualNsfFee('${client.id}')"
+            style="padding:6px 14px;background:rgba(255,107,138,.1);border:1px solid rgba(255,107,138,.3);border-radius:6px;color:var(--coral);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            + Add Manual Fee
+          </button>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:.73rem">
+            <thead>
+              <tr style="background:rgba(30,25,70,.8)">
+                <th style="padding:7px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Date</th>
+                <th style="padding:7px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Loan</th>
+                <th style="padding:7px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Reason</th>
+                <th style="padding:7px 10px;text-align:right;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Amount</th>
+                <th style="padding:7px 10px;text-align:center;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Status</th>
+                <th style="padding:7px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Paid On</th>
+                <th style="padding:7px 10px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${nsfFees.map(fee=>{
+                const isOut = fee.status==='outstanding';
+                const loanRef = loans.find(l=>l.id===fee.loan_id)?.ref || '—';
+                return `<tr id="nsf-row-${fee.id}" style="border-bottom:1px solid rgba(160,154,245,.06);background:${isOut?'rgba(255,107,138,.03)':''}">
+                  <td style="padding:7px 10px;color:var(--muted);white-space:nowrap">${fee.created_at?new Date(fee.created_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</td>
+                  <td style="padding:7px 10px;color:var(--periwinkle)">${loanRef}</td>
+                  <td style="padding:7px 10px;color:var(--muted)">${fee.reason||'NSF fee'}</td>
+                  <td style="padding:7px 10px;text-align:right;font-weight:800;color:${isOut?'var(--coral)':'var(--teal)'}">$${parseFloat(fee.amount||0).toFixed(2)}</td>
+                  <td style="padding:7px 10px;text-align:center">
+                    <select id="nsf-status-${fee.id}"
+                      onchange="onNsfStatusChange('${fee.id}')"
+                      style="padding:3px 6px;background:rgba(8,6,20,.8);border:1px solid ${isOut?'rgba(255,107,138,.3)':'rgba(29,233,198,.3)'};border-radius:5px;color:${isOut?'var(--coral)':'var(--teal)'};font-family:var(--font);font-size:.68rem;font-weight:700;cursor:pointer;outline:none">
+                      <option value="outstanding" ${fee.status==='outstanding'?'selected':''}>outstanding</option>
+                      <option value="collected"   ${fee.status==='collected'  ?'selected':''}>collected</option>
+                      <option value="waived"      ${fee.status==='waived'     ?'selected':''}>waived</option>
+                      <option value="written_off" ${fee.status==='written_off'?'selected':''}>written off</option>
+                    </select>
+                  </td>
+                  <td style="padding:7px 10px">
+                    <input type="date" id="nsf-paidat-${fee.id}"
+                      value="${fee.paid_at?fee.paid_at.slice(0,10):''}"
+                      style="background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.68rem;padding:2px 4px;width:110px">
+                  </td>
+                  <td style="padding:7px 10px">
+                    <button onclick="saveNsfFee('${fee.id}','${client.id}')"
+                      style="padding:3px 10px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.2);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer;white-space:nowrap">
+                      💾 Save
+                    </button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+            <tfoot>
+              <tr style="background:rgba(8,6,20,.4)">
+                <td colspan="3" style="padding:8px 10px;font-size:.75rem;font-weight:800;color:var(--white)">Total Outstanding</td>
+                <td style="padding:8px 10px;text-align:right;font-size:.78rem;font-weight:800;color:var(--coral)">
+                  $${(nsfFees.filter(f=>f.status==='outstanding').reduce((s,f)=>s+parseFloat(f.amount||0),0)).toFixed(2)}
+                </td>
+                <td colspan="3"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>`:''}
 
     </div><!-- /cp-main -->
 
@@ -2307,7 +2388,68 @@ async function confirmClear(){
 }
 
 
-/* ── LOAN HISTORY SCHEDULE EDIT ── */
+/* ── NSF FEE MANAGEMENT ── */
+function onNsfStatusChange(feeId){
+  const sel    = document.getElementById('nsf-status-'+feeId);
+  const paidAt = document.getElementById('nsf-paidat-'+feeId);
+  const row    = document.getElementById('nsf-row-'+feeId);
+  if(['collected','waived'].includes(sel.value) && paidAt && !paidAt.value)
+    paidAt.value = new Date().toISOString().slice(0,10);
+  const colors = { outstanding:'var(--coral)', collected:'var(--teal)', waived:'var(--periwinkle)', written_off:'var(--muted)' };
+  const c = colors[sel.value]||'var(--muted)';
+  sel.style.color = c;
+  sel.style.borderColor = c+'44';
+  if(row) row.style.background = sel.value==='outstanding' ? 'rgba(255,107,138,.05)' : '';
+}
+
+async function saveNsfFee(feeId, clientId){
+  const status = document.getElementById('nsf-status-'+feeId)?.value;
+  const paidAt = document.getElementById('nsf-paidat-'+feeId)?.value;
+  const updates = {
+    status,
+    paid_at: paidAt ? new Date(paidAt).toISOString() : null,
+  };
+  const { error } = await sb.from('nsf_fees').update(updates).eq('id', feeId);
+  if(error){ showToast('Save failed: '+error.message, true); return; }
+  const row = document.getElementById('nsf-row-'+feeId);
+  if(row) row.style.outline = '1px solid rgba(29,233,198,.4)';
+  setTimeout(()=>{ if(row) row.style.outline=''; }, 1500);
+  showToast('✓ NSF fee updated');
+}
+
+async function addManualNsfFee(clientId){
+  const client = allClients.find(x=>x.id===clientId);
+  const clientLoans = allLoans.filter(l=>l.client_id===clientId);
+  if(!clientLoans.length){ showToast('No loans found for this client', true); return; }
+
+  const loanOptions = clientLoans.map(l=>`${l.ref} ($${parseFloat(l.principal||0).toLocaleString()})`).join('\n');
+  const loanRef = prompt(`Add manual NSF fee\n\nLoans:\n${loanOptions}\n\nEnter loan ref (e.g. WF-843805):`);
+  if(!loanRef) return;
+  const loan = clientLoans.find(l=>l.ref===loanRef.trim().toUpperCase()||l.ref===loanRef.trim());
+  if(!loan){ showToast('Loan ref not found', true); return; }
+
+  const reason = prompt('Reason (e.g. "NSF on manual payment attempt"):', 'Manual NSF fee');
+  if(reason===null) return;
+
+  const amount = prompt('Fee amount ($):', '45.00');
+  if(!amount) return;
+
+  const { error } = await sb.from('nsf_fees').insert({
+    client_id:   clientId,
+    loan_id:     loan.id,
+    amount:      parseFloat(amount),
+    reason:      reason || 'Manual NSF fee',
+    return_code: 'manual',
+    status:      'outstanding',
+  });
+  if(error){ showToast('Failed: '+error.message, true); return; }
+
+  showToast('✓ NSF fee added — reload client to see it');
+  // Reload client page to show new fee
+  openClient(clientId);
+}
+
+
 function onLHStatusChange(schedId){
   const sel    = document.getElementById('lh-status-'+schedId);
   const paidAt = document.getElementById('lh-paidat-'+schedId);
