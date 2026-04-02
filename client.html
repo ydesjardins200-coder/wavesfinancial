@@ -762,10 +762,15 @@ function renderLoansTab(){
           <div class="loan-amount">${fmt(loan.principal)}</div>
           <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${(loan.apr*100||23).toFixed(1)}% APR · ${loan.payment_count||8} payments</div>
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           <span class="loan-status ${statusCls}">${statusLbl}</span>
-          <div style="margin-top:8px;font-size:.72rem;color:var(--muted)">Remaining</div>
+          <div style="font-size:.72rem;color:var(--muted)">Remaining</div>
           <div style="font-size:1.1rem;font-weight:700;color:var(--gold)">${fmt(loan.remaining_balance)}</div>
+          ${loan.status==='active'?`
+          <button onclick="openRenewal('${loan.ref}')"
+            style="margin-top:4px;padding:7px 16px;background:linear-gradient(135deg,var(--blue),#0052CC);border:none;border-radius:8px;color:#fff;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">
+            🔄 Apply to Renew
+          </button>`:''}
         </div>
       </div>
 
@@ -885,5 +890,745 @@ window.addEventListener('DOMContentLoaded', ()=>{
   }
 });
 </script>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     RENEWAL MODAL
+══════════════════════════════════════════════════════════ -->
+<style>
+/* Backdrop */
+.rnw-backdrop{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(10,22,40,.85);backdrop-filter:blur(8px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.rnw-backdrop.open{display:flex;animation:backdropIn .3s ease;}
+@keyframes backdropIn{from{opacity:0}to{opacity:1}}
+
+/* Sheet */
+.rnw-sheet{
+  width:100%;max-width:640px;max-height:90vh;overflow-y:auto;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px 24px 0 0;padding:0;
+  animation:sheetUp .35s cubic-bezier(.32,0,.67,0) forwards;
+}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+/* Sheet header */
+.rnw-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px 16px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--card);z-index:2;
+}
+.rnw-title{font-family:var(--serif);font-size:1.2rem;}
+.rnw-close{
+  width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);
+  border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .18s;
+}
+.rnw-close:hover{background:rgba(255,92,115,.12);color:var(--coral);}
+
+/* Steps indicator */
+.rnw-steps{
+  display:flex;align-items:center;justify-content:center;gap:0;
+  padding:16px 24px;
+}
+.rnw-step{
+  display:flex;align-items:center;gap:8px;
+}
+.rnw-step-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:800;border:2px solid var(--border);
+  background:var(--card2);color:var(--muted);transition:all .3s;flex-shrink:0;
+}
+.rnw-step-dot.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.rnw-step-dot.done{background:var(--teal);border-color:var(--teal);color:#fff;}
+.rnw-step-label{font-size:.68rem;color:var(--muted);transition:color .3s;}
+.rnw-step-label.active{color:var(--white);font-weight:600;}
+.rnw-step-line{width:32px;height:1px;background:var(--border);margin:0 4px;flex-shrink:0;}
+
+/* Step panels */
+.rnw-body{padding:24px;}
+.rnw-panel{display:none;}
+.rnw-panel.active{display:block;}
+
+/* Amount step */
+.rnw-amount-display{
+  text-align:center;margin-bottom:20px;
+}
+.rnw-amount-num{font-family:var(--serif);font-size:3rem;color:var(--white);}
+.rnw-amount-sub{font-size:.78rem;color:var(--muted);margin-top:4px;}
+.rnw-slider{
+  width:100%;-webkit-appearance:none;appearance:none;
+  height:6px;border-radius:3px;background:rgba(255,255,255,.08);
+  outline:none;margin-bottom:8px;cursor:pointer;
+}
+.rnw-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+  background:var(--blue);cursor:pointer;border:3px solid var(--card);
+  box-shadow:0 0 0 3px rgba(26,111,255,.3);
+}
+.rnw-slider-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted);margin-bottom:20px;}
+.rnw-payment-preview{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;
+}
+.rnw-pv-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;text-align:center;
+}
+.rnw-pv-label{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.rnw-pv-val{font-size:.95rem;font-weight:700;}
+.rnw-eligibility{
+  padding:10px 14px;background:rgba(0,212,170,.06);
+  border:1px solid rgba(0,212,170,.15);border-radius:8px;
+  font-size:.75rem;color:var(--teal);margin-bottom:20px;line-height:1.5;
+}
+
+/* Sign step */
+.rnw-agreement{
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:16px;font-size:.75rem;color:var(--muted);line-height:1.7;
+  max-height:200px;overflow-y:auto;margin-bottom:16px;
+}
+.rnw-agreement strong{color:var(--white);}
+.rnw-sig-field{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:10px;color:var(--white);font-family:'DM Serif Display',serif;
+  font-size:1.2rem;outline:none;transition:border-color .2s;margin-bottom:6px;
+}
+.rnw-sig-field:focus{border-color:var(--blue);}
+.rnw-sig-hint{font-size:.65rem;color:var(--muted);margin-bottom:14px;}
+.rnw-sig-ts{font-size:.65rem;color:var(--muted);padding:8px 12px;background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:16px;}
+.rnw-check-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.rnw-checkbox{width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:var(--blue);cursor:pointer;}
+.rnw-check-text{font-size:.75rem;color:var(--muted);line-height:1.5;}
+
+/* IBV step */
+.rnw-flinks-box{
+  border:1px solid var(--border);border-radius:12px;
+  background:rgba(8,6,20,.3);overflow:hidden;margin-bottom:16px;
+}
+.rnw-flinks-placeholder{padding:32px 24px;text-align:center;}
+.rnw-flinks-icon{font-size:2.5rem;margin-bottom:12px;}
+.rnw-flinks-title{font-family:var(--serif);font-size:1.1rem;margin-bottom:6px;}
+.rnw-flinks-sub{font-size:.75rem;color:var(--muted);max-width:300px;margin:0 auto 16px;line-height:1.6;}
+.rnw-flinks-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;background:linear-gradient(135deg,var(--blue),#0052CC);
+  border:none;border-radius:10px;color:#fff;
+  font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;
+}
+.rnw-connected{
+  display:none;padding:20px 24px;text-align:center;
+  background:rgba(0,212,170,.04);
+}
+.rnw-connected-icon{font-size:2rem;margin-bottom:6px;}
+.rnw-connected-title{font-size:.95rem;font-weight:700;color:var(--teal);margin-bottom:4px;}
+.rnw-connected-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.2);
+  border-radius:100px;font-size:.75rem;margin:8px 0;
+}
+.rnw-coords{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;
+}
+
+/* Bottom bar */
+.rnw-footer{
+  position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--border);
+  padding:16px 24px;display:flex;gap:10px;
+}
+.rnw-btn-back{
+  padding:12px 20px;background:none;border:1px solid var(--border);
+  border-radius:10px;color:var(--muted);font-family:var(--font);font-size:.88rem;
+  cursor:pointer;transition:all .2s;
+}
+.rnw-btn-back:hover{border-color:var(--white);color:var(--white);}
+.rnw-btn-next{
+  flex:1;padding:13px;background:linear-gradient(135deg,var(--blue),#0052CC);
+  border:none;border-radius:10px;color:#fff;
+  font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;
+}
+.rnw-btn-next:disabled{opacity:.45;cursor:not-allowed;}
+.rnw-btn-next.success{background:linear-gradient(135deg,var(--teal),#00B4D8);}
+
+/* Outcome */
+.rnw-outcome{padding:40px 24px;text-align:center;}
+.rnw-outcome-icon{font-size:3.5rem;margin-bottom:16px;}
+.rnw-outcome-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:8px;}
+.rnw-outcome-sub{font-size:.85rem;color:var(--muted);line-height:1.6;max-width:360px;margin:0 auto;}
+
+/* Input styling */
+.rnw-field-label{font-size:.68rem;font-weight:600;color:var(--muted);margin-bottom:5px;display:block;}
+.rnw-input{
+  width:100%;padding:10px 12px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:8px;color:var(--white);font-family:var(--font);font-size:.85rem;
+  outline:none;transition:border-color .2s;margin-bottom:12px;
+}
+.rnw-input:focus{border-color:var(--blue);}
+.rnw-input.mono{font-family:monospace;letter-spacing:.08em;}
+.rnw-input-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.rnw-err{font-size:.7rem;color:var(--coral);margin-top:-8px;margin-bottom:10px;display:none;}
+.rnw-err.show{display:block;}
+</style>
+
+<!-- Backdrop -->
+<div class="rnw-backdrop" id="rnw-backdrop" onclick="rnwClickOutside(event)">
+<div class="rnw-sheet" id="rnw-sheet">
+
+  <!-- Header -->
+  <div class="rnw-hdr">
+    <div>
+      <div style="font-size:.6rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px">Renewal Application</div>
+      <div class="rnw-title">Apply for a New Loan</div>
+    </div>
+    <button class="rnw-close" onclick="closeRenewal()">✕</button>
+  </div>
+
+  <!-- Steps -->
+  <div class="rnw-steps">
+    <div class="rnw-step">
+      <div class="rnw-step-dot active" id="rnw-dot-1">1</div>
+      <div class="rnw-step-label active" id="rnw-lbl-1">Amount</div>
+    </div>
+    <div class="rnw-step-line"></div>
+    <div class="rnw-step">
+      <div class="rnw-step-dot" id="rnw-dot-2">2</div>
+      <div class="rnw-step-label" id="rnw-lbl-2">Sign</div>
+    </div>
+    <div class="rnw-step-line"></div>
+    <div class="rnw-step">
+      <div class="rnw-step-dot" id="rnw-dot-3">3</div>
+      <div class="rnw-step-label" id="rnw-lbl-3">Verify Bank</div>
+    </div>
+  </div>
+
+  <div class="rnw-body">
+
+    <!-- ── STEP 1: AMOUNT ── -->
+    <div class="rnw-panel active" id="rnw-step-1">
+
+      <div class="rnw-amount-display">
+        <div class="rnw-amount-num" id="rnw-amount-display">$800</div>
+        <div class="rnw-amount-sub">Requested loan amount</div>
+      </div>
+
+      <input type="range" class="rnw-slider" id="rnw-slider"
+        min="500" max="1000" step="100" value="800"
+        oninput="rnwUpdateAmount(this.value)">
+      <div class="rnw-slider-labels">
+        <span>$500</span><span>$600</span><span>$700</span><span>$800</span><span>$900</span><span>$1,000</span>
+      </div>
+
+      <div class="rnw-payment-preview">
+        <div class="rnw-pv-card">
+          <div class="rnw-pv-label">Payment / period</div>
+          <div class="rnw-pv-val" id="rnw-pmt-amt" style="color:var(--gold)">—</div>
+        </div>
+        <div class="rnw-pv-card">
+          <div class="rnw-pv-label">Total repayable</div>
+          <div class="rnw-pv-val" id="rnw-total-repay">—</div>
+        </div>
+        <div class="rnw-pv-card">
+          <div class="rnw-pv-label">8 payments</div>
+          <div class="rnw-pv-val" style="color:var(--muted)">Biweekly</div>
+        </div>
+      </div>
+
+      <div class="rnw-eligibility" id="rnw-eligibility">
+        ✓ Based on your previous loan history, you are eligible to apply for a renewal.
+        Funds will be deposited by Interac e-Transfer to your account on file.
+      </div>
+
+      <!-- Pay frequency + next pay date -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">
+        <div>
+          <label class="rnw-field-label">Pay Frequency <span style="color:var(--coral)">*</span></label>
+          <select class="rnw-input" id="rnw-pay-freq">
+            <option value="">Select…</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly" selected>Bi-weekly</option>
+            <option value="semi-monthly">Semi-monthly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+          <div class="rnw-err" id="rnw-err-pay-freq">Required</div>
+        </div>
+        <div>
+          <label class="rnw-field-label">Next Pay Date <span style="color:var(--coral)">*</span></label>
+          <input type="date" class="rnw-input" id="rnw-next-pay">
+          <div class="rnw-err" id="rnw-err-next-pay">Required</div>
+        </div>
+      </div>
+
+    </div><!-- /step 1 -->
+
+    <!-- ── STEP 2: SIGN ── -->
+    <div class="rnw-panel" id="rnw-step-2">
+
+      <div class="rnw-agreement" id="rnw-agreement-text">
+        <!-- Populated dynamically -->
+      </div>
+
+      <label class="rnw-field-label" for="rnw-esig">
+        E-Signature — Type your full legal name <span style="color:var(--coral)">*</span>
+      </label>
+      <input class="rnw-sig-field" type="text" id="rnw-esig"
+        placeholder="Marie Tremblay" autocomplete="name"
+        oninput="rnwCheckSig()">
+      <div class="rnw-err" id="rnw-err-esig">Please type your full name to sign</div>
+      <div class="rnw-sig-hint">By typing your name you agree this constitutes a legally binding electronic signature.</div>
+
+      <div class="rnw-sig-ts" id="rnw-sig-ts">Signed: —</div>
+
+      <div class="rnw-check-row">
+        <input type="checkbox" class="rnw-checkbox" id="rnw-agree-terms" onchange="rnwCheckSig()">
+        <div class="rnw-check-text">I have read and agree to the terms of this Loan Agreement, including the total cost of borrowing and repayment schedule shown above.</div>
+      </div>
+
+      <div class="rnw-check-row">
+        <input type="checkbox" class="rnw-checkbox" id="rnw-agree-pad" onchange="rnwCheckSig()">
+        <div class="rnw-check-text">I authorize Waves Financial to initiate Pre-Authorized Debits (PAD) from my verified bank account for all scheduled loan repayments.</div>
+      </div>
+      <div class="rnw-err" id="rnw-err-agree">Please check both boxes to continue</div>
+
+    </div><!-- /step 2 -->
+
+    <!-- ── STEP 3: BANK VERIFICATION ── -->
+    <div class="rnw-panel" id="rnw-step-3">
+
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px;line-height:1.6">
+        We need to verify your current bank account to confirm your income and set up automatic payments.
+        This is <strong style="color:var(--white)">read-only</strong> — we can never move money through this connection.
+      </div>
+
+      <div class="rnw-flinks-box" id="rnw-flinks-box">
+        <div class="rnw-flinks-placeholder" id="rnw-flinks-placeholder">
+          <div class="rnw-flinks-icon">🏦</div>
+          <div class="rnw-flinks-title">Instant Bank Verification</div>
+          <div class="rnw-flinks-sub">Powered by Flinks — securely connect your Canadian bank. Your credentials are entered directly with your bank and never shared with Waves Financial.</div>
+          <button class="rnw-flinks-btn" onclick="rnwStartFlinks()">🔗 Connect My Bank</button>
+          <div id="rnw-flinks-iframe-container"></div>
+        </div>
+        <div class="rnw-connected" id="rnw-flinks-connected">
+          <div class="rnw-connected-icon">✅</div>
+          <div class="rnw-connected-title">Bank Connected!</div>
+          <div class="rnw-connected-pill">
+            <span id="rnw-conn-bank">—</span>
+            <span style="color:var(--muted)" id="rnw-conn-acct">—</span>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted)">Your account is verified. Credentials were never shared with Waves Financial.</div>
+          <button onclick="rnwResetFlinks()" style="margin-top:8px;background:none;border:none;color:var(--muted);font-size:.7rem;text-decoration:underline;cursor:pointer;font-family:var(--font)">Connect a different account</button>
+        </div>
+      </div>
+
+      <!-- Banking coordinates -->
+      <div id="rnw-banking-coords" style="display:none;margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:10px">Confirm your banking details for direct deposit</div>
+
+        <!-- Cheque specimen -->
+        <div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1px solid rgba(100,160,255,.12)">
+          <svg viewBox="0 0 520 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#f8f6ff">
+            <rect width="520" height="90" fill="#f8f6ff"/>
+            <rect width="520" height="3" fill="#1A6FFF" opacity="0.5"/>
+            <text x="260" y="55" font-family="Arial" font-size="32" font-weight="900" fill="#1A6FFF" opacity="0.06" text-anchor="middle" letter-spacing="10">VOID</text>
+            <rect x="0" y="58" width="520" height="32" fill="#e8f0ff" opacity="0.6"/>
+            <rect x="35" y="63" width="78" height="18" rx="3" fill="#1A6FFF" opacity="0.12"/>
+            <text x="74" y="76" font-family="Courier New,monospace" font-size="11" fill="#1A6FFF" text-anchor="middle" font-weight="700">0 0 0 0 0</text>
+            <text x="74" y="61" font-family="Arial" font-size="7" fill="#1A6FFF" text-anchor="middle" font-weight="700">Transit</text>
+            <rect x="120" y="63" width="52" height="18" rx="3" fill="#00D4AA" opacity="0.12"/>
+            <text x="146" y="76" font-family="Courier New,monospace" font-size="11" fill="#00D4AA" text-anchor="middle" font-weight="700">0 0 0</text>
+            <text x="146" y="61" font-family="Arial" font-size="7" fill="#00D4AA" text-anchor="middle" font-weight="700">Institution</text>
+            <rect x="180" y="63" width="150" height="18" rx="3" fill="#A29BFE" opacity="0.12"/>
+            <text x="255" y="76" font-family="Courier New,monospace" font-size="11" fill="#A29BFE" text-anchor="middle" font-weight="700">0 0 0 0 0 0 0</text>
+            <text x="255" y="61" font-family="Arial" font-size="7" fill="#A29BFE" text-anchor="middle" font-weight="700">Account Number</text>
+          </svg>
+        </div>
+
+        <div class="rnw-input-grid">
+          <div>
+            <label class="rnw-field-label" style="color:rgba(26,111,255,.8)">Transit (5 digits)</label>
+            <input type="text" class="rnw-input mono" id="rnw-transit"
+              placeholder="00000" maxlength="5" inputmode="numeric"
+              style="border-color:rgba(26,111,255,.3)"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,5)">
+            <div class="rnw-err" id="rnw-err-transit">5 digits required</div>
+          </div>
+          <div>
+            <label class="rnw-field-label" style="color:rgba(0,212,170,.8)">Institution (3 digits)</label>
+            <input type="text" class="rnw-input mono" id="rnw-institution"
+              placeholder="000" maxlength="3" inputmode="numeric"
+              style="border-color:rgba(0,212,170,.3)"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,3)">
+            <div class="rnw-err" id="rnw-err-institution">3 digits required</div>
+          </div>
+          <div>
+            <label class="rnw-field-label" style="color:rgba(162,155,254,.8)">Account Number</label>
+            <input type="text" class="rnw-input mono" id="rnw-account"
+              placeholder="0000000" maxlength="12" inputmode="numeric"
+              style="border-color:rgba(162,155,254,.3)"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,12)">
+            <div class="rnw-err" id="rnw-err-account">5–12 digits required</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /step 3 -->
+
+    <!-- ── OUTCOME ── -->
+    <div class="rnw-panel" id="rnw-outcome">
+      <div class="rnw-outcome">
+        <div class="rnw-outcome-icon" id="rnw-outcome-icon">⏳</div>
+        <div class="rnw-outcome-title" id="rnw-outcome-title">Processing…</div>
+        <div class="rnw-outcome-sub" id="rnw-outcome-sub">Please wait while we review your application.</div>
+        <div id="rnw-outcome-ref" style="margin-top:16px;font-size:.72rem;color:var(--muted)"></div>
+        <button onclick="closeRenewal()" id="rnw-outcome-close"
+          style="display:none;margin-top:24px;padding:12px 28px;background:linear-gradient(135deg,var(--blue),#0052CC);border:none;border-radius:10px;color:#fff;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer">
+          Close
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /rnw-body -->
+
+  <!-- Footer -->
+  <div class="rnw-footer" id="rnw-footer">
+    <button class="rnw-btn-back" id="rnw-btn-back" onclick="rnwBack()" style="display:none">← Back</button>
+    <button class="rnw-btn-next" id="rnw-btn-next" onclick="rnwNext()">
+      <span id="rnw-btn-lbl">Review Terms →</span>
+      <div id="rnw-spinner" style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>
+    </button>
+  </div>
+
+</div><!-- /rnw-sheet -->
+</div><!-- /rnw-backdrop -->
+
+<style>
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+
+<script>
+// ── RENEWAL STATE ─────────────────────────────────────────────────────────────
+const APR=0.23, DAYS=112, N=8;
+let rnwStep=1, rnwAmount=800, rnwFlinksId=null, rnwFlinksData={};
+let rnwSigTimestamp=null, rnwCurrentLoanRef=null;
+
+function rnwCalcPmt(principal){ return principal*(1+APR*DAYS/365)/N; }
+function rnwCalcTotal(principal){ return rnwCalcPmt(principal)*N; }
+function fmtC(n){ return '$'+parseFloat(n).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── OPEN / CLOSE ──────────────────────────────────────────────────────────────
+function openRenewal(loanRef){
+  rnwCurrentLoanRef = loanRef;
+  rnwStep=1; rnwFlinksId=null; rnwFlinksData={};
+  rnwAmount=800;
+  document.getElementById('rnw-slider').value=800;
+  document.getElementById('rnw-esig').value='';
+  document.getElementById('rnw-agree-terms').checked=false;
+  document.getElementById('rnw-agree-pad').checked=false;
+  document.getElementById('rnw-flinks-placeholder').style.display='block';
+  document.getElementById('rnw-flinks-connected').style.display='none';
+  document.getElementById('rnw-banking-coords').style.display='none';
+  document.getElementById('rnw-transit').value='';
+  document.getElementById('rnw-institution').value='';
+  document.getElementById('rnw-account').value='';
+  // Pre-fill banking coords from client profile if available
+  if(currentClient?.bank_transit){
+    document.getElementById('rnw-transit').value=currentClient.bank_transit;
+    document.getElementById('rnw-institution').value=currentClient.bank_institution||'';
+    document.getElementById('rnw-account').value=currentClient.bank_account||'';
+  }
+  rnwUpdateAmount(800);
+  rnwGotoStep(1);
+  document.getElementById('rnw-backdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeRenewal(){
+  document.getElementById('rnw-backdrop').classList.remove('open');
+  document.body.style.overflow='';
+  // Show all outcome panels as hidden for next open
+  document.getElementById('rnw-outcome').classList.remove('active');
+  document.getElementById('rnw-footer').style.display='flex';
+}
+
+function rnwClickOutside(e){
+  if(e.target===document.getElementById('rnw-backdrop')) closeRenewal();
+}
+
+// ── STEP NAVIGATION ───────────────────────────────────────────────────────────
+function rnwGotoStep(n){
+  rnwStep=n;
+  ['rnw-step-1','rnw-step-2','rnw-step-3','rnw-outcome'].forEach((id,i)=>{
+    document.getElementById(id).classList.toggle('active', i===n-1 || (n===4&&i===3));
+  });
+  // Dots
+  [1,2,3].forEach(i=>{
+    const dot=document.getElementById('rnw-dot-'+i);
+    const lbl=document.getElementById('rnw-lbl-'+i);
+    dot.classList.toggle('active',i===n);
+    dot.classList.toggle('done',i<n);
+    dot.textContent = i<n ? '✓' : i;
+    lbl.classList.toggle('active',i===n);
+  });
+  // Back button
+  document.getElementById('rnw-btn-back').style.display = n>1&&n<4 ? 'block' : 'none';
+  // Next button label
+  const labels={1:'Review & Sign →',2:'Verify My Bank →',3:'Submit Application'};
+  document.getElementById('rnw-btn-lbl').textContent = labels[n]||'Next';
+  document.getElementById('rnw-btn-next').style.display = n<4 ? 'flex' : 'none';
+  document.getElementById('rnw-btn-back').style.display = n>1&&n<4 ? 'block' : 'none';
+}
+
+function rnwNext(){
+  if(rnwStep===1) return rnwValidateStep1();
+  if(rnwStep===2) return rnwValidateStep2();
+  if(rnwStep===3) return rnwSubmit();
+}
+
+function rnwBack(){
+  if(rnwStep>1) rnwGotoStep(rnwStep-1);
+}
+
+// ── STEP 1: AMOUNT ────────────────────────────────────────────────────────────
+function rnwUpdateAmount(val){
+  rnwAmount=parseInt(val);
+  document.getElementById('rnw-amount-display').textContent=fmtC(rnwAmount);
+  document.getElementById('rnw-pmt-amt').textContent=fmtC(rnwCalcPmt(rnwAmount));
+  document.getElementById('rnw-total-repay').textContent=fmtC(rnwCalcTotal(rnwAmount));
+}
+
+function rnwValidateStep1(){
+  let ok=true;
+  const freq=document.getElementById('rnw-pay-freq').value;
+  const nextPay=document.getElementById('rnw-next-pay').value;
+  const fe=document.getElementById('rnw-err-pay-freq');
+  const ne=document.getElementById('rnw-err-next-pay');
+  if(!freq){ fe.classList.add('show'); ok=false; } else fe.classList.remove('show');
+  if(!nextPay){ ne.classList.add('show'); ok=false; } else ne.classList.remove('show');
+  if(!ok) return;
+  rnwBuildAgreement();
+  rnwGotoStep(2);
+}
+
+// ── STEP 2: SIGN ──────────────────────────────────────────────────────────────
+function rnwBuildAgreement(){
+  const c=currentClient;
+  const fullName=`${c.first_name||''} ${c.last_name||''}`.trim();
+  const pmt=fmtC(rnwCalcPmt(rnwAmount));
+  const total=fmtC(rnwCalcTotal(rnwAmount));
+  const freq=document.getElementById('rnw-pay-freq').value;
+  const nextPay=document.getElementById('rnw-next-pay').value;
+  const ref='WF-R-PREVIEW';
+
+  document.getElementById('rnw-agreement-text').innerHTML=`
+    <strong>LOAN AGREEMENT — WAVES FINANCIAL INC.</strong><br><br>
+    <strong>Borrower:</strong> ${fullName}<br>
+    <strong>Email:</strong> ${c.email}<br>
+    <strong>Date:</strong> ${new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'})}<br><br>
+    <strong>LOAN DETAILS</strong><br>
+    Principal: <strong>${fmtC(rnwAmount)}</strong><br>
+    Annual Percentage Rate (APR): <strong>23%</strong><br>
+    Term: <strong>112 days (8 ${freq} payments)</strong><br>
+    Payment Amount: <strong>${pmt} per payment</strong><br>
+    First Payment Date: <strong>${nextPay}</strong><br>
+    Total Cost of Borrowing: <strong>${fmtC(rnwCalcTotal(rnwAmount)-rnwAmount)}</strong><br>
+    Total Repayable: <strong>${total}</strong><br><br>
+    <strong>FUNDING:</strong> Funds will be disbursed via Interac e-Transfer to your verified bank account within one business day of approval.<br><br>
+    <strong>REPAYMENT:</strong> Payments will be collected via Pre-Authorized Debit (PAD) from your verified bank account on each scheduled payment date.<br><br>
+    <strong>PREPAYMENT:</strong> You may repay this loan in full at any time with no penalty.<br><br>
+    <strong>NSF FEE:</strong> A $45.00 fee will be charged for any returned payment due to insufficient funds.<br><br>
+    This agreement is governed by the laws of the applicable Canadian province. Licensed lender — Waves Financial Inc.
+  `;
+
+  // Set timestamp
+  rnwSigTimestamp=new Date();
+  const tsStr=rnwSigTimestamp.toLocaleString('en-CA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'});
+  document.getElementById('rnw-sig-ts').textContent=`Signing date & time: ${tsStr}`;
+}
+
+function rnwCheckSig(){
+  const sig=document.getElementById('rnw-esig').value.trim();
+  const terms=document.getElementById('rnw-agree-terms').checked;
+  const pad=document.getElementById('rnw-agree-pad').checked;
+  document.getElementById('rnw-btn-next').disabled=!(sig.length>=4&&terms&&pad);
+}
+
+function rnwValidateStep2(){
+  const sig=document.getElementById('rnw-esig').value.trim();
+  const terms=document.getElementById('rnw-agree-terms').checked;
+  const pad=document.getElementById('rnw-agree-pad').checked;
+  const sigErr=document.getElementById('rnw-err-esig');
+  const agreeErr=document.getElementById('rnw-err-agree');
+  let ok=true;
+  if(sig.length<4){ sigErr.classList.add('show'); ok=false; } else sigErr.classList.remove('show');
+  if(!terms||!pad){ agreeErr.classList.add('show'); ok=false; } else agreeErr.classList.remove('show');
+  if(!ok) return;
+  rnwGotoStep(3);
+}
+
+// ── STEP 3: FLINKS ───────────────────────────────────────────────────────────
+function rnwStartFlinks(){
+  // Production: open Flinks iframe with YOUR_FLINKS_CLIENT_ID
+  // For now simulate — same pattern as apply.html
+  const btn=document.querySelector('.rnw-flinks-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Connecting…'; }
+
+  // Simulate bank connection (replace with real Flinks iframe postMessage)
+  setTimeout(()=>{
+    const mockData={
+      loginId:`sandbox-green-${Math.random().toString(36).substr(2,6)}`,
+      institution:'Desjardins',
+      accountType:'Chequing',
+      accountMask:'••••4521',
+      sandbox:true,
+    };
+    rnwOnFlinksSuccess(mockData);
+  }, 1500);
+}
+
+function rnwOnFlinksSuccess(d){
+  rnwFlinksId=d.loginId; rnwFlinksData=d;
+  document.getElementById('rnw-flinks-placeholder').style.display='none';
+  document.getElementById('rnw-flinks-connected').style.display='block';
+  document.getElementById('rnw-conn-bank').textContent=d.institution;
+  document.getElementById('rnw-conn-acct').textContent=d.accountType+' '+d.accountMask;
+  // Show banking coords
+  document.getElementById('rnw-banking-coords').style.display='block';
+  document.getElementById('rnw-btn-next').disabled=false;
+}
+
+function rnwResetFlinks(){
+  rnwFlinksId=null; rnwFlinksData={};
+  document.getElementById('rnw-flinks-placeholder').style.display='block';
+  document.getElementById('rnw-flinks-connected').style.display='none';
+  document.getElementById('rnw-banking-coords').style.display='none';
+  const btn=document.querySelector('.rnw-flinks-btn');
+  if(btn){ btn.disabled=false; btn.textContent='🔗 Connect My Bank'; }
+}
+
+// Listen for real Flinks postMessage
+window.addEventListener('message', function(e){
+  const d=e.data;
+  if(d && d.loginId && document.getElementById('rnw-backdrop').classList.contains('open')){
+    rnwOnFlinksSuccess({
+      loginId:d.loginId, institution:d.institution||'Your Bank',
+      accountType:d.accountType||'Chequing',
+      accountMask:d.accountNumber?'••••'+d.accountNumber.slice(-4):'••••',
+      sandbox:!!d.sandbox,
+    });
+  }
+});
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+async function rnwSubmit(){
+  if(!rnwFlinksId){ showToast('Please connect your bank account first.', true); return; }
+
+  // Validate banking coords
+  const transit=document.getElementById('rnw-transit').value;
+  const institution=document.getElementById('rnw-institution').value;
+  const account=document.getElementById('rnw-account').value;
+  const te=document.getElementById('rnw-err-transit');
+  const ie=document.getElementById('rnw-err-institution');
+  const ae=document.getElementById('rnw-err-account');
+  let ok=true;
+  if(transit.length!==5){ te.classList.add('show'); ok=false; } else te.classList.remove('show');
+  if(institution.length!==3){ ie.classList.add('show'); ok=false; } else ie.classList.remove('show');
+  if(account.length<5){ ae.classList.add('show'); ok=false; } else ae.classList.remove('show');
+  if(!ok) return;
+
+  const btn=document.getElementById('rnw-btn-next');
+  const lbl=document.getElementById('rnw-btn-lbl');
+  const spinner=document.getElementById('rnw-spinner');
+  btn.disabled=true; lbl.textContent='Submitting…';
+  spinner.style.display='block';
+
+  // Show outcome panel immediately
+  rnwGotoStep(4);
+  document.getElementById('rnw-footer').style.display='none';
+
+  const c=currentClient;
+  const ref='WF-R-'+Math.random().toString(36).substr(2,6).toUpperCase();
+
+  const payload={
+    formType:'renewal', ref,
+    submittedAt: new Date().toISOString(),
+    signature:{
+      fullName: document.getElementById('rnw-esig').value.trim(),
+      timestamp: rnwSigTimestamp?.toISOString()||new Date().toISOString(),
+    },
+    personal:{
+      firstName: c.first_name,
+      lastName:  c.last_name,
+      email:     c.email,
+      dob:       c.dob,
+      cellPhone: c.cell_phone,
+      homePhone: c.home_phone,
+      address:   c.address,
+      city:      c.city,
+      province:  c.province,
+      postal:    c.postal,
+    },
+    employment:{
+      source:       c.employment_status,
+      employer:     c.employer,
+      jobDesc:      c.job_desc,
+      hireDate:     c.hire_date,
+      paidBy:       c.paid_by,
+      payFrequency: document.getElementById('rnw-pay-freq').value,
+      nextPay:      document.getElementById('rnw-next-pay').value,
+    },
+    banking:{
+      flinksLoginId:    rnwFlinksId,
+      institution:      rnwFlinksData.institution||'',
+      sandbox:          !!rnwFlinksData.sandbox,
+      transitNumber:    transit,
+      institutionNumber: institution,
+      accountNumber:    account,
+    },
+    loan:{
+      amount: rnwAmount,
+      fundMethod: 'interac_etransfer',
+    },
+  };
+
+  try{
+    const resp=await fetch(`${RAILWAY_URL}/api/apply/renewal`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+    });
+    const decision=await resp.json();
+
+    if(!resp.ok) throw new Error(decision.error||'Server error '+resp.status);
+
+    const d=decision.decision||'manual_review';
+    const outcomes={
+      auto_approved: {icon:'🎉',title:'Approved!',sub:`Your loan of ${fmtC(rnwAmount)} has been approved. Funds will be sent by Interac e-Transfer within one business day. Your reference number is <strong>${ref}</strong>.`,color:'var(--teal)'},
+      manual_review: {icon:'⏳',title:'Under Review',sub:`Your application (${ref}) has been received and is being reviewed by our team. We'll email you at ${c.email} with a decision within 1 business day.`,color:'var(--gold)'},
+      auto_declined: {icon:'✖',title:'Not Approved',sub:`We were unable to approve your application at this time. Please contact us at 1-800-WAVES-01 for more information. Reference: ${ref}.`,color:'var(--coral)'},
+    };
+    const o=outcomes[d]||outcomes.manual_review;
+    document.getElementById('rnw-outcome-icon').textContent=o.icon;
+    document.getElementById('rnw-outcome-title').textContent=o.title;
+    document.getElementById('rnw-outcome-title').style.color=o.color;
+    document.getElementById('rnw-outcome-sub').innerHTML=o.sub;
+    document.getElementById('rnw-outcome-close').style.display='inline-block';
+
+    // Reload loans if approved
+    if(d==='auto_approved') setTimeout(()=>showApp(),3000);
+
+  }catch(err){
+    document.getElementById('rnw-outcome-icon').textContent='⚠️';
+    document.getElementById('rnw-outcome-title').textContent='Submission Error';
+    document.getElementById('rnw-outcome-sub').textContent=err.message+' — please try again or call 1-800-WAVES-01.';
+    document.getElementById('rnw-outcome-close').style.display='inline-block';
+  }
+}
+</script>
+
 </body>
 </html>
