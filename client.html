@@ -451,7 +451,7 @@ body::before{
               <svg viewBox="0 0 110 110" width="110" height="110">
                 <circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
                 <circle cx="55" cy="55" r="48" fill="none" stroke="url(#scoreGrad)" stroke-width="8"
-                  stroke-dasharray="301.6" id="score-dash" stroke-dashoffset="301.6" stroke-linecap="round"/>
+                  stroke-dasharray="301.6" id="score-dash" stroke-dashoffset="301.6" stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
                 <defs>
                   <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stop-color="#1A6FFF"/>
@@ -827,16 +827,95 @@ function switchTab(panelId, btn){
 }
 
 // ── CREDIT HISTORY ────────────────────────────────────────────────────────────
-function connectEquifax(){
-  // Equifax API integration point
-  // When live: redirect to OAuth flow or embed Equifax Connect widget
-  // For now show a "coming soon" message
-  showToast('Equifax integration coming soon — we\'ll notify you by email.');
-  // Animate placeholder bars
-  document.querySelectorAll('.eq-placeholder-bar').forEach((b,i)=>{
-    const pct = [87, 62, 74, 68, 90, 100][i]||70;
-    setTimeout(()=>{ b.style.width=pct+'%'; }, 100+i*100);
-  });
+async function connectEquifax(){
+  const btn = document.querySelector('.connect-btn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span>⏳</span> Fetching your report…'; }
+
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/credit/report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientId: currentClient.id }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || 'Report fetch failed');
+
+    renderCreditReport(data);
+  } catch(err){
+    if(btn){ btn.disabled=false; btn.innerHTML='<span>🔗</span> Connect Equifax'; }
+    showToast('Credit report error: '+err.message, true);
+  }
+}
+
+function renderCreditReport(report){
+  // Hide disconnected state, show connected
+  document.getElementById('credit-disconnected').style.display='none';
+  document.getElementById('credit-connected').style.display='block';
+
+  // Score ring animation
+  const score = report.score || 0;
+  document.getElementById('equifax-score').textContent = score || '—';
+  // Circle: circumference = 2π × 48 = 301.6, score range 300-850
+  const pct   = score ? Math.max(0, Math.min(1, (score - 300) / 550)) : 0;
+  const dash  = 301.6 * pct;
+  const circle = document.getElementById('score-dash');
+  setTimeout(()=>{ circle.style.strokeDashoffset = (301.6 - dash); }, 100);
+
+  document.getElementById('credit-grade').textContent   = report.grade || '—';
+  document.getElementById('credit-grade').style.color   = report.gradeColor || 'var(--muted)';
+  document.getElementById('credit-updated').textContent = 'Last updated: ' + new Date().toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'});
+
+  const s = report.summary || {};
+  document.getElementById('credit-summary').innerHTML = [
+    s.openAccounts    != null ? `<strong style="color:var(--white)">${s.openAccounts}</strong> open accounts` : null,
+    s.inquiries       != null ? `<strong style="color:var(--white)">${s.inquiries}</strong> recent inquiries` : null,
+    s.latePayments    != null ? `<strong style="color:var(--white)">${s.latePayments}</strong> late payment${s.latePayments!==1?'s':''}` : null,
+    s.utilization     != null ? `<strong style="color:var(--white)">${s.utilization}%</strong> credit utilization` : null,
+    s.accountAgeYears != null ? `<strong style="color:var(--white)">${s.accountAgeYears}</strong> year${s.accountAgeYears!==1?'s':''} oldest account` : null,
+  ].filter(Boolean).join(' · ');
+
+  // Factor bars
+  const bars = report.factorBars || {};
+  const factors = [
+    { label:'Payment History',    key:'paymentHistory',  weight:'35%' },
+    { label:'Credit Utilization', key:'utilization',     weight:'30%' },
+    { label:'Account Age',        key:'accountAge',      weight:'15%' },
+    { label:'Credit Mix',         key:'creditMix',       weight:'10%' },
+    { label:'New Inquiries',      key:'newInquiries',    weight:'10%' },
+    { label:'Public Records',     key:'publicRecords',   weight:'—'   },
+  ];
+
+  const barColor = pct => pct >= 75 ? '#00D4AA' : pct >= 50 ? '#1A6FFF' : pct >= 30 ? '#F5A623' : '#FF5C73';
+
+  document.getElementById('credit-bars').innerHTML = factors.map(f => {
+    const val = bars[f.key] ?? 0;
+    return `<div class="credit-bar-item">
+      <div class="cbi-label">${f.label} <span style="float:right;color:rgba(160,200,255,.3)">${f.weight}</span></div>
+      <div class="cbi-val" style="color:${barColor(val)}">${val >= 80?'Excellent':val>=60?'Good':val>=40?'Fair':'Needs Work'}</div>
+      <div class="cbi-track"><div class="cbi-fill" style="width:0%;background:${barColor(val)};transition:width 1s ease" data-target="${val}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Animate bars
+  setTimeout(()=>{
+    document.querySelectorAll('.cbi-fill[data-target]').forEach(el=>{
+      el.style.width = el.dataset.target + '%';
+    });
+  }, 150);
+
+  // Score factors / reason codes
+  if(report.factors?.length){
+    const factorsHtml = `<div style="margin-top:16px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">Score Factors</div>
+      ${report.factors.map(f=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,92,115,.06);border:1px solid rgba(255,92,115,.12);border-radius:8px;margin-bottom:6px;font-size:.75rem">
+          <span style="color:var(--coral)">⚠</span>
+          <span>${f.description}</span>
+          <span style="margin-left:auto;font-size:.62rem;color:var(--muted)">${f.code}</span>
+        </div>`).join('')}
+    </div>`;
+    document.getElementById('credit-bars').insertAdjacentHTML('afterend', factorsHtml);
+  }
 }
 
 // ── BUDGET PLANNER ────────────────────────────────────────────────────────────
