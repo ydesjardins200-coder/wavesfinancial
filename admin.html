@@ -520,26 +520,43 @@ function renderList(){
     const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
 
-    // DRD + PAD action bar
+    // DRD + PAD + Returns action bar
     const drdBar = `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
-        ${pendingDisb.length?`
-        <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
-        <a href="${RAILWAY_URL}/api/eft/drd" target="_blank"
-           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
-          📁 DRD — Disbursements
-        </a>`:''}
-        <button onclick="previewPAD(5)"
-           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-          👁 Preview PAD (5 days)
-        </button>
-        <button onclick="previewPAD(14)"
-           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-          👁 Preview PAD (14 days)
-        </button>
-        <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Effective: ${nextBizDay()}</span>
-      </div>
-      <div id="pad-preview-box" style="display:none;margin-bottom:12px;padding:14px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px"></div>`;
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
+          ${pendingDisb.length?`
+          <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
+          <a href="${RAILWAY_URL}/api/eft/drd" target="_blank"
+             style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
+            📁 DRD — Disbursements
+          </a>`:''}
+          <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            📋 Preview PAD — 5 days
+          </button>
+          <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            📋 Preview PAD — 14 days
+          </button>
+          <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ${nextBizDay()}</span>
+        </div>
+
+        <div id="pad-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px"></div>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
+          <span style="font-size:.72rem;font-weight:700;color:var(--muted)">Returns &amp; NSF</span>
+          <label style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:6px;color:var(--coral);font-size:.72rem;font-weight:700;cursor:pointer">
+            📥 Import Return File
+            <input type="file" accept=".txt" style="display:none" onchange="importReturnFile(this)">
+          </label>
+          <button onclick="previewRetries()" style="padding:7px 14px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            🔄 NSF Retries Due Today
+          </button>
+        </div>
+
+        <div id="return-results-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(255,107,138,.2);border-radius:8px"></div>
+        <div id="retry-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(255,209,102,.2);border-radius:8px"></div>
+
+      </div>`;
 
     if(!active.length){document.getElementById('app-list').innerHTML=drdBar+'<div class="empty">No active loans.</div>';return;}
     document.getElementById('app-list').innerHTML=drdBar+active.map(l=>{
@@ -2042,6 +2059,170 @@ async function generatePADConfirmed(days){
   }
 }
 
+
+/* ── IMPORT RETURN FILE ── */
+async function importReturnFile(input){
+  const file=input.files[0];
+  if(!file) return;
+  const box=document.getElementById('return-results-box');
+  if(box){ box.style.display='block'; box.innerHTML='<div style="font-size:.78rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Processing return file…</div>'; }
+
+  try{
+    const content=await file.text();
+    const resp=await fetch(`${RAILWAY_URL}/api/eft/returns`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Filename':file.name},
+      body:JSON.stringify({content, filename:file.name}),
+    });
+    const data=await resp.json();
+    if(!resp.ok) throw new Error(data.error||resp.status);
+
+    const resultRows=data.results.map(r=>`
+      <tr style="border-bottom:1px solid rgba(160,154,245,.06)">
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--periwinkle)">${r.loan}</td>
+        <td style="padding:5px 10px;font-size:.72rem">P${String(r.payment).padStart(2,'0')}</td>
+        <td style="padding:5px 10px;font-size:.72rem;font-weight:700">$${r.amount}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--coral)">${r.returnCode}</td>
+        <td style="padding:5px 10px;font-size:.72rem">${r.reason}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--coral)">${r.nsfFee||'—'}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--gold)">${r.retryDate||'—'}</td>
+      </tr>`).join('');
+
+    const unmatchedRows=data.unmatched_xrefs?.map(u=>`
+      <tr style="border-bottom:1px solid rgba(255,107,138,.06)">
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--coral)" colspan="7">⚠ Unmatched: ${u.xref} — ${u.reason} (${u.code})</td>
+      </tr>`).join('')||'';
+
+    if(box) box.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div>
+          <div style="font-size:.78rem;font-weight:800;color:var(--white)">✅ Return file processed: ${file.name}</div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:3px">
+            ${data.matched} matched · ${data.unmatched} unmatched · ${data.nsfFees} NSF fees ($${(data.nsfTotal||0).toFixed(2)}) · ${data.retriesScheduled} retries scheduled
+          </div>
+        </div>
+        <button onclick="this.closest('#return-results-box').style.display='none'"
+          style="padding:5px 10px;background:none;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-family:var(--font);font-size:.7rem;cursor:pointer">✕ Close</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:rgba(30,25,70,.8)">
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Loan</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Pmt</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Amount</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Code</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Reason</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">NSF Fee</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Retry Date</th>
+        </tr></thead>
+        <tbody>${resultRows}${unmatchedRows}</tbody>
+      </table>`;
+
+    input.value='';
+    loadData(); // refresh loan list to show updated statuses
+  }catch(err){
+    if(box) box.innerHTML=`<div style="font-size:.78rem;color:var(--coral)">⚠ Import failed: ${err.message}</div>`;
+    showToast('Return file import failed: '+err.message, true);
+  }
+}
+
+/* ── NSF RETRY PREVIEW + GENERATE ── */
+async function previewRetries(){
+  const box=document.getElementById('retry-preview-box');
+  if(!box) return;
+  box.style.display='block';
+  box.innerHTML='<div style="font-size:.78rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Loading NSF retries…</div>';
+
+  try{
+    const resp=await fetch(`${RAILWAY_URL}/api/eft/retries/preview`);
+    const data=await resp.json();
+
+    if(!data.count){
+      box.innerHTML='<div style="font-size:.78rem;color:var(--muted)">✓ No NSF retries due today.</div>';
+      return;
+    }
+
+    const rows=data.payments.map(p=>`
+      <tr style="border-bottom:1px solid rgba(160,154,245,.06)">
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--periwinkle)">${p.ref}</td>
+        <td style="padding:5px 10px;font-size:.72rem">${p.borrowerName}</td>
+        <td style="padding:5px 10px;font-size:.72rem">P${String(p.paymentNumber).padStart(2,'0')}</td>
+        <td style="padding:5px 10px;font-size:.72rem;font-weight:700;color:var(--gold)">$${parseFloat(p.amount).toFixed(2)}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--muted)">${p.retryDate}</td>
+        <td style="padding:5px 10px;font-size:.72rem;color:var(--coral)">Retry #${p.retryCount}</td>
+        <td style="padding:5px 10px">${p.hasBankingCoords?'<span style="color:var(--teal);font-size:.65rem">✓</span>':'<span style="color:var(--coral);font-size:.65rem">⚠ missing</span>'}</td>
+      </tr>`).join('');
+
+    window._retryPreview=data;
+    box.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:.75rem;font-weight:800;color:var(--white)">${data.count} NSF retry${data.count>1?'s':''} due · $${data.totalAmount}</div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:2px">These will be stamped — cannot be retried again from this run.</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="document.getElementById('retry-preview-box').style.display='none';window._retryPreview=null"
+            style="padding:6px 12px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font);font-size:.72rem;cursor:pointer">Cancel</button>
+          <button onclick="generateRetriesConfirmed()"
+            style="padding:7px 16px;background:linear-gradient(135deg,var(--gold),#FF9945);border:none;border-radius:6px;color:var(--deep);font-family:var(--font);font-size:.75rem;font-weight:800;cursor:pointer">
+            🔄 Generate Retry PAD — $${data.totalAmount}
+          </button>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:rgba(30,25,70,.8)">
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Loan</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Borrower</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Pmt</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Amount</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Retry Date</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Attempt</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Bank</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+
+  }catch(err){
+    box.innerHTML=`<div style="font-size:.78rem;color:var(--coral)">Error: ${err.message}</div>`;
+  }
+}
+
+async function generateRetriesConfirmed(){
+  if(!window._retryPreview) return;
+  const analystName=prompt(
+    `Generate NSF Retry PAD for ${window._retryPreview.count} payment(s) totalling $${window._retryPreview.totalAmount}.\n\nThis is IRREVERSIBLE — payments will be marked as retried.\n\nType your name to confirm:`
+  );
+  if(!analystName||!analystName.trim()) return;
+
+  const box=document.getElementById('retry-preview-box');
+  if(box) box.innerHTML='<div style="font-size:.78rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Generating retry PAD and stamping records…</div>';
+
+  try{
+    const resp=await fetch(`${RAILWAY_URL}/api/eft/retries/generate`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({confirmedBy:analystName.trim()}),
+    });
+    if(!resp.ok){
+      const err=await resp.json();
+      showToast('Retry generation failed: '+(err.error||resp.status),true);
+      if(box) box.innerHTML=`<div style="font-size:.78rem;color:var(--coral)">⚠ ${err.error}</div>`;
+      return;
+    }
+    const blob=await resp.blob();
+    const filename=resp.headers.get('Content-Disposition')?.match(/filename="(.+)"/)?.[1]||'WAVES_PAD_RETRY.txt';
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=filename; a.click();
+    URL.revokeObjectURL(url);
+    showToast(`✓ Retry PAD generated: ${filename}`);
+    if(box) box.style.display='none';
+    window._retryPreview=null;
+    loadData();
+  }catch(err){
+    showToast('Error: '+err.message,true);
+    if(box) box.innerHTML=`<div style="font-size:.78rem;color:var(--coral)">Error: ${err.message}</div>`;
+  }
+}
 
 function nextBizDay(){
   const d=new Date(); d.setDate(d.getDate()+1);
