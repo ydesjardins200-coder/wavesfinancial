@@ -1907,19 +1907,25 @@ async function rnwSubmit(){
 // Show renewal banner when client has at least one active loan
 function updateRenewalBanner(){
   const activeLoans = clientLoans.filter(l => l.status === 'active');
+  const hasAnyLoan  = clientLoans.length > 0;
   const banner = document.getElementById('renew-banner');
   const sub    = document.getElementById('renew-banner-sub');
+  const btn    = document.getElementById('renew-banner-btn');
   if(!banner) return;
 
-  // Always show the banner
   banner.classList.add('visible');
   document.querySelector('.main').style.paddingBottom = '90px';
 
-  if(activeLoans.length && sub){
+  if(activeLoans.length){
     const bal = parseFloat(activeLoans[0].remaining_balance||0);
-    sub.textContent = `${activeLoans[0].ref} · $${bal.toLocaleString('en-CA',{minimumFractionDigits:2})} remaining · apply for more in minutes`;
-  } else if(sub){
-    sub.textContent = 'Get up to $1,000 deposited by Interac e-Transfer — apply in 5 minutes';
+    if(sub) sub.textContent = `${activeLoans[0].ref} · $${bal.toLocaleString('en-CA',{minimumFractionDigits:2})} remaining · apply for more in minutes`;
+    if(btn){ btn.textContent = '🔄 Renew My Loan'; }
+  } else if(hasAnyLoan){
+    if(sub) sub.textContent = 'Your loan is paid off — apply for a new one anytime';
+    if(btn){ btn.textContent = '🔄 Renew My Loan'; }
+  } else {
+    if(sub) sub.textContent = 'Get up to $1,000 deposited by Interac e-Transfer — apply in 5 minutes';
+    if(btn){ btn.textContent = '💳 Get Your First Loan'; }
   }
 }
 
