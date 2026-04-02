@@ -168,6 +168,8 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .ls-active{background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);color:#1DE9C6;}
 .ls-pending{background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);color:#FFD166;}
 .ls-paid{background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.3);color:#A09AF5;}
+.ls-paid-off{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:#00D4AA;}
+.ls-defaulted{background:rgba(255,92,115,.1);border:1px solid rgba(255,92,115,.3);color:#FF5C73;}
 .ls-defaulted{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.3);color:#FF6B8A;}
 
 /* HEALTH */
@@ -395,6 +397,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
       <button class="tab" onclick="switchTab('all')" id="tab-all">All Applications</button>
       <button class="tab" onclick="switchTab('clients')" id="tab-clients">Clients</button>
       <button class="tab" onclick="switchTab('loans')" id="tab-loans">Active Loans</button>
+      <button class="tab" onclick="switchTab('completed')" id="tab-completed">Completed Loans</button>
       <button class="tab" onclick="switchTab('health')" id="tab-health">⬡ System Health</button>
     </div>
 
@@ -405,6 +408,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="sc"><div class="sc-label">Pending Review</div><div class="sc-value" style="color:var(--periwinkle)" id="s-review">—</div></div>
         <div class="sc"><div class="sc-label">Unique Clients</div><div class="sc-value" style="color:var(--teal)" id="s-clients">—</div></div>
         <div class="sc"><div class="sc-label">Active Loans</div><div class="sc-value" style="color:var(--gold)" id="s-loans">—</div></div>
+        <div class="sc"><div class="sc-label">Completed Loans</div><div class="sc-value" style="color:var(--teal)" id="s-completed">—</div></div>
         <div class="sc"><div class="sc-label">Avg Risk Score</div><div class="sc-value" style="color:var(--coral)" id="s-avg">—</div></div>
       </div>
       <div class="qhdr">
@@ -586,14 +590,16 @@ async function loadData(){
 /* ── STATS ── */
 function renderStats(){
   const rev  = allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
-  const loans = allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement').length;
+  const loans     = allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement').length;
+  const completed = allLoans.filter(l=>l.status==='paid_off').length;
   const sc   = allApps.filter(a=>a.risk_score!=null).map(a=>a.risk_score);
   const avg  = sc.length?Math.round(sc.reduce((a,b)=>a+b,0)/sc.length):'—';
   document.getElementById('s-total').textContent   = allApps.length;
   document.getElementById('s-review').textContent  = rev;
   document.getElementById('s-clients').textContent = allClients.length;
-  document.getElementById('s-loans').textContent   = loans;
-  document.getElementById('s-avg').textContent     = avg;
+  document.getElementById('s-loans').textContent     = loans;
+  document.getElementById('s-completed').textContent = completed;
+  document.getElementById('s-avg').textContent       = avg;
   document.getElementById('qcnt').textContent      = rev;
 }
 
@@ -691,13 +697,14 @@ function matchesFilters(item, client){
 /* ── RENDER LIST ── */
 function renderList(){
   const isClientTab = currentTab==='clients';
-  const isLoanTab   = currentTab==='loans';
+  const isLoanTab      = currentTab==='loans';
+  const isCompletedTab = currentTab==='completed';
 
   // Show/hide toolbar elements based on tab
   const typeFilter = document.getElementById('filter-type');
   const provFilter = document.getElementById('filter-province');
   const sortSel    = document.getElementById('sort-by');
-  if(typeFilter) typeFilter.style.display = isLoanTab ? 'none' : '';
+  if(typeFilter) typeFilter.style.display = (isLoanTab||isCompletedTab) ? 'none' : '';
   if(provFilter) provFilter.style.display = isClientTab ? '' : 'none';
 
   // ── CLIENTS TAB ──────────────────────────────────────────────────────────────
@@ -728,10 +735,53 @@ function renderList(){
     return;
   }
 
-  // ── LOANS TAB ────────────────────────────────────────────────────────────────
-  if(isLoanTab){
-    const cols='100px 1fr 80px 90px 90px 90px 110px 130px';
+  // ── LOANS TAB (active only) ───────────────────────────────────────────────────
+  if(isLoanTab || isCompletedTab){
+    const cols='100px 1fr 80px 90px 90px 100px 110px 130px';
     document.getElementById('col-head').style.gridTemplateColumns=cols;
+
+    if(isCompletedTab){
+      document.getElementById('col-head').innerHTML=th('Ref')+th('Client')+th('Type','type')+th('Principal','amount')+th('Total Repaid','amount')+th('Status')+th('Completed','date')+th('Duration');
+      const completed = allLoans.filter(l=>l.status==='paid_off'||l.status==='defaulted'||l.status==='cancelled');
+      document.getElementById('qtitle').textContent='Completed Loans ('+completed.length+')';
+
+      let items = sortItems(completed,'created_at').filter(l=>{
+        const cl=allClients.find(x=>x.id===l.client_id);
+        if(filterSearch){
+          const name=((cl?.first_name||'')+' '+(cl?.last_name||'')).toLowerCase();
+          const email=(cl?.email||'').toLowerCase();
+          const ref=(l.ref||'').toLowerCase();
+          if(!name.includes(filterSearch)&&!email.includes(filterSearch)&&!ref.includes(filterSearch)) return false;
+        }
+        return true;
+      });
+
+      if(!items.length){document.getElementById('app-list').innerHTML='<div class="empty">No completed loans.</div>';return;}
+      document.getElementById('app-list').innerHTML=items.map(l=>{
+        const cl=allClients.find(x=>x.id===l.client_id);
+        const name=cl?((cl.first_name||'')+' '+(cl.last_name||'')).trim():'—';
+        const lsCls=l.status==='paid_off'?'ls-paid-off':l.status==='defaulted'?'ls-defaulted':'ls-pending';
+        const statusLabel=l.status==='paid_off'?'✓ Paid Off':l.status==='defaulted'?'✗ Defaulted':l.status.replace(/_/g,' ');
+        const completedDate=l.updated_at?new Date(l.updated_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
+        // Duration in days
+        const start=l.created_at?new Date(l.created_at):null;
+        const end=l.updated_at?new Date(l.updated_at):null;
+        const days=start&&end?Math.round((end-start)/(86400000)):null;
+        return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
+          <div class="aref">${l.ref||'—'}</div>
+          <div><div class="aname">${name}</div><div class="aemail">${cl?.email||''}</div></div>
+          <div>${loanTypeBadge(l.ref)}</div>
+          <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
+          <div><span class="loan-status ${lsCls}" style="white-space:nowrap;font-size:.6rem">${statusLabel}</span></div>
+          <div style="font-size:.72rem;color:var(--muted)">${completedDate}</div>
+          <div style="font-size:.72rem;color:var(--muted)">${days!==null?days+'d':'—'}</div>
+        </div>`;
+      }).join('');
+      return;
+    }
+
+    // Active loans tab
     document.getElementById('col-head').innerHTML=th('Ref')+th('Client')+th('Type','type')+th('Principal','amount')+th('Paid')+th('Status')+th('Due Date','date')+th('Progress');
     const active=allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
     const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
@@ -783,8 +833,8 @@ function renderList(){
       const c=allClients.find(x=>x.id===l.client_id);
       const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():'—';
       const pct=l.total_repayable?Math.round((l.total_paid||0)/l.total_repayable*100):0;
-      const lsCls=l.status==='active'?'ls-active':'ls-pending';
-      const statusLabel=l.status==='active'?'Active':l.status==='pending_disbursement'?'Pending Disbursement':l.status.replace(/_/g,' ');
+      const lsCls={active:'ls-active',pending_disbursement:'ls-pending',paid_off:'ls-paid-off',defaulted:'ls-defaulted'}[l.status]||'ls-pending';
+      const statusLabel={active:'Active',pending_disbursement:'Pending Disbursement',paid_off:'✓ Paid Off',defaulted:'✗ Defaulted'}[l.status]||l.status.replace(/_/g,' ');
       const dueDate=l.due_date?new Date(l.due_date).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
       const drdBtn=l.status==='pending_disbursement'?
         `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
