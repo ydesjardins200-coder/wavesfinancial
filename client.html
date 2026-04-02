@@ -704,6 +704,8 @@ async function showApp(){
   renderInfoTab();
   renderLoansTab();
   updateRenewalBanner();
+  // Refresh budget if already connected
+  if(document.getElementById('budget-connected')?.style.display==='block') renderBudget();
 }
 
 // ── HERO STATS ────────────────────────────────────────────────────────────────
@@ -962,63 +964,94 @@ function renderCreditReport(report){
 }
 
 // ── BUDGET PLANNER ────────────────────────────────────────────────────────────
-function connectBudgetBank(){
-  // Flinks integration point — same flow as apply.html
-  // When live: open Flinks iframe, capture loginId, fetch transaction data
-  showToast('Bank connection coming soon — Flinks integration in progress.');
+function calcMonthlyLoanPayments(){
+  const today    = new Date();
+  const in30days = new Date(today.getTime() + 30*24*3600*1000);
+  const todayStr = today.toISOString().slice(0,10);
+  const in30Str  = in30days.toISOString().slice(0,10);
+  let monthlyTotal = 0;
+  const breakdown  = [];
+  for(const loan of clientLoans){
+    if(loan.status !== 'active' && loan.status !== 'pending_disbursement') continue;
+    const sched    = clientSchedules[loan.id] || [];
+    const upcoming = sched.filter(p => p.status==='scheduled' && p.due_date>=todayStr && p.due_date<=in30Str);
+    let loanMonthly = 0;
+    if(upcoming.length > 0){
+      loanMonthly = upcoming.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
+    } else {
+      const freq = loan.payment_frequency||'biweekly';
+      const pmt  = parseFloat(loan.payment_amount||0);
+      loanMonthly = freq==='weekly'?pmt*4:freq==='biweekly'?pmt*2:freq==='semi-monthly'?pmt*2:pmt;
+    }
+    if(loanMonthly>0){ monthlyTotal+=loanMonthly; breakdown.push({ref:loan.ref,amount:loanMonthly}); }
+  }
+  return {monthlyTotal, breakdown};
+}
 
-  // Demo: show connected state with sample data
+function connectBudgetBank(){
+  showToast('Bank connection coming soon — Flinks integration in progress.');
   document.getElementById('budget-disconnected').style.display='none';
   document.getElementById('budget-connected').style.display='block';
+  renderBudget();
+}
 
-  const income   = currentClient?.declared_monthly_income||3200;
-  const loanPmt  = clientLoans.reduce((s,l)=>s+parseFloat(l.payment_amount||0),0)*2;
-  const expenses = Math.round(income*0.65);
-  const available= income - expenses;
+function renderBudget(){
+  const income = parseFloat(currentClient?.declared_monthly_income||3200);
+  const {monthlyTotal:loanPmt, breakdown} = calcMonthlyLoanPayments();
+  const otherExp  = Math.round((income-loanPmt)*0.72);
+  const expenses  = otherExp + Math.round(loanPmt);
+  const available = income - expenses;
 
-  document.getElementById('budget-income').textContent   = fmt(income);
-  document.getElementById('budget-expenses').textContent = fmt(expenses);
-  document.getElementById('budget-available').textContent= fmt(available);
+  document.getElementById('budget-income').textContent    = fmt(income);
+  document.getElementById('budget-expenses').textContent  = fmt(expenses);
+  document.getElementById('budget-available').textContent = fmt(Math.max(0,available));
 
   const categories = [
-    { icon:'🏠', name:'Housing',       amt: Math.round(income*.33), color:'#1A6FFF' },
-    { icon:'🛒', name:'Groceries',     amt: Math.round(income*.12), color:'#00D4AA' },
-    { icon:'🚗', name:'Transportation',amt: Math.round(income*.09), color:'#F5A623' },
-    { icon:'💡', name:'Utilities',     amt: Math.round(income*.06), color:'#A29BFE' },
-    { icon:'🏦', name:'Loan Payments', amt: Math.round(loanPmt),    color:'#FF5C73' },
-    { icon:'🍽️', name:'Dining Out',   amt: Math.round(income*.05), color:'#FD79A8' },
-    { icon:'📱', name:'Subscriptions', amt: Math.round(income*.03), color:'#74B9FF' },
-    { icon:'💊', name:'Health',        amt: Math.round(income*.03), color:'#55EFC4' },
+    {icon:'🏠',name:'Housing',        amt:Math.round(income*.33),color:'#1A6FFF'},
+    {icon:'🛒',name:'Groceries',      amt:Math.round(income*.12),color:'#00D4AA'},
+    {icon:'🚗',name:'Transportation', amt:Math.round(income*.09),color:'#F5A623'},
+    {icon:'💡',name:'Utilities',      amt:Math.round(income*.06),color:'#A29BFE'},
+    {icon:'🏦',name:'Loan Payments',  amt:Math.round(loanPmt),   color:'#FF5C73'},
+    {icon:'🍽️',name:'Dining Out',    amt:Math.round(income*.05),color:'#FD79A8'},
+    {icon:'📱',name:'Subscriptions',  amt:Math.round(income*.03),color:'#74B9FF'},
+    {icon:'💊',name:'Health',         amt:Math.round(income*.03),color:'#55EFC4'},
   ];
 
   document.getElementById('category-list').innerHTML = categories.map(cat=>{
-    const pct = Math.round(cat.amt/income*100);
+    const pct = income>0 ? Math.round(cat.amt/income*100) : 0;
     return `<div class="cat-row">
       <div class="cat-icon">${cat.icon}</div>
       <div class="cat-name">${cat.name}</div>
       <div class="cat-amt">${fmt(cat.amt)}</div>
       <div class="cat-pct">${pct}%</div>
-      <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:${pct}%;background:${cat.color};"></div></div>
+      <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:${pct}%;background:${cat.color}"></div></div>
     </div>`;
   }).join('');
 
-  const wavesShare = loanPmt>0 ? Math.round(loanPmt/income*100) : 0;
+  const wavesShare = income>0 ? Math.round(loanPmt/income*100) : 0;
+  const bdHtml = breakdown.length>1 ? breakdown.map(b=>`
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <span style="color:var(--muted)">${b.ref}</span>
+      <span style="color:var(--coral);font-weight:700">${fmt(b.amount)}<span style="color:var(--muted);font-weight:400"> /mo</span></span>
+    </div>`).join('') : '';
+
   document.getElementById('budget-loan-impact').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
       <div style="padding:12px 14px;background:rgba(255,92,115,.06);border:1px solid rgba(255,92,115,.12);border-radius:10px">
-        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Monthly Payment</div>
-        <div style="font-size:1.1rem;font-weight:700;color:var(--coral)">${fmt(loanPmt)}</div>
+        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Monthly Payments</div>
+        <div style="font-size:1.3rem;font-weight:700;color:var(--coral)">${fmt(loanPmt)}</div>
         <div style="font-size:.68rem;color:var(--muted);margin-top:2px">${wavesShare}% of your income</div>
       </div>
       <div style="padding:12px 14px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.12);border-radius:10px">
-        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">After Payment</div>
-        <div style="font-size:1.1rem;font-weight:700;color:var(--teal)">${fmt(available-loanPmt)}</div>
+        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">After Payments</div>
+        <div style="font-size:1.3rem;font-weight:700;color:var(--teal)">${fmt(Math.max(0,income-loanPmt))}</div>
         <div style="font-size:.68rem;color:var(--muted);margin-top:2px">remaining monthly</div>
       </div>
     </div>
+    ${bdHtml ? `<div style="margin-bottom:12px">${bdHtml}</div>` : ''}
     <div style="font-size:.78rem;color:var(--muted);line-height:1.7">
-      Your Waves Financial loan payments represent <strong style="color:var(--white)">${wavesShare}%</strong> of your verified monthly income.
-      ${wavesShare<=30?'<span style="color:var(--teal)">✓ This is within a healthy debt-to-income ratio.</span>':'<span style="color:var(--gold)">⚠ Consider reducing other expenses while your loan is active.</span>'}
+      Your Waves Financial payments represent <strong style="color:var(--white)">${wavesShare}%</strong> of your verified monthly income.
+      ${wavesShare<=30?'<span style="color:var(--teal)">✓ Within a healthy debt-to-income ratio.</span>':'<span style="color:var(--gold)">⚠ Consider reducing other expenses while your loan is active.</span>'}
     </div>`;
 }
 
