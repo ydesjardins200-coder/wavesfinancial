@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Account — Waves Financial</title>
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --ocean:   #0A1628;
+  --deep:    #0D1F3C;
+  --card:    #112240;
+  --card2:   #162B4D;
+  --border:  rgba(100,160,255,.12);
+  --blue:    #1A6FFF;
+  --teal:    #00D4AA;
+  --gold:    #F5A623;
+  --coral:   #FF5C73;
+  --muted:   rgba(160,200,255,.45);
+  --white:   #F0F7FF;
+  --font:    'DM Sans', sans-serif;
+  --serif:   'DM Serif Display', serif;
+  --r:       14px;
+}
+
+html,body{height:100%;background:var(--ocean);color:var(--white);font-family:var(--font);}
+
+/* ── BACKGROUND ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 20%,rgba(26,111,255,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 75%,rgba(0,212,170,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 30% at 60% 10%,rgba(245,166,35,.05) 0%,transparent 50%);
+}
+
+/* ── LOGIN ── */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;
+}
+.login-card{
+  width:100%;max-width:420px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:40px;
+  box-shadow:0 40px 80px rgba(0,0,0,.5);
+}
+.login-logo{
+  display:flex;align-items:center;gap:10px;margin-bottom:32px;
+}
+.login-logo-icon{
+  width:40px;height:40px;background:linear-gradient(135deg,var(--blue),var(--teal));
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+}
+.login-logo-name{font-family:var(--serif);font-size:1.3rem;color:var(--white);}
+.login-eyebrow{
+  font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:8px;
+}
+.login-heading{font-family:var(--serif);font-size:1.8rem;color:var(--white);margin-bottom:6px;}
+.login-sub{font-size:.82rem;color:var(--muted);margin-bottom:28px;}
+.field-label{font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:6px;display:block;}
+.field-input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:10px;color:var(--white);font-family:var(--font);font-size:.9rem;
+  outline:none;transition:border-color .2s;margin-bottom:14px;
+}
+.field-input:focus{border-color:var(--blue);}
+.login-btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--blue),#0052CC);
+  border:none;border-radius:10px;color:var(--white);
+  font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;
+  transition:opacity .2s;margin-top:4px;
+}
+.login-btn:hover{opacity:.9;}
+.login-err{font-size:.75rem;color:var(--coral);margin-top:8px;min-height:18px;}
+.login-footer{font-size:.72rem;color:var(--muted);text-align:center;margin-top:20px;}
+
+/* ── APP SHELL ── */
+#app{display:none;min-height:100vh;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:60px;
+  background:rgba(13,31,60,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-logo{display:flex;align-items:center;gap:10px;}
+.topbar-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;}
+.topbar-logo-name{font-family:var(--serif);font-size:1.1rem;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.user-pill{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 12px 6px 6px;
+  background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.2);
+  border-radius:100px;
+}
+.user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:800;color:var(--white);
+}
+.user-name{font-size:.75rem;font-weight:600;}
+.logout-btn{
+  padding:6px 12px;background:none;border:1px solid var(--border);
+  border-radius:8px;color:var(--muted);font-family:var(--font);
+  font-size:.72rem;cursor:pointer;transition:all .2s;
+}
+.logout-btn:hover{border-color:var(--coral);color:var(--coral);}
+
+/* ── HERO ── */
+.hero{
+  padding:32px 24px 0;max-width:1100px;margin:0 auto;width:100%;
+}
+.hero-greeting{font-family:var(--serif);font-size:2rem;margin-bottom:4px;}
+.hero-sub{font-size:.85rem;color:var(--muted);}
+.hero-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  margin-top:24px;
+}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;
+}
+.stat-label{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.stat-val{font-size:1.4rem;font-weight:700;font-family:var(--serif);}
+.stat-sub{font-size:.68rem;color:var(--muted);margin-top:2px;}
+
+/* ── TABS ── */
+.tabs-bar{
+  display:flex;gap:4px;padding:0 24px;
+  max-width:1100px;margin:24px auto 0;width:100%;
+  border-bottom:1px solid var(--border);
+}
+.tab-btn{
+  padding:10px 18px;font-size:.8rem;font-weight:600;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--muted);font-family:var(--font);cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--white);}
+.tab-btn.active{color:var(--white);border-bottom-color:var(--blue);}
+
+/* ── MAIN CONTENT ── */
+.main{max-width:1100px;margin:0 auto;width:100%;padding:24px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── SECTION CARD ── */
+.sec{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+}
+.sec-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+}
+.sec-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.sec-body{padding:18px;}
+
+/* ── INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.info-field{}
+.info-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;}
+.info-val{font-size:.85rem;font-weight:500;color:var(--white);}
+.info-val.highlight{color:var(--teal);font-weight:700;}
+
+/* ── LOAN CARD ── */
+.loan-card{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:14px;
+}
+.loan-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;
+}
+.loan-ref{font-size:.72rem;font-weight:800;color:var(--blue);}
+.loan-amount{font-family:var(--serif);font-size:1.3rem;}
+.loan-status{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:100px;font-size:.65rem;font-weight:700;
+}
+.ls-active{background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.25);color:var(--teal);}
+.ls-pending{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.25);color:var(--gold);}
+.ls-paidoff{background:rgba(160,200,255,.1);border:1px solid rgba(160,200,255,.2);color:var(--muted);}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{padding:0 18px 16px;}
+.prog-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted);margin-bottom:5px;}
+.prog-track{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:3px;transition:width .6s ease;}
+
+/* ── SCHEDULE TABLE ── */
+.sched-wrap{overflow-x:auto;padding:0 18px 16px;}
+.sched-tbl{width:100%;border-collapse:collapse;font-size:.78rem;}
+.sched-tbl th{padding:7px 10px;text-align:left;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border);}
+.sched-tbl td{padding:8px 10px;border-bottom:1px solid rgba(100,160,255,.06);}
+.ps{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:.62rem;font-weight:700;}
+.ps-scheduled{background:rgba(160,200,255,.08);color:var(--muted);}
+.ps-paid{background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.2);color:var(--teal);}
+.ps-missed{background:rgba(255,92,115,.12);border:1px solid rgba(255,92,115,.2);color:var(--coral);}
+.ps-overdue{background:rgba(255,92,115,.16);border:1px solid rgba(255,92,115,.3);color:var(--coral);}
+.ps-partial{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.2);color:var(--gold);}
+.ps-waived{background:rgba(160,200,255,.08);color:var(--muted);}
+.nsf-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;background:rgba(255,92,115,.1);border:1px solid rgba(255,92,115,.2);border-radius:100px;font-size:.58rem;color:var(--coral);margin-left:4px;}
+
+/* ── CREDIT HISTORY TAB ── */
+.credit-hero{
+  display:flex;align-items:center;gap:28px;
+  padding:24px;background:linear-gradient(135deg,rgba(26,111,255,.08),rgba(0,212,170,.06));
+  border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;
+}
+.score-ring{
+  flex-shrink:0;width:110px;height:110px;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.score-ring-inner{text-align:center;}
+.score-num{font-family:var(--serif);font-size:2rem;font-weight:700;}
+.score-lbl{font-size:.6rem;color:var(--muted);margin-top:1px;}
+.credit-meta{flex:1;}
+.credit-grade{font-size:1.1rem;font-weight:700;margin-bottom:4px;}
+.credit-updated{font-size:.7rem;color:var(--muted);}
+.credit-bars{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.credit-bar-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.cbi-label{font-size:.6rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.cbi-val{font-size:.82rem;font-weight:700;margin-bottom:5px;}
+.cbi-track{height:4px;background:rgba(255,255,255,.06);border-radius:2px;}
+.cbi-fill{height:100%;border-radius:2px;}
+
+/* ── EQUIFAX CONNECT STATE ── */
+.connect-state{
+  text-align:center;padding:48px 24px;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+}
+.connect-icon{font-size:3rem;margin-bottom:16px;}
+.connect-title{font-family:var(--serif);font-size:1.4rem;margin-bottom:8px;}
+.connect-sub{font-size:.82rem;color:var(--muted);max-width:380px;margin:0 auto 24px;}
+.connect-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;background:linear-gradient(135deg,var(--blue),#0052CC);
+  border:none;border-radius:10px;color:var(--white);
+  font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;
+}
+.connect-disclaimer{font-size:.68rem;color:var(--muted);margin-top:14px;}
+
+/* ── BUDGET TAB ── */
+.budget-hero{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;
+}
+.budget-stat{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;text-align:center;
+}
+.bs-label{font-size:.6rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.bs-val{font-family:var(--serif);font-size:1.5rem;font-weight:700;}
+.bs-sub{font-size:.65rem;color:var(--muted);margin-top:3px;}
+.category-list{display:flex;flex-direction:column;gap:8px;}
+.cat-row{
+  display:grid;grid-template-columns:24px 1fr auto auto;align-items:center;gap:10px;
+  padding:10px 14px;background:var(--card2);border-radius:10px;border:1px solid var(--border);
+}
+.cat-icon{font-size:1rem;text-align:center;}
+.cat-name{font-size:.82rem;font-weight:500;}
+.cat-bar-wrap{grid-column:1/5;height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:2px;}
+.cat-bar-fill{height:100%;border-radius:2px;}
+.cat-amt{font-size:.82rem;font-weight:700;}
+.cat-pct{font-size:.65rem;color:var(--muted);}
+
+/* ── FLINKS CONNECT ── */
+.flinks-connect{
+  text-align:center;padding:40px 24px;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+}
+.flinks-connect-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;background:linear-gradient(135deg,#1DE9C6,#00B4D8);
+  border:none;border-radius:10px;color:#0D1F3C;
+  font-family:var(--font);font-size:.88rem;font-weight:800;cursor:pointer;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  padding:10px 18px;background:rgba(0,212,170,.15);border:1px solid rgba(0,212,170,.3);
+  border-radius:10px;font-size:.78rem;font-weight:600;
+  opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;
+}
+.toast.err{background:rgba(255,92,115,.15);border-color:rgba(255,92,115,.3);color:var(--coral);}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .hero-stats{grid-template-columns:1fr 1fr;}
+  .info-grid{grid-template-columns:1fr 1fr;}
+  .budget-hero{grid-template-columns:1fr;}
+  .credit-bars{grid-template-columns:1fr;}
+  .credit-hero{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🌊</div>
+      <div class="login-logo-name">Waves Financial</div>
+    </div>
+    <div class="login-eyebrow">Client Portal</div>
+    <div class="login-heading">Welcome back</div>
+    <div class="login-sub">Sign in with your email and date of birth to access your account.</div>
+    <label class="field-label" for="login-email">Email Address</label>
+    <input class="field-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()">
+    <label class="field-label" for="login-dob">Date of Birth</label>
+    <input class="field-input" type="date" id="login-dob" autocomplete="bday" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Sign In to My Account</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">Need help? Call us at <strong>1-800-WAVES-01</strong></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app" style="display:none;flex-direction:column;">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">🌊</div>
+      <div class="topbar-logo-name">Waves Financial</div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar">—</div>
+        <span class="user-name" id="user-name">—</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-greeting" id="hero-greeting">Good morning</div>
+    <div class="hero-sub" id="hero-sub">Here's your account overview</div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-label">Active Loans</div>
+        <div class="stat-val" id="stat-active">—</div>
+        <div class="stat-sub">current</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Borrowed</div>
+        <div class="stat-val" id="stat-borrowed">—</div>
+        <div class="stat-sub">all time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Outstanding Balance</div>
+        <div class="stat-val" id="stat-balance" style="color:var(--gold)">—</div>
+        <div class="stat-sub">remaining</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Next Payment</div>
+        <div class="stat-val" id="stat-next" style="font-size:1rem">—</div>
+        <div class="stat-sub" id="stat-next-amt">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('tab-info',this)">My Information</button>
+    <button class="tab-btn" onclick="switchTab('tab-loans',this)">My Loans</button>
+    <button class="tab-btn" onclick="switchTab('tab-credit',this)">Credit History</button>
+    <button class="tab-btn" onclick="switchTab('tab-budget',this)">Budget Planner</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- ── TAB: MY INFO ── -->
+    <div class="tab-panel active" id="tab-info">
+
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-title">Personal Information</div>
+        </div>
+        <div class="sec-body">
+          <div class="info-grid" id="info-personal"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-title">Address</div>
+        </div>
+        <div class="sec-body">
+          <div class="info-grid" id="info-address"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-title">Employment</div>
+        </div>
+        <div class="sec-body">
+          <div class="info-grid" id="info-employment"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-hdr">
+          <div class="sec-title">Banking on File</div>
+        </div>
+        <div class="sec-body">
+          <div class="info-grid" id="info-banking"></div>
+          <div style="margin-top:12px;padding:10px 14px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15);border-radius:8px;font-size:.72rem;color:var(--muted);">
+            🔒 To update your banking information, please contact us at <strong style="color:var(--white)">1-800-WAVES-01</strong>.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-info -->
+
+    <!-- ── TAB: MY LOANS ── -->
+    <div class="tab-panel" id="tab-loans">
+      <div id="loans-container">
+        <div style="text-align:center;padding:40px;color:var(--muted)">Loading your loans…</div>
+      </div>
+    </div>
+
+    <!-- ── TAB: CREDIT HISTORY ── -->
+    <div class="tab-panel" id="tab-credit">
+      <div id="credit-container">
+
+        <!-- Connected state (hidden until API live) -->
+        <div id="credit-connected" style="display:none">
+          <div class="credit-hero">
+            <div class="score-ring">
+              <svg viewBox="0 0 110 110" width="110" height="110">
+                <circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+                <circle cx="55" cy="55" r="48" fill="none" stroke="url(#scoreGrad)" stroke-width="8"
+                  stroke-dasharray="301.6" id="score-dash" stroke-dashoffset="301.6" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#1A6FFF"/>
+                    <stop offset="100%" stop-color="#00D4AA"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="score-ring-inner">
+                <div class="score-num" id="equifax-score">—</div>
+                <div class="score-lbl">Equifax Score</div>
+              </div>
+            </div>
+            <div class="credit-meta">
+              <div class="credit-grade" id="credit-grade">—</div>
+              <div class="credit-updated" id="credit-updated">Last updated —</div>
+              <div style="margin-top:12px;font-size:.78rem;color:var(--muted);line-height:1.6" id="credit-summary">—</div>
+            </div>
+          </div>
+          <div class="credit-bars" id="credit-bars"></div>
+        </div>
+
+        <!-- Disconnected / not yet live -->
+        <div id="credit-disconnected">
+          <div class="connect-state">
+            <div class="connect-icon">📊</div>
+            <div class="connect-title">Your Credit Report</div>
+            <div class="connect-sub">View your full Equifax credit report and score — updated monthly, no hard inquiry.</div>
+            <button class="connect-btn" onclick="connectEquifax()">
+              <span>🔗</span> Connect Equifax
+            </button>
+            <div class="connect-disclaimer">Soft inquiry only · Does not affect your credit score · Powered by Equifax API</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
+            ${['Payment History','Credit Utilization','Account Age','Credit Mix','New Inquiries','Public Records'].map((f,i)=>`
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">${f}</div>
+              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden">
+                <div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .${i}s" class="eq-placeholder-bar"></div>
+              </div>
+              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
+            </div>`).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /tab-credit -->
+
+    <!-- ── TAB: BUDGET PLANNER ── -->
+    <div class="tab-panel" id="tab-budget">
+      <div id="budget-container">
+
+        <!-- Not connected -->
+        <div id="budget-disconnected">
+          <div class="flinks-connect">
+            <div style="font-size:2.5rem;margin-bottom:14px">💳</div>
+            <div style="font-family:var(--serif);font-size:1.4rem;margin-bottom:8px">Budget Planner</div>
+            <div style="font-size:.82rem;color:var(--muted);max-width:380px;margin:0 auto 22px;line-height:1.6">
+              Connect your bank account to automatically categorize your spending and build a personalized budget. Read-only access — we can never move money.
+            </div>
+            <button class="flinks-connect-btn" onclick="connectBudgetBank()">
+              🏦 Connect My Bank Account
+            </button>
+            <div style="font-size:.68rem;color:var(--muted);margin-top:12px">Powered by Flinks · Bank-level encryption · Read-only</div>
+          </div>
+        </div>
+
+        <!-- Connected budget view -->
+        <div id="budget-connected" style="display:none">
+          <div class="budget-hero">
+            <div class="budget-stat">
+              <div class="bs-label">Monthly Income</div>
+              <div class="bs-val" id="budget-income" style="color:var(--teal)">—</div>
+              <div class="bs-sub">verified by Flinks</div>
+            </div>
+            <div class="budget-stat">
+              <div class="bs-label">Monthly Expenses</div>
+              <div class="bs-val" id="budget-expenses" style="color:var(--coral)">—</div>
+              <div class="bs-sub">last 30 days</div>
+            </div>
+            <div class="budget-stat">
+              <div class="bs-label">Available</div>
+              <div class="bs-val" id="budget-available" style="color:var(--gold)">—</div>
+              <div class="bs-sub">after expenses</div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-hdr">
+              <div class="sec-title">Spending by Category</div>
+              <div style="font-size:.68rem;color:var(--muted)">Last 30 days</div>
+            </div>
+            <div class="sec-body">
+              <div class="category-list" id="category-list"></div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-hdr">
+              <div class="sec-title">Loan Payment Impact</div>
+            </div>
+            <div class="sec-body">
+              <div id="budget-loan-impact" style="font-size:.82rem;color:var(--muted)">—</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /tab-budget -->
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL  = 'https://rutupqpzvfeubzpnqujn.supabase.co';
+const SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1dHVwcXB6dmZldWJ6cG5xdWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTA1MDMsImV4cCI6MjA5MDYyNjUwM30.2baR2r6bI7NJQlJhGhmsStvJu-2ZXA1ZILjIVqYa9TI';
+const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
+
+let sb, currentClient, clientLoans=[], clientSchedules={};
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function esc(v){ return v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(n){ return n!=null?'$'+parseFloat(n).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):'—'; }
+function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'; }
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(err?' err':'');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function infoField(label, val, highlight=false){
+  return `<div class="info-field">
+    <div class="info-label">${label}</div>
+    <div class="info-val${highlight?' highlight':''}">${esc(val)||'—'}</div>
+  </div>`;
+}
+function greeting(){
+  const h=new Date().getHours();
+  if(h<12)return'Good morning';if(h<17)return'Good afternoon';return'Good evening';
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const dob   = document.getElementById('login-dob').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent='';
+
+  if(!email||!dob){ errEl.textContent='Please enter your email and date of birth.'; return; }
+
+  sb = supabase.createClient(SUPA_URL, SUPA_ANON);
+
+  // Match client by email + DOB
+  const { data: clients, error } = await sb
+    .from('clients')
+    .select('*')
+    .eq('email', email)
+    .eq('dob', dob);
+
+  if(error || !clients || !clients.length){
+    errEl.textContent='No account found. Please check your email and date of birth.';
+    return;
+  }
+
+  currentClient = clients[0];
+  sessionStorage.setItem('wf_client_id', currentClient.id);
+  showApp();
+}
+
+function doLogout(){
+  sessionStorage.removeItem('wf_client_id');
+  currentClient=null; clientLoans=[]; clientSchedules={};
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+// ── SHOW APP ──────────────────────────────────────────────────────────────────
+async function showApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+
+  const c = currentClient;
+  const firstName = c.first_name||'';
+  const initials  = ((c.first_name||'').charAt(0)+(c.last_name||'').charAt(0)).toUpperCase()||'?';
+
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('user-name').textContent   = `${firstName} ${c.last_name||''}`.trim();
+  document.getElementById('hero-greeting').textContent = `${greeting()}, ${firstName}`;
+  document.getElementById('hero-sub').textContent = `Welcome to your Waves Financial account · Member since ${fmtDate(c.created_at)}`;
+
+  // Load loans + schedules in parallel
+  const { data: loans } = await sb.from('loans').select('*').eq('client_id', c.id).order('created_at',{ascending:false});
+  clientLoans = loans||[];
+
+  for(const loan of clientLoans){
+    const {data:sched} = await sb.from('repayment_schedule').select('*').eq('loan_id',loan.id).order('payment_number');
+    clientSchedules[loan.id] = sched||[];
+  }
+
+  renderHeroStats();
+  renderInfoTab();
+  renderLoansTab();
+}
+
+// ── HERO STATS ────────────────────────────────────────────────────────────────
+function renderHeroStats(){
+  const active  = clientLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement');
+  const balance = clientLoans.reduce((s,l)=>s+parseFloat(l.remaining_balance||0),0);
+  const borrowed= clientLoans.reduce((s,l)=>s+parseFloat(l.principal||0),0);
+
+  document.getElementById('stat-active').textContent = active.length;
+  document.getElementById('stat-borrowed').textContent = fmt(borrowed);
+  document.getElementById('stat-balance').textContent = fmt(balance);
+
+  // Next payment across all active loans
+  const allSched = clientLoans.flatMap(l=>clientSchedules[l.id]||[]);
+  const upcoming = allSched
+    .filter(p=>p.status==='scheduled'&&p.due_date>=new Date().toISOString().slice(0,10))
+    .sort((a,b)=>a.due_date.localeCompare(b.due_date));
+
+  if(upcoming.length){
+    const next=upcoming[0];
+    document.getElementById('stat-next').textContent = fmtDate(next.due_date);
+    document.getElementById('stat-next-amt').textContent = fmt(next.scheduled_amount);
+  } else {
+    document.getElementById('stat-next').textContent='—';
+    document.getElementById('stat-next-amt').textContent='no upcoming payments';
+  }
+}
+
+// ── INFO TAB ──────────────────────────────────────────────────────────────────
+function renderInfoTab(){
+  const c = currentClient;
+
+  document.getElementById('info-personal').innerHTML = [
+    infoField('First Name', c.first_name),
+    infoField('Last Name', c.last_name),
+    infoField('Email', c.email),
+    infoField('Cell Phone', c.cell_phone),
+    infoField('Home Phone', c.home_phone),
+    infoField('Date of Birth', fmtDate(c.dob)),
+  ].join('');
+
+  document.getElementById('info-address').innerHTML = [
+    infoField('Street Address', c.address, false),
+    infoField('Apt / Unit', c.apt),
+    infoField('City', c.city),
+    infoField('Province', c.province),
+    infoField('Postal Code', c.postal),
+  ].join('');
+
+  document.getElementById('info-employment').innerHTML = [
+    infoField('Employment Status', c.employment_status),
+    infoField('Employer', c.employer),
+    infoField('Job Title', c.job_desc),
+    infoField('Pay Frequency', c.pay_frequency),
+    infoField('Paid By', c.paid_by),
+    infoField('Monthly Income', c.declared_monthly_income?fmt(c.declared_monthly_income):null),
+  ].join('');
+
+  document.getElementById('info-banking').innerHTML = [
+    infoField('Bank Name', c.bank_name),
+    infoField('Institution', c.bank_institution ? `(${c.bank_institution})` : null),
+    infoField('Account', c.bank_account ? `••••••${c.bank_account.slice(-4)}` : null, true),
+  ].join('');
+}
+
+// ── LOANS TAB ─────────────────────────────────────────────────────────────────
+function renderLoansTab(){
+  const container = document.getElementById('loans-container');
+
+  if(!clientLoans.length){
+    container.innerHTML=`<div style="text-align:center;padding:48px;color:var(--muted)">
+      <div style="font-size:2.5rem;margin-bottom:12px">📋</div>
+      <div style="font-family:var(--serif);font-size:1.2rem;margin-bottom:6px">No loans yet</div>
+      <div style="font-size:.82rem">Your loan history will appear here.</div>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = clientLoans.map(loan=>{
+    const sched  = clientSchedules[loan.id]||[];
+    const pct    = loan.total_repayable?Math.round((loan.total_paid||0)/loan.total_repayable*100):0;
+    const today  = new Date().toISOString().slice(0,10);
+    const statusCls = loan.status==='active'?'ls-active':loan.status==='pending_disbursement'?'ls-pending':'ls-paidoff';
+    const statusLbl = loan.status==='active'?'Active':loan.status==='pending_disbursement'?'Pending Disbursement':loan.status==='paid_off'?'Paid Off':loan.status;
+
+    const schedHtml = sched.map(p=>{
+      const isOverdue = p.status==='scheduled' && p.due_date < today;
+      const effStatus = isOverdue ? 'overdue' : p.status;
+      const psCls = {'paid':'ps-paid','missed':'ps-missed','overdue':'ps-overdue','partial':'ps-partial','waived':'ps-waived','scheduled':'ps-scheduled'}[effStatus]||'ps-scheduled';
+      const nsfBadge = p.nsf_fee_charged ? '<span class="nsf-badge">$45 NSF</span>' : '';
+      const retryBadge = p.return_code==='900' && p.eft_retry_at ? '<span class="nsf-badge" style="border-color:rgba(245,166,35,.3);color:var(--gold)">Retry sent</span>' : '';
+      return `<tr>
+        <td style="color:var(--muted)">${p.payment_number}</td>
+        <td>${fmtDate(p.due_date)}</td>
+        <td style="font-weight:700">${fmt(p.scheduled_amount)}</td>
+        <td><span class="ps ${psCls}">${effStatus}</span>${nsfBadge}${retryBadge}</td>
+        <td style="color:var(--muted)">${p.paid_at?fmtDate(p.paid_at):'—'}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="loan-card">
+      <div class="loan-hdr">
+        <div>
+          <div class="loan-ref">${esc(loan.ref)}</div>
+          <div class="loan-amount">${fmt(loan.principal)}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${(loan.apr*100||23).toFixed(1)}% APR · ${loan.payment_count||8} payments</div>
+        </div>
+        <div style="text-align:right">
+          <span class="loan-status ${statusCls}">${statusLbl}</span>
+          <div style="margin-top:8px;font-size:.72rem;color:var(--muted)">Remaining</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--gold)">${fmt(loan.remaining_balance)}</div>
+        </div>
+      </div>
+
+      <div class="prog-wrap">
+        <div class="prog-labels">
+          <span>Paid ${fmt(loan.total_paid||0)}</span>
+          <span>${pct}% complete</span>
+          <span>Total ${fmt(loan.total_repayable)}</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+      </div>
+
+      ${sched.length?`<div class="sched-wrap">
+        <table class="sched-tbl">
+          <thead><tr>
+            <th>#</th><th>Due Date</th><th>Amount</th>
+            <th>Status</th><th>Paid On</th>
+          </tr></thead>
+          <tbody>${schedHtml}</tbody>
+        </table>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function switchTab(panelId, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── CREDIT HISTORY ────────────────────────────────────────────────────────────
+function connectEquifax(){
+  // Equifax API integration point
+  // When live: redirect to OAuth flow or embed Equifax Connect widget
+  // For now show a "coming soon" message
+  showToast('Equifax integration coming soon — we\'ll notify you by email.');
+  // Animate placeholder bars
+  document.querySelectorAll('.eq-placeholder-bar').forEach((b,i)=>{
+    const pct = [87, 62, 74, 68, 90, 100][i]||70;
+    setTimeout(()=>{ b.style.width=pct+'%'; }, 100+i*100);
+  });
+}
+
+// ── BUDGET PLANNER ────────────────────────────────────────────────────────────
+function connectBudgetBank(){
+  // Flinks integration point — same flow as apply.html
+  // When live: open Flinks iframe, capture loginId, fetch transaction data
+  showToast('Bank connection coming soon — Flinks integration in progress.');
+
+  // Demo: show connected state with sample data
+  document.getElementById('budget-disconnected').style.display='none';
+  document.getElementById('budget-connected').style.display='block';
+
+  const income   = currentClient?.declared_monthly_income||3200;
+  const loanPmt  = clientLoans.reduce((s,l)=>s+parseFloat(l.payment_amount||0),0)*2;
+  const expenses = Math.round(income*0.65);
+  const available= income - expenses;
+
+  document.getElementById('budget-income').textContent   = fmt(income);
+  document.getElementById('budget-expenses').textContent = fmt(expenses);
+  document.getElementById('budget-available').textContent= fmt(available);
+
+  const categories = [
+    { icon:'🏠', name:'Housing',       amt: Math.round(income*.33), color:'#1A6FFF' },
+    { icon:'🛒', name:'Groceries',     amt: Math.round(income*.12), color:'#00D4AA' },
+    { icon:'🚗', name:'Transportation',amt: Math.round(income*.09), color:'#F5A623' },
+    { icon:'💡', name:'Utilities',     amt: Math.round(income*.06), color:'#A29BFE' },
+    { icon:'🏦', name:'Loan Payments', amt: Math.round(loanPmt),    color:'#FF5C73' },
+    { icon:'🍽️', name:'Dining Out',   amt: Math.round(income*.05), color:'#FD79A8' },
+    { icon:'📱', name:'Subscriptions', amt: Math.round(income*.03), color:'#74B9FF' },
+    { icon:'💊', name:'Health',        amt: Math.round(income*.03), color:'#55EFC4' },
+  ];
+
+  document.getElementById('category-list').innerHTML = categories.map(cat=>{
+    const pct = Math.round(cat.amt/income*100);
+    return `<div class="cat-row">
+      <div class="cat-icon">${cat.icon}</div>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-amt">${fmt(cat.amt)}</div>
+      <div class="cat-pct">${pct}%</div>
+      <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:${pct}%;background:${cat.color};"></div></div>
+    </div>`;
+  }).join('');
+
+  const wavesShare = loanPmt>0 ? Math.round(loanPmt/income*100) : 0;
+  document.getElementById('budget-loan-impact').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div style="padding:12px 14px;background:rgba(255,92,115,.06);border:1px solid rgba(255,92,115,.12);border-radius:10px">
+        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Monthly Payment</div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--coral)">${fmt(loanPmt)}</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:2px">${wavesShare}% of your income</div>
+      </div>
+      <div style="padding:12px 14px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.12);border-radius:10px">
+        <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">After Payment</div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--teal)">${fmt(available-loanPmt)}</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:2px">remaining monthly</div>
+      </div>
+    </div>
+    <div style="font-size:.78rem;color:var(--muted);line-height:1.7">
+      Your Waves Financial loan payments represent <strong style="color:var(--white)">${wavesShare}%</strong> of your verified monthly income.
+      ${wavesShare<=30?'<span style="color:var(--teal)">✓ This is within a healthy debt-to-income ratio.</span>':'<span style="color:var(--gold)">⚠ Consider reducing other expenses while your loan is active.</span>'}
+    </div>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', ()=>{
+  // Check session
+  const savedId = sessionStorage.getItem('wf_client_id');
+  if(savedId){
+    sb = supabase.createClient(SUPA_URL, SUPA_ANON);
+    sb.from('clients').select('*').eq('id', savedId).single().then(({data})=>{
+      if(data){ currentClient=data; showApp(); }
+    });
+  }
+});
+</script>
+</body>
+</html>
