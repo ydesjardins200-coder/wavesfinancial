@@ -1910,24 +1910,29 @@ function updateRenewalBanner(){
   const banner = document.getElementById('renew-banner');
   const sub    = document.getElementById('renew-banner-sub');
   if(!banner) return;
-  if(activeLoans.length){
-    banner.classList.add('visible');
-    // Add bottom padding to main so banner doesn't cover content
-    document.querySelector('.main').style.paddingBottom = '90px';
-    if(sub && activeLoans[0]){
-      const bal = parseFloat(activeLoans[0].remaining_balance||0);
-      sub.textContent = `${activeLoans[0].ref} · $${bal.toLocaleString('en-CA',{minimumFractionDigits:2})} remaining · renew in minutes`;
-    }
-  } else {
-    banner.classList.remove('visible');
-    document.querySelector('.main').style.paddingBottom = '24px';
+
+  // Always show the banner
+  banner.classList.add('visible');
+  document.querySelector('.main').style.paddingBottom = '90px';
+
+  if(activeLoans.length && sub){
+    const bal = parseFloat(activeLoans[0].remaining_balance||0);
+    sub.textContent = `${activeLoans[0].ref} · $${bal.toLocaleString('en-CA',{minimumFractionDigits:2})} remaining · apply for more in minutes`;
+  } else if(sub){
+    sub.textContent = 'Get up to $1,000 deposited by Interac e-Transfer — apply in 5 minutes';
   }
 }
 
 function openRenewalFromBanner(){
   const activeLoans = clientLoans.filter(l => l.status === 'active');
-  if(!activeLoans.length) return;
-  openRenewal(activeLoans[0].ref);
+  if(activeLoans.length){
+    openRenewal(activeLoans[0].ref);
+  } else {
+    // No active loan — open renewal modal with most recent loan ref, or generic
+    const anyLoan = clientLoans[0];
+    if(anyLoan) openRenewal(anyLoan.ref);
+    else showToast('Please contact us at 1-800-WAVES-01 to apply.');
+  }
 }
 </script>
 
