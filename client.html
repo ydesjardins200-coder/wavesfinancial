@@ -408,7 +408,7 @@ body::before{
   <div class="tabs-bar">
     <button class="tab-btn active" onclick="switchTab('tab-info',this)">My Information</button>
     <button class="tab-btn" onclick="switchTab('tab-loans',this)">My Loans</button>
-    <button class="tab-btn" onclick="switchTab('tab-credit',this)">Credit History</button>
+    <button class="tab-btn" onclick="switchTab('tab-credit',this);renderWavesHistory()">Payment History</button>
     <button class="tab-btn" onclick="switchTab('tab-budget',this)">Budget Planner</button>
   </div>
 
@@ -469,82 +469,8 @@ body::before{
     <!-- ── TAB: CREDIT HISTORY ── -->
     <div class="tab-panel" id="tab-credit">
       <div id="credit-container">
-
-        <!-- Connected state (hidden until API live) -->
-        <div id="credit-connected" style="display:none">
-          <div class="credit-hero">
-            <div class="score-ring">
-              <svg viewBox="0 0 110 110" width="110" height="110">
-                <circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-                <circle cx="55" cy="55" r="48" fill="none" stroke="url(#scoreGrad)" stroke-width="8"
-                  stroke-dasharray="301.6" id="score-dash" stroke-dashoffset="301.6" stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
-                <defs>
-                  <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#1A6FFF"/>
-                    <stop offset="100%" stop-color="#00D4AA"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div class="score-ring-inner">
-                <div class="score-num" id="equifax-score">—</div>
-                <div class="score-lbl">Equifax Score</div>
-              </div>
-            </div>
-            <div class="credit-meta">
-              <div class="credit-grade" id="credit-grade">—</div>
-              <div class="credit-updated" id="credit-updated">Last updated —</div>
-              <div style="margin-top:12px;font-size:.78rem;color:var(--muted);line-height:1.6" id="credit-summary">—</div>
-            </div>
-          </div>
-          <div class="credit-bars" id="credit-bars"></div>
-        </div>
-
-        <!-- Disconnected / not yet live -->
-        <div id="credit-disconnected">
-          <div class="connect-state">
-            <div class="connect-icon">📊</div>
-            <div class="connect-title">Your Credit Report</div>
-            <div class="connect-sub">View your full Equifax credit report and score — updated monthly, no hard inquiry.</div>
-            <button class="connect-btn" onclick="connectEquifax()">
-              <span>🔗</span> Connect Equifax
-            </button>
-            <div class="connect-disclaimer">Soft inquiry only · Does not affect your credit score · Powered by Equifax API</div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
-            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Payment History</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease 0s" class="eq-placeholder-bar"></div></div>
-              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Credit Utilization</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .1s" class="eq-placeholder-bar"></div></div>
-              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Account Age</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .2s" class="eq-placeholder-bar"></div></div>
-              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Credit Mix</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .3s" class="eq-placeholder-bar"></div></div>
-              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">New Inquiries</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .4s" class="eq-placeholder-bar"></div></div>
-              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Public Records</div>
-              <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width 1s ease .5s" class="eq-placeholder-bar"></div></div>
-              <div style="font-size:.68rem;color:var(--muted);margin-top:6px">Connect to view</div>
-            </div>
-          </div>
-        </div>
-
+        <!-- Rendered by renderWavesHistory() -->
+        <div style="text-align:center;padding:40px;color:var(--muted)">Loading your history…</div>
       </div>
     </div><!-- /tab-credit -->
 
@@ -691,18 +617,26 @@ async function showApp(){
   document.getElementById('hero-greeting').textContent = `${greeting()}, ${firstName}`;
   document.getElementById('hero-sub').textContent = `Welcome to your Waves Financial account · Member since ${fmtDate(c.created_at)}`;
 
-  // Load loans + schedules in parallel
+  // Load loans + schedules + apps + NSF fees in parallel
   const { data: loans } = await sb.from('loans').select('*').eq('client_id', c.id).order('created_at',{ascending:false});
   clientLoans = loans||[];
 
-  for(const loan of clientLoans){
-    const {data:sched} = await sb.from('repayment_schedule').select('*').eq('loan_id',loan.id).order('payment_number');
-    clientSchedules[loan.id] = sched||[];
-  }
+  const [schedResults, appsRes, nsfRes] = await Promise.all([
+    Promise.all(clientLoans.map(loan =>
+      sb.from('repayment_schedule').select('*').eq('loan_id',loan.id).order('payment_number').then(r=>({loanId:loan.id,data:r.data||[]}))
+    )),
+    sb.from('loan_applications').select('risk_score,tier,submitted_at').eq('client_id',c.id).order('submitted_at',{ascending:false}).limit(10),
+    sb.from('nsf_fees').select('*').eq('client_id',c.id).order('created_at',{ascending:false}),
+  ]);
+
+  for(const r of schedResults) clientSchedules[r.loanId] = r.data;
+  window._clientApps    = appsRes.data  || [];
+  window._clientNsfFees = nsfRes.data   || [];
 
   renderHeroStats();
   renderInfoTab();
   renderLoansTab();
+  renderWavesHistory();
   updateRenewalBanner();
   // Refresh budget if already connected
   if(document.getElementById('budget-connected')?.style.display==='block') renderBudget();
@@ -1847,4 +1781,154 @@ function openRenewalFromBanner(){
 </script>
 
 </body>
-</html>
+</html// ── WAVES CREDIT HISTORY ────────────────────────────────────────────────────────
+function renderWavesHistory(){
+  const container = document.getElementById('credit-container');
+  if(!container) return;
+
+  // ── Derive stats from Supabase data ──────────────────────────────────────────
+  const allSched = clientLoans.flatMap(l => clientSchedules[l.id]||[]);
+  const paid     = allSched.filter(p => p.status==='paid').length;
+  const missed   = allSched.filter(p => p.status==='missed'||p.status==='failed').length;
+  const total    = allSched.filter(p => ['paid','missed','failed','partial','waived','scheduled'].includes(p.status)).length;
+  const onTimeRate = total > 0 ? Math.round(paid/total*100) : 100;
+
+  const totalBorrowed = clientLoans.reduce((s,l)=>s+parseFloat(l.principal||0),0);
+  const totalRepaid   = clientLoans.reduce((s,l)=>s+parseFloat(l.total_paid||0),0);
+  const activeLoans   = clientLoans.filter(l=>l.status==='active').length;
+  const paidOffLoans  = clientLoans.filter(l=>l.status==='paid_off').length;
+
+  // NSF fees from nsf_fees table (loaded separately)
+  const nsfCount      = (window._clientNsfFees||[]).length;
+  const nsfOutstanding= (window._clientNsfFees||[]).filter(f=>f.status==='outstanding').length;
+
+  // Waves score — from latest application
+  const latestApp  = [...(window._clientApps||[])].sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at))[0];
+  const wavesScore = latestApp?.risk_score ?? null;
+  const wavesTier  = latestApp?.tier || null;
+
+  // Standing derived from payment behaviour
+  const standing = missed===0 && nsfCount===0 ? 'Excellent'
+    : missed<=1 && nsfCount<=1 ? 'Good'
+    : missed<=3 ? 'Fair' : 'Needs Attention';
+  const standingColor = standing==='Excellent'?'var(--teal)':standing==='Good'?'#00B4D8':standing==='Fair'?'var(--gold)':'var(--coral)';
+
+  // Score ring — invert risk score (lower risk = higher standing)
+  const ringPct = wavesScore!==null ? Math.max(0, Math.min(100, 100-wavesScore)) : onTimeRate;
+  const ringDash = Math.round(301.6 * ringPct/100);
+  const ringColor = ringPct>=80?'#00D4AA':ringPct>=60?'#1A6FFF':ringPct>=40?'#F5A623':'#FF5C73';
+
+  // Payment history timeline
+  const timelineRows = clientLoans.map(loan=>{
+    const sched = (clientSchedules[loan.id]||[]).sort((a,b)=>a.payment_number-b.payment_number);
+    const dots  = sched.map(p=>{
+      const isOverdue = p.status==='scheduled' && p.due_date < new Date().toISOString().slice(0,10);
+      const effStatus = isOverdue ? 'overdue' : p.status;
+      const dot = {
+        paid:'🟢', partial:'🟡', scheduled:'⚪', missed:'🔴',
+        failed:'🔴', overdue:'🟠', waived:'⚫', cancelled:'⚫'
+      }[effStatus]||'⚪';
+      return `<span title="P${p.payment_number} · ${p.due_date} · ${effStatus}">${dot}</span>`;
+    }).join('');
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+      <span style="font-size:.72rem;color:var(--muted);min-width:90px">${loan.ref}</span>
+      <span style="font-size:1rem;letter-spacing:2px">${dots}</span>
+      <span style="font-size:.68rem;color:var(--muted);margin-left:auto">${fmt(loan.principal)}</span>
+    </div>`;
+  }).join('');
+
+  // Factor bars
+  const factors = [
+    { label:'Payment History',   val:onTimeRate,                            detail:`${paid} on time · ${missed} missed` },
+    { label:'Active Loans',      val:Math.max(0,100-activeLoans*30),        detail:`${activeLoans} active · ${paidOffLoans} paid off` },
+    { label:'Total Repaid',      val:totalBorrowed>0?Math.round(totalRepaid/totalBorrowed*100):0, detail:`${fmt(totalRepaid)} of ${fmt(totalBorrowed)}` },
+    { label:'NSF Incidents',     val:Math.max(0,100-nsfCount*25),           detail:nsfCount===0?'None on record':`${nsfCount} incident${nsfCount!==1?'s':''}` },
+    { label:'Account Standing',  val:standing==='Excellent'?100:standing==='Good'?78:standing==='Fair'?50:25, detail:standing },
+  ];
+
+  const barColor = v => v>=80?'#00D4AA':v>=60?'#1A6FFF':v>=40?'#F5A623':'#FF5C73';
+
+  const factorHtml = factors.map(f=>`
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <div style="font-size:.68rem;font-weight:600;color:var(--muted)">${f.label}</div>
+        <div style="font-size:.65rem;color:${barColor(f.val)}">${f.detail}</div>
+      </div>
+      <div style="height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:0%;background:${barColor(f.val)};border-radius:3px;transition:width 1s ease" data-target="${f.val}"></div>
+      </div>
+    </div>`).join('');
+
+  container.innerHTML = `
+    <!-- Score hero -->
+    <div style="display:flex;align-items:center;gap:24px;padding:20px;background:linear-gradient(135deg,rgba(26,111,255,.08),rgba(0,212,170,.06));border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;flex-wrap:wrap">
+      <div style="position:relative;width:100px;height:100px;flex-shrink:0">
+        <svg viewBox="0 0 110 110" width="100" height="100" style="transform:rotate(-90deg)">
+          <circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+          <circle cx="55" cy="55" r="48" fill="none" stroke="${ringColor}" stroke-width="8"
+            stroke-dasharray="301.6" stroke-dashoffset="${301.6-ringDash}" stroke-linecap="round"
+            style="transition:stroke-dashoffset 1.2s ease" id="waves-score-ring"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+          <div style="font-family:var(--serif);font-size:1.6rem;font-weight:700;color:${ringColor}">${ringPct}</div>
+          <div style="font-size:.55rem;color:var(--muted);margin-top:1px">STANDING</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-size:1.1rem;font-weight:700;color:${standingColor};margin-bottom:4px">${standing}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">Your Waves Financial relationship score · updated in real time</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">On-Time Rate</div><div style="font-size:.88rem;font-weight:700;color:var(--teal)">${onTimeRate}%</div></div>
+          <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Total Borrowed</div><div style="font-size:.88rem;font-weight:700">${fmt(totalBorrowed)}</div></div>
+          <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Total Repaid</div><div style="font-size:.88rem;font-weight:700;color:var(--teal)">${fmt(totalRepaid)}</div></div>
+          ${nsfCount>0?`<div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">NSF Incidents</div><div style="font-size:.88rem;font-weight:700;color:var(--coral)">${nsfCount}</div></div>`:''}
+          ${wavesScore!==null&&wavesTier?`<div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Risk Tier</div><div style="font-size:.88rem;font-weight:700;text-transform:capitalize">${wavesTier}</div></div>`:''}
+        </div>
+      </div>
+    </div>
+
+    <!-- Factor bars -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      ${factorHtml}
+    </div>
+
+    <!-- Payment timeline -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)">Payment Timeline</div>
+        <div style="display:flex;gap:10px;font-size:.62rem;color:var(--muted)">
+          <span>🟢 Paid</span><span>🟡 Partial</span><span>🔴 Missed</span><span>🟠 Overdue</span><span>⚪ Scheduled</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px">
+        ${timelineRows || '<div style="font-size:.78rem;color:var(--muted)">No payment history yet.</div>'}
+      </div>
+    </div>
+
+    <!-- Renewal eligibility -->
+    ${onTimeRate>=80&&missed===0?`
+    <div style="padding:14px 18px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:var(--r);display:flex;align-items:center;gap:12px">
+      <span style="font-size:1.5rem">✅</span>
+      <div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--teal)">Good standing — eligible to renew</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Your payment history qualifies you for a renewal loan when ready.</div>
+      </div>
+    </div>`:onTimeRate<60||missed>=3?`
+    <div style="padding:14px 18px;background:rgba(255,92,115,.06);border:1px solid rgba(255,92,115,.2);border-radius:var(--r);display:flex;align-items:center;gap:12px">
+      <span style="font-size:1.5rem">⚠️</span>
+      <div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--coral)">Missed payments on record</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Bring your account current to improve renewal eligibility. Call us at 1-800-WAVES-01.</div>
+      </div>
+    </div>`:''}
+  `;
+
+  // Animate factor bars
+  setTimeout(()=>{
+    container.querySelectorAll('[data-target]').forEach(el=>{
+      el.style.width = el.dataset.target + '%';
+    });
+  }, 100);
+}
+
+>
