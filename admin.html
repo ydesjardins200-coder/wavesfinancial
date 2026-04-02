@@ -632,11 +632,10 @@ function renderStats(){
   const avg  = sc.length?Math.round(sc.reduce((a,b)=>a+b,0)/sc.length):'—';
   document.getElementById('s-total').textContent   = allApps.length;
   document.getElementById('s-review').textContent  = rev;
-  document.getElementById('s-clients').textContent = allClients.length;
   document.getElementById('s-loans').textContent     = loans;
   document.getElementById('s-completed').textContent = completed;
   document.getElementById('s-avg').textContent       = avg;
-  document.getElementById('qcnt').textContent      = rev;
+  const qcntEl=document.getElementById('qcnt'); if(qcntEl) qcntEl.textContent=rev;
 }
 
 /* ── FILTER STATE ── */
@@ -739,7 +738,7 @@ function renderList(){
   // Show/hide toolbar elements based on tab
   const typeFilter = document.getElementById('filter-type');
   const provFilter = document.getElementById('filter-province');
-  const sortSel    = document.getElementById('sort-by');
+  const sortSel = null; // select removed, sorting via column headers
   if(typeFilter) typeFilter.style.display = (isLoanTab||isCompletedTab) ? 'none' : '';
   if(provFilter) provFilter.style.display = isClientTab ? '' : 'none';
 
