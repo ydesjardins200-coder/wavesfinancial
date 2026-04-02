@@ -1210,9 +1210,9 @@ function appHistoryRow(a, loans, schedMap){
       <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer" onclick="toggleAHR('${bodyId}')">
         <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle);min-width:90px">${a.ref||'—'}</div>
         <div style="font-size:.75rem;min-width:60px">${a.type==='renewal'?'Renewal':'New Loan'}</div>
-        <div style="font-size:.82rem;font-weight:700;min-width:55px">$${(a.requested_amount||0).toLocaleString()}</div>
+        <div style="font-size:.82rem;font-weight:700;min-width:55px" id="ahr-amt-${a.id}">$${(a.approved_amount||a.requested_amount||0).toLocaleString()}</div>
         <span class="tb ${tc}">${a.tier||'—'}</span>
-        <span class="db ${dc}">${dl}</span>
+        <span class="db ${dc}" id="ahr-dec-${a.id}">${dl}</span>
         <div style="font-size:.68rem;color:var(--muted);margin-left:auto">${a.submitted_at?new Date(a.submitted_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
         <div style="font-size:.65rem;color:var(--muted)" id="${bodyId}-chev">▶</div>
       </div>
@@ -1522,6 +1522,10 @@ async function selectFeasibleAmount(appId, loanId, amount, freq, nextPayDate){
   // 1. Update application approved_amount
   await sb.from('loan_applications').update({approved_amount:amount}).eq('id',appId);
   if(a) a.approved_amount=amount;
+
+  // Update header amount display immediately
+  const headerAmt=document.getElementById('ahr-amt-'+appId);
+  if(headerAmt) headerAmt.textContent='$'+amount.toLocaleString();
 
   // 2. Update loan principal + balance if loan exists
   if(loanId){
