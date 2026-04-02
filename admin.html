@@ -830,6 +830,70 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
           </div>
         </div>
 
+        <!-- Banking Coordinates -->
+        <div class="crm-sec">
+          <div class="crm-sec-hdr">
+            <div class="crm-sec-title" style="margin:0">Banking Coordinates</div>
+            <button class="ca ca-note" style="padding:6px 14px;font-size:.72rem" onclick="saveClientSection('${client.id}','banking')">💾 Save</button>
+          </div>
+          ${(client.bank_transit||client.bank_institution||client.bank_account)?`
+          <div style="margin-bottom:10px;padding:8px 12px;background:rgba(8,6,20,.4);border-radius:8px;border:1px solid var(--border)">
+            <svg viewBox="0 0 520 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#f8f6ff;border-radius:6px">
+              <rect width="520" height="90" fill="#f8f6ff"/>
+              <rect width="520" height="3" fill="#5B52D8" opacity="0.7"/>
+              <text x="260" y="55" font-family="Arial,sans-serif" font-size="32" font-weight="900" fill="#5B52D8" opacity="0.06" text-anchor="middle" letter-spacing="10">VOID</text>
+              <rect x="0" y="58" width="520" height="32" fill="#ede9ff" opacity="0.5"/>
+              <text x="22" y="24" font-family="Arial,sans-serif" font-size="8" fill="#666">${esc((client.first_name||'')+' '+(client.last_name||''))}</text>
+              <!-- Transit -->
+              <rect x="35" y="63" width="78" height="18" rx="3" fill="#5B52D8" opacity="0.12"/>
+              <text x="74" y="76" font-family="'Courier New',monospace" font-size="11" fill="#5B52D8" text-anchor="middle" font-weight="700">${client.bank_transit||'—————'}</text>
+              <text x="74" y="61" font-family="Arial,sans-serif" font-size="7" fill="#5B52D8" text-anchor="middle" font-weight="700">Transit</text>
+              <!-- Institution -->
+              <rect x="120" y="63" width="52" height="18" rx="3" fill="#1DE9C6" opacity="0.15"/>
+              <text x="146" y="76" font-family="'Courier New',monospace" font-size="11" fill="#1DE9C6" text-anchor="middle" font-weight="700">${client.bank_institution||'———'}</text>
+              <text x="146" y="61" font-family="Arial,sans-serif" font-size="7" fill="#1DE9C6" text-anchor="middle" font-weight="700">Institution</text>
+              <!-- Account -->
+              <rect x="180" y="63" width="150" height="18" rx="3" fill="#A09AF5" opacity="0.15"/>
+              <text x="255" y="76" font-family="'Courier New',monospace" font-size="11" fill="#A09AF5" text-anchor="middle" font-weight="700">${client.bank_account?'••••••'+client.bank_account.slice(-4):'—————————'}</text>
+              <text x="255" y="61" font-family="Arial,sans-serif" font-size="7" fill="#A09AF5" text-anchor="middle" font-weight="700">Account</text>
+              <!-- Bank name -->
+              <text x="410" y="76" font-family="Arial,sans-serif" font-size="8" fill="#888" text-anchor="middle">${esc(client.bank_name||'')}</text>
+            </svg>
+          </div>`:''}
+          <div class="crm-grid">
+            <div class="crf">
+              <div class="crf-label" style="color:#5B52D8">Transit Number <span style="font-size:.6rem;color:var(--muted)">(5 digits)</span></div>
+              <input class="crf-edit" data-client-field="bank_transit"
+                placeholder="00000" maxlength="5" inputmode="numeric"
+                style="font-family:monospace;letter-spacing:.1em;border-color:rgba(91,82,216,.35)"
+                value="${esc(client.bank_transit)}"
+                oninput="this.value=this.value.replace(/\\D/g,'').slice(0,5)">
+            </div>
+            <div class="crf">
+              <div class="crf-label" style="color:#1DE9C6">Institution Number <span style="font-size:.6rem;color:var(--muted)">(3 digits)</span></div>
+              <input class="crf-edit" data-client-field="bank_institution"
+                placeholder="000" maxlength="3" inputmode="numeric"
+                style="font-family:monospace;letter-spacing:.1em;border-color:rgba(29,233,198,.35)"
+                value="${esc(client.bank_institution)}"
+                oninput="this.value=this.value.replace(/\\D/g,'').slice(0,3)">
+            </div>
+            <div class="crf">
+              <div class="crf-label" style="color:#A09AF5">Account Number <span style="font-size:.6rem;color:var(--muted)">(7–12 digits)</span></div>
+              <input class="crf-edit" data-client-field="bank_account"
+                placeholder="0000000" maxlength="12" inputmode="numeric"
+                style="font-family:monospace;letter-spacing:.1em;border-color:rgba(160,154,245,.35)"
+                value="${esc(client.bank_account)}"
+                oninput="this.value=this.value.replace(/\\D/g,'').slice(0,12)">
+            </div>
+            <div class="crf">
+              <div class="crf-label">Bank Name</div>
+              <input class="crf-edit" data-client-field="bank_name"
+                placeholder="e.g. Desjardins"
+                value="${esc(client.bank_name)}">
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- TAB: Loan History -->
@@ -2390,17 +2454,27 @@ function esc(v){return v==null?'':String(v).replace(/"/g,'&quot;').replace(/</g,
 /* ── SAVE CLIENT SECTION ── */
 async function saveClientSection(clientId, section){
   const updates={};
-  // Collect all [data-client-field] inputs in the page
-  document.querySelectorAll('[data-client-field]').forEach(el=>{
-    updates[el.dataset.clientField] = el.value.trim() || null;
-  });
+
+  // Only save dirty fields — or all if none are dirty (e.g. first save)
+  const allFields   = [...document.querySelectorAll('[data-client-field]')];
+  const dirtyFields = allFields.filter(el=>el.classList.contains('dirty'));
+  const toSave      = dirtyFields.length ? dirtyFields : allFields;
+  toSave.forEach(el=>{ updates[el.dataset.clientField] = el.value.trim() || null; });
+
   if(!Object.keys(updates).length) return;
+
+  // Validate banking fields
+  if(section==='banking'){
+    if(updates.bank_transit    && updates.bank_transit.length!==5)   { showToast('Transit must be exactly 5 digits',true); return; }
+    if(updates.bank_institution && updates.bank_institution.length!==3){ showToast('Institution must be exactly 3 digits',true); return; }
+    if(updates.bank_account    && updates.bank_account.length<5)     { showToast('Account number too short',true); return; }
+  }
+
   const {error}=await sb.from('clients').update(updates).eq('id',clientId);
   if(error){showToast('Save failed: '+error.message,true);return;}
-  // Update local cache
   const c=allClients.find(x=>x.id===clientId);
   if(c) Object.assign(c,updates);
-  document.querySelectorAll('[data-client-field]').forEach(el=>el.classList.remove('dirty'));
+  allFields.forEach(el=>el.classList.remove('dirty'));
   showToast('✓ '+section.charAt(0).toUpperCase()+section.slice(1)+' saved');
 }
 
