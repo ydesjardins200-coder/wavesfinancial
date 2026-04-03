@@ -1745,22 +1745,11 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
       <!-- Repayment schedule -->
       <div style="padding:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-          <div class="crm-sec-title" style="margin:0">Repayment Schedule
-            ${app?.optional_fees ? (() => { try { const f=JSON.parse(app.optional_fees); return f.length?`<span style="font-size:.62rem;color:var(--gold);margin-left:8px">+$${f.reduce((s,x)=>s+parseFloat(x.fee||0),0).toFixed(2)} fees (${f.map(x=>x.label).join(', ')})</span>`:''; } catch{return '';} })() : ''}
-          </div>
+          <div class="crm-sec-title" style="margin:0">Repayment Schedule ${lhFeeLabel(app)}</div>
           <div style="display:flex;gap:8px">
-            ${app?.optional_fees && JSON.parse(app.optional_fees||'[]').length ? `
-            <button onclick="recalcScheduleFees('${loan.id}','${app?.id||''}')"
-              style="padding:5px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
-              🔄 Apply Fees to Schedule
-            </button>` : ''}
-            ${schedule.length?`
-            <button onclick="saveAllLHRows('${loan.id}','${client.id}',[${schedule.map(p=>`'${p.id}'`).join(',')}])"
-              style="padding:5px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
-              💾 Save All Changes
-            </button>`:``}
+            ${lhFeeButton(loan.id, app)}
+            ${lhSaveButton(loan.id, client.id, schedule)}
           </div>
-        </div>
         </div>
         ${schedule.length?`<div style="overflow-x:auto"><table class="sched-table" style="table-layout:fixed;width:100%">
           <thead><tr>
@@ -1824,30 +1813,7 @@ function appHistoryRow(a, loans, schedMap){
       ${ahrField('Hard Decline',a.hard_decline||'—',a.hard_decline?'var(--coral)':'')}
     </div>
 
-    ${(() => {
-      try {
-        const fees = a.optional_fees ? JSON.parse(a.optional_fees) : [];
-        if (!fees.length) return '';
-        const total = fees.reduce((s,f) => s + parseFloat(f.fee||0), 0);
-        return `
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(255,209,102,.2)">Optional Fees Selected</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center">
-          ${fees.map(f => `
-            <div style="padding:6px 12px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);border-radius:8px">
-              <div style="font-size:.72rem;font-weight:700;color:var(--white)">${f.label}</div>
-              <div style="font-size:.68rem;color:var(--gold);font-weight:800">+$${parseFloat(f.fee).toFixed(2)}</div>
-            </div>`).join('')}
-          <div style="padding:6px 14px;background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.35);border-radius:8px">
-            <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Total</div>
-            <div style="font-size:.82rem;font-weight:800;color:var(--gold)">+$${total.toFixed(2)}</div>
-          </div>
-          ${a.id ? `<button onclick="recalcScheduleFeesFromApp('${a.id}')"
-            style="margin-left:auto;padding:6px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:8px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
-            🔄 Apply Fees to Schedule
-          </button>` : ''}
-        </div>`;
-      } catch(e) { return ''; }
-    })()}
+    ${renderOptionalFeesBlock(a)}
 
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Employment at Application</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
@@ -4142,6 +4108,54 @@ async function saveAllLHRows(loanId, clientId, schedIds){
   }
   await recalcLoanTotals(loanId);
   showToast(failed ? `⚠ ${saved} saved, ${failed} failed` : `✓ All ${saved} payments saved`);
+}
+
+function renderOptionalFeesBlock(a) {
+  try {
+    const fees = a.optional_fees ? JSON.parse(a.optional_fees) : [];
+    if (!fees.length) return '';
+    const total = fees.reduce((s,f) => s + parseFloat(f.fee||0), 0);
+    let html = '<div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(255,209,102,.2)">Optional Fees Selected</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center">';
+    fees.forEach(f => {
+      html += '<div style="padding:6px 12px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);border-radius:8px">'
+        + '<div style="font-size:.72rem;font-weight:700;color:var(--white)">' + f.label + '</div>'
+        + '<div style="font-size:.68rem;color:var(--gold);font-weight:800">+$' + parseFloat(f.fee).toFixed(2) + '</div>'
+        + '</div>';
+    });
+    html += '<div style="padding:6px 14px;background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.35);border-radius:8px">'
+      + '<div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Total</div>'
+      + '<div style="font-size:.82rem;font-weight:800;color:var(--gold)">+$' + total.toFixed(2) + '</div>'
+      + '</div>';
+    if (a.id) {
+      html += '<button onclick="recalcScheduleFeesFromApp(\'' + a.id + '\')" style="margin-left:auto;padding:6px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:8px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">🔄 Apply Fees to Schedule</button>';
+    }
+    html += '</div>';
+    return html;
+  } catch(e) { return ''; }
+}
+
+function lhSaveButton(loanId, clientId, schedule) {
+  if (!schedule || !schedule.length) return '';
+  const ids = schedule.map(p => "'" + p.id + "'").join(',');
+  return '<button onclick="saveAllLHRows(\'' + loanId + '\',\'' + clientId + '\',[' + ids + '])" style="padding:5px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">💾 Save All Changes</button>';
+}
+
+function lhFeeLabel(app) {
+  try {
+    const fees = app && app.optional_fees ? JSON.parse(app.optional_fees) : [];
+    if (!fees.length) return '';
+    const total = fees.reduce((s,f) => s + parseFloat(f.fee||0), 0);
+    return '<span style="font-size:.62rem;color:var(--gold);margin-left:8px">+$' + total.toFixed(2) + ' (' + fees.map(f=>f.label).join(', ') + ')</span>';
+  } catch(e) { return ''; }
+}
+
+function lhFeeButton(loanId, app) {
+  try {
+    const fees = app && app.optional_fees ? JSON.parse(app.optional_fees) : [];
+    if (!fees.length) return '';
+    return '<button onclick="recalcScheduleFees(\'' + loanId + '\',\'' + (app.id||'') + '\')" style="padding:5px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">🔄 Apply Fees to Schedule</button>';
+  } catch(e) { return ''; }
 }
 
 async function recalcScheduleFeesFromApp(applicationId) {
