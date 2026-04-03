@@ -2199,6 +2199,8 @@ function showPanel(n, dir) {
   if(next){if(dir==='back')next.classList.add('slide-back');next.classList.add('active');}
   currentStep=n; updateStepper(n);
   window.scrollTo({top:0,behavior:'smooth'});
+  // Load IBV provider when step 3 activates
+  if(n===3) loadIBV('new');
 }
 function goNext(from) {
   const valid = validateStep(from);
@@ -2436,12 +2438,61 @@ function syncContractSummary() {
   document.getElementById('sig-timestamp').dataset.iso = now.toISOString();
 }
 
+// ─── IBV ROUTING (Flinks ↔ VoPay iQ11) ──────────────────────────────────────
+const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
+
+async function loadIBV(funnel) {
+  try {
+    const res = await fetch(RAILWAY_URL + '/api/ibv/embed-url');
+    const cfg = await res.json();
+    if (cfg.provider === 'vopay' && cfg.embedUrl) renderIQ11Box(funnel, cfg.embedUrl);
+  } catch (err) {
+    console.warn('[IBV] Defaulting to Flinks:', err.message);
+  }
+}
+
+function renderIQ11Box(funnel, embedUrl) {
+  const prefix = funnel === 'renewal' ? 'r-' : '';
+  const box    = document.getElementById(prefix + 'flinks-box');
+  if (!box) return;
+  box.innerHTML = `
+    <div style="text-align:center;padding:16px 16px 8px;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,212,170,.7);margin-bottom:4px">Instant Bank Verification</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.5)">Powered by VoPay iQ11 — your credentials go directly to your bank</div>
+    </div>
+    <iframe id="${prefix}iq11-iframe" src="${embedUrl}"
+      style="width:100%;height:520px;border:none;display:block" allow="camera"
+      title="VoPay iQ11 Bank Verification"></iframe>`;
+}
+
 // ─── FLINKS STATE ─────────────────────────────────────────────────────
 let flinksId = null, flinksData = {};
 
 window.addEventListener('message', function(e) {
-  const d = e.data;
-  if(d && d.loginId){
+  let d = e.data;
+  if (typeof d === 'string') { try { d = JSON.parse(d); } catch { return; } }
+  if (!d) return;
+
+  // VoPay iQ11 token
+  if (d.Token || d.token) {
+    const token = d.Token || d.token;
+    const inst  = d.BankName || d.bank || 'Your Bank';
+    const mask  = d.MaskedAccount || '••••';
+    const isRen = document.getElementById('r-step-3')?.classList.contains('active');
+    if (isRen) {
+      rFlinksId   = 'iq11-' + token;
+      rFlinksData = { loginId: rFlinksId, institution: inst, iq11Token: token, sandbox: false };
+      rOnFlinksSuccess({ institution: inst, accountType: 'Chequing', accountMask: mask });
+    } else {
+      flinksId   = 'iq11-' + token;
+      flinksData = { loginId: flinksId, institution: inst, iq11Token: token, sandbox: false };
+      onFlinksSuccess({ loginId: flinksId, institution: inst, accountType: 'Chequing', accountMask: mask });
+    }
+    return;
+  }
+
+  // Flinks loginId
+  if (d && d.loginId) {
     flinksId=d.loginId; flinksData=d;
     onFlinksSuccess({loginId:d.loginId,institution:d.institution||'Your Bank',accountType:d.accountType||'Chequing',accountMask:d.accountNumber?'••••'+d.accountNumber.slice(-4):'••••'});
   }
@@ -2727,6 +2778,7 @@ function rShowPanel(n, dir) {
   if(next){if(dir==='back')next.classList.add('slide-back');next.classList.add('active');}
   rCurrentStep=n; rUpdateStepper(n);
   window.scrollTo({top:0,behavior:'smooth'});
+  if(n===3) loadIBV('renewal');
 }
 
 function rGoNext(from) {

@@ -343,10 +343,13 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
   border-color:rgba(0,212,170,.3);
   color:var(--white);
 }
-#proc-btn-vopay.proc-disabled{
-  opacity:.45;
-  cursor:not-allowed !important;
-}
+#ibv-btn-flinks.proc-active{background:rgba(26,111,255,.1);border-color:var(--blue);color:var(--white);}
+#ibv-btn-flinks:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
+#ibv-btn-flinks:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
+#ibv-btn-vopay.proc-active{background:rgba(0,212,170,.1);border-color:var(--teal);color:var(--white);}
+#ibv-btn-vopay:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
+#ibv-btn-vopay:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(0,212,170,.3);color:var(--white);}
+#ibv-btn-vopay.proc-disabled{opacity:.45;cursor:not-allowed !important;}
 
 /* ── REPORTING ENGINE ── */
 .rpt-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
@@ -524,6 +527,34 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <!-- Active processor status bar -->
         <div id="proc-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
       </div>
+
+      <!-- IBV Provider Selector -->
+      <div id="ibv-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Bank Verification (IBV)</div>
+            <div style="font-size:.82rem;color:var(--muted)">Controls which provider verifies borrower bank accounts in the apply funnel</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="ibv-btn-flinks" onclick="setIBV('flinks')"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
+              <span style="font-size:1.3rem">🔗</span>
+              <span style="font-size:.8rem;font-weight:700">Flinks</span>
+              <span style="font-size:.6rem">Open Banking IBV</span>
+              <span style="font-size:.58rem;margin-top:2px" id="flinks-status-pill">Sandbox active</span>
+            </button>
+            <button id="ibv-btn-vopay" onclick="setIBV('vopay')"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
+              <span style="font-size:1.3rem">⚡</span>
+              <span style="font-size:.8rem;font-weight:700">VoPay iQ11</span>
+              <span style="font-size:.6rem">Intelligent EFT IBV</span>
+              <span style="font-size:.58rem;margin-top:2px" id="iq11-status-pill">Credentials pending</span>
+            </button>
+          </div>
+        </div>
+        <div id="ibv-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
+      </div>
+
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
           <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
@@ -2631,6 +2662,65 @@ function updateSummaryHealth(){
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
 }
 
+/* ── IBV PROVIDER ─────────────────────────────────────────────────────────── */
+
+let activeIBV = localStorage.getItem('waves_ibv') || 'flinks';
+
+async function initIBV(){
+  try{
+    const res = await fetch(RAILWAY_URL+'/api/ibv/status', {signal: AbortSignal.timeout(5000)});
+    const data = await res.json();
+    activeIBV = data.provider || activeIBV;
+    localStorage.setItem('waves_ibv', activeIBV);
+    const flinksPill = document.getElementById('flinks-status-pill');
+    const iq11Pill   = document.getElementById('iq11-status-pill');
+    const iq11Btn    = document.getElementById('ibv-btn-vopay');
+    if(data.flinksClientId && flinksPill){ flinksPill.textContent='✓ Client ID set'; flinksPill.style.color='var(--teal)'; }
+    if(data.vopayConfigured){
+      if(iq11Pill){ iq11Pill.textContent='✓ Credentials set'; iq11Pill.style.color='var(--teal)'; }
+      iq11Btn?.classList.remove('proc-disabled');
+    } else {
+      if(iq11Pill){ iq11Pill.textContent='Credentials pending'; iq11Pill.style.color='var(--muted)'; }
+      iq11Btn?.classList.add('proc-disabled');
+      if(activeIBV==='vopay'){ activeIBV='flinks'; localStorage.setItem('waves_ibv','flinks'); }
+    }
+  } catch {
+    document.getElementById('ibv-btn-vopay')?.classList.add('proc-disabled');
+  }
+  renderIBVUI();
+}
+
+function setIBV(provider){
+  if(provider==='vopay' && document.getElementById('ibv-btn-vopay')?.classList.contains('proc-disabled')){
+    showToast('VoPay iQ11 requires credentials in Railway. Set IBV_PROVIDER=vopay in env vars once ready.', true);
+    return;
+  }
+  if(provider===activeIBV) return;
+  activeIBV = provider;
+  localStorage.setItem('waves_ibv', provider);
+  renderIBVUI();
+  fetch(RAILWAY_URL+'/api/ibv/provider/set', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider})})
+    .then(r=>r.json())
+    .then(d=> showToast(d.message||`IBV set to ${provider}`))
+    .catch(()=> showToast(`Set IBV_PROVIDER=${provider} in Railway env vars to apply`, true));
+}
+
+function renderIBVUI(){
+  const flBtn=document.getElementById('ibv-btn-flinks');
+  const vpBtn=document.getElementById('ibv-btn-vopay');
+  const bar  =document.getElementById('ibv-status-bar');
+  if(!flBtn||!vpBtn||!bar) return;
+  flBtn.classList.toggle('proc-active', activeIBV==='flinks');
+  vpBtn.classList.toggle('proc-active', activeIBV==='vopay');
+  if(activeIBV==='flinks'){
+    bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15)';
+    bar.innerHTML=`<span>🔗</span><span style="color:var(--blue);font-weight:700">Flinks Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">Bank connection via Flinks Open Banking · loginId token per application</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);border-radius:100px;color:var(--blue)">● Active</span>`;
+  } else {
+    bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15)';
+    bar.innerHTML=`<span>⚡</span><span style="color:var(--teal);font-weight:700">VoPay iQ11 Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">Bank connection via iQ11 iFrame · token reused for all future payments · reduces NSF</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(0,212,170,.15);border:1px solid rgba(0,212,170,.3);border-radius:100px;color:var(--teal)">● Active</span>`;
+  }
+}
+
 /* ── PAYMENT PROCESSOR ───────────────────────────────────────────────────────── */
 
 let activeProcessor = localStorage.getItem('waves_processor') || 'manual';
@@ -2638,6 +2728,7 @@ let activeProcessor = localStorage.getItem('waves_processor') || 'manual';
 function initProcessor(){
   renderProcessorUI();
   checkVoPayStatus();
+  initIBV();
 }
 
 async function checkVoPayStatus(){

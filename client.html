@@ -1733,23 +1733,45 @@ function rnwValidateStep2(){
 }
 
 // ── STEP 3: FLINKS ───────────────────────────────────────────────────────────
-function rnwStartFlinks(){
-  // Production: open Flinks iframe with YOUR_FLINKS_CLIENT_ID
-  // For now simulate — same pattern as apply.html
+async function rnwStartFlinks(){
   const btn=document.querySelector('.rnw-flinks-btn');
   if(btn){ btn.disabled=true; btn.textContent='Connecting…'; }
 
-  // Simulate bank connection (replace with real Flinks iframe postMessage)
-  setTimeout(()=>{
-    const mockData={
-      loginId:`sandbox-green-${Math.random().toString(36).substr(2,6)}`,
-      institution:'Desjardins',
-      accountType:'Chequing',
-      accountMask:'••••4521',
-      sandbox:true,
-    };
-    rnwOnFlinksSuccess(mockData);
-  }, 1500);
+  try {
+    const res = await fetch(`${RAILWAY_URL}/api/ibv/embed-url`);
+    const cfg = await res.json();
+
+    if(cfg.provider === 'vopay' && cfg.embedUrl){
+      // Render iQ11 iFrame inline
+      const placeholder = document.getElementById('rnw-flinks-placeholder');
+      if(placeholder){
+        placeholder.innerHTML = `
+          <div style="text-align:center;padding:12px 0 8px">
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(0,212,170,.7);margin-bottom:4px">VoPay iQ11 Verification</div>
+            <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px">Your credentials go directly to your bank</div>
+          </div>
+          <iframe id="rnw-iq11-iframe" src="${cfg.embedUrl}"
+            style="width:100%;height:440px;border:none;display:block;border-radius:0 0 10px 10px"
+            allow="camera" title="VoPay iQ11 Bank Verification"></iframe>`;
+      }
+      return; // Token comes via postMessage below
+    }
+
+    // Flinks — simulate for sandbox
+    setTimeout(()=>{
+      const mockData={
+        loginId:`sandbox-green-${Math.random().toString(36).substr(2,6)}`,
+        institution:'Desjardins', accountType:'Chequing', accountMask:'••••4521', sandbox:true,
+      };
+      rnwOnFlinksSuccess(mockData);
+    }, 1500);
+  } catch(err){
+    console.warn('[IBV] Defaulting to Flinks simulate:', err.message);
+    if(btn){ btn.disabled=false; btn.textContent='🔗 Connect My Bank'; }
+    setTimeout(()=>{
+      rnwOnFlinksSuccess({loginId:`sandbox-green-${Math.random().toString(36).substr(2,6)}`,institution:'Desjardins',accountType:'Chequing',accountMask:'••••4521',sandbox:true});
+    }, 800);
+  }
 }
 
 function rnwOnFlinksSuccess(d){
@@ -1758,7 +1780,7 @@ function rnwOnFlinksSuccess(d){
   document.getElementById('rnw-flinks-connected').style.display='block';
   document.getElementById('rnw-conn-bank').textContent=d.institution;
   document.getElementById('rnw-conn-acct').textContent=d.accountType+' '+d.accountMask;
-  // Show banking coords
+  if(d.iq11Token) document.getElementById('rnw-conn-bank').textContent += ' (iQ11 ✓)';
   document.getElementById('rnw-banking-coords').style.display='block';
   document.getElementById('rnw-btn-next').disabled=false;
 }
@@ -1772,16 +1794,23 @@ function rnwResetFlinks(){
   if(btn){ btn.disabled=false; btn.textContent='🔗 Connect My Bank'; }
 }
 
-// Listen for real Flinks postMessage
+// Unified IBV postMessage handler (Flinks + VoPay iQ11)
 window.addEventListener('message', function(e){
-  const d=e.data;
-  if(d && d.loginId && document.getElementById('rnw-backdrop').classList.contains('open')){
-    rnwOnFlinksSuccess({
-      loginId:d.loginId, institution:d.institution||'Your Bank',
-      accountType:d.accountType||'Chequing',
-      accountMask:d.accountNumber?'••••'+d.accountNumber.slice(-4):'••••',
-      sandbox:!!d.sandbox,
-    });
+  let d=e.data;
+  if(typeof d==='string'){ try{ d=JSON.parse(d); }catch{ return; } }
+  if(!d || !document.getElementById('rnw-backdrop')?.classList.contains('open')) return;
+
+  // VoPay iQ11 token
+  if(d.Token || d.token){
+    const token=d.Token||d.token;
+    const inst=d.BankName||d.bank||'Your Bank';
+    const mask=d.MaskedAccount||'••••';
+    rnwOnFlinksSuccess({ loginId:'iq11-'+token, institution:inst, accountType:'Chequing', accountMask:mask, iq11Token:token, sandbox:false });
+    return;
+  }
+  // Flinks loginId
+  if(d.loginId){
+    rnwOnFlinksSuccess({ loginId:d.loginId, institution:d.institution||'Your Bank', accountType:d.accountType||'Chequing', accountMask:d.accountNumber?'••••'+d.accountNumber.slice(-4):'••••', sandbox:!!d.sandbox });
   }
 });
 
@@ -1845,6 +1874,7 @@ async function rnwSubmit(){
     },
     banking:{
       flinksLoginId:    rnwFlinksId,
+      iq11Token:        rnwFlinksData?.iq11Token || null,
       institution:      rnwFlinksData.institution||'',
       sandbox:          !!rnwFlinksData.sandbox,
       transitNumber:    transit,
