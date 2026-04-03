@@ -80,7 +80,7 @@ async function seed() {
       province:          loc[1],
       postal:            loc[2],
       employer:          rand(EMPLOYERS),
-      job_title:         rand(JOBS),
+      job_desc:          rand(JOBS),
       declared_monthly_income: ri(2200, 5500),
       pay_frequency:     rand(['weekly','biweekly','monthly']),
       bank_name:         rand(BANKS),
@@ -92,7 +92,6 @@ async function seed() {
       latest_decision:   decision,
       total_applications: ri(1, 4),
       total_loans:       ri(0, 3),
-      is_sandbox:        true,
     };
   });
 
