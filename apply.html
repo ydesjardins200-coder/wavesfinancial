@@ -2462,8 +2462,10 @@ function renderPaymentMethods(radioName, groupId) {
 
   const available = _paymentMethods.filter(m => {
     if (!m.enabled) return false;
+    // provinces array = provinces where this method is RESTRICTED (hidden)
+    // empty array = available everywhere
     if (m.provinces && m.provinces.length > 0 && selectedProv) {
-      return m.provinces.includes(selectedProv);
+      return !m.provinces.includes(selectedProv);
     }
     return true;
   });
