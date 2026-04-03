@@ -825,23 +825,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 
       <div class="field-row" style="margin-top:20px;">
         <div class="field"><label class="field-label">How would you like to receive your funds? <span class="req">*</span></label>
-          <div class="fund-group" id="fund-group-new">
-            <label class="fund-option"><input type="radio" name="n-fund-method" value="direct" checked>
-              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
-                <span class="fund-title">Direct Deposit <span class="fund-badge free">Free</span></span>
-                <span class="fund-desc">Same day if approved before 2:30 PM EST.</span>
-              </span></span></label>
-            <label class="fund-option"><input type="radio" name="n-fund-method" value="instant">
-              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
-                <span class="fund-title">Instant Deposit</span>
-                <span class="fund-desc">In your account within 1&ndash;2 hours of approval.</span>
-              </span></span></label>
-            <label class="fund-option"><input type="radio" name="n-fund-method" value="etransfer">
-              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
-                <span class="fund-title">Interac e-Transfer&reg; <span class="fund-badge fee">+$6.00</span></span>
-                <span class="fund-desc">Sent to your email on file within ~2 minutes of approval.</span>
-              </span></span></label>
-          </div></div>
+          <div class="fund-group" id="fund-group-new"><div style="font-size:.78rem;color:var(--text-muted);padding:8px 0">Loading options…</div></div></div>
       </div>
 
       <div class="actions">
@@ -1504,23 +1488,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       </div>
       <div class="field-row">
         <div class="field"><label class="field-label">How would you like to receive your funds? <span class="req">*</span></label>
-          <div class="fund-group" id="fund-group-renewal">
-            <label class="fund-option"><input type="radio" name="r-fund-method" value="direct" checked>
-              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
-                <span class="fund-title">Direct Deposit <span class="fund-badge free">Free</span></span>
-                <span class="fund-desc">Same day if approved before 2:30 PM EST.</span>
-              </span></span></label>
-            <label class="fund-option"><input type="radio" name="r-fund-method" value="instant">
-              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
-                <span class="fund-title">Instant Deposit</span>
-                <span class="fund-desc">Within 1&ndash;2 hours of approval.</span>
-              </span></span></label>
-            <label class="fund-option"><input type="radio" name="r-fund-method" value="etransfer">
-              <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
-                <span class="fund-title">Interac e-Transfer&reg; <span class="fund-badge fee">+$6.00</span></span>
-                <span class="fund-desc">Sent to your email on file. Available to returning clients only.</span>
-              </span></span></label>
-          </div></div>
+          <div class="fund-group" id="fund-group-renewal"><div style="font-size:.78rem;color:var(--text-muted);padding:8px 0">Loading options…</div></div></div>
       </div>
 
       <div class="actions" style="margin-top:26px;">
@@ -2535,9 +2503,6 @@ function getFundFee(radioName) {
   return method?.fee || 0;
 }
 
-// Call on page load
-loadPaymentMethods();
-
 // Re-filter when province changes
 ['n-prov', 'r-prov'].forEach(id => {
   const el = document.getElementById(id);
@@ -2552,6 +2517,9 @@ document.addEventListener('change', function(e) {
   if (e.target.name === 'n-fund-method') syncContractSummary();
   if (e.target.name === 'r-fund-method') rSyncContractSummary?.();
 });
+
+// Load payment methods from Railway on DOM ready
+document.addEventListener('DOMContentLoaded', loadPaymentMethods);
 
 // ─── IBV ROUTING (Flinks ↔ VoPay iQ11) ──────────────────────────────────────
 const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
