@@ -993,10 +993,12 @@ function renderList(){
         <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
           ${pendingDisb.length?`
           <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
-          <a href="${RAILWAY_URL}/api/eft/drd" target="_blank"
-             style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
-            📁 DRD — Disbursements
-          </a>`:``}
+          <button onclick="drdDownload()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            📁 DRD — Download
+          </button>
+          <button id="drd-confirm-btn" onclick="drdConfirm()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            ✓ Confirm Sent to Desjardins
+          </button>`:``}
           <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 5 days</button>
           <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 14 days</button>
           <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ${nextBizDay()}</span>
@@ -1048,10 +1050,10 @@ function renderList(){
                style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
                ⚡ Disburse
              </button>`
-          : `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
-               style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700">
+          : `<button onclick="event.stopPropagation();drdDownloadSingle('${l.id}','${l.ref}')"
+               style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
                📁 DRD
-             </a>`
+             </button>`
       ) : '';
       // Determine loan type from form_type or whether client has prior loans
       return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
@@ -3331,6 +3333,74 @@ async function vopayCollectToday(){
   } catch(err){
     if(box) box.innerHTML=`<div style="font-size:.75rem;color:var(--coral)">❌ ${err.message}</div>`;
     showToast('Collection failed: '+err.message, true);
+  }
+}
+
+/* ── DRD DOWNLOAD + CONFIRM ──────────────────────────────────────────────────── */
+
+let _pendingDrdLoanIds = []; // set on download, used by confirm
+
+async function drdDownloadSingle(loanId, loanRef){
+  _pendingDrdLoanIds = [loanId];
+  const url = `${RAILWAY_URL}/api/eft/drd?loanIds=${loanId}`;
+  const a   = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.download = '';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => {
+    if(confirm(`DRD downloaded for ${loanRef}.\n\nMark this loan as Active (confirmed sent to Desjardins)?`)){
+      drdConfirm();
+    }
+  }, 800);
+}
+
+async function drdDownload(){
+  // Collect IDs of all pending_disbursement loans currently shown
+  _pendingDrdLoanIds = allLoans
+    .filter(l => l.status === 'pending_disbursement')
+    .map(l => l.id);
+
+  if(!_pendingDrdLoanIds.length){ showToast('No pending disbursements.'); return; }
+
+  // Trigger file download
+  const url = `${RAILWAY_URL}/api/eft/drd?loanIds=${_pendingDrdLoanIds.join(',')}`;
+  const a   = document.createElement('a');
+  a.href    = url;
+  a.target  = '_blank';
+  a.download = '';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Show confirm button after a short delay (give browser time to start download)
+  setTimeout(() => {
+    const btn = document.getElementById('drd-confirm-btn');
+    if(btn){ btn.style.display = 'inline-flex'; btn.style.animation = 'fadeIn .3s ease'; }
+    showToast('DRD file downloaded — submit it to Desjardins, then click Confirm.');
+  }, 800);
+}
+
+async function drdConfirm(){
+  if(!_pendingDrdLoanIds.length){ showToast('No loans to confirm.', true); return; }
+
+  const count = _pendingDrdLoanIds.length;
+  if(!confirm(`Confirm that the DRD file has been submitted to Desjardins?\n\nThis will mark ${count} loan${count !== 1 ? 's' : ''} as Active.`)) return;
+
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/eft/drd/confirm`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ loanIds: _pendingDrdLoanIds, confirmedBy: 'analyst' }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || 'Confirm failed');
+
+    showToast(`✅ ${data.activated} loan${data.activated !== 1 ? 's' : ''} marked Active`);
+    _pendingDrdLoanIds = [];
+    const btn = document.getElementById('drd-confirm-btn');
+    if(btn) btn.style.display = 'none';
+    setTimeout(loadData, 800);
+  } catch(err){
+    showToast('Confirm failed: ' + err.message, true);
   }
 }
 
