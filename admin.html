@@ -3392,7 +3392,7 @@ async function drdConfirm(){
       body:    JSON.stringify({ loanIds: _pendingDrdLoanIds, confirmedBy: 'analyst' }),
     });
     const data = await resp.json();
-    if(!resp.ok) throw new Error(data.error || 'Confirm failed');
+    if(!resp.ok) throw new Error(data.error || `Server error ${resp.status}`);
 
     showToast(`✅ ${data.activated} loan${data.activated !== 1 ? 's' : ''} marked Active`);
     _pendingDrdLoanIds = [];
