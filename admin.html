@@ -2750,13 +2750,19 @@ async function initKYC(){
 
 function setKYC(enabled){
   if(enabled && document.getElementById('kyc-btn-on')?.classList.contains('proc-disabled')){
-    showToast('Set KYC_API_KEY and KYC_ENABLED=true in Railway to activate KYC screening.', true);
+    showToast('Set KYC_API_KEY in Railway to activate KYC screening.', true);
     return;
   }
-  kycEnabled = enabled;
-  localStorage.setItem('waves_kyc', enabled);
-  renderKYCUI();
-  showToast(enabled ? '🛡️ KYC screening enabled — runs on every approval' : '⏸ KYC screening disabled');
+  fetch(RAILWAY_URL+'/api/kyc/toggle', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({enabled})})
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok){ showToast(d.error||'Failed', true); return; }
+      kycEnabled = d.enabled;
+      localStorage.setItem('waves_kyc', d.enabled);
+      renderKYCUI();
+      showToast(d.enabled ? '🛡️ KYC screening enabled' : '⏸ KYC screening disabled');
+    })
+    .catch(err=>showToast('KYC toggle failed: '+err.message, true));
 }
 
 function renderKYCUI(){
@@ -2860,17 +2866,20 @@ async function initIBV(){
 
 function setIBV(provider){
   if(provider==='vopay' && document.getElementById('ibv-btn-vopay')?.classList.contains('proc-disabled')){
-    showToast('VoPay iQ11 requires credentials in Railway. Set IBV_PROVIDER=vopay in env vars once ready.', true);
+    showToast('VoPay iQ11 requires VOPAY credentials in Railway.', true);
     return;
   }
   if(provider===activeIBV) return;
-  activeIBV = provider;
-  localStorage.setItem('waves_ibv', provider);
-  renderIBVUI();
   fetch(RAILWAY_URL+'/api/ibv/provider/set', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({provider})})
     .then(r=>r.json())
-    .then(d=> showToast(d.message||`IBV set to ${provider}`))
-    .catch(()=> showToast(`Set IBV_PROVIDER=${provider} in Railway env vars to apply`, true));
+    .then(d=>{
+      if(!d.ok){ showToast(d.error||'Failed', true); return; }
+      activeIBV = d.provider || provider;
+      localStorage.setItem('waves_ibv', activeIBV);
+      renderIBVUI();
+      showToast(`IBV switched to ${activeIBV}`);
+    })
+    .catch(err=>showToast('IBV switch failed: '+err.message, true));
 }
 
 function renderIBVUI(){
@@ -2924,11 +2933,16 @@ function setProcessor(proc){
     return;
   }
   if(proc===activeProcessor) return;
-  activeProcessor = proc;
-  localStorage.setItem('waves_processor', proc);
-  renderProcessorUI();
-  showToast(proc==='vopay' ? '⚡ Switched to VoPay — API payments active' : '📁 Switched to Manual EFT — DRD/PAD files active');
-  fetch(RAILWAY_URL+'/api/processor/set', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({processor:proc})}).catch(()=>{});
+  fetch(RAILWAY_URL+'/api/processor/set', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({processor:proc})})
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok){ showToast(d.error||'Failed', true); return; }
+      activeProcessor = d.activeProcessor || proc;
+      localStorage.setItem('waves_processor', activeProcessor);
+      renderProcessorUI();
+      showToast(activeProcessor==='vopay' ? '⚡ Switched to VoPay — API payments active' : '📁 Switched to Manual EFT — DRD/PAD files active');
+    })
+    .catch(err=>showToast('Processor switch failed: '+err.message, true));
 }
 
 function renderProcessorUI(){
