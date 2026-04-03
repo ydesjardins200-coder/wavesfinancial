@@ -472,6 +472,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
       <button class="tab" onclick="switchTab('loans')" id="tab-loans">Active Loans</button>
       <button class="tab" onclick="switchTab('completed')" id="tab-completed">Completed Loans</button>
       <button class="tab" onclick="switchTab('health')" id="tab-health">⬡ System Health</button>
+      <button class="tab" onclick="switchTab('config')" id="tab-config">⚙ System Config</button>
       <button class="tab" onclick="switchTab('reporting')" id="tab-reporting">📊 Reports</button>
     </div>
 
@@ -517,6 +518,80 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
       <div class="qhdr">
         <div class="qtitle">System Health</div>
         <button class="qrefresh" onclick="runHealthChecks()">↻ Refresh</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--periwinkle)" id="hsum-clients">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Active Loans</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--teal)" id="hsum-loans">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Review Queue</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-queue">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">NSF Outstanding</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--coral)" id="hsum-nsf">—</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Pending Disburse</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-disburse">—</div>
+        </div>
+      </div>
+
+      <div class="hgrid">
+
+        <!-- Railway Backend -->
+        <div class="hcard">
+          <div class="hcard-hdr"><div class="hcard-title">🚂 Railway Backend</div><div class="hcard-time" id="htime-railway">—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🌐</div><div><div class="hitem-name">API Server</div><div class="hitem-detail">web-production-31ce.up.railway.app</div></div></div><div class="hstatus hs-chk" id="hs-api"><div class="hsdot"></div>Checking…</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚡</div><div><div class="hitem-name">Response Time</div><div class="hitem-detail" id="hd-latency">—</div></div></div><div class="hstatus hs-chk" id="hs-latency"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔧</div><div><div class="hitem-name">Environment</div><div class="hitem-detail" id="hd-env">—</div></div></div><div class="hstatus hs-chk" id="hs-env"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏦</div><div><div class="hitem-name">Equifax Token</div><div class="hitem-detail" id="hd-efx">—</div></div></div><div class="hstatus hs-chk" id="hs-efx"><div class="hsdot"></div>—</div></div>
+        </div>
+
+        <!-- Supabase -->
+        <div class="hcard">
+          <div class="hcard-hdr"><div class="hcard-title">🗄️ Supabase Database</div><div class="hcard-time" id="htime-supa">—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔌</div><div><div class="hitem-name">Connection</div><div class="hitem-detail">rutupqpzvfeubzpnqujn.supabase.co</div></div></div><div class="hstatus hs-chk" id="hs-db"><div class="hsdot"></div>Checking…</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Clients</div><div class="hitem-detail" id="hd-clients-count">—</div></div></div><div class="hstatus hs-chk" id="hs-clients-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📋</div><div><div class="hitem-name">Applications</div><div class="hitem-detail" id="hd-apps-count">—</div></div></div><div class="hstatus hs-chk" id="hs-apps-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Loans</div><div class="hitem-detail" id="hd-loans-count">—</div></div></div><div class="hstatus hs-chk" id="hs-loans-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📅</div><div><div class="hitem-name">Repayment Schedule</div><div class="hitem-detail" id="hd-sched-count">—</div></div></div><div class="hstatus hs-chk" id="hs-sched-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚠️</div><div><div class="hitem-name">NSF Fees</div><div class="hitem-detail" id="hd-nsf-count">—</div></div></div><div class="hstatus hs-chk" id="hs-nsf-tbl"><div class="hsdot"></div>—</div></div>
+        </div>
+
+        <!-- EFT Endpoints -->
+        <div class="hcard">
+          <div class="hcard-hdr"><div class="hcard-title">🏛️ EFT System</div><div class="hcard-time" id="htime-eft">—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💸</div><div><div class="hitem-name">DRD Disbursements</div><div class="hitem-detail">/api/eft/drd</div></div></div><div class="hstatus hs-chk" id="hs-drd"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📤</div><div><div class="hitem-name">PAD Preview</div><div class="hitem-detail">/api/eft/pads/preview</div></div></div><div class="hstatus hs-chk" id="hs-pad"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">↩️</div><div><div class="hitem-name">Returns Processor</div><div class="hitem-detail">/api/eft/returns</div></div></div><div class="hstatus hs-chk" id="hs-ret"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔄</div><div><div class="hitem-name">NSF Retry Queue</div><div class="hitem-detail">/api/eft/retries/preview</div></div></div><div class="hstatus hs-chk" id="hs-retry"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">✓</div><div><div class="hitem-name">Clearable Payments</div><div class="hitem-detail">/api/eft/clearable</div></div></div><div class="hstatus hs-chk" id="hs-clear"><div class="hsdot"></div>—</div></div>
+        </div>
+
+        <!-- Frontend + Apply -->
+        <div class="hcard">
+          <div class="hcard-hdr"><div class="hcard-title">🌍 Frontend & Apply</div><div class="hcard-time" id="htime-dns">—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏠</div><div><div class="hitem-name">wavesfinancial.ca</div><div class="hitem-detail">Netlify CDN</div></div></div><div class="hstatus hs-chk" id="hs-site"><div class="hsdot"></div>Checking…</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply</div></div></div><div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👤</div><div><div class="hitem-name">Client Portal</div><div class="hitem-detail">wavesfinancial.ca/client</div></div></div><div class="hstatus hs-chk" id="hs-client-portal"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔒</div><div><div class="hitem-name">SSL Certificate</div><div class="hitem-detail">HTTPS / TLS</div></div></div><div class="hstatus hs-chk" id="hs-ssl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔗</div><div><div class="hitem-name">Flinks IBV</div><div class="hitem-detail">Sandbox active · Prod pending</div></div></div><div class="hstatus hs-warn" id="hs-flinks"><div class="hsdot"></div>Sandbox</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONFIG VIEW -->
+    <div class="content" id="config-view" style="display:none;">
+      <div class="qhdr">
+        <div class="qtitle">System Config</div>
       </div>
 
       <!-- Payment Processor Selector -->
@@ -654,72 +729,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         </div>
         <div id="ofees-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--periwinkle)" id="hsum-clients">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Active Loans</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--teal)" id="hsum-loans">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Review Queue</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-queue">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">NSF Outstanding</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--coral)" id="hsum-nsf">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Pending Disburse</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-disburse">—</div>
-        </div>
-      </div>
 
-      <div class="hgrid">
-
-        <!-- Railway Backend -->
-        <div class="hcard">
-          <div class="hcard-hdr"><div class="hcard-title">🚂 Railway Backend</div><div class="hcard-time" id="htime-railway">—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🌐</div><div><div class="hitem-name">API Server</div><div class="hitem-detail">web-production-31ce.up.railway.app</div></div></div><div class="hstatus hs-chk" id="hs-api"><div class="hsdot"></div>Checking…</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚡</div><div><div class="hitem-name">Response Time</div><div class="hitem-detail" id="hd-latency">—</div></div></div><div class="hstatus hs-chk" id="hs-latency"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔧</div><div><div class="hitem-name">Environment</div><div class="hitem-detail" id="hd-env">—</div></div></div><div class="hstatus hs-chk" id="hs-env"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏦</div><div><div class="hitem-name">Equifax Token</div><div class="hitem-detail" id="hd-efx">—</div></div></div><div class="hstatus hs-chk" id="hs-efx"><div class="hsdot"></div>—</div></div>
-        </div>
-
-        <!-- Supabase -->
-        <div class="hcard">
-          <div class="hcard-hdr"><div class="hcard-title">🗄️ Supabase Database</div><div class="hcard-time" id="htime-supa">—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔌</div><div><div class="hitem-name">Connection</div><div class="hitem-detail">rutupqpzvfeubzpnqujn.supabase.co</div></div></div><div class="hstatus hs-chk" id="hs-db"><div class="hsdot"></div>Checking…</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👥</div><div><div class="hitem-name">Clients</div><div class="hitem-detail" id="hd-clients-count">—</div></div></div><div class="hstatus hs-chk" id="hs-clients-tbl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📋</div><div><div class="hitem-name">Applications</div><div class="hitem-detail" id="hd-apps-count">—</div></div></div><div class="hstatus hs-chk" id="hs-apps-tbl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Loans</div><div class="hitem-detail" id="hd-loans-count">—</div></div></div><div class="hstatus hs-chk" id="hs-loans-tbl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📅</div><div><div class="hitem-name">Repayment Schedule</div><div class="hitem-detail" id="hd-sched-count">—</div></div></div><div class="hstatus hs-chk" id="hs-sched-tbl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚠️</div><div><div class="hitem-name">NSF Fees</div><div class="hitem-detail" id="hd-nsf-count">—</div></div></div><div class="hstatus hs-chk" id="hs-nsf-tbl"><div class="hsdot"></div>—</div></div>
-        </div>
-
-        <!-- EFT Endpoints -->
-        <div class="hcard">
-          <div class="hcard-hdr"><div class="hcard-title">🏛️ EFT System</div><div class="hcard-time" id="htime-eft">—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💸</div><div><div class="hitem-name">DRD Disbursements</div><div class="hitem-detail">/api/eft/drd</div></div></div><div class="hstatus hs-chk" id="hs-drd"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📤</div><div><div class="hitem-name">PAD Preview</div><div class="hitem-detail">/api/eft/pads/preview</div></div></div><div class="hstatus hs-chk" id="hs-pad"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">↩️</div><div><div class="hitem-name">Returns Processor</div><div class="hitem-detail">/api/eft/returns</div></div></div><div class="hstatus hs-chk" id="hs-ret"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔄</div><div><div class="hitem-name">NSF Retry Queue</div><div class="hitem-detail">/api/eft/retries/preview</div></div></div><div class="hstatus hs-chk" id="hs-retry"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">✓</div><div><div class="hitem-name">Clearable Payments</div><div class="hitem-detail">/api/eft/clearable</div></div></div><div class="hstatus hs-chk" id="hs-clear"><div class="hsdot"></div>—</div></div>
-        </div>
-
-        <!-- Frontend + Apply -->
-        <div class="hcard">
-          <div class="hcard-hdr"><div class="hcard-title">🌍 Frontend & Apply</div><div class="hcard-time" id="htime-dns">—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏠</div><div><div class="hitem-name">wavesfinancial.ca</div><div class="hitem-detail">Netlify CDN</div></div></div><div class="hstatus hs-chk" id="hs-site"><div class="hsdot"></div>Checking…</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply</div></div></div><div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👤</div><div><div class="hitem-name">Client Portal</div><div class="hitem-detail">wavesfinancial.ca/client</div></div></div><div class="hstatus hs-chk" id="hs-client-portal"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔒</div><div><div class="hitem-name">SSL Certificate</div><div class="hitem-detail">HTTPS / TLS</div></div></div><div class="hstatus hs-chk" id="hs-ssl"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔗</div><div><div class="hitem-name">Flinks IBV</div><div class="hitem-detail">Sandbox active · Prod pending</div></div></div><div class="hstatus hs-warn" id="hs-flinks"><div class="hsdot"></div>Sandbox</div></div>
-        </div>
-
-      </div>
     </div>
 
     <!-- REPORTING VIEW -->
@@ -1177,9 +1187,11 @@ function switchTab(tab){
   if(el) el.classList.add('active');
   document.getElementById('list-view').style.display='none';
   document.getElementById('health-view').style.display='none';
+  document.getElementById('config-view').style.display='none';
   document.getElementById('reporting-view').style.display='none';
   document.getElementById('client-page').style.display='none';
   if(tab==='health')         { document.getElementById('health-view').style.display='block'; initProcessor(); }
+  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); }
   else if(tab==='reporting') { document.getElementById('reporting-view').style.display='block'; renderReports(); }
   else                       { document.getElementById('list-view').style.display='block'; renderList(); }
 }
@@ -1195,6 +1207,7 @@ async function openClientByAppId(appId){
 async function openClient(clientId, highlightRef){
   document.getElementById('list-view').style.display='none';
   document.getElementById('health-view').style.display='none';
+  document.getElementById('config-view').style.display='none';
   document.getElementById('client-page').style.display='flex';
   document.getElementById('cp-body').innerHTML='<div class="loading-row"><div class="spinner"></div> Loading client…</div>';
   window.scrollTo(0,0);
