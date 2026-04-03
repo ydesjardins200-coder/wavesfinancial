@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Waves — Seed 14 Clients</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  body{font-family:monospace;background:#0D0B1F;color:#e0e6ff;padding:40px;max-width:900px;margin:0 auto;}
+  h1{color:#A09AF5;margin-bottom:8px;}
+  p{color:rgba(160,154,245,.6);margin-bottom:24px;font-size:.85rem;}
+  button{padding:14px 32px;background:linear-gradient(135deg,#3B35B0,#5B52D8);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;font-family:monospace;}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  #log{margin-top:24px;padding:16px;background:#13112a;border:1px solid rgba(160,154,245,.15);border-radius:10px;font-size:.78rem;line-height:1.8;min-height:80px;white-space:pre-wrap;}
+  .ok{color:#1DE9C6;} .err{color:#FF6B8A;} .info{color:#FFD166;}
+</style>
+</head>
+<body>
+<h1>🌊 Waves Financial — Seed 14 Clients</h1>
+<p>Click once to insert 14 dummy clients directly into Supabase. Safe to run multiple times (uses unique emails). Delete this file after use.</p>
+<button id="btn" onclick="seed()">Insert 14 Dummy Clients</button>
+<div id="log">Ready. Click the button to start.</div>
+
+<script>
+const SUPA_URL = 'https://rutupqpzvfeubzpnqujn.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1dHVwcXB6dmZldWJ6cG5xdWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTA1MDMsImV4cCI6MjA5MDYyNjUwM30.2baR2r6bI7NJQlJhGhmsStvJu-2ZXA1ZILjIVqYa9TI';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+const FIRST    = ['Sophie','Liam','Emma','Noah','Olivia','Ethan','Ava','Mason','Isabella','Logan','Mia','Lucas','Charlotte','Aiden'];
+const LAST     = ['Tremblay','Gagnon','Roy','Côté','Bouchard','Fortin','Gauthier','Morin','Lavoie','Leblanc','Martin','Bernard','Girard','Pelletier'];
+const STREETS  = ['Maple Ave','Oak St','Pine Rd','Cedar Blvd','Elm Dr','Birch Ln','Willow Way','Spruce Cres'];
+const EMPLOYERS= ['Amazon Canada','Tim Hortons','Walmart Canada','Loblaws','Home Depot','FedEx','Shoppers Drug Mart','Bell Canada','Rogers','Sysco'];
+const JOBS     = ['Warehouse Associate','Shift Supervisor','Cashier','Delivery Driver','Customer Service Rep','Admin Assistant','Sales Associate','Team Lead'];
+const CITIES   = [
+  ['Vancouver','BC','V5K 1A1'],['Surrey','BC','V3S 2B2'],['Toronto','ON','M4B 1B3'],
+  ['Mississauga','ON','L5A 1A1'],['Halifax','NS','B3H 1A1'],['Moncton','NB','E1C 1A1'],
+  ['Charlottetown','PE','C1A 1A1'],["St. John's",'NL','A1C 1A1'],['Burnaby','BC','V5A 2B2'],
+  ['Ottawa','ON','K1A 0A1'],['Dartmouth','NS','B2Y 1A1'],['Fredericton','NB','E3B 1A1'],
+  ['Summerside','PE','C1N 1A1'],['Corner Brook','NL','A2H 1A1'],
+];
+const BANKS    = ['RBC Royal Bank','TD Canada Trust','Scotiabank','BMO','CIBC','Desjardins','Tangerine','EQ Bank'];
+const TIERS    = ['Gold','Green','Blue','Yellow','Orange'];
+const TIER_SCORES = {Gold:[0,15],Green:[15,30],Blue:[30,50],Yellow:[50,70],Orange:[70,90]};
+
+const rand    = a => a[Math.floor(Math.random()*a.length)];
+const ri      = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const phone   = () => `(${ri(400,999)}) ${ri(200,999)}-${String(ri(1000,9999))}`;
+const email   = (fn,ln) => `${fn.toLowerCase()}.${ln.toLowerCase()}${ri(10,99)}@gmail.com`;
+const dob     = () => `${ri(1968,2000)}-${String(ri(1,12)).padStart(2,'0')}-${String(ri(1,28)).padStart(2,'0')}`;
+const transit = () => String(ri(10000,99999));
+const inst    = () => String(ri(100,999));
+const acct    = () => String(ri(1000000,9999999));
+
+function log(msg, cls='') {
+  const el = document.getElementById('log');
+  el.innerHTML += `\n<span class="${cls}">${msg}</span>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+async function seed() {
+  const btn = document.getElementById('btn');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '<span class="info">Starting seed…</span>';
+
+  const clients = FIRST.map((fn, i) => {
+    const ln   = LAST[i];
+    const loc  = CITIES[i];
+    const tier = rand(TIERS);
+    const [sMin, sMax] = TIER_SCORES[tier];
+    const score = ri(sMin, sMax);
+    const decision = tier === 'Orange' ? 'manual_review' : tier === 'Gold' ? 'auto_approved' : rand(['auto_approved','auto_approved','manual_review']);
+    return {
+      first_name:        fn,
+      last_name:         ln,
+      email:             email(fn, ln),
+      dob:               dob(),
+      phone:             phone(),
+      cell_phone:        phone(),
+      address:           `${ri(100,9999)} ${rand(STREETS)}`,
+      city:              loc[0],
+      province:          loc[1],
+      postal:            loc[2],
+      employer:          rand(EMPLOYERS),
+      job_title:         rand(JOBS),
+      declared_monthly_income: ri(2200, 5500),
+      pay_frequency:     rand(['weekly','biweekly','monthly']),
+      bank_name:         rand(BANKS),
+      bank_transit:      transit(),
+      bank_institution:  inst(),
+      bank_account:      acct(),
+      latest_tier:       tier,
+      latest_score:      score,
+      latest_decision:   decision,
+      total_applications: ri(1, 4),
+      total_loans:       ri(0, 3),
+      is_sandbox:        true,
+    };
+  });
+
+  log(`\nPrepared ${clients.length} clients — inserting…`, 'info');
+
+  let inserted = 0;
+  for (const client of clients) {
+    const { data, error } = await sb.from('clients').insert(client).select('id, first_name, last_name').single();
+    if (error) {
+      log(`  ❌ ${client.first_name} ${client.last_name} — ${error.message}`, 'err');
+    } else {
+      inserted++;
+      log(`  ✅ ${data.first_name} ${data.last_name} — ${data.id.slice(0,8)}…`, 'ok');
+    }
+  }
+
+  log(`\n${'─'.repeat(50)}`, 'info');
+  log(`Done — ${inserted}/${clients.length} clients inserted.`, inserted === clients.length ? 'ok' : 'err');
+  log(`\nRefresh admin.html → Clients tab to see them.`, 'info');
+  if (inserted > 0) log(`\n⚠️  Delete seed-clients.html from your repo when done.`, 'info');
+  btn.disabled = false;
+  btn.textContent = '↻ Run Again';
+}
+</script>
+</body>
+</html>
