@@ -2445,10 +2445,45 @@ async function loadIBV(funnel) {
   try {
     const res = await fetch(RAILWAY_URL + '/api/ibv/embed-url');
     const cfg = await res.json();
-    if (cfg.provider === 'vopay' && cfg.embedUrl) renderIQ11Box(funnel, cfg.embedUrl);
+
+    if (cfg.provider === 'vopay' && cfg.embedUrl) {
+      renderIQ11Box(funnel, cfg.embedUrl);
+      return;
+    }
+
+    // Flinks — inject real iFrame if client ID is configured
+    if (cfg.provider === 'flinks' && cfg.flinksUrl) {
+      renderFlinksBox(funnel, cfg.flinksUrl);
+      return;
+    }
+
+    // No client ID set — keep sandbox panel visible (dev mode)
   } catch (err) {
-    console.warn('[IBV] Defaulting to Flinks:', err.message);
+    console.warn('[IBV] Could not load embed config, using sandbox mode:', err.message);
   }
+}
+
+function renderFlinksBox(funnel, flinksUrl) {
+  const prefix      = funnel === 'renewal' ? 'r-' : '';
+  const sandboxId   = funnel === 'renewal' ? 'r-sandbox-panel' : 'sandbox-panel';
+  const placeholder = document.getElementById(prefix + 'flinks-placeholder');
+  const sandbox     = document.getElementById(sandboxId);
+  const box         = document.getElementById(prefix + 'flinks-box');
+  if (!box) return;
+
+  // Hide sandbox panel
+  if (sandbox) sandbox.style.display = 'none';
+
+  // Don't inject twice
+  if (document.getElementById(prefix + 'flinks-iframe')) return;
+
+  const iframe = document.createElement('iframe');
+  iframe.id    = prefix + 'flinks-iframe';
+  iframe.src   = flinksUrl;
+  iframe.style.cssText = 'width:100%;height:520px;border:none;display:block;border-radius:0 0 12px 12px';
+  iframe.allow = 'camera';
+  iframe.title = 'Flinks Bank Verification';
+  if (placeholder) placeholder.appendChild(iframe);
 }
 
 function renderIQ11Box(funnel, embedUrl) {
