@@ -312,6 +312,42 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .sidebar-send{width:100%;margin-top:6px;padding:8px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .15s;}
 .sidebar-send:hover{opacity:.9;}
 
+/* ── PAYMENT PROCESSOR SELECTOR ── */
+#proc-btn-manual.proc-active{
+  background:rgba(26,111,255,.1);
+  border-color:var(--blue);
+  color:var(--white);
+}
+#proc-btn-manual:not(.proc-active){
+  background:rgba(255,255,255,.03);
+  border-color:var(--border);
+  color:var(--muted);
+}
+#proc-btn-manual:not(.proc-active):hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(160,154,245,.3);
+  color:var(--white);
+}
+#proc-btn-vopay.proc-active{
+  background:rgba(0,212,170,.1);
+  border-color:var(--teal);
+  color:var(--white);
+}
+#proc-btn-vopay:not(.proc-active){
+  background:rgba(255,255,255,.03);
+  border-color:var(--border);
+  color:var(--muted);
+}
+#proc-btn-vopay:not(.proc-active):hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(0,212,170,.3);
+  color:var(--white);
+}
+#proc-btn-vopay.proc-disabled{
+  opacity:.45;
+  cursor:not-allowed !important;
+}
+
 /* ── REPORTING ENGINE ── */
 .rpt-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
 .rpt-kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;transition:border-color .18s;}
@@ -461,7 +497,33 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <button class="qrefresh" onclick="runHealthChecks()">↻ Refresh</button>
       </div>
 
-      <!-- Summary bar -->
+      <!-- Payment Processor Selector -->
+      <div id="proc-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Payment Processor</div>
+            <div style="font-size:.82rem;color:var(--muted)">Controls how loan disbursements and PAD collections are processed</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="proc-btn-manual" onclick="setProcessor('manual')"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
+              <span style="font-size:1.3rem">📁</span>
+              <span style="font-size:.8rem;font-weight:700">Manual EFT</span>
+              <span style="font-size:.6rem">DRD / PAD Files</span>
+              <span style="font-size:.58rem;margin-top:2px">Desjardins</span>
+            </button>
+            <button id="proc-btn-vopay" onclick="setProcessor('vopay')"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
+              <span style="font-size:1.3rem">⚡</span>
+              <span style="font-size:.8rem;font-weight:700">VoPay API</span>
+              <span style="font-size:.6rem">Automated EFT</span>
+              <span style="font-size:.58rem;margin-top:2px" id="vopay-status-pill">Credentials pending</span>
+            </button>
+          </div>
+        </div>
+        <!-- Active processor status bar -->
+        <div id="proc-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
           <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
@@ -945,9 +1007,9 @@ function switchTab(tab){
   document.getElementById('health-view').style.display='none';
   document.getElementById('reporting-view').style.display='none';
   document.getElementById('client-page').style.display='none';
-  if(tab==='health')     { document.getElementById('health-view').style.display='block'; }
+  if(tab==='health')         { document.getElementById('health-view').style.display='block'; initProcessor(); }
   else if(tab==='reporting') { document.getElementById('reporting-view').style.display='block'; renderReports(); }
-  else { document.getElementById('list-view').style.display='block'; renderList(); }
+  else                       { document.getElementById('list-view').style.display='block'; renderList(); }
 }
 
 /* ── OPEN CLIENT PAGE ── */
@@ -2534,6 +2596,62 @@ function updateSummaryHealth(){
   hs('hs-sum-clients','hs-ok',allClients.length);
   hs('hs-sum-loans',active>0?'hs-ok':'hs-chk',active);
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
+}
+
+/* ── PAYMENT PROCESSOR ───────────────────────────────────────────────────────── */
+
+let activeProcessor = localStorage.getItem('waves_processor') || 'manual';
+
+function initProcessor(){
+  renderProcessorUI();
+  checkVoPayStatus();
+}
+
+async function checkVoPayStatus(){
+  try{
+    const res = await fetch(RAILWAY_URL+'/api/vopay/status', {signal: AbortSignal.timeout(5000)});
+    const data = await res.json();
+    const pill = document.getElementById('vopay-status-pill');
+    if(data.configured){
+      if(pill){ pill.textContent = '✓ Credentials set'; pill.style.color='var(--teal)'; }
+      document.getElementById('proc-btn-vopay')?.classList.remove('proc-disabled');
+    } else {
+      if(pill){ pill.textContent = 'Credentials pending'; pill.style.color='var(--muted)'; }
+      document.getElementById('proc-btn-vopay')?.classList.add('proc-disabled');
+      if(activeProcessor==='vopay'){ activeProcessor='manual'; localStorage.setItem('waves_processor','manual'); renderProcessorUI(); }
+    }
+  } catch {
+    document.getElementById('proc-btn-vopay')?.classList.add('proc-disabled');
+  }
+}
+
+function setProcessor(proc){
+  if(proc==='vopay' && document.getElementById('proc-btn-vopay')?.classList.contains('proc-disabled')){
+    showToast('VoPay credentials not configured yet — add VOPAY_ACCOUNT_ID and VOPAY_API_KEY in Railway.', true);
+    return;
+  }
+  if(proc===activeProcessor) return;
+  activeProcessor = proc;
+  localStorage.setItem('waves_processor', proc);
+  renderProcessorUI();
+  showToast(proc==='vopay' ? '⚡ Switched to VoPay — API payments active' : '📁 Switched to Manual EFT — DRD/PAD files active');
+  fetch(RAILWAY_URL+'/api/processor/set', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({processor:proc})}).catch(()=>{});
+}
+
+function renderProcessorUI(){
+  const manualBtn = document.getElementById('proc-btn-manual');
+  const vopayBtn  = document.getElementById('proc-btn-vopay');
+  const bar       = document.getElementById('proc-status-bar');
+  if(!manualBtn||!vopayBtn||!bar) return;
+  manualBtn.classList.toggle('proc-active', activeProcessor==='manual');
+  vopayBtn.classList.toggle('proc-active',  activeProcessor==='vopay');
+  if(activeProcessor==='manual'){
+    bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15)';
+    bar.innerHTML=`<span>📁</span><span style="color:var(--blue);font-weight:700">Manual EFT Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">Disbursements via DRD file · Collections via PAD file · Submitted manually to Desjardins</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);border-radius:100px;color:var(--blue);white-space:nowrap">● Active</span>`;
+  } else {
+    bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15)';
+    bar.innerHTML=`<span>⚡</span><span style="color:var(--teal);font-weight:700">VoPay API Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">Disbursements via eft/withdraw · Collections via eft/fund · Returns via webhook</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(0,212,170,.15);border:1px solid rgba(0,212,170,.3);border-radius:100px;color:var(--teal);white-space:nowrap">● Active</span>`;
+  }
 }
 
 /* ── REPORTING ENGINE ────────────────────────────────────────────────────────── */
