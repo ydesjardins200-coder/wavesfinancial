@@ -1824,6 +1824,31 @@ function appHistoryRow(a, loans, schedMap){
       ${ahrField('Hard Decline',a.hard_decline||'—',a.hard_decline?'var(--coral)':'')}
     </div>
 
+    ${(() => {
+      try {
+        const fees = a.optional_fees ? JSON.parse(a.optional_fees) : [];
+        if (!fees.length) return '';
+        const total = fees.reduce((s,f) => s + parseFloat(f.fee||0), 0);
+        return `
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(255,209,102,.2)">Optional Fees Selected</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center">
+          ${fees.map(f => `
+            <div style="padding:6px 12px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);border-radius:8px">
+              <div style="font-size:.72rem;font-weight:700;color:var(--white)">${f.label}</div>
+              <div style="font-size:.68rem;color:var(--gold);font-weight:800">+$${parseFloat(f.fee).toFixed(2)}</div>
+            </div>`).join('')}
+          <div style="padding:6px 14px;background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.35);border-radius:8px">
+            <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Total</div>
+            <div style="font-size:.82rem;font-weight:800;color:var(--gold)">+$${total.toFixed(2)}</div>
+          </div>
+          ${a.id ? `<button onclick="recalcScheduleFeesFromApp('${a.id}')"
+            style="margin-left:auto;padding:6px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:8px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
+            🔄 Apply Fees to Schedule
+          </button>` : ''}
+        </div>`;
+      } catch(e) { return ''; }
+    })()}
+
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Employment at Application</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
       ${ahrField('Income Source',a.employment_status||'—')}
@@ -4117,6 +4142,15 @@ async function saveAllLHRows(loanId, clientId, schedIds){
   }
   await recalcLoanTotals(loanId);
   showToast(failed ? `⚠ ${saved} saved, ${failed} failed` : `✓ All ${saved} payments saved`);
+}
+
+async function recalcScheduleFeesFromApp(applicationId) {
+  // Find the loan for this application
+  const app = allApps.find(a => a.id === applicationId);
+  if (!app) { showToast('Application not found', true); return; }
+  const loan = allLoans.find(l => l.ref === app.ref);
+  if (!loan) { showToast('No loan found for this application — approve it first', true); return; }
+  await recalcScheduleFees(loan.id, applicationId);
 }
 
 async function recalcScheduleFees(loanId, applicationId) {
