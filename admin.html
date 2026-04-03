@@ -1744,13 +1744,23 @@ function loanHistoryCard(loan, schedule, contract, client, apps, highlightRef){
     <div class="lh-body" id="loan-${loan.id}">
       <!-- Repayment schedule -->
       <div style="padding:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="crm-sec-title" style="margin:0">Repayment Schedule</div>
-          ${schedule.length?`
-          <button onclick="saveAllLHRows('${loan.id}','${client.id}',[${schedule.map(p=>`'${p.id}'`).join(',')}])"
-            style="padding:5px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
-            💾 Save All Changes
-          </button>`:''}
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <div class="crm-sec-title" style="margin:0">Repayment Schedule
+            ${app?.optional_fees ? (() => { try { const f=JSON.parse(app.optional_fees); return f.length?`<span style="font-size:.62rem;color:var(--gold);margin-left:8px">+$${f.reduce((s,x)=>s+parseFloat(x.fee||0),0).toFixed(2)} fees (${f.map(x=>x.label).join(', ')})</span>`:''; } catch{return '';} })() : ''}
+          </div>
+          <div style="display:flex;gap:8px">
+            ${app?.optional_fees && JSON.parse(app.optional_fees||'[]').length ? `
+            <button onclick="recalcScheduleFees('${loan.id}','${app?.id||''}')"
+              style="padding:5px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
+              🔄 Apply Fees to Schedule
+            </button>` : ''}
+            ${schedule.length?`
+            <button onclick="saveAllLHRows('${loan.id}','${client.id}',[${schedule.map(p=>`'${p.id}'`).join(',')}])"
+              style="padding:5px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">
+              💾 Save All Changes
+            </button>`:``}
+          </div>
+        </div>
         </div>
         ${schedule.length?`<div style="overflow-x:auto"><table class="sched-table" style="table-layout:fixed;width:100%">
           <thead><tr>
@@ -4107,6 +4117,23 @@ async function saveAllLHRows(loanId, clientId, schedIds){
   }
   await recalcLoanTotals(loanId);
   showToast(failed ? `⚠ ${saved} saved, ${failed} failed` : `✓ All ${saved} payments saved`);
+}
+
+async function recalcScheduleFees(loanId, applicationId) {
+  if(!confirm('Recalculate all schedule amounts to include the optional fees from this application?\n\nThis will update the scheduled_amount on every row.')) return;
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/loans/${loanId}/recalc-fees`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ applicationId }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Failed');
+    showToast(`✅ Schedule updated — $${data.newPaymentAmount}/payment (${data.paymentsUpdated} rows)`);
+    setTimeout(loadData, 800);
+  } catch(err) {
+    showToast('Recalc failed: '+err.message, true);
+  }
 }
 
 async function recalcLoanTotals(loanId){
