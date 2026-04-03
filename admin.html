@@ -3414,35 +3414,57 @@ async function previewPAD(days){
   try{
     const resp=await fetch(`${RAILWAY_URL}/api/eft/pads/preview?days=${days}`);
     const data=await resp.json();
+    const s=data.summary||{};
 
-    if(!data.count){
-      box.innerHTML=`<div style="font-size:.78rem;color:var(--muted)">✓ No unsubmitted payments due in the next ${days} days.</div>`;
+    if(!data.payments?.length){
+      box.innerHTML=`<div style="font-size:.78rem;color:var(--muted)">✓ No payments due in the next ${days} days.</div>`;
       return;
     }
 
-    const rows=data.payments.map(p=>`
-      <tr style="border-bottom:1px solid rgba(160,154,245,.06)">
+    const statusTag = p => {
+      if(p.alreadySubmitted) return `<span style="font-size:.6rem;padding:1px 5px;background:rgba(160,154,245,.1);border:1px solid rgba(160,154,245,.2);border-radius:4px;color:var(--periwinkle)">in PAD</span>`;
+      if(p.status==='failed')  return `<span style="font-size:.6rem;padding:1px 5px;background:rgba(255,107,138,.1);border:1px solid rgba(255,107,138,.2);border-radius:4px;color:var(--coral)">NSF retry</span>`;
+      if(p.isOverdue)          return `<span style="font-size:.6rem;padding:1px 5px;background:rgba(255,153,69,.1);border:1px solid rgba(255,153,69,.2);border-radius:4px;color:#FF9945">overdue</span>`;
+      return '';
+    };
+
+    const rows=data.payments.map(p=>{
+      const dimmed = p.alreadySubmitted ? 'opacity:.45;' : '';
+      return `<tr style="border-bottom:1px solid rgba(160,154,245,.06);${dimmed}">
         <td style="padding:5px 10px;font-size:.72rem;color:var(--periwinkle)">${p.ref}</td>
         <td style="padding:5px 10px;font-size:.72rem">${p.borrowerName}</td>
         <td style="padding:5px 10px;font-size:.72rem">P${String(p.paymentNumber).padStart(2,'0')}</td>
         <td style="padding:5px 10px;font-size:.72rem;font-weight:700">$${parseFloat(p.amount).toFixed(2)}</td>
         <td style="padding:5px 10px;font-size:.72rem;color:var(--muted)">${p.dueDate}</td>
-        <td style="padding:5px 10px">${p.hasBankingCoords?'<span style="color:var(--teal);font-size:.65rem">✓ coords</span>':'<span style="color:var(--coral);font-size:.65rem">⚠ missing</span>'}</td>
-      </tr>`).join('');
+        <td style="padding:5px 10px">${p.hasBankingCoords?'<span style="color:var(--teal);font-size:.65rem">✓</span>':'<span style="color:var(--coral);font-size:.65rem">⚠ missing</span>'}</td>
+        <td style="padding:5px 10px">${statusTag(p)}</td>
+      </tr>`;
+    }).join('');
+
+    const summaryChips = [
+      s.includedInPAD    ? `<span style="font-size:.65rem;padding:2px 8px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.25);border-radius:100px;color:var(--teal)">✓ ${s.includedInPAD} to collect</span>` : '',
+      s.alreadySubmitted ? `<span style="font-size:.65rem;padding:2px 8px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.2);border-radius:100px;color:var(--periwinkle)">${s.alreadySubmitted} already in PAD</span>` : '',
+      s.failed           ? `<span style="font-size:.65rem;padding:2px 8px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:100px;color:var(--coral)">${s.failed} NSF retry</span>` : '',
+      s.missingCoords    ? `<span style="font-size:.65rem;padding:2px 8px;background:rgba(255,153,69,.08);border:1px solid rgba(255,153,69,.2);border-radius:100px;color:#FF9945">${s.missingCoords} missing coords</span>` : '',
+      s.overdue          ? `<span style="font-size:.65rem;padding:2px 8px;background:rgba(255,153,69,.08);border:1px solid rgba(255,153,69,.2);border-radius:100px;color:#FF9945">${s.overdue} overdue</span>` : '',
+    ].filter(Boolean).join('');
 
     box.innerHTML=`
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
         <div>
-          <div style="font-size:.75rem;font-weight:800;color:var(--white)">${data.count} payment${data.count>1?'s':''} · $${data.totalAmount} · effective ${data.effectiveDate}</div>
-          <div style="font-size:.65rem;color:var(--muted);margin-top:2px">These rows will be stamped and cannot be included in a future PAD run.</div>
+          <div style="font-size:.75rem;font-weight:800;color:var(--white);margin-bottom:5px">
+            ${data.count} payment${data.count!==1?'s':''} to collect · $${data.totalAmount} · effective ${data.effectiveDate}
+          </div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">${summaryChips}</div>
+          ${data.warning?`<div style="font-size:.65rem;color:var(--gold);margin-top:5px">⚠ ${data.warning}</div>`:''}
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button onclick="this.closest('#pad-preview-box').style.display='none'"
-            style="padding:6px 12px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font);font-size:.72rem;cursor:pointer">Cancel</button>
-          <button onclick="generatePADConfirmed(${days})"
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          <button onclick="document.getElementById('pad-preview-box').style.display='none'"
+            style="padding:6px 12px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font);font-size:.72rem;cursor:pointer">Close</button>
+          ${data.count>0?`<button onclick="generatePADConfirmed(${days})"
             style="padding:7px 16px;background:linear-gradient(135deg,#1DE9C6,#00E5FF);border:none;border-radius:6px;color:var(--deep);font-family:var(--font);font-size:.75rem;font-weight:800;cursor:pointer">
-            📁 Generate PAD File — $${data.totalAmount}
-          </button>
+            📁 Generate PAD — $${data.totalAmount}
+          </button>`:''}
         </div>
       </div>
       <table style="width:100%;border-collapse:collapse">
@@ -3451,18 +3473,18 @@ async function previewPAD(days){
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Borrower</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Pmt</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Amount</th>
-          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Due Date</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Due</th>
           <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Bank</th>
+          <th style="padding:5px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Status</th>
         </tr></thead>
         <tbody>${rows}</tbody>
         <tr style="background:rgba(91,82,216,.12)">
-          <td colspan="3" style="padding:7px 10px;font-size:.75rem;font-weight:800;color:var(--white)">Total</td>
+          <td colspan="3" style="padding:7px 10px;font-size:.75rem;font-weight:800;color:var(--white)">Total (included in PAD)</td>
           <td style="padding:7px 10px;font-size:.75rem;font-weight:800;color:var(--teal)">$${data.totalAmount}</td>
-          <td colspan="2"></td>
+          <td colspan="3"></td>
         </tr>
       </table>`;
 
-    // Store preview data for confirm step
     window._padPreview = data;
   } catch(err){
     box.innerHTML=`<div style="font-size:.78rem;color:var(--coral)">Preview failed: ${err.message}</div>`;
