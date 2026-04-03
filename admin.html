@@ -682,7 +682,9 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="qtitle">Reporting Engine</div>
         <div style="display:flex;align-items:center;gap:8px">
           <select id="rpt-period" onchange="renderReports()" style="padding:6px 10px;background:#131628;border:1px solid rgba(160,154,245,.2);border-radius:8px;color:#e0e6ff;font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer">
-            <option value="30">Last 30 days</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="30" selected>Last 30 days</option>
             <option value="60">Last 60 days</option>
             <option value="90">Last 90 days</option>
             <option value="180">Last 6 months</option>
@@ -2973,9 +2975,25 @@ async function renderReports(){
   // ── Date window ──────────────────────────────────────────────────────────────
   const periodVal = document.getElementById('rpt-period')?.value || '30';
   const now       = new Date();
-  const cutoff    = periodVal === 'all' ? new Date('2000-01-01') : new Date(now - periodVal * 86400000);
+
+  let cutoff, periodLabel;
+  if (periodVal === 'all') {
+    cutoff      = new Date('2000-01-01');
+    periodLabel = 'All Time';
+  } else if (periodVal === 'today') {
+    cutoff      = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // midnight today
+    periodLabel = 'Today';
+  } else if (periodVal === 'week') {
+    const day   = now.getDay(); // 0=Sun, 1=Mon…
+    const diff  = day === 0 ? 6 : day - 1; // days since Monday
+    cutoff      = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diff);
+    periodLabel = 'This Week';
+  } else {
+    cutoff      = new Date(now - periodVal * 86400000);
+    periodLabel = `Last ${periodVal} days`;
+  }
+
   const cutoffStr = cutoff.toISOString();
-  const periodLabel = periodVal==='all'?'All Time':`Last ${periodVal} days`;
 
   // ── Fetch supplementary data (schedules + NSF) ───────────────────────────────
   const [schedRes, nsfRes] = await Promise.all([
