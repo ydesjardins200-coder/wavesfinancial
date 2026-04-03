@@ -825,7 +825,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
 
       <div class="field-row" style="margin-top:20px;">
         <div class="field"><label class="field-label">How would you like to receive your funds? <span class="req">*</span></label>
-          <div class="fund-group">
+          <div class="fund-group" id="fund-group-new">
             <label class="fund-option"><input type="radio" name="n-fund-method" value="direct" checked>
               <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
                 <span class="fund-title">Direct Deposit <span class="fund-badge free">Free</span></span>
@@ -1504,7 +1504,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       </div>
       <div class="field-row">
         <div class="field"><label class="field-label">How would you like to receive your funds? <span class="req">*</span></label>
-          <div class="fund-group">
+          <div class="fund-group" id="fund-group-renewal">
             <label class="fund-option"><input type="radio" name="r-fund-method" value="direct" checked>
               <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
                 <span class="fund-title">Direct Deposit <span class="fund-badge free">Free</span></span>
@@ -2306,9 +2306,12 @@ function vRadio(name){
 // ── PAYMENT SCHEDULE BUILDER ──────────────────────────────────────────────
 // Generates a full amortization table. Payments fall the day AFTER the
 // client's pay date — aligned with their pay frequency.
-function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
+function buildPaymentSchedule(containerId, principal, freq, nextPayStr, fundFee) {
   const container = document.getElementById(containerId);
   if (!container) return;
+
+  // Fee is added to total repayable, spread evenly across all payments
+  const feeAmount = parseFloat(fundFee || 0);
 
   // Parse next pay date — payments fall the day after payday
   const firstPay = new Date(nextPayStr + 'T12:00:00');
@@ -2340,10 +2343,12 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
     }
   }
 
-  // Calculate equal payment using the same formula as calcPayment()
-  const payment = calcPayment(principal, freq);
-  const totalOwed = payment * numPayments;
-  const totalInterest = totalOwed - principal;
+  // Calculate equal payment — fee spread across all payments
+  const payment      = calcPayment(principal, freq);
+  const feePerPmt    = feeAmount > 0 ? parseFloat((feeAmount / (config[freq]?.n || 8)).toFixed(2)) : 0;
+  const paymentTotal = payment + feePerPmt;
+  const totalOwed    = paymentTotal * numPayments;
+  const totalInterest= totalOwed - principal - feeAmount;
 
   // Build amortization — simple interest, split evenly
   // Remaining balance decreases by (payment - interest portion) each period
@@ -2353,12 +2358,12 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
   for (let i = 0; i < numPayments; i++) {
     const daysInPeriod = cfg.intervalDays || (freq === 'monthly' ? 30 : 15);
     const interestCharge = parseFloat((balance * dailyRate * daysInPeriod).toFixed(2));
-    const principal_portion = Math.min(balance, payment - interestCharge);
+    const principal_portion = Math.min(balance, paymentTotal - interestCharge - feePerPmt);
     balance = Math.max(0, parseFloat((balance - principal_portion).toFixed(2)));
     // Last payment — clear any rounding residual
-    const actualPayment = i === numPayments - 1 ? payment + balance : payment;
+    const actualPayment = i === numPayments - 1 ? paymentTotal + balance : paymentTotal;
     if (i === numPayments - 1) balance = 0;
-    rows.push({ date: dates[i], payment: actualPayment, interest: interestCharge, balance });
+    rows.push({ date: dates[i], payment: actualPayment, interest: interestCharge, fee: feePerPmt, balance });
   }
 
   // Format date as "Mon DD, YYYY"
@@ -2368,6 +2373,7 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
 
   const hSt = 'font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);padding:6px 8px;text-align:';
   const cSt = 'font-size:0.72rem;padding:7px 8px;border-top:1px solid rgba(160,154,245,0.07);text-align:';
+  const showFee = feeAmount > 0;
 
   const rowsHtml = rows.map((r, i) => {
     const isLast   = i === rows.length - 1;
@@ -2379,9 +2385,14 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
       + '<td style="' + cSt + 'left;color:var(--white);font-weight:600;">' + fmtDate(r.date) + '</td>'
       + '<td style="' + cSt + 'right;color:var(--white);font-weight:700;">$' + r.payment.toFixed(2) + '</td>'
       + '<td style="' + cSt + 'right;color:var(--text-muted);">$' + r.interest.toFixed(2) + '</td>'
+      + (showFee ? '<td style="' + cSt + 'right;color:var(--gold);">$' + r.fee.toFixed(2) + '</td>' : '')
       + '<td style="' + cSt + 'right;color:' + balColor + ';font-weight:' + balWt + ';">$' + r.balance.toFixed(2) + '</td>'
       + '</tr>';
   }).join('');
+
+  const feeNote = showFee
+    ? ' + funding fee $' + feeAmount.toFixed(2)
+    : '';
 
   container.innerHTML = ''
     + '<div style="border:1px solid rgba(160,154,245,0.15);border-radius:8px;overflow:hidden;margin-bottom:8px;">'
@@ -2392,6 +2403,7 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
     + '<th style="' + hSt + 'left;">Payment Date</th>'
     + '<th style="' + hSt + 'right;">Amount</th>'
     + '<th style="' + hSt + 'right;">Interest</th>'
+    + (showFee ? '<th style="' + hSt + 'right;color:var(--gold);">Fee</th>' : '')
     + '<th style="' + hSt + 'right;">Balance</th>'
     + '</tr></thead>'
     + '<tbody>' + rowsHtml + '</tbody>'
@@ -2400,43 +2412,146 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr) {
     + '<td colspan="2" style="font-size:0.7rem;font-weight:700;padding:7px 8px;color:var(--periwinkle);">Totals</td>'
     + '<td style="font-size:0.72rem;font-weight:800;padding:7px 8px;text-align:right;color:var(--white);">$' + totalOwed.toFixed(2) + '</td>'
     + '<td style="font-size:0.72rem;font-weight:700;padding:7px 8px;text-align:right;color:var(--text-muted);">$' + totalInterest.toFixed(2) + '</td>'
+    + (showFee ? '<td style="font-size:0.72rem;font-weight:700;padding:7px 8px;text-align:right;color:var(--gold);">$' + feeAmount.toFixed(2) + '</td>' : '')
     + '<td style="font-size:0.72rem;font-weight:800;padding:7px 8px;text-align:right;color:#1DE9C6;">$0.00</td>'
     + '</tr></tfoot>'
     + '</table></div>'
     + '<p style="font-size:0.65rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">'
     + 'Payments are due the day after each pay date, collected via Pre-Authorized Debit. '
     + 'Total cost of borrowing: <strong style="color:var(--white);">$' + totalOwed.toFixed(2) + '</strong>'
-    + ' (principal $' + principal.toLocaleString() + ' + interest $' + totalInterest.toFixed(2) + ').'
+    + ' (principal $' + principal.toLocaleString() + ' + interest $' + totalInterest.toFixed(2) + feeNote + ').'
     + '</p>';
 }
 
 function syncContractSummary() {
-  const amt = loanAmount;
-  document.getElementById('contract-amount').textContent  = '$'+amt.toLocaleString();
-  document.getElementById('contract-amount-2').textContent = '$'+amt.toLocaleString();
-  document.getElementById('n-chip-val').textContent   = '$'+amt.toLocaleString();
-  document.getElementById('n-chip-val-3').textContent = '$'+amt.toLocaleString();
+  const amt    = loanAmount;
+  const fee    = getFundFee('n-fund-method');
+  const total  = amt + fee;
+
+  document.getElementById('contract-amount').textContent   = '$' + amt.toLocaleString();
+  document.getElementById('contract-amount-2').textContent = '$' + amt.toLocaleString();
+  document.getElementById('n-chip-val').textContent        = '$' + amt.toLocaleString();
+  document.getElementById('n-chip-val-3').textContent      = '$' + amt.toLocaleString();
+
   const fundEl = document.querySelector('input[name="n-fund-method"]:checked');
-  const fundLabels = {direct:'Direct Deposit (Free)', instant:'Instant Deposit', etransfer:'Interac e-Transfer® (+$6)'};
-  if(fundEl) document.getElementById('contract-fund-method').textContent = fundLabels[fundEl.value]||fundEl.value;
+  if (fundEl && _paymentMethods) {
+    const m = _paymentMethods.find(x => x.id === fundEl.value);
+    const feeStr = m?.fee > 0 ? ` (+$${m.fee.toFixed(2)} fee)` : m?.fee === 0 ? ' (Free)' : '';
+    if (document.getElementById('contract-fund-method'))
+      document.getElementById('contract-fund-method').textContent = (m?.label || fundEl.value) + feeStr;
+  } else if (fundEl) {
+    const fundLabels = { direct:'Direct Deposit (Free)', instant:'Instant Deposit', etransfer:'Interac e-Transfer® (+$6.00)' };
+    if (document.getElementById('contract-fund-method'))
+      document.getElementById('contract-fund-method').textContent = fundLabels[fundEl.value] || fundEl.value;
+  }
+
   const freqEl = document.getElementById('n-pay-freq');
-  if(freqEl && freqEl.value) {
+  if (freqEl && freqEl.value) {
     const opt = freqEl.options[freqEl.selectedIndex];
     document.getElementById('contract-pay-freq').textContent = opt ? opt.text : '—';
   }
-  // Payment schedule
+
+  // Payment schedule — pass fee so it's spread across payments
   const nextPayEl = document.getElementById('n-next-pay');
   const freq = freqEl ? freqEl.value : '';
-  if(freq && nextPayEl && nextPayEl.value) {
-    buildPaymentSchedule('n-schedule-table', amt, freq, nextPayEl.value);
+  if (freq && nextPayEl && nextPayEl.value) {
+    buildPaymentSchedule('n-schedule-table', amt, freq, nextPayEl.value, fee);
   }
+
   // Set e-sig timestamp
   const now = new Date();
-  document.getElementById('sig-timestamp').textContent = now.toLocaleString('en-CA',{
-    year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'
+  document.getElementById('sig-timestamp').textContent = now.toLocaleString('en-CA', {
+    year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', timeZoneName:'short'
   });
   document.getElementById('sig-timestamp').dataset.iso = now.toISOString();
 }
+
+// ─── PAYMENT METHODS — DYNAMIC CONFIG ────────────────────────────────────────
+// Loaded from Railway on page load — reflects admin config
+let _paymentMethods = null; // null = not loaded yet
+
+async function loadPaymentMethods() {
+  try {
+    const res  = await fetch(RAILWAY_URL + '/api/config/payment-methods');
+    const data = await res.json();
+    _paymentMethods = data.methods || [];
+    renderPaymentMethods('n-fund-method', 'fund-group-new');
+    renderPaymentMethods('r-fund-method', 'fund-group-renewal');
+  } catch(err) {
+    console.warn('[PaymentMethods] Using defaults:', err.message);
+    _paymentMethods = null; // keep existing HTML
+  }
+}
+
+function renderPaymentMethods(radioName, groupId) {
+  const group = document.getElementById(groupId);
+  if (!group || !_paymentMethods) return;
+
+  // Filter by province if one is selected
+  const provEl = document.querySelector(`[name="${radioName === 'n-fund-method' ? 'n-province' : 'r-province'}"]`) ||
+                 document.getElementById(radioName === 'n-fund-method' ? 'n-prov' : 'r-prov');
+  const selectedProv = provEl?.value || '';
+
+  const available = _paymentMethods.filter(m => {
+    if (!m.enabled) return false;
+    if (m.provinces && m.provinces.length > 0 && selectedProv) {
+      return m.provinces.includes(selectedProv);
+    }
+    return true;
+  });
+
+  group.innerHTML = available.map((m, i) => {
+    const badgeHtml = m.fee > 0
+      ? `<span class="fund-badge fee">+$${m.fee.toFixed(2)}</span>`
+      : m.fee === 0 && m.badgeType === 'free'
+        ? `<span class="fund-badge free">Free</span>`
+        : '';
+    return `<label class="fund-option">
+      <input type="radio" name="${radioName}" value="${m.id}" ${i === 0 ? 'checked' : ''}
+        onchange="onFundMethodChange('${radioName}')">
+      <span class="fund-label"><span class="fund-dot"></span><span class="fund-info">
+        <span class="fund-title">${m.label} ${badgeHtml}</span>
+        <span class="fund-desc">${m.description}</span>
+      </span></span>
+    </label>`;
+  }).join('');
+}
+
+function onFundMethodChange(radioName) {
+  // Trigger contract summary update when fund method changes
+  if (radioName === 'n-fund-method') syncContractSummary();
+  else rSyncContractSummary?.();
+}
+
+function getFundFee(radioName) {
+  if (!_paymentMethods) {
+    // Fallback to hardcoded defaults
+    const el = document.querySelector(`input[name="${radioName}"]:checked`);
+    return el?.value === 'etransfer' ? 6 : 0;
+  }
+  const el = document.querySelector(`input[name="${radioName}"]:checked`);
+  if (!el) return 0;
+  const method = _paymentMethods.find(m => m.id === el.value);
+  return method?.fee || 0;
+}
+
+// Call on page load
+loadPaymentMethods();
+
+// Re-filter when province changes
+['n-prov', 'r-prov'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', () => {
+    renderPaymentMethods(id === 'n-prov' ? 'n-fund-method' : 'r-fund-method',
+                         id === 'n-prov' ? 'fund-group-new' : 'fund-group-renewal');
+  });
+});
+
+// Re-sync contract when fund method changes (static HTML radios)
+document.addEventListener('change', function(e) {
+  if (e.target.name === 'n-fund-method') syncContractSummary();
+  if (e.target.name === 'r-fund-method') rSyncContractSummary?.();
+});
 
 // ─── IBV ROUTING (Flinks ↔ VoPay iQ11) ──────────────────────────────────────
 const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
@@ -2855,29 +2970,37 @@ function rValidateStep2() {
 // ─── RENEWAL CONTRACT SYNC ────────────────────────────────────────────
 function rSyncContractSummary() {
   const amt = parseInt(document.getElementById('r-amount').value)||800;
-  document.getElementById('r-contract-amount').textContent  = '$'+amt.toLocaleString();
+  const fee = getFundFee('r-fund-method');
+  document.getElementById('r-contract-amount').textContent   = '$'+amt.toLocaleString();
   document.getElementById('r-contract-amount-2').textContent = '$'+amt.toLocaleString();
   document.getElementById('r-chip-val').textContent   = '$'+amt.toLocaleString();
   document.getElementById('r-chip-val-3').textContent = '$'+amt.toLocaleString();
-  const fundEl=document.querySelector('input[name="r-fund-method"]:checked');
-  const fundLabels={direct:'Direct Deposit (Free)',instant:'Instant Deposit',etransfer:'Interac e-Transfer® (+$6)'};
-  if(fundEl) document.getElementById('r-contract-fund').textContent=fundLabels[fundEl.value]||fundEl.value;
-  const freqEl=document.getElementById('r-pay-freq');
-  if(freqEl&&freqEl.value){
-    const opt=freqEl.options[freqEl.selectedIndex];
-    document.getElementById('r-contract-freq').textContent=opt?opt.text:'—';
+  const fundEl = document.querySelector('input[name="r-fund-method"]:checked');
+  if (fundEl && _paymentMethods) {
+    const m = _paymentMethods.find(x => x.id === fundEl.value);
+    const feeStr = m?.fee > 0 ? ` (+$${m.fee.toFixed(2)} fee)` : m?.fee === 0 ? ' (Free)' : '';
+    if (document.getElementById('r-contract-fund'))
+      document.getElementById('r-contract-fund').textContent = (m?.label || fundEl.value) + feeStr;
+  } else if (fundEl) {
+    const fundLabels = {direct:'Direct Deposit (Free)',instant:'Instant Deposit',etransfer:'Interac e-Transfer® (+$6.00)'};
+    if (document.getElementById('r-contract-fund'))
+      document.getElementById('r-contract-fund').textContent = fundLabels[fundEl.value]||fundEl.value;
   }
-  // Payment schedule
+  const freqEl = document.getElementById('r-pay-freq');
+  if (freqEl && freqEl.value) {
+    const opt = freqEl.options[freqEl.selectedIndex];
+    document.getElementById('r-contract-freq').textContent = opt ? opt.text : '—';
+  }
   const nextPayEl = document.getElementById('r-next-pay');
   const freq = freqEl ? freqEl.value : '';
-  if(freq && nextPayEl && nextPayEl.value) {
-    buildPaymentSchedule('r-schedule-table', amt, freq, nextPayEl.value);
+  if (freq && nextPayEl && nextPayEl.value) {
+    buildPaymentSchedule('r-schedule-table', amt, freq, nextPayEl.value, fee);
   }
-  const now=new Date();
-  document.getElementById('r-sig-timestamp').textContent=now.toLocaleString('en-CA',{
+  const now = new Date();
+  document.getElementById('r-sig-timestamp').textContent = now.toLocaleString('en-CA',{
     year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'
   });
-  document.getElementById('r-sig-timestamp').dataset.iso=now.toISOString();
+  document.getElementById('r-sig-timestamp').dataset.iso = now.toISOString();
 }
 
 // ─── RENEWAL FLINKS ───────────────────────────────────────────────────

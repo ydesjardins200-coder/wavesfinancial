@@ -607,6 +607,24 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="kyc-bulk-results" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;font-size:.72rem"></div>
       </div>
 
+      <!-- Payment Methods Configurator -->
+      <div id="pmethods-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Payment Methods</div>
+            <div style="font-size:.82rem;color:var(--muted)">Configure funding options shown in apply.html — labels, fees and province availability</div>
+          </div>
+          <button onclick="savePMethods()" id="pmethods-save-btn"
+            style="padding:8px 18px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+            💾 Save Changes
+          </button>
+        </div>
+        <div id="pmethods-list" style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:.72rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Loading…</div>
+        </div>
+        <div id="pmethods-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
+      </div>
+
       <!-- Summary stats bar -->
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
@@ -2724,6 +2742,115 @@ function updateSummaryHealth(){
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
 }
 
+/* ── PAYMENT METHODS CONFIG ──────────────────────────────────────────────────── */
+
+const PROVINCES = ['BC','ON','NS','NB','PE','NL','AB','MB','SK','QC','YT','NT','NU'];
+let _pmethods = [];
+
+async function initPMethods() {
+  try {
+    const res  = await fetch(RAILWAY_URL + '/api/config/payment-methods');
+    const data = await res.json();
+    _pmethods  = data.methods || [];
+    renderPMethods();
+  } catch(err) {
+    document.getElementById('pmethods-list').innerHTML =
+      `<div style="font-size:.72rem;color:var(--coral)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+function renderPMethods() {
+  const list = document.getElementById('pmethods-list');
+  if (!list) return;
+  list.innerHTML = _pmethods.map((m, i) => `
+    <div style="padding:14px 16px;background:rgba(8,6,20,.4);border:1px solid ${m.enabled ? 'rgba(160,154,245,.2)' : 'var(--border)'};border-radius:10px;transition:border-color .2s">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+        <!-- Enable toggle -->
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;flex-shrink:0">
+          <input type="checkbox" id="pm-enabled-${i}" ${m.enabled ? 'checked' : ''}
+            onchange="_pmethods[${i}].enabled=this.checked;renderPMethods()"
+            style="width:16px;height:16px;accent-color:var(--iris);cursor:pointer">
+          <span style="font-size:.72rem;font-weight:700;color:${m.enabled ? 'var(--white)' : 'var(--muted)'}">${m.enabled ? 'Enabled' : 'Disabled'}</span>
+        </label>
+        <span style="font-size:.65rem;color:var(--muted);padding:2px 8px;background:rgba(160,154,245,.06);border:1px solid rgba(160,154,245,.12);border-radius:100px">id: ${m.id}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:start;flex-wrap:wrap">
+        <!-- Label -->
+        <div>
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Label</div>
+          <input type="text" value="${m.label}" oninput="_pmethods[${i}].label=this.value"
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none">
+        </div>
+        <!-- Description -->
+        <div>
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Description</div>
+          <input type="text" value="${m.description}" oninput="_pmethods[${i}].description=this.value"
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none">
+        </div>
+        <!-- Fee -->
+        <div style="min-width:90px">
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Fee ($)</div>
+          <input type="number" min="0" step="0.01" value="${m.fee || 0}" oninput="_pmethods[${i}].fee=parseFloat(this.value)||0"
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:${m.fee > 0 ? 'var(--gold)' : 'var(--white)'};font-family:var(--font);font-size:.8rem;outline:none;text-align:right">
+        </div>
+      </div>
+      <!-- Province restrictions -->
+      <div style="margin-top:10px">
+        <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">
+          Restrict to provinces <span style="font-weight:400;text-transform:none">(leave all unchecked = available everywhere)</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${PROVINCES.map(p => `
+            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;padding:3px 8px;background:${(m.provinces||[]).includes(p)?'rgba(91,82,216,.2)':'rgba(255,255,255,.03)'};border:1px solid ${(m.provinces||[]).includes(p)?'rgba(91,82,216,.4)':'rgba(160,154,245,.1)'};border-radius:6px;transition:all .15s">
+              <input type="checkbox" ${(m.provinces||[]).includes(p)?'checked':''}
+                onchange="pmToggleProvince(${i},'${p}',this.checked)"
+                style="width:11px;height:11px;accent-color:var(--iris);cursor:pointer">
+              <span style="font-size:.65rem;font-weight:700;color:var(--white)">${p}</span>
+            </label>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function pmToggleProvince(methodIdx, province, checked) {
+  const m = _pmethods[methodIdx];
+  if (!m.provinces) m.provinces = [];
+  if (checked) { if (!m.provinces.includes(province)) m.provinces.push(province); }
+  else { m.provinces = m.provinces.filter(p => p !== province); }
+  renderPMethods();
+}
+
+async function savePMethods() {
+  const btn = document.getElementById('pmethods-save-btn');
+  const st  = document.getElementById('pmethods-status');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Saving…'; }
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/config/payment-methods', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ methods: _pmethods }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Save failed');
+    if (st) {
+      st.style.display = 'block';
+      st.style.cssText = 'display:block;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);color:var(--teal)';
+      st.textContent   = `✅ Saved — ${data.methods.length} methods. Apply.html will reflect changes immediately.`;
+      setTimeout(() => { if(st) st.style.display='none'; }, 4000);
+    }
+    showToast('Payment methods saved — apply.html updated');
+  } catch(err) {
+    if (st) {
+      st.style.display = 'block';
+      st.style.cssText = 'display:block;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);color:var(--coral)';
+      st.textContent   = `❌ ${err.message}`;
+    }
+    showToast('Save failed: ' + err.message, true);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Save Changes'; }
+  }
+}
+
 /* ── KYC / AML COMPLIANCE ─────────────────────────────────────────────────── */
 
 let kycEnabled = localStorage.getItem('waves_kyc') === 'true';
@@ -2911,6 +3038,7 @@ function initProcessor(){
   checkVoPayStatus();
   initIBV();
   initKYC();
+  initPMethods();
 }
 
 async function checkVoPayStatus(){
