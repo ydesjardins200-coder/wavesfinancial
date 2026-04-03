@@ -74,8 +74,9 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
 /* MAIN */
 .main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
-.tabs{display:flex;gap:2px;padding:12px 20px 0;border-bottom:1px solid var(--border);background:rgba(16,14,46,.5);}
-.tab{padding:8px 16px;border-radius:8px 8px 0 0;font-size:.78rem;font-weight:600;cursor:pointer;background:none;border:none;color:var(--muted);font-family:var(--font);transition:all .2s;border-bottom:2px solid transparent;position:relative;bottom:-1px;}
+.tabs{display:flex;gap:2px;padding:10px 16px 0;border-bottom:1px solid var(--border);background:rgba(16,14,46,.5);overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:7px 12px;border-radius:8px 8px 0 0;font-size:.74rem;font-weight:600;cursor:pointer;background:none;border:none;color:var(--muted);font-family:var(--font);transition:all .2s;border-bottom:2px solid transparent;position:relative;bottom:-1px;white-space:nowrap;}
 .tab:hover{color:var(--white);}
 .tab.active{color:var(--periwinkle);border-bottom-color:var(--iris);background:rgba(91,82,216,.08);}
 .tcnt{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:rgba(255,107,138,.2);color:var(--coral);font-size:.6rem;font-weight:800;margin-left:5px;}
@@ -605,6 +606,9 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="kyc-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
         <div id="kyc-bulk-results" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;font-size:.72rem"></div>
       </div>
+
+      <!-- Summary stats bar -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
           <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
           <div style="font-size:1.3rem;font-weight:800;color:var(--periwinkle)" id="hsum-clients">—</div>
