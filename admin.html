@@ -884,28 +884,53 @@ function renderList(){
     const pendingDisb=active.filter(l=>l.status==='pending_disbursement');
     document.getElementById('qtitle').textContent='Active Loans ('+active.length+')';
 
-    // DRD + PAD + Returns action bar
+    // DRD + PAD + Returns action bar — adapts to active processor
+    const isVoPay = activeProcessor === 'vopay';
     const drdBar=`
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+
+        ${isVoPay ? `
+        <!-- VoPay mode -->
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,212,170,.05);border:1px solid rgba(0,212,170,.2);border-radius:8px;flex-wrap:wrap">
+          <span style="font-size:.75rem;font-weight:700;color:var(--teal)">⚡ VoPay Active</span>
+          ${pendingDisb.length?`
+          <span style="font-size:.75rem;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
+          <button onclick="vopayDisburseAll()" style="padding:7px 14px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            ⚡ Disburse All via VoPay
+          </button>`:'<span style="font-size:.72rem;color:var(--muted)">No pending disbursements</span>'}
+          <button onclick="vopayCollectToday()" style="padding:7px 14px;background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.3);border-radius:6px;color:var(--blue);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+            💳 Collect Today's Payments
+          </button>
+          <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Returns processed automatically via webhook</span>
+        </div>
+        <div id="vopay-action-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(0,212,170,.2);border-radius:8px"></div>
+        ` : `
+        <!-- Manual EFT mode -->
         <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
           ${pendingDisb.length?`
           <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
           <a href="${RAILWAY_URL}/api/eft/drd" target="_blank"
              style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);text-decoration:none;font-size:.72rem;font-weight:700">
             📁 DRD — Disbursements
-          </a>`:''}
+          </a>`:``}
           <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 5 days</button>
           <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 14 days</button>
           <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ${nextBizDay()}</span>
         </div>
         <div id="pad-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px"></div>
+        `}
+
         <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
           <span style="font-size:.72rem;font-weight:700;color:var(--muted)">Returns &amp; NSF</span>
+          ${isVoPay ? `
+          <span style="font-size:.72rem;color:var(--muted)">✓ Returns processed automatically via VoPay webhook</span>
+          ` : `
           <label style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:6px;color:var(--coral);font-size:.72rem;font-weight:700;cursor:pointer">
             📥 Import Return File<input type="file" accept=".txt" style="display:none" onchange="importReturnFile(this)">
           </label>
           <button onclick="previewRetries()" style="padding:7px 14px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">🔄 NSF Retries Due Today</button>
           <button onclick="previewClearable()" style="padding:7px 14px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.25);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">✓ Mark Payments Cleared</button>
+          `}
         </div>
         <div id="return-results-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(255,107,138,.2);border-radius:8px"></div>
         <div id="retry-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(255,209,102,.2);border-radius:8px"></div>
@@ -933,9 +958,17 @@ function renderList(){
       const lsCls={active:'ls-active',pending_disbursement:'ls-pending',paid_off:'ls-paid-off',defaulted:'ls-defaulted'}[l.status]||'ls-pending';
       const statusLabel={active:'Active',pending_disbursement:'Pending Disbursement',paid_off:'✓ Paid Off',defaulted:'✗ Defaulted'}[l.status]||l.status.replace(/_/g,' ');
       const dueDate=l.due_date?new Date(l.due_date).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
-      const drdBtn=l.status==='pending_disbursement'?
-        `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
-            style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700">📁 DRD</a>`:'';
+      const drdBtn = l.status==='pending_disbursement' ? (
+        activeProcessor==='vopay'
+          ? `<button onclick="event.stopPropagation();vopayDisburseLoan('${l.id}','${l.ref}')"
+               style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
+               ⚡ Disburse
+             </button>`
+          : `<a href="${RAILWAY_URL}/api/eft/drd?loanIds=${l.id}" target="_blank" onclick="event.stopPropagation()"
+               style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);text-decoration:none;font-size:.62rem;font-weight:700">
+               📁 DRD
+             </a>`
+      ) : '';
       // Determine loan type from form_type or whether client has prior loans
       return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
         <div class="aref">${l.ref||'—'}</div>
@@ -2955,6 +2988,78 @@ function sig(label,value,pts,maxPts){
   const c=pct===0?'var(--teal)':pct<0.5?'var(--gold)':'var(--coral)';
   return `<div class="sig-card"><div class="sig-label">${label}</div><div class="sig-val">${value}</div><div class="sig-pts" style="color:${c}">${pts??0}pt/${maxPts}pt</div></div>`;
 }
+/* ── VOPAY ADMIN ACTIONS ─────────────────────────────────────────────────────── */
+
+async function vopayDisburseLoan(loanId, loanRef){
+  if(!confirm(`Disburse ${loanRef} via VoPay?`)) return;
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/vopay/disburse/${loanId}`,{method:'POST'});
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Failed');
+    showToast(`✅ ${loanRef} disbursed — txId: ${data.txId}`);
+    setTimeout(loadData, 1500);
+  } catch(err){ showToast('Disburse failed: '+err.message, true); }
+}
+
+async function vopayDisburseAll(){
+  const pending = allLoans.filter(l=>l.status==='pending_disbursement');
+  if(!pending.length){ showToast('No pending disbursements.'); return; }
+  if(!confirm(`Disburse ${pending.length} loan(s) via VoPay API?\n\n${pending.map(l=>`${l.ref} — $${Number(l.principal).toLocaleString()}`).join('\n')}`)) return;
+
+  const box = document.getElementById('vopay-action-box');
+  if(box){ box.style.display='block'; box.innerHTML='<div style="font-size:.78rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Submitting disbursements…</div>'; }
+
+  const results = [];
+  for(const loan of pending){
+    try{
+      const resp = await fetch(`${RAILWAY_URL}/api/vopay/disburse/${loan.id}`,{method:'POST'});
+      const data = await resp.json();
+      if(!resp.ok) throw new Error(data.error||'Failed');
+      results.push(`✅ ${loan.ref} — txId: ${data.txId}`);
+    } catch(err){
+      results.push(`❌ ${loan.ref} — ${err.message}`);
+    }
+  }
+
+  if(box){
+    box.innerHTML = `<div style="font-size:.75rem;font-weight:700;color:var(--teal);margin-bottom:8px">Disburse Results</div>`+
+      results.map(r=>`<div style="font-size:.72rem;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)">${r}</div>`).join('');
+  }
+  showToast(`${results.filter(r=>r.startsWith('✅')).length}/${results.length} disbursements submitted`);
+  setTimeout(loadData, 2000);
+}
+
+async function vopayCollectToday(){
+  const today = new Date().toISOString().slice(0,10);
+  if(!confirm(`Run VoPay collections for ${today}?\n\nThis will debit all borrowers with payments due today.`)) return;
+
+  const box = document.getElementById('vopay-action-box');
+  if(box){ box.style.display='block'; box.innerHTML='<div style="font-size:.78rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Running collections for today…</div>'; }
+
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/vopay/collect-today`,{method:'POST'});
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Failed');
+
+    if(box){
+      box.innerHTML = `
+        <div style="display:flex;gap:16px;margin-bottom:10px">
+          <div style="font-size:.78rem;color:var(--teal)">✅ Submitted: <strong>${data.submitted}</strong></div>
+          ${data.failed?`<div style="font-size:.78rem;color:var(--coral)">❌ Failed: <strong>${data.failed}</strong></div>`:''}
+          <div style="font-size:.78rem;color:var(--muted)">Date: ${data.date}</div>
+        </div>
+        ${(data.results||[]).map(r=>`
+          <div style="font-size:.7rem;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+            ${r.txId?'✅':'❌'} ${r.loanRef||r.id} ${r.txId?'— txId: '+r.txId:r.error?'— '+r.error:''}
+          </div>`).join('')}`;
+    }
+    showToast(`${data.submitted} payment${data.submitted!==1?'s':''} submitted to VoPay`);
+  } catch(err){
+    if(box) box.innerHTML=`<div style="font-size:.75rem;color:var(--coral)">❌ ${err.message}</div>`;
+    showToast('Collection failed: '+err.message, true);
+  }
+}
+
 /* ── PAD PREVIEW + CONFIRM ── */
 async function previewPAD(days){
   const box=document.getElementById('pad-preview-box');
