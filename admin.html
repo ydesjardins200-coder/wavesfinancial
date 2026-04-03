@@ -631,7 +631,29 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="pmethods-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
 
-      <!-- Summary stats bar -->
+      <!-- Optional Fees Configurator -->
+      <div id="ofees-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Optional Fees</div>
+            <div style="font-size:.82rem;color:var(--muted)">Add-on fees shown as checkboxes in apply.html — borrower opts in, fee added to total repayable</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onclick="addOFee()"
+              style="padding:8px 14px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);border-radius:8px;color:var(--gold);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+              + Add Fee
+            </button>
+            <button onclick="saveOFees()" id="ofees-save-btn"
+              style="padding:8px 18px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+              💾 Save Changes
+            </button>
+          </div>
+        </div>
+        <div id="ofees-list" style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:.72rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Loading…</div>
+        </div>
+        <div id="ofees-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
           <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
@@ -2748,6 +2770,137 @@ function updateSummaryHealth(){
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
 }
 
+/* ── OPTIONAL FEES CONFIG ────────────────────────────────────────────────────── */
+
+let _ofees = [];
+
+async function initOFees() {
+  try {
+    const res  = await fetch(RAILWAY_URL + '/api/config/optional-fees');
+    const data = await res.json();
+    _ofees     = data.fees || [];
+    renderOFees();
+  } catch(err) {
+    document.getElementById('ofees-list').innerHTML =
+      `<div style="font-size:.72rem;color:var(--coral)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+function renderOFees() {
+  const list = document.getElementById('ofees-list');
+  if (!list) return;
+  if (!_ofees.length) {
+    list.innerHTML = `<div style="font-size:.72rem;color:var(--muted);padding:8px 0">No optional fees configured. Click + Add Fee to create one.</div>`;
+    return;
+  }
+  list.innerHTML = _ofees.map((f, i) => `
+    <div style="padding:14px 16px;background:rgba(8,6,20,.4);border:1px solid ${f.enabled ? 'rgba(255,209,102,.2)' : 'var(--border)'};border-radius:10px;transition:border-color .2s">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;flex-shrink:0">
+          <input type="checkbox" ${f.enabled ? 'checked' : ''}
+            onchange="_ofees[${i}].enabled=this.checked;renderOFees()"
+            style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer">
+          <span style="font-size:.72rem;font-weight:700;color:${f.enabled ? 'var(--white)' : 'var(--muted)'}">${f.enabled ? 'Enabled' : 'Disabled'}</span>
+        </label>
+        <span style="font-size:.65rem;color:var(--muted);padding:2px 8px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.12);border-radius:100px">id: ${f.id}</span>
+        <button onclick="deleteOFee(${i})"
+          style="margin-left:auto;padding:3px 10px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:6px;color:var(--coral);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer">
+          🗑 Remove
+        </button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:start">
+        <div>
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Label</div>
+          <input type="text" value="${f.label}" oninput="_ofees[${i}].label=this.value"
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none">
+        </div>
+        <div>
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Description</div>
+          <input type="text" value="${f.description}" oninput="_ofees[${i}].description=this.value"
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none">
+        </div>
+        <div style="min-width:90px">
+          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Fee ($)</div>
+          <input type="number" min="0" step="0.01" value="${f.fee || 0}" oninput="_ofees[${i}].fee=parseFloat(this.value)||0"
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--gold);font-family:var(--font);font-size:.8rem;outline:none;text-align:right">
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">
+          Restrict (hide) in provinces <span style="font-weight:400;text-transform:none">(leave unchecked = shown everywhere)</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${PROVINCES.map(p => `
+            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;padding:3px 8px;background:${(f.provinces||[]).includes(p)?'rgba(255,209,102,.15)':'rgba(255,255,255,.03)'};border:1px solid ${(f.provinces||[]).includes(p)?'rgba(255,209,102,.4)':'rgba(160,154,245,.1)'};border-radius:6px;transition:all .15s">
+              <input type="checkbox" ${(f.provinces||[]).includes(p)?'checked':''}
+                onchange="ofToggleProvince(${i},'${p}',this.checked)"
+                style="width:11px;height:11px;accent-color:var(--gold);cursor:pointer">
+              <span style="font-size:.65rem;font-weight:700;color:var(--white)">${p}</span>
+            </label>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addOFee() {
+  _ofees.push({
+    id:          'fee_' + Date.now(),
+    label:       'New Optional Fee',
+    description: 'Description shown to the borrower.',
+    fee:         0,
+    enabled:     true,
+    provinces:   [],
+  });
+  renderOFees();
+  setTimeout(() => {
+    const list = document.getElementById('ofees-list');
+    if (list) list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function deleteOFee(i) {
+  if (!confirm(`Remove "${_ofees[i].label}"?\n\nThis will hide it from apply.html after saving.`)) return;
+  _ofees.splice(i, 1);
+  renderOFees();
+}
+
+function ofToggleProvince(feeIdx, province, checked) {
+  const f = _ofees[feeIdx];
+  if (!f.provinces) f.provinces = [];
+  if (checked) { if (!f.provinces.includes(province)) f.provinces.push(province); }
+  else { f.provinces = f.provinces.filter(p => p !== province); }
+  renderOFees();
+}
+
+async function saveOFees() {
+  const btn = document.getElementById('ofees-save-btn');
+  const st  = document.getElementById('ofees-status');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Saving…'; }
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/config/optional-fees', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ fees: _ofees }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Save failed');
+    if (st) {
+      st.style.cssText = 'display:block;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);color:var(--teal)';
+      st.textContent   = `✅ Saved — ${data.fees.length} optional fees. Apply.html updated immediately.`;
+      setTimeout(() => { if(st) st.style.display='none'; }, 4000);
+    }
+    showToast('Optional fees saved');
+  } catch(err) {
+    if (st) {
+      st.style.cssText = 'display:block;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);color:var(--coral)';
+      st.textContent   = `❌ ${err.message}`;
+    }
+    showToast('Save failed: ' + err.message, true);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Save Changes'; }
+  }
+}
+
 /* ── PAYMENT METHODS CONFIG ──────────────────────────────────────────────────── */
 
 const PROVINCES = ['BC','ON','NS','NB','PE','NL','AB','MB','SK','QC','YT','NT','NU'];
@@ -3075,6 +3228,7 @@ function initProcessor(){
   initIBV();
   initKYC();
   initPMethods();
+  initOFees();
 }
 
 async function checkVoPayStatus(){
