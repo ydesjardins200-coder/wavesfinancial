@@ -614,10 +614,16 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
             <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Payment Methods</div>
             <div style="font-size:.82rem;color:var(--muted)">Configure funding options shown in apply.html — labels, fees and province availability</div>
           </div>
-          <button onclick="savePMethods()" id="pmethods-save-btn"
-            style="padding:8px 18px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
-            💾 Save Changes
-          </button>
+          <div style="display:flex;gap:8px">
+            <button onclick="addPMethod()"
+              style="padding:8px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:8px;color:var(--teal);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+              + Add Method
+            </button>
+            <button onclick="savePMethods()" id="pmethods-save-btn"
+              style="padding:8px 18px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+              💾 Save Changes
+            </button>
+          </div>
         </div>
         <div id="pmethods-list" style="display:flex;flex-direction:column;gap:10px">
           <div style="font-size:.72rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Loading…</div>
@@ -2773,6 +2779,10 @@ function renderPMethods() {
           <span style="font-size:.72rem;font-weight:700;color:${m.enabled ? 'var(--white)' : 'var(--muted)'}">${m.enabled ? 'Enabled' : 'Disabled'}</span>
         </label>
         <span style="font-size:.65rem;color:var(--muted);padding:2px 8px;background:rgba(160,154,245,.06);border:1px solid rgba(160,154,245,.12);border-radius:100px">id: ${m.id}</span>
+        <button onclick="deletePMethod(${i})" title="Delete this method"
+          style="margin-left:auto;padding:3px 10px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:6px;color:var(--coral);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer">
+          🗑 Remove
+        </button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:start;flex-wrap:wrap">
         <!-- Label -->
@@ -2810,6 +2820,32 @@ function renderPMethods() {
         </div>
       </div>
     </div>`).join('');
+}
+
+function addPMethod() {
+  const id = 'custom_' + Date.now();
+  _pmethods.push({
+    id,
+    label:       'New Method',
+    description: 'Description of this funding option.',
+    fee:         0,
+    enabled:     true,
+    badgeType:   'none',
+    provinces:   [],
+  });
+  renderPMethods();
+  // Scroll to the new card
+  setTimeout(() => {
+    const list = document.getElementById('pmethods-list');
+    if (list) list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function deletePMethod(i) {
+  const m = _pmethods[i];
+  if (!confirm(`Remove "${m.label}"?\n\nThis will hide it from apply.html after saving.`)) return;
+  _pmethods.splice(i, 1);
+  renderPMethods();
 }
 
 function pmToggleProvince(methodIdx, province, checked) {
