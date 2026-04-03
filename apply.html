@@ -2469,24 +2469,26 @@ function renderOptionalFees(funnel) {
   const group   = document.getElementById(`ofees-group-${prefix}`);
   if (!section || !group || !_optionalFees) return;
 
-  // Filter by province
-  const provEl      = document.getElementById(funnel === 'renewal' ? 'r-prov' : 'n-prov');
+  // Hide until province is selected
+  const provEl       = document.getElementById(funnel === 'renewal' ? 'r-prov' : 'n-prov');
   const selectedProv = provEl?.value || '';
+
+  if (!selectedProv) { section.style.display = 'none'; return; }
 
   const available = _optionalFees.filter(f => {
     if (!f.enabled) return false;
-    if (f.provinces?.length > 0 && selectedProv) return !f.provinces.includes(selectedProv);
+    if (f.provinces?.length > 0) return !f.provinces.includes(selectedProv);
     return true;
   });
 
   if (!available.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
 
-  const radioName = funnel === 'renewal' ? 'r-fund-method' : 'n-fund-method';
   group.innerHTML = available.map(f => `
     <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid rgba(255,209,102,.15);border-radius:10px;cursor:pointer">
       <input type="checkbox" id="ofee-${funnel}-${f.id}" name="ofee-${funnel}" value="${f.id}"
         data-fee="${f.fee}"
+        checked
         onchange="onOptionalFeeChange('${funnel}')"
         style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;margin-top:2px;flex-shrink:0">
       <span style="flex:1">
@@ -2497,6 +2499,9 @@ function renderOptionalFees(funnel) {
         <span style="font-size:.72rem;color:var(--text-muted)">${f.description}</span>
       </span>
     </label>`).join('');
+
+  // Trigger recalc now that fees are checked
+  onOptionalFeeChange(funnel);
 }
 
 function onOptionalFeeChange(funnel) {
