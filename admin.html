@@ -1260,6 +1260,27 @@ async function openClient(clientId, highlightRef){
   renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef, nsfFees);
   // Render notes feed after DOM is ready
   renderNotesFeed(clientId, notesRes.data||[]);
+
+  // ── AUTO-APPLY FEES: silently fix schedule rows that are missing optional fees ──
+  for (const loan of loans) {
+    if (loan.status !== 'active' && loan.status !== 'pending_disbursement') continue;
+    const app = apps.find(a => a.ref === loan.ref);
+    if (!app?.optional_fees) continue;
+    let fees = [];
+    try { fees = JSON.parse(app.optional_fees); } catch { continue; }
+    if (!fees.length) continue;
+    const optTotal   = fees.reduce((s,f) => s + parseFloat(f.fee||0), 0);
+    const feePerPmt  = parseFloat((optTotal / (loan.payment_count||8)).toFixed(2));
+    const sched      = schedMap[loan.id] || [];
+    const firstSched = sched.find(r => r.status === 'scheduled');
+    if (!firstSched) continue;
+    // If any scheduled row is missing the fee portion, auto-fix silently
+    const storedAmt  = parseFloat(firstSched.scheduled_amount || 0);
+    const loanAmt    = parseFloat(loan.payment_amount || 0);
+    if (feePerPmt > 0 && Math.abs(storedAmt - loanAmt) > 0.01) {
+      autoRecalcFees(loan.id, app.id);
+    }
+  }
 }
 
 function renderClientPage(client, apps, loans, schedMap, contractMap, highlightRef, nsfFees=[]){
@@ -4158,8 +4179,25 @@ function lhFeeButton(loanId, app) {
   } catch(e) { return ''; }
 }
 
+async function autoRecalcFees(loanId, applicationId) {
+  // Silent version — called automatically on client open, no confirm/toast on success
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/loans/' + loanId + '/recalc-fees', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ applicationId }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) { console.warn('[autoRecalcFees] failed:', data.error); return; }
+    console.log('[autoRecalcFees]', data.loanRef, '— updated', data.paymentsUpdated, 'rows to $' + data.newPaymentAmount);
+    // Reload so schedule table shows updated amounts
+    await loadData();
+  } catch(err) {
+    console.warn('[autoRecalcFees] error:', err.message);
+  }
+}
+
 async function recalcScheduleFeesFromApp(applicationId) {
-  // Find the loan for this application
   const app = allApps.find(a => a.id === applicationId);
   if (!app) { showToast('Application not found', true); return; }
   const loan = allLoans.find(l => l.ref === app.ref);
@@ -4168,19 +4206,18 @@ async function recalcScheduleFeesFromApp(applicationId) {
 }
 
 async function recalcScheduleFees(loanId, applicationId) {
-  if(!confirm('Recalculate all schedule amounts to include the optional fees from this application?\n\nThis will update the scheduled_amount on every row.')) return;
   try {
-    const resp = await fetch(`${RAILWAY_URL}/api/loans/${loanId}/recalc-fees`, {
+    const resp = await fetch(RAILWAY_URL + '/api/loans/' + loanId + '/recalc-fees', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ applicationId }),
     });
     const data = await resp.json();
-    if(!resp.ok) throw new Error(data.error||'Failed');
-    showToast(`✅ Schedule updated — $${data.newPaymentAmount}/payment (${data.paymentsUpdated} rows)`);
-    setTimeout(loadData, 800);
+    if (!resp.ok) throw new Error(data.error || 'Failed');
+    showToast('✅ Schedule updated — $' + data.newPaymentAmount + '/payment (' + data.paymentsUpdated + ' rows)');
+    await loadData();
   } catch(err) {
-    showToast('Recalc failed: '+err.message, true);
+    showToast('Recalc failed: ' + err.message, true);
   }
 }
 
