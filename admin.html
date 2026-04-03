@@ -351,6 +351,24 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 #ibv-btn-vopay:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(0,212,170,.3);color:var(--white);}
 #ibv-btn-vopay.proc-disabled{opacity:.45;cursor:not-allowed !important;}
 
+/* ── KYC TOGGLE ── */
+#kyc-btn-off.proc-active{background:rgba(107,125,179,.12);border-color:#6b7db3;color:var(--white);}
+#kyc-btn-off:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
+#kyc-btn-off:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
+#kyc-btn-on.proc-active{background:rgba(162,155,254,.12);border-color:var(--periwinkle);color:var(--white);}
+#kyc-btn-on:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
+#kyc-btn-on:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(162,155,254,.3);color:var(--white);}
+#kyc-btn-on.proc-disabled{opacity:.45;cursor:not-allowed !important;}
+
+/* ── KYC STATUS BADGES (in application rows) ── */
+.kyc-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:100px;font-size:.58rem;font-weight:700;white-space:nowrap;}
+.kyc-clear{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:#00D4AA;}
+.kyc-flag{background:rgba(255,92,115,.12);border:1px solid rgba(255,92,115,.3);color:#FF5C73;}
+.kyc-review{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);color:#F5A623;}
+.kyc-pending{background:rgba(162,155,254,.1);border:1px solid rgba(162,155,254,.25);color:#A29BFE;}
+.kyc-skip{background:rgba(107,125,179,.08);border:1px solid rgba(107,125,179,.2);color:#6b7db3;}
+.kyc-error{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:#F5A623;}
+
 /* ── REPORTING ENGINE ── */
 .rpt-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
 .rpt-kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;transition:border-color .18s;}
@@ -555,7 +573,38 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="ibv-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
+      <!-- KYC/AML Compliance Selector -->
+      <div id="kyc-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">KYC / AML Compliance Screening</div>
+            <div style="font-size:.82rem;color:var(--muted)">PEP · Sanctions · Adverse Media — runs automatically on every approved application</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="kyc-btn-off" onclick="setKYC(false)"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:120px">
+              <span style="font-size:1.3rem">⏸</span>
+              <span style="font-size:.8rem;font-weight:700">Off</span>
+              <span style="font-size:.6rem">Manual review only</span>
+            </button>
+            <button id="kyc-btn-on" onclick="setKYC(true)"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:120px">
+              <span style="font-size:1.3rem">🛡️</span>
+              <span style="font-size:.8rem;font-weight:700">KYC2020</span>
+              <span style="font-size:.6rem">Auto PEP + Sanctions</span>
+              <span style="font-size:.58rem;margin-top:2px" id="kyc-status-pill">Credentials pending</span>
+            </button>
+            <div style="width:1px;height:40px;background:var(--border)"></div>
+            <button onclick="kycBulkScreen()"
+              id="kyc-bulk-btn"
+              style="padding:10px 16px;background:rgba(162,155,254,.08);border:1px solid rgba(162,155,254,.2);border-radius:10px;color:var(--periwinkle);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s">
+              🔍 Screen All Unscreened
+            </button>
+          </div>
+        </div>
+        <div id="kyc-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
+        <div id="kyc-bulk-results" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;font-size:.72rem"></div>
+      </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
           <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
           <div style="font-size:1.3rem;font-weight:800;color:var(--periwinkle)" id="hsum-clients">—</div>
@@ -1019,9 +1068,9 @@ function renderList(){
   }
 
   // ── APPLICATIONS TABS (queue / all / approved / declined) ────────────────────
-  const cols='100px 1fr 80px 90px 90px 80px 90px 130px';
+  const cols='100px 1fr 80px 90px 90px 80px 90px 100px 130px';
   document.getElementById('col-head').style.gridTemplateColumns=cols;
-  document.getElementById('col-head').innerHTML=th('Ref')+th('Applicant','name')+th('Type','type')+th('Amount','amount')+th('Score','score')+th('Tier','tier')+th('Submitted','date')+th('Decision');
+  document.getElementById('col-head').innerHTML=th('Ref')+th('Applicant','name')+th('Type','type')+th('Amount','amount')+th('Score','score')+th('Tier','tier')+th('Submitted','date')+th('KYC')+th('Decision');
 
   let apps=[...allApps];
   if(currentTab==='queue')    apps=apps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at);
@@ -1056,6 +1105,11 @@ function renderList(){
       <div style="font-size:.82rem;font-weight:700;color:${scoreColor(a.risk_score)}">${a.risk_score??'—'}</div>
       <div><span class="tb ${tc}">${a.tier||'—'}</span></div>
       <div style="font-size:.68rem;color:var(--muted)">${a.submitted_at?timeAgo(a.submitted_at):'—'}</div>
+      <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
+        ${kycBadge(a.kyc_status)}
+        ${!a.kyc_status?`<button onclick="event.stopPropagation();kycScreenApp('${a.id}','${a.ref}')"
+          style="font-size:.58rem;padding:2px 6px;background:rgba(162,155,254,.08);border:1px solid rgba(162,155,254,.2);border-radius:4px;color:var(--periwinkle);cursor:pointer;font-family:var(--font)">Screen</button>`:''}
+      </div>
       <div><span class="db ${dc}">${dl}</span></div>
     </div>`;
   }).join('');
@@ -2662,6 +2716,116 @@ function updateSummaryHealth(){
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
 }
 
+/* ── KYC / AML COMPLIANCE ─────────────────────────────────────────────────── */
+
+let kycEnabled = localStorage.getItem('waves_kyc') === 'true';
+
+async function initKYC(){
+  try{
+    const res  = await fetch(RAILWAY_URL+'/api/kyc/status', {signal: AbortSignal.timeout(5000)});
+    const data = await res.json();
+    kycEnabled = data.enabled;
+    localStorage.setItem('waves_kyc', kycEnabled);
+
+    const pill   = document.getElementById('kyc-status-pill');
+    const kycBtn = document.getElementById('kyc-btn-on');
+
+    if(data.configured){
+      if(pill){ pill.textContent = data.sandbox ? '✓ Sandbox active' : '✓ Live'; pill.style.color='var(--teal)'; }
+      kycBtn?.classList.remove('proc-disabled');
+    } else {
+      if(pill){ pill.textContent = 'Set KYC_API_KEY in Railway'; pill.style.color='var(--muted)'; }
+      kycBtn?.classList.add('proc-disabled');
+      if(kycEnabled){ kycEnabled=false; localStorage.setItem('waves_kyc','false'); }
+    }
+  } catch {
+    document.getElementById('kyc-btn-on')?.classList.add('proc-disabled');
+  }
+  renderKYCUI();
+}
+
+function setKYC(enabled){
+  if(enabled && document.getElementById('kyc-btn-on')?.classList.contains('proc-disabled')){
+    showToast('Set KYC_API_KEY and KYC_ENABLED=true in Railway to activate KYC screening.', true);
+    return;
+  }
+  kycEnabled = enabled;
+  localStorage.setItem('waves_kyc', enabled);
+  renderKYCUI();
+  showToast(enabled ? '🛡️ KYC screening enabled — runs on every approval' : '⏸ KYC screening disabled');
+}
+
+function renderKYCUI(){
+  const offBtn = document.getElementById('kyc-btn-off');
+  const onBtn  = document.getElementById('kyc-btn-on');
+  const bar    = document.getElementById('kyc-status-bar');
+  if(!offBtn||!onBtn||!bar) return;
+  offBtn.classList.toggle('proc-active', !kycEnabled);
+  onBtn.classList.toggle('proc-active',  kycEnabled);
+
+  if(kycEnabled){
+    bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(162,155,254,.06);border:1px solid rgba(162,155,254,.15)';
+    bar.innerHTML=`<span>🛡️</span><span style="color:var(--periwinkle);font-weight:700">KYC2020 Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">PEP · OFAC · Canadian Sanctions · Adverse Media — auto-runs on every approval</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(162,155,254,.15);border:1px solid rgba(162,155,254,.3);border-radius:100px;color:var(--periwinkle)">● Active</span>`;
+  } else {
+    bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(107,125,179,.05);border:1px solid rgba(107,125,179,.12)';
+    bar.innerHTML=`<span>⏸</span><span style="color:#6b7db3;font-weight:700">KYC Screening Off</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">No automatic compliance screening — use manual screen buttons per application</span>`;
+  }
+}
+
+function kycBadge(status){
+  const labels = { clear:'✓ Clear', flag:'🚨 Flagged', review:'⚠ Review', pending:'⏳ Pending', skipped:'— No Screen', error:'⚠ Error' };
+  const cls    = { clear:'kyc-clear', flag:'kyc-flag', review:'kyc-review', pending:'kyc-pending', skipped:'kyc-skip', error:'kyc-error' };
+  if(!status) return `<span class="kyc-badge kyc-skip">— No Screen</span>`;
+  return `<span class="kyc-badge ${cls[status]||'kyc-skip'}">${labels[status]||'—'}</span>`;
+}
+
+async function kycScreenApp(applicationId, ref){
+  if(!confirm(`Run KYC/AML screen for ${ref}?\n\nThis will check against PEP lists, OFAC, Canadian sanctions, and adverse media.`)) return;
+  showToast(`Screening ${ref}…`);
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/kyc/screen/${applicationId}`, {method:'POST'});
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Failed');
+    showToast(`${ref}: ${data.summary||data.status}`);
+    loadData();
+  } catch(err){ showToast('KYC error: '+err.message, true); }
+}
+
+async function kycBulkScreen(){
+  const btn = document.getElementById('kyc-bulk-btn');
+  const box = document.getElementById('kyc-bulk-results');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Screening…'; }
+  if(box){ box.style.display='block'; box.innerHTML='<div class="spinner" style="display:inline-block"></div> Running KYC screens…'; }
+
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/kyc/bulk-screen`, {method:'POST'});
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Failed');
+
+    if(box){
+      box.innerHTML = `
+        <div style="display:flex;gap:16px;margin-bottom:8px">
+          <span style="color:var(--teal)">✅ Screened: <strong>${data.screened}</strong></span>
+          ${data.flagged?`<span style="color:var(--coral)">🚨 Flagged: <strong>${data.flagged}</strong></span>`:''}
+          ${data.review?`<span style="color:var(--gold)">⚠ Review: <strong>${data.review}</strong></span>`:''}
+        </div>
+        ${(data.results||[]).map(r=>`
+          <div style="display:flex;gap:8px;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+            ${kycBadge(r.status)}
+            <span style="font-size:.7rem;color:var(--muted)">${r.ref}</span>
+            <span style="font-size:.68rem;color:var(--muted);margin-left:auto">${r.summary||''}</span>
+          </div>`).join('')}`;
+    }
+    showToast(`Bulk KYC: ${data.screened} screened, ${data.flagged||0} flagged`);
+    setTimeout(loadData, 1500);
+  } catch(err){
+    if(box) box.innerHTML=`<span style="color:var(--coral)">❌ ${err.message}</span>`;
+    showToast('Bulk screen failed: '+err.message, true);
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='🔍 Screen All Unscreened'; }
+  }
+}
+
 /* ── IBV PROVIDER ─────────────────────────────────────────────────────────── */
 
 let activeIBV = localStorage.getItem('waves_ibv') || 'flinks';
@@ -2729,6 +2893,7 @@ function initProcessor(){
   renderProcessorUI();
   checkVoPayStatus();
   initIBV();
+  initKYC();
 }
 
 async function checkVoPayStatus(){
