@@ -4345,14 +4345,14 @@ async function renderReports(){
         ${isCurrentMonth ? `<rect x="${x + W * .15}%" y="${height + 16}" width="${W * .7}%" height="2" fill="${color}" rx="1" opacity=".5"/>` : ''}
         <text x="${x + W / 2}%" y="${height + 13}" text-anchor="middle"
           font-size="7.5" fill="${isCurrentMonth ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.3)'}"
-          font-weight="${isCurrentMonth ? '700' : '400'}">${lbl}</text>
+          font-weight="${isCurrentMonth ? '700' : '400'}">${m.slice(5) + '/' + m.slice(2,4)}</text>
         ${valStr ? `<text x="${x + W / 2}%" y="${height - h}" text-anchor="middle"
           font-size="7" fill="${color}" font-weight="700" dy="-2">${valStr}</text>` : ''}
       </g>`;
     }).join('');
     return `<div class="rpt-chart-wrap">
-      <svg viewBox="0 0 100 ${height + 22}" xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none" style="width:100%;height:${height + 22}px;display:block">
+      <svg viewBox="0 0 100 ${height + 28}" xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none" style="width:100%;height:${height + 28}px;display:block">
         <!-- Grid lines -->
         ${[.25,.5,.75,1].map(f => `<line x1="0" y1="${height - Math.round(f*height) + 4}" x2="100%" y2="${height - Math.round(f*height) + 4}" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>`).join('')}
         ${bars}
