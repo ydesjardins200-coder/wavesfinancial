@@ -3843,7 +3843,7 @@ async function initLoanSettings() {
         const enabled = served.includes(p.code);
         return `<label style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${enabled?'rgba(29,233,198,.06)':'rgba(255,255,255,.02)'};border:1px solid ${enabled?'rgba(29,233,198,.2)':'rgba(255,255,255,.08)'};border-radius:8px;cursor:pointer;transition:all .2s" id="prov-label-${p.code}">
           <div onclick="toggleProvince('${p.code}')" id="prov-toggle-${p.code}"
-            style="width:34px;height:18px;border-radius:9px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;background:${enabled?'var(--teal)':'rgba(255,255,255,.1)'}">
+            data-on="${enabled?'1':'0'}" style="width:34px;height:18px;border-radius:9px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;background:${enabled?'var(--teal)':'rgba(255,255,255,.1)'}">
             <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;transition:left .2s;left:${enabled?'18px':'2px'}"></div>
           </div>
           <div>
@@ -3865,8 +3865,9 @@ function toggleProvince(code) {
   const name   = document.getElementById('prov-name-'  + code);
   const status = document.getElementById('prov-status-' + code);
   if (!toggle) return;
-  const isOn = toggle.style.background === 'var(--teal)';
+  const isOn = toggle.dataset.on === '1';
   const newOn = !isOn;
+  toggle.dataset.on = newOn ? '1' : '0';
   toggle.style.background = newOn ? 'var(--teal)' : 'rgba(255,255,255,.1)';
   toggle.querySelector('div').style.left = newOn ? '18px' : '2px';
   if (label)  { label.style.background  = newOn ? 'rgba(29,233,198,.06)' : 'rgba(255,255,255,.02)'; label.style.borderColor = newOn ? 'rgba(29,233,198,.2)' : 'rgba(255,255,255,.08)'; }
@@ -3876,7 +3877,7 @@ function toggleProvince(code) {
 
 function getServedProvinces() {
   return ALL_PROVINCES
-    .filter(p => document.getElementById('prov-toggle-'+p.code)?.style.background === 'var(--teal)')
+    .filter(p => document.getElementById('prov-toggle-'+p.code)?.dataset.on === '1')
     .map(p => p.code);
 }
 
