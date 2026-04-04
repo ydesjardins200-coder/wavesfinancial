@@ -594,7 +594,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <div class="amount-hero">
         <div class="amount-label" id="amount-label">How much do you need?</div>
         <div class="amount-display" id="amount-display">$300</div>
-        <div class="amount-estimate">Estimated biweekly payment: <strong id="est-payment">~$34</strong> &middot; 23% APR &middot; No credit check</div>
+        <div class="amount-estimate">Estimated biweekly payment: <strong id="est-payment">~$34</strong> &middot; <span class="apr-display">23%</span> APR &middot; No credit check</div>
         <div class="amount-picker-grid" id="amount-picker">
           <button class="amount-btn" onclick="setAmount(this,100)">$100</button>
           <button class="amount-btn" onclick="setAmount(this,200)">$200</button>
@@ -863,7 +863,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(91,82,216,0.2);border:1px solid rgba(91,82,216,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">📄</div>
             <div>
               <div style="font-size:0.85rem;font-weight:700;color:var(--white);">Waves Financial Loan Agreement</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);">Personal Loan &middot; 23% APR &middot; <span id="contract-amount">$800</span></div>
+              <div style="font-size:0.7rem;color:var(--text-muted);">Personal Loan &middot; <span class="apr-display">23%</span> APR &middot; <span id="contract-amount">$800</span></div>
             </div>
           </div>
           <div style="font-size:0.68rem;color:var(--teal);font-weight:700;padding:3px 10px;border-radius:100px;background:rgba(29,233,198,0.1);border:1px solid rgba(29,233,198,0.2);">Pending signature</div>
@@ -877,7 +877,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             </div>
             <div style="padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
               <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Annual Interest Rate</div>
-              <div style="font-size:1rem;font-weight:800;color:var(--white);">23% APR</div>
+              <div style="font-size:1rem;font-weight:800;color:var(--white);"><span class="apr-display">23%</span> APR</div>
             </div>
             <div style="padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
               <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px;">Deposit Method</div>
@@ -893,9 +893,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             <p style="font-weight:700;color:var(--white);margin-bottom:10px;">PERSONAL LOAN AGREEMENT</p>
             <p style="margin-bottom:8px;">This Loan Agreement ("Agreement") is entered into between <strong style="color:var(--white);">Waves Financial Inc.</strong> ("Lender") and the applicant identified in this application ("Borrower"), effective as of the date of signing below.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">1. LOAN AMOUNT &amp; DISBURSEMENT</p>
-            <p style="margin-bottom:8px;">The Lender agrees to provide the Borrower with the loan amount selected above (the "Principal"). Funds will be disbursed via the method selected by the Borrower on the same business day of approval, provided the application is approved before 2:30 PM EST.</p>
+            <p style="margin-bottom:8px;">The Lender agrees to provide the Borrower with the loan amount selected above (the "Principal"). Funds will be disbursed via the method selected by the Borrower on the same business day of approval, provided the application is approved before <span class="pad-cutoff-display">2:30 PM EST</span>.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">2. INTEREST RATE</p>
-            <p style="margin-bottom:8px;">The loan carries an Annual Percentage Rate (APR) of <strong style="color:var(--white);">23%</strong> calculated on a simple interest basis. The total cost of borrowing will be disclosed in your final loan documents.</p>
+            <p style="margin-bottom:8px;">The loan carries an Annual Percentage Rate (APR) of <strong style="color:var(--white);"><span class="apr-display">23%</span></strong> calculated on a simple interest basis. The total cost of borrowing will be disclosed in your final loan documents.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">3. REPAYMENT</p>
             <p style="margin-bottom:8px;">Repayments will be collected via Pre-Authorized Debit (PAD) from the bank account verified in Step 3 of this application, aligned with the Borrower's pay frequency. The Borrower may repay the loan in full at any time without penalty.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">3a. PAYMENT SCHEDULE</p>
@@ -1290,7 +1290,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <div class="amount-hero">
         <div class="amount-label">How much do you need?</div>
         <div class="amount-display" id="r-amount-display">$800</div>
-        <div class="amount-estimate">Estimated biweekly payment: <strong id="r-est-payment">~$91</strong> &middot; 23% APR &middot; Returning customer</div>
+        <div class="amount-estimate">Estimated biweekly payment: <strong id="r-est-payment">~$91</strong> &middot; <span class="apr-display">23%</span> APR &middot; Returning customer</div>
         <div class="amount-picker-grid">
           <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,600)">$600</button>
           <button class="amount-btn r-amount-btn" onclick="rSetAmount(this,700)">$700</button>
@@ -1527,7 +1527,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(91,82,216,0.2);border:1px solid rgba(91,82,216,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">📄</div>
             <div>
               <div style="font-size:0.85rem;font-weight:700;color:var(--white);">Waves Financial Loan Renewal Agreement</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);">Loan Renewal &middot; 23% APR &middot; <span id="r-contract-amount">$800</span></div>
+              <div style="font-size:0.7rem;color:var(--text-muted);">Loan Renewal &middot; <span class="apr-display">23%</span> APR &middot; <span id="r-contract-amount">$800</span></div>
             </div>
           </div>
           <div style="font-size:0.68rem;color:var(--teal);font-weight:700;padding:3px 10px;border-radius:100px;background:rgba(29,233,198,0.1);border:1px solid rgba(29,233,198,0.2);">Pending signature</div>
@@ -1555,9 +1555,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
             <p style="font-weight:700;color:var(--white);margin-bottom:10px;">LOAN RENEWAL AGREEMENT</p>
             <p style="margin-bottom:8px;">This Loan Renewal Agreement ("Agreement") is entered into between <strong style="color:var(--white);">Waves Financial Inc.</strong> ("Lender") and the existing client identified in this renewal request ("Borrower"), effective as of the date of signing below.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">1. RENEWAL AMOUNT &amp; DISBURSEMENT</p>
-            <p style="margin-bottom:8px;">The Lender agrees to provide the Borrower with the renewal loan amount selected above. Funds will be disbursed via the method selected by the Borrower, on the same business day of approval if approved before 2:30 PM EST.</p>
+            <p style="margin-bottom:8px;">The Lender agrees to provide the Borrower with the renewal loan amount selected above. Funds will be disbursed via the method selected by the Borrower, on the same business day of approval if approved before <span class="pad-cutoff-display">2:30 PM EST</span>.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">2. INTEREST RATE</p>
-            <p style="margin-bottom:8px;">This renewal carries an Annual Percentage Rate (APR) of <strong style="color:var(--white);">23%</strong> on a simple interest basis. Total cost of borrowing will be disclosed in your final renewal documents.</p>
+            <p style="margin-bottom:8px;">This renewal carries an Annual Percentage Rate (APR) of <strong style="color:var(--white);"><span class="apr-display">23%</span></strong> on a simple interest basis. Total cost of borrowing will be disclosed in your final renewal documents.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">3. REPAYMENT</p>
             <p style="margin-bottom:8px;">Repayments will be collected via Pre-Authorized Debit (PAD) from the verified bank account, aligned with the Borrower's pay frequency. The Borrower may repay in full at any time without penalty.</p>
             <p style="font-weight:700;color:var(--periwinkle);margin:12px 0 6px;">3a. PAYMENT SCHEDULE</p>
@@ -2089,6 +2089,8 @@ async function loadLoanSettings() {
       PAD_CUTOFF = h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm + ' EST';
     }
     // Update any visible references
+    const aprPct = Math.round(APR * 100) + '%';
+    document.querySelectorAll('.apr-display').forEach(el => el.textContent = aprPct);
     document.querySelectorAll('.pad-cutoff-display').forEach(el => el.textContent = PAD_CUTOFF);
   } catch(err) {
     console.warn('[loanSettings] Using defaults:', err.message);
@@ -3308,7 +3310,6 @@ function genRef(prefix){return prefix+'-'+Math.floor(100000+Math.random()*900000
 // nav stripped — funnel mode
 // ── SCORING DEMO ENGINE ────────────────────────────────────────────────────
 // Self-contained port of scoringEngine.js for in-browser board demo
-const DEMO_APR = 0.23;
 const DEMO_TIERS = [
   {name:'gold',  label:'Gold',  min:0,  max:15,  decision:'auto_approved'},
   {name:'green', label:'Green', min:15, max:30,  decision:'manual_review'},
@@ -3340,7 +3341,7 @@ const DECISION_LABELS = {
   auto_declined: {label:'❌ Auto-Declined',   bg:'rgba(255,107,138,0.15)', color:'#FF6B8A'},
 };
 
-function demoCalcPayment(p){return(p*(1+DEMO_APR*112/365))/8;}
+function demoCalcPayment(p){return(p*(1+APR*TERM_DAYS/365))/PAYMENT_COUNT_N;}
 function demoResolveTier(s){return DEMO_TIERS.find(t=>s>=t.min&&s<t.max)||DEMO_TIERS[5];}
 function demoFeasible(obs,inc,req){
   const cands=[req,...DEMO_CANDIDATES].filter(c=>c<=req);
