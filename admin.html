@@ -1115,8 +1115,8 @@ function renderList(){
         ` : `
         <!-- Manual EFT mode -->
         ${(() => {
-          const pendingDrd = pendingDisb.filter(l => l.fund_method !== 'etransfer');
-          const pendingEt  = pendingDisb.filter(l => l.fund_method === 'etransfer');
+          const pendingDrd = pendingDisb.filter(l => l.fund_method !== 'etransfer' && l.fund_method !== 'interac');
+          const pendingEt  = pendingDisb.filter(l => (l.fund_method === 'etransfer' || l.fund_method === 'interac'));
           let html = '';
 
           // ── DRD row (direct deposit) ──
@@ -1196,7 +1196,7 @@ function renderList(){
                style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
                ⚡ Disburse
              </button>`
-          : l.fund_method === 'etransfer'
+          : (l.fund_method === 'etransfer' || l.fund_method === 'interac')
             ? `<button onclick="event.stopPropagation();etDownloadSingle('${l.id}','${l.ref}')"
                  style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.3);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
                  📧 e-Transfer
@@ -4107,7 +4107,7 @@ async function drdDownloadSingle(loanId, loanRef){
 
 async function drdDownload(){
   _pendingDrdLoanIds = allLoans
-    .filter(l => l.status === 'pending_disbursement' && l.fund_method !== 'etransfer')
+    .filter(l => l.status === 'pending_disbursement' && l.fund_method !== 'etransfer' && l.fund_method !== 'interac')
     .map(l => l.id);
 
   if(!_pendingDrdLoanIds.length){ showToast('No pending direct deposit disbursements.'); return; }
@@ -4126,7 +4126,7 @@ async function drdDownload(){
 
 async function etDownload(){
   _pendingEtLoanIds = allLoans
-    .filter(l => l.status === 'pending_disbursement' && l.fund_method === 'etransfer')
+    .filter(l => l.status === 'pending_disbursement' && (l.fund_method === 'etransfer' || l.fund_method === 'interac'))
     .map(l => l.id);
 
   if(!_pendingEtLoanIds.length){ showToast('No pending e-Transfer disbursements.'); return; }
