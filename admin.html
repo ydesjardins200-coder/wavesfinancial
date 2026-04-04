@@ -1219,14 +1219,18 @@ function renderList(){
 
   if(currentTab==='approved') apps=apps.filter(a=>a.decision==='auto_approved');
   if(currentTab==='declined') apps=apps.filter(a=>a.decision==='auto_declined');
-  if(currentTab==='queue'){const p={green:1,blue:2,yellow:3,orange:4};apps.sort((a,b)=>(p[a.tier]||9)-(p[b.tier]||9)||new Date(a.submitted_at)-new Date(b.submitted_at));}
-
   // Apply filters
   apps = apps.filter(a=>{
     const c=allClients.find(x=>x.id===a.client_id);
     return matchesFilters(a,c);
   });
-  if(currentTab!=='queue') apps=sortItems(apps,'submitted_at');
+  // Sort — queue uses priority order by default, but respects column header clicks
+  if(currentTab==='queue' && (sortBy==='date_desc'||sortBy==='date_asc')){
+    const p={gold:1,green:2,blue:3,yellow:4,orange:5,red:6};
+    apps.sort((a,b)=>(p[a.tier]||9)-(p[b.tier]||9)||new Date(a.submitted_at)-new Date(b.submitted_at));
+  } else {
+    apps=sortItems(apps,'submitted_at');
+  }
 
   const titles={queue:'Review Queue',all:'Applications',approved:'Approved',declined:'Declined'};
   document.getElementById('qtitle').textContent=(titles[currentTab]||'')+' ('+apps.length+')';
