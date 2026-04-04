@@ -1119,30 +1119,39 @@ function renderList(){
           const pendingEt  = pendingDisb.filter(l => (l.fund_method === 'etransfer' || l.fund_method === 'interac'));
           let html = '';
 
-          // ── DRD row (direct deposit) ──
-          html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">';
-          html += '<span style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Direct Deposit</span>';
+          // ── DRD + e-Transfer side by side ──
+          html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+
+          // Left: Direct Deposit
+          html += '<div style="display:flex;flex-direction:column;gap:8px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px">';
+          html += '<span style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">📁 Direct Deposit</span>';
           if (pendingDrd.length) {
+            html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
             html += '<span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ' + pendingDrd.length + ' pending</span>';
-            html += '<button onclick="drdDownload()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📁 DRD — Download</button>';
-            html += '<button id="drd-confirm-btn" onclick="drdConfirm()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">✓ Confirm Sent to Desjardins</button>';
+            html += '<button onclick="drdDownload()" style="padding:5px 11px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">Download DRD</button>';
+            html += '<button id="drd-confirm-btn" onclick="drdConfirm()" style="display:none;padding:5px 11px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">✓ Confirm Sent</button>';
+            html += '</div>';
           } else {
             html += '<span style="font-size:.72rem;color:var(--muted)">No pending direct deposits</span>';
           }
-          html += '<span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ' + nextBizDay() + '</span>';
+          html += '<span style="font-size:.62rem;color:var(--muted)">Next biz day: ' + nextBizDay() + '</span>';
           html += '</div>';
 
-          // ── e-Transfer row ──
-          html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">';
-          html += '<span style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Interac e-Transfer</span>';
+          // Right: Interac e-Transfer
+          html += '<div style="display:flex;flex-direction:column;gap:8px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px">';
+          html += '<span style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">📧 Interac e-Transfer</span>';
           if (pendingEt.length) {
+            html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
             html += '<span style="font-size:.75rem;font-weight:700;color:var(--periwinkle)">📧 ' + pendingEt.length + ' pending</span>';
-            html += '<button onclick="etDownload()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.35);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📧 e-Transfer CSV — Download</button>';
-            html += '<button id="et-confirm-btn" onclick="etConfirm()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">✓ Confirm Sent to Desjardins</button>';
+            html += '<button onclick="etDownload()" style="padding:5px 11px;background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.35);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">Download CSV</button>';
+            html += '<button id="et-confirm-btn" onclick="etConfirm()" style="display:none;padding:5px 11px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.7rem;font-weight:700;cursor:pointer">✓ Confirm Sent</button>';
+            html += '</div>';
           } else {
             html += '<span style="font-size:.72rem;color:var(--muted)">No pending e-Transfers</span>';
           }
           html += '</div>';
+
+          html += '</div>'; // /grid
           html += '<div id="et-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(160,154,245,.2);border-radius:8px"></div>';
 
           return html;
