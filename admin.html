@@ -771,13 +771,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
             <input type="time" id="ls-pad-cutoff" value="14:30"
               style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
           </div>
-          <!-- Live payment preview -->
-          <div style="padding:10px 12px;background:rgba(29,233,198,.05);border:1px solid rgba(29,233,198,.15);border-radius:8px;display:flex;flex-direction:column;gap:3px">
-            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:2px">Payment Preview</div>
-            <div style="font-size:.72rem;color:var(--muted)">On $750 biweekly</div>
-            <div style="font-size:1.1rem;font-weight:800;color:var(--teal)" id="ls-preview-amt">—</div>
-            <div style="font-size:.65rem;color:var(--muted)" id="ls-preview-total">— total</div>
-          </div>
         </div>
 
         <div id="loan-settings-status" style="display:none;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
@@ -3300,24 +3293,16 @@ async function initLoanSettings() {
     document.getElementById('ls-payment-count').value = _loanCfg.paymentCount;
     document.getElementById('ls-nsf-fee').value       = _loanCfg.nsfFee;
     document.getElementById('ls-pad-cutoff').value    = _loanCfg.padCutoffTime;
-    updateLoanSettingsPreview();
+    updateAprDisplay();
   } catch(err) {
     console.warn('[loanSettings] load failed:', err.message);
   }
 }
 
-function updateLoanSettingsPreview() {
+function updateAprDisplay() {
   const apr    = parseFloat(document.getElementById('ls-apr')?.value || 0.23);
-  const term   = parseInt(document.getElementById('ls-term-days')?.value || 112);
-  const n      = parseInt(document.getElementById('ls-payment-count')?.value || 8);
   const aprPct = document.getElementById('ls-apr-display');
   if (aprPct) aprPct.textContent = '= ' + (apr * 100).toFixed(1) + '%';
-  const pmt    = ((750 * (1 + apr * term / 365)) / n);
-  const total  = pmt * n;
-  const pa     = document.getElementById('ls-preview-amt');
-  const pt     = document.getElementById('ls-preview-total');
-  if (pa) pa.textContent = '$' + pmt.toFixed(2) + '/pmt';
-  if (pt) pt.textContent = '$' + total.toFixed(2) + ' total repayable';
 }
 
 async function saveLoanSettings() {
@@ -3363,7 +3348,7 @@ async function saveLoanSettings() {
       nsfFee:       body.nsf_fee,
       padCutoffTime:body.pad_cutoff_time,
     };
-    updateLoanSettingsPreview();
+    updateAprDisplay();
   } catch(err) {
     if (st) {
       st.style.cssText = 'display:block;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);color:var(--coral)';
@@ -3378,7 +3363,7 @@ async function saveLoanSettings() {
 // Live preview update when loan setting inputs change
 ['ls-apr','ls-term-days','ls-payment-count'].forEach(id => {
   document.addEventListener('input', e => {
-    if (e.target.id === id) updateLoanSettingsPreview();
+    if (e.target.id === id) updateAprDisplay();
   });
 });
 
