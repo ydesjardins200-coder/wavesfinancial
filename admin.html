@@ -3874,27 +3874,12 @@ async function initLoanSettings() {
   }
 }
 
-// Accurate Canada province SVG paths — viewBox 0 0 1000 700
-const CANADA_SVG_PATHS = {
-BC: "M 88,362 L 82,388 L 76,415 L 72,442 L 70,468 L 68,494 L 72,518 L 78,540 L 86,558 L 96,572 L 108,582 L 118,590 L 128,598 L 136,608 L 144,618 L 154,628 L 164,634 L 176,638 L 188,638 L 198,634 L 206,626 L 210,614 L 210,600 L 204,586 L 196,572 L 192,558 L 196,544 L 204,532 L 214,520 L 220,506 L 224,490 L 222,474 L 216,460 L 222,446 L 232,434 L 242,422 L 248,408 L 248,392 L 242,376 L 234,362 L 226,348 L 220,332 L 216,316 L 212,300 L 208,284 L 202,268 L 194,252 L 184,240 L 172,230 L 162,222 L 152,218 L 146,224 L 140,234 L 136,246 L 130,260 L 122,274 L 114,290 L 106,308 L 98,326 L 91,344 Z",
-AB: "M 248,220 L 250,240 L 252,260 L 253,280 L 254,300 L 254,320 L 254,340 L 254,360 L 253,380 L 252,400 L 250,420 L 248,440 L 246,460 L 244,480 L 242,500 L 240,520 L 238,540 L 236,560 L 234,580 L 232,600 L 230,620 L 228,638 L 330,638 L 330,218 L 318,218 L 306,218 L 294,218 L 282,218 L 270,218 Z",
-SK: "M 330,218 L 330,638 L 448,638 L 448,218 Z",
-MB: "M 448,218 L 448,638 L 500,638 L 512,634 L 524,626 L 534,615 L 542,602 L 548,588 L 552,572 L 556,556 L 558,539 L 560,522 L 560,504 L 558,486 L 554,468 L 558,452 L 564,438 L 572,426 L 581,416 L 590,406 L 598,395 L 602,383 L 600,370 L 592,358 L 582,348 L 576,336 L 578,323 L 583,311 L 586,298 L 583,285 L 576,274 L 566,265 L 554,259 L 541,255 L 528,252 L 514,251 L 500,252 L 488,255 L 476,260 L 466,267 Z",
-ON: "M 466,267 L 476,260 L 488,255 L 500,252 L 514,251 L 528,252 L 541,255 L 554,259 L 566,265 L 576,274 L 583,285 L 586,298 L 583,311 L 578,323 L 576,336 L 582,348 L 592,358 L 600,370 L 602,383 L 598,395 L 590,406 L 581,416 L 572,426 L 564,438 L 558,452 L 556,466 L 558,478 L 564,488 L 574,496 L 586,500 L 600,502 L 614,501 L 628,497 L 640,490 L 650,481 L 656,470 L 658,458 L 654,447 L 646,438 L 636,432 L 626,428 L 618,422 L 614,414 L 616,405 L 624,398 L 635,394 L 648,393 L 661,395 L 672,400 L 681,409 L 685,420 L 683,432 L 676,441 L 666,449 L 656,455 L 648,463 L 646,473 L 650,483 L 658,490 L 669,495 L 682,497 L 695,496 L 707,492 L 717,484 L 723,474 L 724,463 L 718,452 L 708,444 L 697,438 L 688,431 L 684,422 L 686,412 L 693,404 L 704,399 L 716,397 L 728,398 L 739,403 L 748,411 L 752,421 L 750,432 L 743,441 L 734,448 L 726,456 L 722,466 L 724,477 L 731,486 L 742,492 L 755,495 L 768,494 L 780,490 L 790,482 L 796,473 L 797,462 L 792,451 L 782,443 L 771,437 L 762,430 L 758,420 L 761,410 L 769,402 L 781,397 L 795,395 L 808,397 L 819,402 L 827,411 L 830,421 L 826,432 L 818,440 L 808,445 L 799,451 L 795,460 L 797,470 L 806,479 L 818,484 L 832,486 L 846,484 L 858,479 L 867,471 L 872,461 L 870,450 L 862,441 L 851,435 L 840,431 L 832,424 L 830,414 L 835,404 L 845,397 L 857,394 L 870,394 L 882,398 L 891,405 L 896,415 L 895,426 L 887,435 L 876,441 L 864,446 L 855,453 L 851,463 L 854,474 L 863,482 L 875,486 L 889,487 L 901,483 L 911,477 L 917,468 L 917,458 L 910,449 L 899,443 L 887,440 L 877,434 L 872,424 L 876,413 L 887,405 L 900,401 L 913,401 L 924,405 L 932,413 L 933,424 L 927,434 L 917,442 L 907,448 L 900,456 L 900,467 L 908,476 L 920,481 L 934,483 L 947,481 L 958,475 L 964,466 L 962,455 L 952,447 L 940,442 L 930,435 L 925,425 L 928,415 L 938,407 L 951,403 L 964,402 L 975,406 L 982,414 L 982,424 L 974,432 L 963,438 L 952,443 L 944,451 L 943,461 L 950,470 L 961,476 L 975,478 L 988,476 L 998,470 L 1000,462 L 1000,380 L 995,368 L 988,356 L 978,346 L 966,338 L 952,332 L 938,328 L 924,326 L 910,327 L 896,330 L 882,335 L 869,342 L 857,350 L 848,360 L 842,371 L 840,383 L 844,394 L 851,403 L 858,395 L 862,383 L 862,370 L 866,358 L 874,348 L 884,340 L 895,334 L 907,330 L 919,329 L 931,330 L 942,335 L 951,342 L 957,352 L 957,363 L 952,373 L 943,381 L 932,386 L 920,388 L 908,386 L 897,382 L 888,374 L 883,364 L 882,353 L 886,343 L 874,337 L 861,333 L 848,331 L 835,332 L 822,336 L 810,342 L 800,351 L 792,362 L 788,374 L 788,386 L 792,397 L 800,406 L 810,412 L 820,416 L 827,422 L 828,432 L 822,440 L 811,445 L 798,446 L 785,443 L 773,437 L 764,428 L 760,416 L 762,404 L 770,394 L 782,387 L 794,384 L 806,384 L 817,388 L 826,395 L 831,404 L 828,414 L 818,420 L 805,423 L 792,420 L 780,413 L 771,402 L 768,390 L 772,378 L 781,368 L 793,362 L 806,360 L 793,354 L 779,350 L 764,350 L 750,354 L 738,361 L 729,371 L 726,383 L 729,395 L 738,404 L 749,410 L 761,412 L 771,408 L 778,400 L 777,390 L 769,382 L 759,377 L 750,374 L 743,368 L 742,360 L 747,352 L 757,347 L 769,345 L 780,347 L 789,353 L 793,362 L 784,358 L 772,356 L 762,360 L 756,368 L 758,378 L 767,385 L 779,388 L 790,385 L 798,377 L 800,366 L 794,356 L 783,350 L 771,348 L 759,350 L 749,356 L 743,366 L 744,378 L 752,388 L 764,394 L 777,396 L 789,394 L 798,387 L 800,376 L 795,366 L 784,360 L 772,358 L 760,362 L 752,370 L 750,382 L 756,392 L 768,398 L 782,400 L 795,397 L 803,388 L 800,376 L 786,354 L 770,345 L 752,341 L 734,342 L 718,347 L 704,357 L 694,370 L 690,385 L 693,400 L 703,413 L 716,421 L 730,424 L 744,422 L 756,415 L 762,404 L 760,392 L 750,383 L 737,378 L 724,378 L 712,382 L 703,391 L 700,402 L 704,414 L 714,423 L 726,428 L 740,428 L 752,423 L 760,413 L 758,401 L 748,392 L 735,387 L 722,387 L 712,393 L 706,402 L 707,414 L 715,423 L 600,502 L 586,500 L 574,496 L 564,488 L 558,478 L 556,466 L 558,452 Z",
-QC: "M 638,310 L 644,298 L 652,287 L 663,279 L 675,273 L 688,270 L 700,270 L 712,272 L 722,278 L 730,286 L 734,296 L 734,307 L 730,317 L 722,325 L 712,331 L 700,334 L 688,334 L 676,331 L 666,324 L 660,315 Z M 1000,100 L 1000,380 L 1000,462 L 992,462 L 980,466 L 968,468 L 956,467 L 944,463 L 934,456 L 928,447 L 928,437 L 934,428 L 944,422 L 954,418 L 964,416 L 972,410 L 976,401 L 972,391 L 964,384 L 954,380 L 942,380 L 930,384 L 920,392 L 914,402 L 915,414 L 921,424 L 930,432 L 940,437 L 949,443 L 952,453 L 946,462 L 935,468 L 922,471 L 908,470 L 895,465 L 884,456 L 878,445 L 880,434 L 888,424 L 899,418 L 912,415 L 924,415 L 934,420 L 940,429 L 936,440 L 924,447 L 910,449 L 897,446 L 886,438 L 880,426 L 882,414 L 892,406 L 905,402 L 918,402 L 929,408 L 934,419 L 926,410 L 912,405 L 897,404 L 884,408 L 875,416 L 871,427 L 875,438 L 886,446 L 900,450 L 914,450 L 926,445 L 933,435 L 930,423 L 921,415 L 910,411 L 898,411 L 888,416 L 883,426 L 887,437 L 897,444 L 910,447 L 922,445 L 930,437 L 929,426 L 920,418 L 908,414 L 896,416 L 887,424 L 886,435 L 895,444 L 908,447 L 920,445 L 928,437 L 926,426 L 916,419 L 904,415 L 892,415 L 882,420 L 878,431 L 882,443 L 893,451 L 908,454 L 922,452 L 932,444 L 933,432 L 924,422 L 910,416 L 896,414 L 883,416 L 874,424 L 872,436 L 880,448 L 894,455 L 910,457 L 925,454 L 935,446 L 936,434 L 928,424 L 914,418 L 900,416 L 887,418 L 878,427 L 878,439 L 888,449 L 902,454 L 918,454 L 931,449 L 937,439 L 935,428 L 924,420 L 910,416 L 896,414 L 882,417 L 872,426 L 872,438 L 882,448 L 896,454 L 1000,480 L 1000,100 Z",
-NB: "M 988,476 L 998,470 L 1000,462 L 1000,480 L 996,490 L 990,498 L 982,504 L 972,508 L 961,510 L 950,509 L 940,505 L 931,498 L 925,489 L 922,479 L 924,469 L 931,461 L 940,456 L 950,454 L 960,455 L 970,459 L 978,466 Z",
-NS: "M 922,479 L 924,469 L 931,461 L 940,456 L 948,454 L 940,466 L 934,476 L 931,487 L 932,498 L 938,508 L 947,515 L 958,519 L 970,520 L 981,518 L 990,513 L 996,506 L 998,498 L 1000,492 L 1000,520 L 990,524 L 978,526 L 966,525 L 954,521 L 942,514 L 932,505 L 925,494 Z M 1000,520 L 1000,540 L 994,536 L 986,532 L 978,530 L 970,530 L 963,532 L 958,536 L 956,542 L 960,548 L 967,552 L 976,554 L 985,552 L 993,547 L 998,540 Z",
-PE: "M 958,438 L 966,434 L 975,432 L 984,434 L 990,440 L 992,448 L 988,455 L 980,460 L 970,461 L 961,457 L 956,450 L 956,442 Z",
-NL: "M 1000,100 L 1000,200 L 994,196 L 986,190 L 978,182 L 972,173 L 968,163 L 967,152 L 970,142 L 976,134 L 984,128 L 993,124 Z M 975,478 L 988,476 L 978,466 L 970,459 L 960,455 L 950,454 L 940,456 L 931,461 L 924,469 L 922,479 L 914,486 L 904,490 L 893,490 L 882,487 L 872,480 L 865,471 L 863,460 L 867,450 L 876,443 L 887,440 L 899,441 L 910,446 L 918,455 L 920,466 L 914,476 L 902,482 L 888,483 L 875,479 L 865,471 Z",
-YT: "M 88,362 L 91,344 L 98,326 L 106,308 L 114,290 L 122,274 L 130,260 L 136,246 L 140,234 L 146,224 L 152,218 L 148,212 L 140,204 L 130,198 L 118,194 L 106,192 L 94,194 L 82,200 L 72,208 L 64,218 L 58,230 L 54,243 L 54,256 L 58,268 L 65,278 L 74,286 L 85,293 L 94,302 L 100,313 L 100,325 L 96,337 L 90,348 Z",
-NT: "M 152,218 L 162,222 L 172,230 L 184,240 L 194,252 L 202,268 L 208,284 L 212,300 L 216,316 L 220,332 L 226,348 L 234,362 L 242,376 L 248,392 L 248,220 L 240,218 L 228,216 L 216,215 L 204,214 L 192,214 L 180,214 L 168,214 L 156,214 L 144,214 L 132,213 L 120,212 L 108,210 L 96,208 L 86,204 L 78,198 L 72,190 L 68,180 L 66,168 L 68,156 L 74,145 L 82,136 L 92,128 L 104,122 L 116,118 L 130,116 L 144,115 L 158,116 L 170,119 L 180,124 L 188,132 L 192,141 L 192,152 L 188,162 L 182,172 L 176,182 L 172,192 L 170,202 L 170,212 L 172,218 Z",
-NU: "M 248,220 L 248,140 L 260,138 L 272,136 L 284,135 L 296,134 L 308,133 L 320,133 L 332,133 L 344,134 L 356,135 L 368,136 L 380,138 L 392,140 L 404,142 L 416,144 L 428,146 L 440,148 L 448,150 L 448,218 L 436,217 L 424,216 L 412,215 L 400,215 L 388,215 L 376,215 L 364,215 L 352,216 L 340,217 L 328,218 L 316,218 L 304,218 L 292,218 L 280,218 L 268,218 Z M 560,100 L 574,98 L 588,97 L 602,96 L 616,95 L 630,95 L 644,95 L 658,96 L 672,97 L 686,99 L 700,101 L 712,105 L 722,111 L 729,119 L 732,128 L 730,138 L 724,147 L 714,153 L 702,157 L 690,158 L 678,156 L 666,152 L 656,144 L 649,134 L 647,124 L 650,114 L 657,106 L 666,100 L 675,96 L 682,92 L 686,86 L 685,78 L 680,71 L 671,66 L 660,64 L 648,64 L 637,67 L 627,73 L 620,80 L 616,89 L 616,98 L 619,107 L 625,116 L 629,125 L 628,134 L 622,142 L 612,148 L 600,151 L 588,150 L 578,145 L 570,137 L 566,127 L 566,116 L 570,107 L 578,100 Z",
-};
-
-const PROVINCE_LABEL_POS = {
-  BC:{x:160,y:510}, AB:{x:288,y:460}, SK:{x:388,y:440}, MB:{x:508,y:430},
-  ON:{x:620,y:420}, QC:{x:780,y:340}, NB:{x:958,y:488}, NS:{x:952,y:508},
-  PE:{x:973,y:447}, NL:{x:892,y:480}, YT:{x:100,y:280}, NT:{x:192,y:270}, NU:{x:380,y:180},
+// Canada province map — loaded dynamically from svg-maps CDN
+const PROV_NAME_TO_CODE = {
+  'British Columbia':'BC','Alberta':'AB','Saskatchewan':'SK','Manitoba':'MB',
+  'Ontario':'ON','Quebec':'QC','New Brunswick':'NB','Nova Scotia':'NS',
+  'Prince Edward Island':'PE','Newfoundland and Labrador':'NL',
+  'Yukon':'YT','Northwest Territories':'NT','Nunavut':'NU'
 };
 
 function renderProvinceMap() {
@@ -3907,41 +3892,60 @@ function renderProvinceMap() {
       .map(p => p.code)
   );
 
-  const FULL_NAMES = {
-    BC:'British Columbia', AB:'Alberta', SK:'Saskatchewan', MB:'Manitoba',
-    ON:'Ontario', QC:'Quebec', NB:'New Brunswick', NS:'Nova Scotia',
-    PE:'P.E.I.', NL:'Newfoundland & Lab.', YT:'Yukon', NT:'N.W.T.', NU:'Nunavut',
-  };
+  // If already loaded, just recolor
+  const svg = container.querySelector('svg');
+  if (svg) {
+    svg.querySelectorAll('path[data-code]').forEach(path => {
+      const code = path.dataset.code;
+      const on   = enabled.has(code);
+      path.style.fill   = on ? 'rgba(29,233,198,.25)' : 'rgba(255,107,138,.18)';
+      path.style.stroke = on ? 'rgba(29,233,198,.85)' : 'rgba(255,107,138,.75)';
+    });
+    svg.querySelectorAll('text[data-code]').forEach(txt => {
+      const on = enabled.has(txt.dataset.code);
+      txt.style.fill = on ? 'rgb(29,233,198)' : 'rgb(255,107,138)';
+    });
+    return;
+  }
 
-  const paths = Object.entries(CANADA_SVG_PATHS).map(([code, d]) => {
-    const on    = enabled.has(code);
-    const fill  = on ? 'rgba(29,233,198,.22)'  : 'rgba(255,107,138,.16)';
-    const stroke= on ? 'rgba(29,233,198,.8)'   : 'rgba(255,107,138,.7)';
-    const lpos  = PROVINCE_LABEL_POS[code];
-    const label = lpos
-      ? `<text x="${lpos.x}" y="${lpos.y}" text-anchor="middle"
-           font-size="10" font-weight="800" letter-spacing=".05em"
-           fill="${on ? 'rgba(29,233,198,1)' : 'rgba(255,107,138,1)'}"
-           style="pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.8)">${code}</text>`
-      : '';
-    return `<g onclick="toggleProvince('${code}');renderProvinceMap()" style="cursor:pointer">
-      <title>${FULL_NAMES[code]||code}: ${on?'✓ Accepting':'✗ Disabled'}</title>
-      <path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="1.2"
-        stroke-linejoin="round" style="transition:fill .2s,stroke .2s"/>
-      <path d="${d}" fill="transparent" stroke="transparent" stroke-width="6"/>
-      ${label}
+  // First load — fetch svg-maps data
+  container.innerHTML = '<div style="text-align:center;padding:24px;font-size:.72rem;color:var(--muted)"><div class="spinner" style="display:inline-block"></div> Loading map…</div>';
+
+  fetch('https://cdn.jsdelivr.net/npm/svg-maps@3.0.0/canada/index.json')
+    .then(r => r.json())
+    .then(data => _buildCanadaMap(data, container, enabled))
+    .catch(() => {
+      container.innerHTML = '<div style="text-align:center;padding:20px;font-size:.72rem;color:var(--muted)">Map unavailable — use toggles below</div>';
+    });
+}
+
+function _buildCanadaMap(data, container, enabled) {
+  const locs = data.locations || [];
+  const vb   = data.viewBox   || '0 0 1000 600';
+
+  const paths = locs.map(loc => {
+    const code = PROV_NAME_TO_CODE[loc.name] || (loc.id||'').toUpperCase();
+    if (!code) return '';
+    const on     = enabled.has(code);
+    const fill   = on ? 'rgba(29,233,198,.25)'  : 'rgba(255,107,138,.18)';
+    const stroke = on ? 'rgba(29,233,198,.85)'  : 'rgba(255,107,138,.75)';
+    const tcolor = on ? 'rgb(29,233,198)'        : 'rgb(255,107,138)';
+    const cx = loc.cx || 0;
+    const cy = loc.cy || 0;
+    return `<g>
+      <path data-code="${code}" d="${loc.path}"
+        style="fill:${fill};stroke:${stroke};stroke-width:1.5;stroke-linejoin:round;cursor:pointer;transition:fill .18s,stroke .18s"
+        onclick="toggleProvince('${code}');renderProvinceMap()">
+        <title>${loc.name} (${code}): ${on?'✓ Accepting':'✗ Disabled'}</title>
+      </path>
+      ${cx&&cy ? `<text data-code="${code}" x="${cx}" y="${cy}" text-anchor="middle"
+        style="font-size:10px;font-weight:800;fill:${tcolor};pointer-events:none;letter-spacing:.04em">${code}</text>` : ''}
     </g>`;
   }).join('');
 
   container.innerHTML = `
-    <svg viewBox="0 0 1000 580" xmlns="http://www.w3.org/2000/svg"
-      style="width:100%;height:auto;display:block;border-radius:10px;background:rgba(6,4,18,.6);border:1px solid rgba(255,255,255,.06)">
-      <defs>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="2" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
+    <svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg"
+      style="width:100%;height:auto;display:block;border-radius:8px;background:rgba(6,4,18,.5);border:1px solid rgba(255,255,255,.06)">
       ${paths}
     </svg>`;
 }
