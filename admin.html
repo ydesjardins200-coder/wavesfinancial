@@ -731,13 +731,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
               <span style="font-size:.6rem">Transactional email</span>
               <span style="font-size:.58rem;margin-top:2px" id="email-resend-pill">Not configured</span>
             </button>
-            <button id="email-btn-leadfox" disabled
-              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:not-allowed;font-family:var(--font);transition:all .2s;min-width:140px;opacity:.4">
-              <span style="font-size:1.3rem">🦊</span>
-              <span style="font-size:.8rem;font-weight:700">Leadfox</span>
-              <span style="font-size:.6rem">CRM + marketing</span>
-              <span style="font-size:.58rem;margin-top:2px">Coming soon</span>
-            </button>
           </div>
         </div>
         <!-- Resend config fields — shown only when resend active -->
@@ -3232,17 +3225,6 @@ function switchCfgTab(tab) {
 
 /* ── EMAIL PROVIDER ─────────────────────────────────────────────────────────── */
 
-async function initEmailProvider() {
-  try {
-    const resp = await fetch(RAILWAY_URL + '/api/email/provider');
-    if (!resp.ok) return;
-    const data = await resp.json();
-    _setEmailProviderUI(data.provider, data.hasResendKey, data.from);
-  } catch(err) {
-    console.warn('[email] initEmailProvider failed:', err.message);
-  }
-}
-
 function _setEmailProviderUI(provider, hasKey, from) {
   ['manual','resend'].forEach(p => {
     const btn = document.getElementById('email-btn-' + p);
@@ -3253,6 +3235,18 @@ function _setEmailProviderUI(provider, hasKey, from) {
   const pill = document.getElementById('email-resend-pill');
   if (pill) pill.textContent = hasKey ? '✓ Key configured' : 'Not configured';
   if (from) { const f = document.getElementById('email-resend-from'); if(f && !f.value) f.value = from; }
+}
+
+async function initEmailProvider() {
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/email/provider');
+    if (!resp.ok) { _setEmailProviderUI('manual', false, null); return; }
+    const data = await resp.json();
+    _setEmailProviderUI(data.provider || 'manual', data.hasResendKey, data.from);
+  } catch(err) {
+    _setEmailProviderUI('manual', false, null);
+    console.warn('[email] initEmailProvider failed:', err.message);
+  }
 }
 
 async function setEmailProvider(provider) {
