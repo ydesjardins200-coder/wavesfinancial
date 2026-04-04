@@ -771,15 +771,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
             <input type="time" id="ls-pad-cutoff" value="14:30"
               style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
           </div>
-          <!-- Email notifications -->
-          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
-            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Email Notifications</div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px">
-              <input type="checkbox" id="ls-email-notif"
-                style="width:16px;height:16px;accent-color:var(--iris);cursor:pointer">
-              <span style="font-size:.8rem;color:var(--white)">Send email on approval</span>
-            </label>
-          </div>
           <!-- Live payment preview -->
           <div style="padding:10px 12px;background:rgba(29,233,198,.05);border:1px solid rgba(29,233,198,.15);border-radius:8px;display:flex;flex-direction:column;gap:3px">
             <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:2px">Payment Preview</div>
@@ -3309,7 +3300,6 @@ async function initLoanSettings() {
     document.getElementById('ls-payment-count').value = _loanCfg.paymentCount;
     document.getElementById('ls-nsf-fee').value       = _loanCfg.nsfFee;
     document.getElementById('ls-pad-cutoff').value    = _loanCfg.padCutoffTime;
-    document.getElementById('ls-email-notif').checked = _loanCfg.emailNotif;
     updateLoanSettingsPreview();
   } catch(err) {
     console.warn('[loanSettings] load failed:', err.message);
@@ -3343,7 +3333,6 @@ async function saveLoanSettings() {
       payment_count:       parseInt(document.getElementById('ls-payment-count').value),
       nsf_fee:             parseFloat(document.getElementById('ls-nsf-fee').value),
       pad_cutoff_time:     document.getElementById('ls-pad-cutoff').value,
-      email_notifications: document.getElementById('ls-email-notif').checked ? 'true' : 'false',
     };
     // Validation
     if (body.min_loan >= body.max_loan) throw new Error('Min loan must be less than max loan');
@@ -3373,7 +3362,6 @@ async function saveLoanSettings() {
       maxLoan:      body.max_loan,
       nsfFee:       body.nsf_fee,
       padCutoffTime:body.pad_cutoff_time,
-      emailNotif:   body.email_notifications === 'true',
     };
     updateLoanSettingsPreview();
   } catch(err) {
