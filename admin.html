@@ -599,6 +599,24 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="qtitle">System Config</div>
       </div>
 
+      <!-- Config sub-tabs -->
+      <div style="display:flex;gap:2px;margin-bottom:20px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:10px;padding:4px">
+        <button id="cfg-tab-system" onclick="switchCfgTab('system')"
+          style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:linear-gradient(135deg,var(--royal),var(--iris));color:var(--white)">
+          ⚙ System Configuration
+        </button>
+        <button id="cfg-tab-payment" onclick="switchCfgTab('payment')"
+          style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted)">
+          💳 Payment Settings
+        </button>
+        <button id="cfg-tab-loans" onclick="switchCfgTab('loans')"
+          style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted)">
+          🏦 Loan Settings
+        </button>
+      </div>
+
+      <!-- System Configuration tab -->
+      <div id="cfg-section-system">
       <!-- Payment Processor Selector -->
       <div id="proc-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
@@ -682,6 +700,10 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="kyc-bulk-results" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;font-size:.72rem"></div>
       </div>
 
+      </div><!-- /cfg-section-system -->
+
+      <!-- Payment Settings tab -->
+      <div id="cfg-section-payment" style="display:none">
       <!-- Payment Methods Configurator -->
       <div id="pmethods-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
@@ -732,6 +754,10 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
       <!-- Loan Settings -->
 
+      </div><!-- /cfg-section-payment -->
+
+      <!-- Loan Settings tab -->
+      <div id="cfg-section-loans" style="display:none">
       <div id="loan-settings-card" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
           <div>
@@ -792,6 +818,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
         <div id="loan-settings-status" style="display:none;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
+      </div><!-- /cfg-section-loans -->
 
     </div><!-- /config-view -->
 
@@ -1344,7 +1371,7 @@ function switchTab(tab){
   document.getElementById('reporting-view').style.display='none';
   document.getElementById('client-page').style.display='none';
   if(tab==='health')         { document.getElementById('health-view').style.display='block'; initProcessor(); }
-  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); }
+  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); switchCfgTab('system'); }
   else if(tab==='reporting') { document.getElementById('reporting-view').style.display='block'; renderReports(); }
   else                       { document.getElementById('list-view').style.display='block'; renderList(); }
 }
@@ -3082,6 +3109,18 @@ function updateSummaryHealth(){
   hs('hs-sum-clients','hs-ok',allClients.length);
   hs('hs-sum-loans',active>0?'hs-ok':'hs-chk',active);
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
+}
+
+function switchCfgTab(tab) {
+  ['system','payment','loans'].forEach(t => {
+    const btn = document.getElementById('cfg-tab-' + t);
+    const sec = document.getElementById('cfg-section-' + t);
+    if (!btn || !sec) return;
+    const active = t === tab;
+    btn.style.background = active ? 'linear-gradient(135deg,var(--royal),var(--iris))' : 'transparent';
+    btn.style.color      = active ? 'var(--white)' : 'var(--muted)';
+    sec.style.display    = active ? 'block' : 'none';
+  });
 }
 
 /* ── OPTIONAL FEES CONFIG ────────────────────────────────────────────────────── */
