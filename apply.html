@@ -2106,18 +2106,16 @@ function applyProvinceRestrictions(served) {
     if (!sel) return;
     Array.from(sel.options).forEach(opt => {
       if (!opt.value) return; // keep "Select…" placeholder
-      const isServed = served.includes(opt.value);
-      opt.disabled = !isServed;
-      opt.textContent = isServed
-        ? opt.textContent.replace(' (not available)', '')
-        : opt.textContent.replace(' (not available)', '') + ' (not available)';
-      opt.style.color = isServed ? '' : 'rgba(255,255,255,.3)';
+      opt.hidden   = !served.includes(opt.value);
+      opt.disabled = !served.includes(opt.value);
+      // Clean up any "(not available)" text from previous runs
+      opt.textContent = opt.textContent.replace(' (not available)', '');
     });
   });
 
-  // Also update eligibility text
+  // Update eligibility text
   const eligProvEl = document.querySelector('.elig-item strong');
-  if (eligProvEl && eligProvEl.textContent.includes('BC')) {
+  if (eligProvEl && eligProvEl.textContent.match(/BC|ON|NS|NB|PE|NL/)) {
     eligProvEl.textContent = served.join(', ');
   }
 }
