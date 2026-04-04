@@ -1834,8 +1834,6 @@ function appHistoryRow(a, loans, schedMap){
       ${ahrField('Hard Decline',a.hard_decline||'—',a.hard_decline?'var(--coral)':'')}
     </div>
 
-    ${renderOptionalFeesBlock(a)}
-
     <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Employment at Application</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
       ${ahrField('Income Source',a.employment_status||'—')}
@@ -1969,6 +1967,8 @@ function appHistoryRow(a, loans, schedMap){
             </button>
           </div>
         </details>
+
+    ${renderOptionalFeesBlock(a)}
       </div>`;
     })()}
 
