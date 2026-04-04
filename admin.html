@@ -1114,19 +1114,41 @@ function renderList(){
         <div id="vopay-action-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(0,212,170,.2);border-radius:8px"></div>
         ` : `
         <!-- Manual EFT mode -->
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">
-          ${pendingDisb.length?`
-          <span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ${pendingDisb.length} pending disbursement</span>
-          <button onclick="drdDownload()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-            📁 DRD — Download
-          </button>
-          <button id="drd-confirm-btn" onclick="drdConfirm()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
-            ✓ Confirm Sent to Desjardins
-          </button>`:``}
+        ${(() => {
+          const pendingDrd = pendingDisb.filter(l => l.fund_method !== 'etransfer');
+          const pendingEt  = pendingDisb.filter(l => l.fund_method === 'etransfer');
+          let html = '';
+
+          // ── DRD row (direct deposit) ──
+          html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">';
+          html += '<span style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Direct Deposit</span>';
+          if (pendingDrd.length) {
+            html += '<span style="font-size:.75rem;font-weight:700;color:var(--gold)">💸 ' + pendingDrd.length + ' pending</span>';
+            html += '<button onclick="drdDownload()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);border-radius:6px;color:var(--gold);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📁 DRD — Download</button>';
+            html += '<button id="drd-confirm-btn" onclick="drdConfirm()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">✓ Confirm Sent to Desjardins</button>';
+          } else {
+            html += '<span style="font-size:.72rem;color:var(--muted)">No pending direct deposits</span>';
+          }
+          html += '<span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ' + nextBizDay() + '</span>';
+          html += '</div>';
+
+          // ── e-Transfer row ──
+          html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap">';
+          html += '<span style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Interac e-Transfer</span>';
+          if (pendingEt.length) {
+            html += '<span style="font-size:.75rem;font-weight:700;color:var(--periwinkle)">📧 ' + pendingEt.length + ' pending</span>';
+            html += '<button onclick="etDownload()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.35);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📧 e-Transfer CSV — Download</button>';
+            html += '<button id="et-confirm-btn" onclick="etConfirm()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:rgba(29,233,198,.12);border:1px solid rgba(29,233,198,.35);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">✓ Confirm Sent to Desjardins</button>';
+          } else {
+            html += '<span style="font-size:.72rem;color:var(--muted)">No pending e-Transfers</span>';
+          }
+          html += '</div>';
+          html += '<div id="et-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid rgba(160,154,245,.2);border-radius:8px"></div>';
+
+          return html;
+        })()}
           <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 5 days</button>
           <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 14 days</button>
-          <span style="font-size:.65rem;color:var(--muted);margin-left:auto">Next biz day: ${nextBizDay()}</span>
-        </div>
         <div id="pad-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px"></div>
         `}
 
@@ -1174,10 +1196,15 @@ function renderList(){
                style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
                ⚡ Disburse
              </button>`
-          : `<button onclick="event.stopPropagation();drdDownloadSingle('${l.id}','${l.ref}')"
-               style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
-               📁 DRD
-             </button>`
+          : l.fund_method === 'etransfer'
+            ? `<button onclick="event.stopPropagation();etDownloadSingle('${l.id}','${l.ref}')"
+                 style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(160,154,245,.12);border:1px solid rgba(160,154,245,.3);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
+                 📧 e-Transfer
+               </button>`
+            : `<button onclick="event.stopPropagation();drdDownloadSingle('${l.id}','${l.ref}')"
+                 style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:5px;color:var(--gold);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">
+                 📁 DRD
+               </button>`
       ) : '';
       // Determine loan type from form_type or whether client has prior loans
       return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
@@ -4050,6 +4077,20 @@ async function vopayCollectToday(){
 /* ── DRD DOWNLOAD + CONFIRM ──────────────────────────────────────────────────── */
 
 let _pendingDrdLoanIds = []; // set on download, used by confirm
+let _pendingEtLoanIds  = []; // set on e-Transfer download, used by confirm
+
+async function etDownloadSingle(loanId, loanRef){
+  _pendingEtLoanIds = [loanId];
+  const url = `${RAILWAY_URL}/api/eft/etransfer?loanIds=${loanId}`;
+  const a   = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.download = '';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => {
+    if(confirm(`e-Transfer CSV downloaded for ${loanRef}.\n\nMark this loan as Active (confirmed sent to Desjardins)?`)){
+      etConfirm();
+    }
+  }, 800);
+}
 
 async function drdDownloadSingle(loanId, loanRef){
   _pendingDrdLoanIds = [loanId];
@@ -4065,29 +4106,66 @@ async function drdDownloadSingle(loanId, loanRef){
 }
 
 async function drdDownload(){
-  // Collect IDs of all pending_disbursement loans currently shown
   _pendingDrdLoanIds = allLoans
-    .filter(l => l.status === 'pending_disbursement')
+    .filter(l => l.status === 'pending_disbursement' && l.fund_method !== 'etransfer')
     .map(l => l.id);
 
-  if(!_pendingDrdLoanIds.length){ showToast('No pending disbursements.'); return; }
+  if(!_pendingDrdLoanIds.length){ showToast('No pending direct deposit disbursements.'); return; }
 
-  // Trigger file download
   const url = `${RAILWAY_URL}/api/eft/drd?loanIds=${_pendingDrdLoanIds.join(',')}`;
   const a   = document.createElement('a');
-  a.href    = url;
-  a.target  = '_blank';
-  a.download = '';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.target = '_blank'; a.download = '';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
 
-  // Show confirm button after a short delay (give browser time to start download)
   setTimeout(() => {
     const btn = document.getElementById('drd-confirm-btn');
     if(btn){ btn.style.display = 'inline-flex'; btn.style.animation = 'fadeIn .3s ease'; }
-    showToast('DRD file downloaded — submit it to Desjardins, then click Confirm.');
+    showToast('DRD file downloaded — submit to Desjardins, then click Confirm.');
   }, 800);
+}
+
+async function etDownload(){
+  _pendingEtLoanIds = allLoans
+    .filter(l => l.status === 'pending_disbursement' && l.fund_method === 'etransfer')
+    .map(l => l.id);
+
+  if(!_pendingEtLoanIds.length){ showToast('No pending e-Transfer disbursements.'); return; }
+
+  const url = `${RAILWAY_URL}/api/eft/etransfer?loanIds=${_pendingEtLoanIds.join(',')}`;
+  const a   = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.download = '';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
+  setTimeout(() => {
+    const btn = document.getElementById('et-confirm-btn');
+    if(btn){ btn.style.display = 'inline-flex'; btn.style.animation = 'fadeIn .3s ease'; }
+    showToast('e-Transfer CSV downloaded — submit to Desjardins AccèsD Business, then click Confirm.');
+  }, 800);
+}
+
+async function etConfirm(){
+  if(!_pendingEtLoanIds.length){ showToast('No e-Transfer loans to confirm.', true); return; }
+
+  const count = _pendingEtLoanIds.length;
+  if(!confirm(`Confirm that the e-Transfer CSV has been submitted to Desjardins?\n\nThis will mark ${count} loan${count !== 1 ? 's' : ''} as Active.`)) return;
+
+  try{
+    const resp = await fetch(`${RAILWAY_URL}/api/eft/etransfer/confirm`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ loanIds: _pendingEtLoanIds, confirmedBy: 'analyst' }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || `Server error ${resp.status}`);
+
+    showToast(`✅ ${data.activated} loan${data.activated !== 1 ? 's' : ''} marked Active — e-Transfers sent`);
+    _pendingEtLoanIds = [];
+    const btn = document.getElementById('et-confirm-btn');
+    if(btn) btn.style.display = 'none';
+    setTimeout(loadData, 800);
+  } catch(err){
+    showToast('Confirm failed: ' + err.message, true);
+  }
 }
 
 async function drdConfirm(){
