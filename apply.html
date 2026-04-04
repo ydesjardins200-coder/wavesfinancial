@@ -2521,6 +2521,9 @@ function renderOptionalFees(funnel) {
   const section = document.getElementById(`ofees-section-${prefix}`);
   const group   = document.getElementById(`ofees-group-${prefix}`);
   if (!section || !group || !_optionalFees) return;
+  // Get current loan amount for percentage fee calculation
+  const loanAmountEl = document.getElementById(funnel === 'renewal' ? 'r-loan-amount' : 'n-loan-amount');
+  const loanAmount   = parseFloat(loanAmountEl?.value || loanAmountEl?.dataset?.value || 750);
 
   // Hide until province is selected
   const provEl       = document.getElementById(funnel === 'renewal' ? 'r-prov' : 'n-prov');
@@ -2540,14 +2543,14 @@ function renderOptionalFees(funnel) {
   group.innerHTML = available.map(f => `
     <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid rgba(255,209,102,.15);border-radius:10px;cursor:pointer">
       <input type="checkbox" id="ofee-${funnel}-${f.id}" name="ofee-${funnel}" value="${f.id}"
-        data-fee="${f.fee}"
+        data-fee="${resolveOptionalFee(f, loanAmount)}"
         checked
         onchange="onOptionalFeeChange('${funnel}')"
         style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;margin-top:2px;flex-shrink:0">
       <span style="flex:1">
         <span style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
           <span style="font-size:.875rem;font-weight:700;color:var(--white)">${f.label}</span>
-          <span style="font-size:.7rem;font-weight:700;padding:1px 7px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:100px;color:var(--gold)">+$${parseFloat(f.fee).toFixed(2)}</span>
+          <span style="font-size:.7rem;font-weight:700;padding:1px 7px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.3);border-radius:100px;color:var(--gold)">${formatOptionalFeeBadge(f, loanAmount)}</span>
         </span>
         <span style="font-size:.72rem;color:var(--text-muted)">${f.description}</span>
       </span>
@@ -2562,11 +2565,32 @@ function onOptionalFeeChange(funnel) {
   else rSyncContractSummary?.();
 }
 
+
+function resolveOptionalFee(f, loanAmount) {
+  const type = f.fee_type || 'flat';
+  const flat = parseFloat(f.fee || 0);
+  const pct  = parseFloat(f.pct  || 0);
+  if (type === 'flat')       return flat;
+  if (type === 'percentage') return parseFloat((loanAmount * pct / 100).toFixed(2));
+  if (type === 'both')       return parseFloat((flat + loanAmount * pct / 100).toFixed(2));
+  return flat;
+}
+
+function formatOptionalFeeBadge(f, loanAmount) {
+  const type = f.fee_type || 'flat';
+  const flat = parseFloat(f.fee || 0);
+  const pct  = parseFloat(f.pct  || 0);
+  if (type === 'flat')       return '+$' + flat.toFixed(2);
+  if (type === 'percentage') return '+' + pct + '% (+$' + resolveOptionalFee(f, loanAmount).toFixed(2) + ')';
+  if (type === 'both')       return '+$' + flat.toFixed(2) + ' +' + pct + '% (+$' + resolveOptionalFee(f, loanAmount).toFixed(2) + ')';
+  return '+$' + flat.toFixed(2);
+}
+
 function getOptionalFeesTotal(funnel) {
   if (!_optionalFees?.length) return 0;
   let total = 0;
   document.querySelectorAll(`input[name="ofee-${funnel}"]:checked`).forEach(cb => {
-    total += parseFloat(cb.dataset.fee || 0);
+    total += parseFloat(cb.dataset.fee || 0); // resolved at render time
   });
   return total;
 }
@@ -2575,7 +2599,7 @@ function getOptionalFeesSelected(funnel) {
   const selected = [];
   document.querySelectorAll(`input[name="ofee-${funnel}"]:checked`).forEach(cb => {
     const f = _optionalFees?.find(x => x.id === cb.value);
-    if (f) selected.push({ id: f.id, label: f.label, fee: f.fee });
+    if (f) selected.push({ id: f.id, label: f.label, fee: parseFloat(cb.dataset.fee||0), fee_type: f.fee_type||'flat', pct: f.pct||0 });
   });
   return selected;
 }

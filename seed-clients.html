@@ -59,7 +59,12 @@ function getFeesForProvince(fees, province) {
     if (!f.enabled) return false;
     if (f.provinces?.length > 0) return !f.provinces.includes(province);
     return true;
-  }).map(f => ({ id: f.id, label: f.label, fee: f.fee }));
+  }).map(f => ({
+    id: f.id, label: f.label,
+    fee_type: f.fee_type || 'flat',
+    fee: parseFloat(f.fee || 0),
+    pct: parseFloat(f.pct || 0),
+  }));
 }
 
 async function seed(){

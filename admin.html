@@ -3568,21 +3568,55 @@ function renderOFees() {
           🗑 Remove
         </button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:start">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;margin-bottom:10px">
         <div>
           <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Label</div>
           <input type="text" value="${f.label}" oninput="_ofees[${i}].label=this.value"
-            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none">
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none;box-sizing:border-box">
         </div>
         <div>
           <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Description</div>
           <input type="text" value="${f.description}" oninput="_ofees[${i}].description=this.value"
-            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none">
+            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.8rem;outline:none;box-sizing:border-box">
         </div>
-        <div style="min-width:90px">
-          <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Fee ($)</div>
-          <input type="number" min="0" step="0.01" value="${f.fee || 0}" oninput="_ofees[${i}].fee=parseFloat(this.value)||0"
-            style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.2);border-radius:7px;color:var(--gold);font-family:var(--font);font-size:.8rem;outline:none;text-align:right">
+      </div>
+      <!-- Fee type + amounts -->
+      <div style="padding:12px 14px;background:rgba(255,209,102,.04);border:1px solid rgba(255,209,102,.15);border-radius:8px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Fee Type</div>
+          ${['flat','percentage','both'].map(t => `
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 10px;background:${(f.fee_type||'flat')===t?'rgba(255,209,102,.18)':'rgba(255,255,255,.03)'};border:1px solid ${(f.fee_type||'flat')===t?'rgba(255,209,102,.5)':'rgba(255,255,255,.1)'};border-radius:20px;transition:all .15s">
+              <input type="radio" name="fee_type_${i}" value="${t}" ${(f.fee_type||'flat')===t?'checked':''}
+                onchange="_ofees[${i}].fee_type='${t}';renderOFees()"
+                style="accent-color:var(--gold);cursor:pointer">
+              <span style="font-size:.7rem;font-weight:700;color:${(f.fee_type||'flat')===t?'var(--gold)':'var(--muted)'}">${t==='flat'?'Flat ($)':t==='percentage'?'Percentage (%)':'Both'}</span>
+            </label>`).join('')}
+          <div style="margin-left:auto;font-size:.7rem;color:var(--periwinkle);font-weight:600" id="ofee-preview-${i}">
+            ${(() => {
+              const type = f.fee_type || 'flat';
+              const flat = parseFloat(f.fee || 0);
+              const pct  = parseFloat(f.pct  || 0);
+              if (type === 'flat')       return flat ? '+ $' + flat.toFixed(2) : '—';
+              if (type === 'percentage') return pct  ? '+ ' + pct + '% of loan' : '—';
+              if (type === 'both')       return (flat||pct) ? '+ $' + flat.toFixed(2) + ' + ' + pct + '% of loan' : '—';
+              return '—';
+            })()}
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          ${(f.fee_type||'flat') !== 'percentage' ? `
+          <div style="flex:1">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Flat Amount ($)</div>
+            <input type="number" min="0" step="0.01" value="${f.fee || 0}" oninput="_ofees[${i}].fee=parseFloat(this.value)||0"
+              style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.3);border-radius:7px;color:var(--gold);font-family:var(--font);font-size:.85rem;outline:none;text-align:right;box-sizing:border-box">
+          </div>` : ''}
+          ${(f.fee_type||'flat') !== 'flat' ? `
+          <div style="flex:1">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Percentage of Loan (%)</div>
+            <input type="number" min="0" max="100" step="0.1" value="${f.pct || 0}" oninput="_ofees[${i}].pct=parseFloat(this.value)||0"
+              style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,209,102,.3);border-radius:7px;color:var(--periwinkle);font-family:var(--font);font-size:.85rem;outline:none;text-align:right;box-sizing:border-box">
+            <div style="font-size:.6rem;color:var(--muted);margin-top:3px">On a $750 loan = $${((f.pct||0)/100*750).toFixed(2)}</div>
+          </div>` : ''}
         </div>
       </div>
       <div style="margin-top:10px">
@@ -3607,7 +3641,9 @@ function addOFee() {
     id:          'fee_' + Date.now(),
     label:       'New Optional Fee',
     description: 'Description shown to the borrower.',
+    fee_type:    'flat',
     fee:         0,
+    pct:         0,
     enabled:     true,
     provinces:   [],
   });
