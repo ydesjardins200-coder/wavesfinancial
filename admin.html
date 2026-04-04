@@ -3300,63 +3300,95 @@ async function sendTestEmail() {
 
 /* ── EMAIL TEMPLATES ─────────────────────────────────────────────────────────── */
 
-const _emailTemplateEventLabels = {
-  loan_approved:    { label:'Loan Approved',      icon:'✅', color:'var(--teal)' },
-  loan_declined:    { label:'Loan Declined',       icon:'🚫', color:'var(--coral)' },
-  nsf_triggered:    { label:'NSF Triggered',       icon:'⚠️', color:'var(--gold)' },
-  disbursement_sent:{ label:'Disbursement Sent',   icon:'💸', color:'var(--periwinkle)' },
-};
+/* ── EMAIL TEMPLATES ─────────────────────────────────────────────────────────── */
 
 async function loadEmailTemplates() {
   const container = document.getElementById('email-templates-list');
   if (!container) return;
-  container.innerHTML = '<div class="empty"><div class="spinner"></div><br>Loading…</div>';
+  container.innerHTML = '<div class="empty"><div class="spinner"></div><br>Loading templates…</div>';
   try {
-    const resp = await fetch(RAILWAY_URL + '/api/email/templates');
+    const resp = await fetch(RAILWAY_URL + '/api/email/templates', { signal: AbortSignal.timeout(15000) });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error);
-    container.innerHTML = data.templates.map(t => renderEmailTemplateCard(t)).join('');
+    if (!data.templates?.length) throw new Error('No templates returned');
+
+    const borrower = data.templates.filter(t => t.audience === 'borrower');
+    const internal = data.templates.filter(t => t.audience === 'internal');
+    const vars     = data.variables || {};
+
+    container.innerHTML = `
+      <!-- Variable reference -->
+      <div style="margin-bottom:20px;padding:14px 18px;background:rgba(8,6,20,.5);border:1px solid rgba(160,154,245,.15);border-radius:10px">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">📋 Available Variables — use <code style="background:rgba(160,154,245,.12);padding:1px 5px;border-radius:4px">{{variable_name}}</code> in any template</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px">
+          ${[...(vars.borrower||[]),...(vars.company||[])].map(v=>`
+            <div style="display:flex;align-items:baseline;gap:6px;font-size:.72rem">
+              <code onclick="navigator.clipboard?.writeText('{{${v.key}}}')" title="Click to copy"
+                style="background:rgba(160,154,245,.1);border:1px solid rgba(160,154,245,.2);padding:1px 6px;border-radius:4px;color:var(--periwinkle);cursor:pointer;white-space:nowrap">{{${v.key}}}</code>
+              <span style="color:var(--muted)">${v.desc}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Borrower-facing templates -->
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(29,233,198,.15)">
+        👤 Borrower-Facing Emails
+      </div>
+      ${borrower.map(t => renderEmailTemplateCard(t)).join('')}
+
+      <!-- Internal / staff templates -->
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,209,102,.15)">
+        🔒 Internal / Staff-Facing Emails
+      </div>
+      ${internal.map(t => renderEmailTemplateCard(t)).join('')}
+    `;
   } catch(err) {
-    container.innerHTML = `<div class="empty" style="color:var(--coral)">Failed to load templates: ${err.message}</div>`;
+    container.innerHTML = `
+      <div style="padding:16px;background:rgba(255,107,138,.05);border:1px solid rgba(255,107,138,.2);border-radius:10px;font-size:.78rem;color:var(--coral)">
+        ⚠ Failed to load templates: ${err.message}<br>
+        <span style="color:var(--muted);font-size:.72rem">Railway may still be deploying. Wait 30 seconds and click ↻ Reload.</span>
+        <br><br>
+        <button onclick="loadEmailTemplates()" style="padding:6px 14px;background:rgba(255,107,138,.1);border:1px solid rgba(255,107,138,.3);border-radius:6px;color:var(--coral);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">↻ Retry</button>
+      </div>`;
   }
 }
 
 function renderEmailTemplateCard(t) {
-  const meta = _emailTemplateEventLabels[t.event] || { label: t.event, icon:'📧', color:'var(--muted)' };
+  const audienceColor = t.audience === 'internal' ? 'var(--gold)' : 'var(--teal)';
   const updated = t.updated_at ? new Date(t.updated_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}) : null;
   return `
-  <div style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:1.1rem">${meta.icon}</span>
+  <div style="margin-bottom:14px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer" title="${t.enabled?'Enabled — click to disable':'Disabled — click to enable'}">
+          <div onclick="toggleTemplateEnabled('${t.event}')" id="tpl-toggle-${t.event}"
+            style="width:34px;height:18px;border-radius:9px;position:relative;cursor:pointer;transition:background .2s;background:${t.enabled?'var(--teal)':'rgba(255,255,255,.1)'}">
+            <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;transition:left .2s;left:${t.enabled?'18px':'2px'}"></div>
+          </div>
+        </label>
         <div>
-          <div style="font-size:.85rem;font-weight:700;color:${meta.color}">${meta.label}</div>
-          <div style="font-size:.65rem;color:var(--muted)">${t.event}${updated?' · Last saved '+updated:' · Using default'}</div>
+          <span style="font-size:.85rem;font-weight:700;color:var(--white)">${t.label}</span>
+          <span style="font-size:.65rem;color:${audienceColor};margin-left:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">${t.audience}</span>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:1px">${t.event}${updated?' · saved '+updated:' · default'}</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);cursor:pointer">
-          <input type="checkbox" id="tpl-enabled-${t.event}" ${t.enabled?'checked':''} onchange="toggleTemplateEnabled('${t.event}')">
-          Enabled
-        </label>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button onclick="previewTemplate('${t.event}')" style="padding:4px 9px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.2);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer">👁 Preview</button>
         ${!t.is_default?`<button onclick="resetTemplate('${t.event}')" style="padding:4px 9px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:5px;color:var(--coral);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer">↩ Reset</button>`:''}
       </div>
     </div>
-    <div style="margin-bottom:10px">
-      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Subject Line</div>
+    <div style="margin-bottom:8px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Subject</div>
       <input id="tpl-subject-${t.event}" type="text" value="${escHtml(t.subject)}"
-        style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.82rem;outline:none;box-sizing:border-box">
+        style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.82rem;outline:none;box-sizing:border-box">
     </div>
-    <div style="margin-bottom:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">HTML Body</div>
-        <button onclick="previewTemplate('${t.event}')" style="padding:3px 8px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.2);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">👁 Preview</button>
-      </div>
-      <textarea id="tpl-body-${t.event}" rows="6"
-        style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:monospace;font-size:.72rem;outline:none;resize:vertical;box-sizing:border-box">${escHtml(t.body_html)}</textarea>
+    <div style="margin-bottom:10px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">HTML Body</div>
+      <textarea id="tpl-body-${t.event}" rows="5"
+        style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:monospace;font-size:.7rem;outline:none;resize:vertical;box-sizing:border-box">${escHtml(t.body_html)}</textarea>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
-      <button onclick="saveTemplate('${t.event}')" style="padding:7px 16px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">💾 Save Template</button>
+      <button onclick="saveTemplate('${t.event}')" style="padding:6px 14px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">💾 Save</button>
       <div id="tpl-status-${t.event}" style="font-size:.72rem;color:var(--muted)"></div>
     </div>
   </div>`;
@@ -3386,13 +3418,21 @@ async function saveTemplate(event) {
 }
 
 async function toggleTemplateEnabled(event) {
-  const enabled  = document.getElementById('tpl-enabled-' + event)?.checked;
+  const toggle   = document.getElementById('tpl-toggle-' + event);
   const subject  = document.getElementById('tpl-subject-' + event)?.value?.trim();
   const body_html= document.getElementById('tpl-body-'    + event)?.value?.trim();
   if (!subject || !body_html) return;
+  // Determine current state from background color
+  const isEnabled = toggle?.style.background?.includes('teal') || toggle?.style.background === 'var(--teal)';
+  const newEnabled = !isEnabled;
+  if (toggle) {
+    toggle.style.background = newEnabled ? 'var(--teal)' : 'rgba(255,255,255,.1)';
+    const dot = toggle.querySelector('div');
+    if (dot) dot.style.left = newEnabled ? '18px' : '2px';
+  }
   await fetch(`${RAILWAY_URL}/api/email/templates/${event}`, {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ subject, body_html, enabled }),
+    body: JSON.stringify({ subject, body_html, enabled: newEnabled }),
   });
 }
 
