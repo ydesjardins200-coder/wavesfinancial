@@ -2081,19 +2081,44 @@ async function loadLoanSettings() {
     PAYMENT_COUNT_N= parseInt(  data.paymentCount  || 8);
     MIN_LOAN       = parseFloat(data.minLoan       || 500);
     MAX_LOAN       = parseFloat(data.maxLoan       || 1000);
-    // Format PAD cutoff for display (14:30 → 2:30 PM EST)
     if (data.padCutoffTime) {
       const [h, m] = data.padCutoffTime.split(':').map(Number);
       const ampm = h >= 12 ? 'PM' : 'AM';
       const h12  = h % 12 || 12;
       PAD_CUTOFF = h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm + ' EST';
     }
-    // Update any visible references
     const aprPct = Math.round(APR * 100) + '%';
     document.querySelectorAll('.apr-display').forEach(el => el.textContent = aprPct);
     document.querySelectorAll('.pad-cutoff-display').forEach(el => el.textContent = PAD_CUTOFF);
+
+    // Apply served province restrictions to both province selects
+    if (Array.isArray(data.servedProvinces) && data.servedProvinces.length) {
+      applyProvinceRestrictions(data.servedProvinces);
+    }
   } catch(err) {
     console.warn('[loanSettings] Using defaults:', err.message);
+  }
+}
+
+function applyProvinceRestrictions(served) {
+  ['n-prov', 'r-prov'].forEach(selectId => {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    Array.from(sel.options).forEach(opt => {
+      if (!opt.value) return; // keep "Select…" placeholder
+      const isServed = served.includes(opt.value);
+      opt.disabled = !isServed;
+      opt.textContent = isServed
+        ? opt.textContent.replace(' (not available)', '')
+        : opt.textContent.replace(' (not available)', '') + ' (not available)';
+      opt.style.color = isServed ? '' : 'rgba(255,255,255,.3)';
+    });
+  });
+
+  // Also update eligibility text
+  const eligProvEl = document.querySelector('.elig-item strong');
+  if (eligProvEl && eligProvEl.textContent.includes('BC')) {
+    eligProvEl.textContent = served.join(', ');
   }
 }
 

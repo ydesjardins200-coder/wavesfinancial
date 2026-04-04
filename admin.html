@@ -862,6 +862,14 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           </div>
         </div>
 
+        <!-- Province toggles -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+          <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px">Served Provinces — Borrowers in disabled provinces cannot apply</div>
+          <div id="ls-provinces" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+            <!-- Populated by initLoanSettings() -->
+          </div>
+        </div>
+
         <div id="loan-settings-status" style="display:none;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
       </div><!-- /cfg-section-loans -->
@@ -3793,11 +3801,20 @@ async function savePMethods() {
 
 /* ── LOAN SETTINGS ────────────────────────────────────────────────────────────── */
 
+const ALL_PROVINCES = [
+  {code:'BC',name:'British Columbia'}, {code:'ON',name:'Ontario'},
+  {code:'NS',name:'Nova Scotia'},      {code:'NB',name:'New Brunswick'},
+  {code:'PE',name:'Prince Edward Island'},{code:'NL',name:'Newfoundland & Labrador'},
+  {code:'AB',name:'Alberta'},           {code:'MB',name:'Manitoba'},
+  {code:'SK',name:'Saskatchewan'},      {code:'QC',name:'Quebec'},
+  {code:'YT',name:'Yukon'},             {code:'NT',name:'Northwest Territories'},
+  {code:'NU',name:'Nunavut'},
+];
+
 async function initLoanSettings() {
   try {
     const res  = await fetch(RAILWAY_URL + '/api/config/loan-settings');
     const data = await res.json();
-    // Populate global — used by all hardcoded APR/DAYS/N blocks in admin
     _loanCfg = {
       apr:           parseFloat(data.apr           || 0.23),
       termDays:      parseInt(  data.termDays      || 112),
@@ -3816,9 +3833,49 @@ async function initLoanSettings() {
     document.getElementById('ls-nsf-fee').value       = _loanCfg.nsfFee;
     document.getElementById('ls-pad-cutoff').value    = _loanCfg.padCutoffTime;
     updateAprDisplay();
+
+    // Render province toggles
+    const served = Array.isArray(data.servedProvinces) ? data.servedProvinces : ['BC','ON','NS','NB','PE','NL'];
+    const container = document.getElementById('ls-provinces');
+    if (container) {
+      container.innerHTML = ALL_PROVINCES.map(p => {
+        const enabled = served.includes(p.code);
+        return `<label style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${enabled?'rgba(29,233,198,.06)':'rgba(255,255,255,.02)'};border:1px solid ${enabled?'rgba(29,233,198,.2)':'rgba(255,255,255,.08)'};border-radius:8px;cursor:pointer;transition:all .2s" id="prov-label-${p.code}">
+          <div onclick="toggleProvince('${p.code}')" id="prov-toggle-${p.code}"
+            style="width:34px;height:18px;border-radius:9px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;background:${enabled?'var(--teal)':'rgba(255,255,255,.1)'}">
+            <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;transition:left .2s;left:${enabled?'18px':'2px'}"></div>
+          </div>
+          <div>
+            <div style="font-size:.78rem;font-weight:700;color:${enabled?'var(--white)':'var(--muted)'}" id="prov-name-${p.code}">${p.name}</div>
+            <div style="font-size:.62rem;color:${enabled?'var(--teal)':'var(--muted)'}" id="prov-status-${p.code}">${enabled?'✓ Accepting applications':'✗ Disabled'}</div>
+          </div>
+        </label>`;
+      }).join('');
+    }
   } catch(err) {
     console.warn('[loanSettings] load failed:', err.message);
   }
+}
+
+function toggleProvince(code) {
+  const toggle = document.getElementById('prov-toggle-' + code);
+  const label  = document.getElementById('prov-label-' + code);
+  const name   = document.getElementById('prov-name-'  + code);
+  const status = document.getElementById('prov-status-' + code);
+  if (!toggle) return;
+  const isOn = toggle.style.background === 'var(--teal)';
+  const newOn = !isOn;
+  toggle.style.background = newOn ? 'var(--teal)' : 'rgba(255,255,255,.1)';
+  toggle.querySelector('div').style.left = newOn ? '18px' : '2px';
+  if (label)  { label.style.background  = newOn ? 'rgba(29,233,198,.06)' : 'rgba(255,255,255,.02)'; label.style.borderColor = newOn ? 'rgba(29,233,198,.2)' : 'rgba(255,255,255,.08)'; }
+  if (name)   { name.style.color   = newOn ? 'var(--white)' : 'var(--muted)'; }
+  if (status) { status.style.color = newOn ? 'var(--teal)' : 'var(--muted)'; status.textContent = newOn ? '✓ Accepting applications' : '✗ Disabled'; }
+}
+
+function getServedProvinces() {
+  return ALL_PROVINCES
+    .filter(p => document.getElementById('prov-toggle-'+p.code)?.style.background === 'var(--teal)')
+    .map(p => p.code);
 }
 
 function updateAprDisplay() {
@@ -3840,6 +3897,7 @@ async function saveLoanSettings() {
       payment_count:       parseInt(document.getElementById('ls-payment-count').value),
       nsf_fee:             parseFloat(document.getElementById('ls-nsf-fee').value),
       pad_cutoff_time:     document.getElementById('ls-pad-cutoff').value,
+      served_provinces:    getServedProvinces(),
     };
     // Validation
     if (body.min_loan >= body.max_loan) throw new Error('Min loan must be less than max loan');
