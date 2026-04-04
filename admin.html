@@ -713,7 +713,84 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="ofees-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
 
-    </div>
+      <!-- Loan Settings -->
+
+      <div id="loan-settings-card" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Loan Settings</div>
+            <div style="font-size:.82rem;color:var(--muted)">Core product parameters — changes apply to all new loans immediately</div>
+          </div>
+          <button onclick="saveLoanSettings()" id="loan-settings-save-btn"
+            style="padding:8px 18px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:8px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">
+            💾 Save Changes
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+          <!-- Min loan -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Min Loan Amount ($)</div>
+            <input type="number" id="ls-min-loan" min="100" step="50" value="500"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
+          </div>
+          <!-- Max loan -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Max Loan Amount ($)</div>
+            <input type="number" id="ls-max-loan" min="100" step="50" value="1000"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
+          </div>
+          <!-- NSF fee -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">NSF Fee ($)</div>
+            <input type="number" id="ls-nsf-fee" min="0" step="1" value="45"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(255,107,138,.2);border-radius:7px;color:var(--coral);font-family:var(--font);font-size:.85rem;outline:none">
+          </div>
+          <!-- APR -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Annual Rate — APR (decimal)</div>
+            <input type="number" id="ls-apr" min="0.01" max="1" step="0.01" value="0.23"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--gold);font-family:var(--font);font-size:.85rem;outline:none">
+            <div style="font-size:.62rem;color:var(--muted);margin-top:3px" id="ls-apr-display">= 23%</div>
+          </div>
+          <!-- Term days -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Term Length (days)</div>
+            <input type="number" id="ls-term-days" min="7" step="1" value="112"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
+          </div>
+          <!-- Payment count -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Number of Payments</div>
+            <input type="number" id="ls-payment-count" min="1" step="1" value="8"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
+          </div>
+          <!-- PAD cutoff -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">PAD Cutoff Time (HH:MM EST)</div>
+            <input type="time" id="ls-pad-cutoff" value="14:30"
+              style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.85rem;outline:none">
+          </div>
+          <!-- Email notifications -->
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Email Notifications</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px">
+              <input type="checkbox" id="ls-email-notif"
+                style="width:16px;height:16px;accent-color:var(--iris);cursor:pointer">
+              <span style="font-size:.8rem;color:var(--white)">Send email on approval</span>
+            </label>
+          </div>
+          <!-- Live payment preview -->
+          <div style="padding:10px 12px;background:rgba(29,233,198,.05);border:1px solid rgba(29,233,198,.15);border-radius:8px;display:flex;flex-direction:column;gap:3px">
+            <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:2px">Payment Preview</div>
+            <div style="font-size:.72rem;color:var(--muted)">On $750 biweekly</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--teal)" id="ls-preview-amt">—</div>
+            <div style="font-size:.65rem;color:var(--muted)" id="ls-preview-total">— total</div>
+          </div>
+        </div>
+
+        <div id="loan-settings-status" style="display:none;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
+      </div>
 
     <!-- REPORTING VIEW -->
     <div class="content" id="reporting-view" style="display:none">
@@ -762,6 +839,8 @@ const SUPA_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
 
 let sb=null, allApps=[], allClients=[], allLoans=[], currentTab='queue', searchTmo=null;
+// Live loan config — populated by initLoanSettings(), falls back to regulatory defaults
+let _loanCfg = { apr:0.23, termDays:112, paymentCount:8, minLoan:500, maxLoan:1000, nsfFee:45, padCutoffTime:'14:30', emailNotif:false };
 
 /* ── LOGIN ── */
 function doLogin(){
@@ -2098,7 +2177,7 @@ function buildCalendarRows(a, loan, sched) {
 }
 
 function generateCalendarFromPayInfo(freq, nextPayDate, principal, feePerPmt) {
-  const APR = 0.23, DAYS = 112, N = 8;
+  const APR = _loanCfg.apr, DAYS = _loanCfg.termDays, N = _loanCfg.paymentCount;
   const fee = parseFloat(feePerPmt || 0);
   const baseAmt = nextPayDate && principal
     ? parseFloat(((principal * (1 + APR * DAYS / 365)) / N).toFixed(2))
@@ -2207,7 +2286,7 @@ async function savePaymentCalendar(loanId, appId){
   if(!hasError&&loanId&&a){
     const approvedAmt=a.approved_amount||a.requested_amount;
     if(approvedAmt){
-      const APR=0.23,DAYS=112,N=8;
+      const APR=_loanCfg.apr,DAYS=_loanCfg.termDays,N=_loanCfg.paymentCount;
       const payAmt=parseFloat(((approvedAmt*(1+APR*DAYS/365))/N).toFixed(2));
       const totalRepayable=parseFloat((payAmt*N).toFixed(2));
       await sb.from('loans').update({
@@ -2362,7 +2441,7 @@ async function selectFeasibleAmount(appId, loanId, amount, freq, nextPayDate){
   const a = allApps.find(x=>x.id===appId);
   if(!a) return;
 
-  const APR=0.23, DAYS=112, N=8;
+  const APR=_loanCfg.apr, DAYS=_loanCfg.termDays, N=_loanCfg.paymentCount;
   const payAmt = parseFloat(((amount*(1+APR*DAYS/365))/N).toFixed(2));
   const totalRepayable = parseFloat((payAmt*N).toFixed(2));
 
@@ -2430,7 +2509,7 @@ function recalcFeasibility(appId, requestedAmount){
   const accountAgeDays   = parseInt(get('sig-accountAgeDays-'+appId))     || 0;
   const incomeRegularity = get('sig-incomeRegularity-'+appId)             || 'consistent';
 
-  const APR=0.23, DAYS=112, N=8, DTI_LIMIT=0.75;
+  const APR=_loanCfg.apr, DAYS=_loanCfg.termDays, N=_loanCfg.paymentCount, DTI_LIMIT=0.75;
   const CANDIDATES=[1000,900,800,700,600,500,400,300,200,100];
 
   // Recalculate feasibility list
@@ -3206,6 +3285,115 @@ async function savePMethods() {
   }
 }
 
+/* ── LOAN SETTINGS ────────────────────────────────────────────────────────────── */
+
+async function initLoanSettings() {
+  try {
+    const res  = await fetch(RAILWAY_URL + '/api/config/loan-settings');
+    const data = await res.json();
+    // Populate global — used by all hardcoded APR/DAYS/N blocks in admin
+    _loanCfg = {
+      apr:           parseFloat(data.apr           || 0.23),
+      termDays:      parseInt(  data.termDays      || 112),
+      paymentCount:  parseInt(  data.paymentCount  || 8),
+      minLoan:       parseFloat(data.minLoan       || 500),
+      maxLoan:       parseFloat(data.maxLoan       || 1000),
+      nsfFee:        parseFloat(data.nsfFee        || 45),
+      padCutoffTime: data.padCutoffTime             || '14:30',
+      emailNotif:    !!data.emailNotif,
+    };
+    document.getElementById('ls-min-loan').value      = _loanCfg.minLoan;
+    document.getElementById('ls-max-loan').value      = _loanCfg.maxLoan;
+    document.getElementById('ls-apr').value           = _loanCfg.apr;
+    document.getElementById('ls-term-days').value     = _loanCfg.termDays;
+    document.getElementById('ls-payment-count').value = _loanCfg.paymentCount;
+    document.getElementById('ls-nsf-fee').value       = _loanCfg.nsfFee;
+    document.getElementById('ls-pad-cutoff').value    = _loanCfg.padCutoffTime;
+    document.getElementById('ls-email-notif').checked = _loanCfg.emailNotif;
+    updateLoanSettingsPreview();
+  } catch(err) {
+    console.warn('[loanSettings] load failed:', err.message);
+  }
+}
+
+function updateLoanSettingsPreview() {
+  const apr    = parseFloat(document.getElementById('ls-apr')?.value || 0.23);
+  const term   = parseInt(document.getElementById('ls-term-days')?.value || 112);
+  const n      = parseInt(document.getElementById('ls-payment-count')?.value || 8);
+  const aprPct = document.getElementById('ls-apr-display');
+  if (aprPct) aprPct.textContent = '= ' + (apr * 100).toFixed(1) + '%';
+  const pmt    = ((750 * (1 + apr * term / 365)) / n);
+  const total  = pmt * n;
+  const pa     = document.getElementById('ls-preview-amt');
+  const pt     = document.getElementById('ls-preview-total');
+  if (pa) pa.textContent = '$' + pmt.toFixed(2) + '/pmt';
+  if (pt) pt.textContent = '$' + total.toFixed(2) + ' total repayable';
+}
+
+async function saveLoanSettings() {
+  const btn = document.getElementById('loan-settings-save-btn');
+  const st  = document.getElementById('loan-settings-status');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Saving…'; }
+  try {
+    const body = {
+      min_loan:            parseFloat(document.getElementById('ls-min-loan').value),
+      max_loan:            parseFloat(document.getElementById('ls-max-loan').value),
+      apr:                 parseFloat(document.getElementById('ls-apr').value),
+      term_days:           parseInt(document.getElementById('ls-term-days').value),
+      payment_count:       parseInt(document.getElementById('ls-payment-count').value),
+      nsf_fee:             parseFloat(document.getElementById('ls-nsf-fee').value),
+      pad_cutoff_time:     document.getElementById('ls-pad-cutoff').value,
+      email_notifications: document.getElementById('ls-email-notif').checked ? 'true' : 'false',
+    };
+    // Validation
+    if (body.min_loan >= body.max_loan) throw new Error('Min loan must be less than max loan');
+    if (body.apr <= 0 || body.apr > 1)  throw new Error('APR must be between 0 and 1 (e.g. 0.23 for 23%)');
+    if (body.term_days < 1)             throw new Error('Term days must be at least 1');
+    if (body.payment_count < 1)         throw new Error('Payment count must be at least 1');
+
+    const resp = await fetch(RAILWAY_URL + '/api/config/loan-settings', {
+      method:  'POST',
+      headers: {'Content-Type':'application/json'},
+      body:    JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Save failed');
+    if (st) {
+      st.style.cssText = 'display:block;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);color:var(--teal)';
+      st.textContent   = '✅ Saved — changes apply to all new loans immediately';
+      setTimeout(() => { if(st) st.style.display='none'; }, 4000);
+    }
+    showToast('Loan settings saved');
+    // Update global so all payment calculations use new values immediately
+    _loanCfg = { ..._loanCfg,
+      apr:          body.apr,
+      termDays:     body.term_days,
+      paymentCount: body.payment_count,
+      minLoan:      body.min_loan,
+      maxLoan:      body.max_loan,
+      nsfFee:       body.nsf_fee,
+      padCutoffTime:body.pad_cutoff_time,
+      emailNotif:   body.email_notifications === 'true',
+    };
+    updateLoanSettingsPreview();
+  } catch(err) {
+    if (st) {
+      st.style.cssText = 'display:block;padding:8px 12px;border-radius:8px;font-size:.72rem;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);color:var(--coral)';
+      st.textContent   = '❌ ' + err.message;
+    }
+    showToast(err.message, true);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Save Changes'; }
+  }
+}
+
+// Live preview update when loan setting inputs change
+['ls-apr','ls-term-days','ls-payment-count'].forEach(id => {
+  document.addEventListener('input', e => {
+    if (e.target.id === id) updateLoanSettingsPreview();
+  });
+});
+
 /* ── KYC / AML COMPLIANCE ─────────────────────────────────────────────────── */
 
 let kycEnabled = localStorage.getItem('waves_kyc') === 'true';
@@ -3395,6 +3583,7 @@ function initProcessor(){
   initKYC();
   initPMethods();
   initOFees();
+  initLoanSettings();
 }
 
 async function checkVoPayStatus(){
@@ -4459,7 +4648,7 @@ async function previewRetries(){
         <td style="padding:5px 10px;font-size:.72rem">
           ${isRetry
             ? `<span style="color:var(--teal)">P${String(p.paymentNumber).padStart(2,'0')} retry</span>`
-            : `<span style="color:var(--coral)">$45 NSF fee</span>`}
+            : `<span style="color:var(--coral)">$${_loanCfg.nsfFee} NSF fee</span>`}
         </td>
         <td style="padding:5px 10px;font-size:.72rem;font-weight:800;color:${isFee?'var(--coral)':'var(--gold)'}">$${parseFloat(p.amount).toFixed(2)}</td>
         <td style="padding:5px 10px;font-size:.72rem;color:var(--muted)">${p.retryDate||'—'}</td>

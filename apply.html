@@ -1200,7 +1200,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <div class="success-next">
         <div class="success-next-item"><span class="success-step-badge">1</span>We review your application and verified bank data &mdash; usually within a few hours.</div>
         <div class="success-next-item"><span class="success-step-badge">2</span>You'll receive a final confirmation email with your approved loan details.</div>
-        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
+        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before <span class="pad-cutoff-display">2:30 PM EST</span>.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
       <div style="margin-top:14px;">
@@ -1720,7 +1720,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,11,31,0.9
       <div class="success-next">
         <div class="success-next-item"><span class="success-step-badge">1</span>We'll verify your renewal request and updated information.</div>
         <div class="success-next-item"><span class="success-step-badge">2</span>You'll receive an email confirming your new loan amount and terms.</div>
-        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before 2:30 PM EST.</div>
+        <div class="success-next-item"><span class="success-step-badge">3</span>Funds arrive via your chosen method same day if approved before <span class="pad-cutoff-display">2:30 PM EST</span>.</div>
       </div>
       <a href="index.html" style="display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:rgba(91,82,216,0.18);border:1px solid rgba(160,154,245,0.28);border-radius:var(--r-md);color:var(--periwinkle);text-decoration:none;font-weight:600;font-size:0.88rem;">&larr; Back to Home</a>
       <div style="margin-top:14px;">
@@ -2063,13 +2063,41 @@ function fillDummyRenewal() {
     el.dispatchEvent(new Event('change'));
   });
 }
-// ─── AMOUNT ──────────────────────────────────────────────────────────
+// ─── LOAN SETTINGS (loaded from Railway) ─────────────────────────────────────
 let loanAmount = 300;
-const APR = 0.23;
+let APR = 0.23;
+let TERM_DAYS = 112;
+let PAYMENT_COUNT_N = 8;
+let MIN_LOAN = 500;
+let MAX_LOAN = 1000;
+let PAD_CUTOFF = '2:30 PM EST';
+
+async function loadLoanSettings() {
+  try {
+    const res  = await fetch(RAILWAY_URL + '/api/config/loan-settings');
+    const data = await res.json();
+    APR            = parseFloat(data.apr           || 0.23);
+    TERM_DAYS      = parseInt(  data.termDays      || 112);
+    PAYMENT_COUNT_N= parseInt(  data.paymentCount  || 8);
+    MIN_LOAN       = parseFloat(data.minLoan       || 500);
+    MAX_LOAN       = parseFloat(data.maxLoan       || 1000);
+    // Format PAD cutoff for display (14:30 → 2:30 PM EST)
+    if (data.padCutoffTime) {
+      const [h, m] = data.padCutoffTime.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12  = h % 12 || 12;
+      PAD_CUTOFF = h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm + ' EST';
+    }
+    // Update any visible references
+    document.querySelectorAll('.pad-cutoff-display').forEach(el => el.textContent = PAD_CUTOFF);
+  } catch(err) {
+    console.warn('[loanSettings] Using defaults:', err.message);
+  }
+}
+
 function calcPayment(p, freq) {
-  const days={weekly:112,biweekly:112,monthly:150};
-  const n={weekly:16,biweekly:8,monthly:5};
-  return Math.ceil(p*(1+APR*days[freq]/365)/n[freq]);
+  const n = { weekly: PAYMENT_COUNT_N * 2, biweekly: PAYMENT_COUNT_N, monthly: Math.ceil(PAYMENT_COUNT_N * 14 / 30) };
+  return Math.ceil(p * (1 + APR * TERM_DAYS / 365) / (n[freq] || PAYMENT_COUNT_N));
 }
 function setAmount(btn, val) {
   loanAmount = val;
@@ -2299,10 +2327,10 @@ function buildPaymentSchedule(containerId, principal, freq, nextPayStr, fundFee)
 
   // Number of payments and interval in days per frequency
   const config = {
-    weekly:    { n: 16, intervalDays: 7  },
-    biweekly:  { n: 8,  intervalDays: 14 },
-    monthly:   { n: 5,  intervalDays: null }, // calendar month
-    semimonthly:{ n: 10, intervalDays: null }, // 1st & 16th
+    weekly:    { n: PAYMENT_COUNT_N * 2, intervalDays: 7  },
+    biweekly:  { n: PAYMENT_COUNT_N,     intervalDays: 14 },
+    monthly:   { n: Math.ceil(PAYMENT_COUNT_N * 14 / 30), intervalDays: null },
+    semimonthly:{ n: PAYMENT_COUNT_N * 14 / 15, intervalDays: null },
   };
   const cfg = config[freq] || config['biweekly'];
   const numPayments = cfg.n;
@@ -2615,10 +2643,11 @@ document.addEventListener('change', function(e) {
   if (e.target.name === 'r-fund-method') rSyncContractSummary?.();
 });
 
-// Load payment methods + optional fees from Railway on DOM ready
+// Load payment methods + optional fees + loan settings from Railway on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   loadPaymentMethods();
   loadOptionalFees();
+  loadLoanSettings();
 });
 
 // ─── IBV ROUTING (Flinks ↔ VoPay iQ11) ──────────────────────────────────────
