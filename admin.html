@@ -353,7 +353,12 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 #ibv-btn-vopay.proc-disabled{opacity:.45;cursor:not-allowed !important;}
 
 /* ── KYC TOGGLE ── */
-#kyc-btn-off.proc-active{background:rgba(107,125,179,.12);border-color:#6b7db3;color:var(--white);}
+#email-btn-manual.proc-active{background:rgba(107,125,179,.12);border-color:#6b7db3;color:var(--white);}
+#email-btn-manual:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
+#email-btn-manual:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
+#email-btn-resend.proc-active{background:rgba(162,155,254,.12);border-color:var(--periwinkle);color:var(--white);}
+#email-btn-resend:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
+#email-btn-resend:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(162,155,254,.3);color:var(--white);}
 #kyc-btn-off:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
 #kyc-btn-off:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
 #kyc-btn-on.proc-active{background:rgba(162,155,254,.12);border-color:var(--periwinkle);color:var(--white);}
@@ -613,6 +618,10 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted)">
           🏦 Loan Settings
         </button>
+        <button id="cfg-tab-email" onclick="switchCfgTab('email')"
+          style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted)">
+          📧 Email Templates
+        </button>
       </div>
 
       <!-- System Configuration tab -->
@@ -698,6 +707,69 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         </div>
         <div id="kyc-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
         <div id="kyc-bulk-results" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;font-size:.72rem"></div>
+      </div>
+
+      <!-- Email Provider -->
+      <div id="email-provider-card" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Email Provider</div>
+            <div style="font-size:.82rem;color:var(--muted)">Transactional emails sent on approval, decline, NSF and disbursement</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="email-btn-manual" onclick="setEmailProvider('manual')"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
+              <span style="font-size:1.3rem">⏸</span>
+              <span style="font-size:.8rem;font-weight:700">Manual</span>
+              <span style="font-size:.6rem">No emails sent</span>
+              <span style="font-size:.58rem;margin-top:2px;visibility:hidden">—</span>
+            </button>
+            <button id="email-btn-resend" onclick="setEmailProvider('resend')"
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
+              <span style="font-size:1.3rem">✉️</span>
+              <span style="font-size:.8rem;font-weight:700">Resend API</span>
+              <span style="font-size:.6rem">Transactional email</span>
+              <span style="font-size:.58rem;margin-top:2px" id="email-resend-pill">Not configured</span>
+            </button>
+            <button id="email-btn-leadfox" disabled
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:not-allowed;font-family:var(--font);transition:all .2s;min-width:140px;opacity:.4">
+              <span style="font-size:1.3rem">🦊</span>
+              <span style="font-size:.8rem;font-weight:700">Leadfox</span>
+              <span style="font-size:.6rem">CRM + marketing</span>
+              <span style="font-size:.58rem;margin-top:2px">Coming soon</span>
+            </button>
+          </div>
+        </div>
+        <!-- Resend config fields — shown only when resend active -->
+        <div id="email-resend-fields" style="display:none;padding:14px 16px;background:rgba(8,6,20,.4);border:1px solid rgba(160,154,245,.15);border-radius:10px;margin-top:4px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div>
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Resend API Key</div>
+              <input id="email-resend-key" type="password" placeholder="re_xxxxxxxxxxxxxxxxxxxx"
+                style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.82rem;outline:none;box-sizing:border-box">
+            </div>
+            <div>
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">From Address</div>
+              <input id="email-resend-from" type="email" placeholder="noreply@wavesfinancial.ca"
+                style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.82rem;outline:none;box-sizing:border-box">
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button onclick="saveEmailProvider()" style="padding:7px 16px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">💾 Save Credentials</button>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input id="email-test-addr" type="email" placeholder="test@email.com"
+                style="padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;outline:none;width:180px">
+              <select id="email-test-event" style="padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;outline:none;cursor:pointer">
+                <option value="loan_approved">Loan Approved</option>
+                <option value="loan_declined">Loan Declined</option>
+                <option value="nsf_triggered">NSF Triggered</option>
+                <option value="disbursement_sent">Disbursement Sent</option>
+              </select>
+              <button onclick="sendTestEmail()" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:7px;color:var(--teal);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">🧪 Send Test</button>
+            </div>
+          </div>
+        </div>
+        <div id="email-provider-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.75rem"></div>
       </div>
 
       </div><!-- /cfg-section-system -->
@@ -819,6 +891,15 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="loan-settings-status" style="display:none;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
       </div><!-- /cfg-section-loans -->
+
+      <!-- Email Templates tab -->
+      <div id="cfg-section-email" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div style="font-size:.82rem;color:var(--muted)">Edit subject lines and HTML body for each automated email. Variables use <code style="background:rgba(160,154,245,.1);padding:1px 5px;border-radius:4px;font-size:.78rem">{{variable_name}}</code> syntax.</div>
+          <button onclick="loadEmailTemplates()" style="padding:6px 12px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">↻ Reload</button>
+        </div>
+        <div id="email-templates-list"><div class="empty"><div class="spinner"></div><br>Loading templates…</div></div>
+      </div><!-- /cfg-section-email -->
 
     </div><!-- /config-view -->
 
@@ -1371,7 +1452,7 @@ function switchTab(tab){
   document.getElementById('reporting-view').style.display='none';
   document.getElementById('client-page').style.display='none';
   if(tab==='health')         { document.getElementById('health-view').style.display='block'; initProcessor(); }
-  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); switchCfgTab('system'); }
+  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); initEmailProvider(); switchCfgTab('system'); }
   else if(tab==='reporting') { document.getElementById('reporting-view').style.display='block'; renderReports(); }
   else                       { document.getElementById('list-view').style.display='block'; renderList(); }
 }
@@ -1506,7 +1587,7 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
         <button class="cp-tab active" onclick="switchCpTab('tab-personal-${client.id}',this)">Personal</button>
         <button class="cp-tab" onclick="switchCpTab('tab-loans-${client.id}',this)">Loan History <span class="cp-tab-count">${loans.length}</span></button>
         <button class="cp-tab" onclick="switchCpTab('tab-apps-${client.id}',this)">Applications <span class="cp-tab-count">${apps.length}</span></button>
-        ${nsfFees.length?`<button class="cp-tab" onclick="switchCpTab('tab-nsf-${client.id}',this)" style="color:${nsfFees.some(f=>f.status==='outstanding')?'var(--coral)':'var(--muted)'}">NSF Fees <span class="cp-tab-count" style="${nsfFees.some(f=>f.status==='outstanding')?'background:rgba(255,107,138,.2);color:var(--coral)':''}">${nsfFees.length}</span></button>`:''}
+        ${nsfFees.length?`<button class="cp-tab" onclick="switchCpTab('tab-nsf-${client.id}',this)" style="color:${nsfFees.some(f=>f.status==='outstanding')?'var(--coral)':'var(--muted)'}">NSF Fees <span class="cp-tab-count" style="${nsfFees.some(f=>f.status==='outstanding')?'background:rgba(255,107,138,.2);color:var(--coral)':''}">${nsfFees.length}</span></button>`:''}\n        <button class="cp-tab" onclick="switchCpTab('tab-comms-${client.id}',this);loadClientEmailLog('${client.id}')">📧 Communications</button>
       </div>
 
       <!-- TAB: Personal (Personal Info + Address + Employment) -->
@@ -1758,7 +1839,32 @@ function renderClientPage(client, apps, loans, schedMap, contractMap, highlightR
             </tfoot>
           </table>
         </div>
-      </div>`:''}
+      </div>`:``}
+
+      <!-- Communications Panel -->
+      <div class="cp-panel" id="tab-comms-${client.id}" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:4px">Email History</div>
+            <div style="font-size:.78rem;color:var(--muted)">All automated and manual emails sent to ${client.first_name}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="manual-email-event-${client.id}" style="padding:6px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.72rem;outline:none;cursor:pointer">
+              <option value="loan_approved">Loan Approved</option>
+              <option value="loan_declined">Loan Declined</option>
+              <option value="nsf_triggered">NSF Triggered</option>
+              <option value="disbursement_sent">Disbursement Sent</option>
+            </select>
+            <button onclick="sendManualEmail('${client.id}','${client.email||''}')"
+              style="padding:6px 14px;background:rgba(160,154,245,.1);border:1px solid rgba(160,154,245,.3);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+              📧 Send Now
+            </button>
+          </div>
+        </div>
+        <div id="email-log-${client.id}">
+          <div class="empty"><div class="spinner"></div><br>Loading…</div>
+        </div>
+      </div>
 
     </div><!-- /cp-main -->
 
@@ -3112,7 +3218,7 @@ function updateSummaryHealth(){
 }
 
 function switchCfgTab(tab) {
-  ['system','payment','loans'].forEach(t => {
+  ['system','payment','loans','email'].forEach(t => {
     const btn = document.getElementById('cfg-tab-' + t);
     const sec = document.getElementById('cfg-section-' + t);
     if (!btn || !sec) return;
@@ -3121,6 +3227,204 @@ function switchCfgTab(tab) {
     btn.style.color      = active ? 'var(--white)' : 'var(--muted)';
     sec.style.display    = active ? 'block' : 'none';
   });
+  if (tab === 'email') loadEmailTemplates();
+}
+
+/* ── EMAIL PROVIDER ─────────────────────────────────────────────────────────── */
+
+async function initEmailProvider() {
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/email/provider');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    _setEmailProviderUI(data.provider, data.hasResendKey, data.from);
+  } catch(err) {
+    console.warn('[email] initEmailProvider failed:', err.message);
+  }
+}
+
+function _setEmailProviderUI(provider, hasKey, from) {
+  ['manual','resend'].forEach(p => {
+    const btn = document.getElementById('email-btn-' + p);
+    if (btn) btn.classList.toggle('proc-active', p === provider);
+  });
+  const fields = document.getElementById('email-resend-fields');
+  if (fields) fields.style.display = provider === 'resend' ? 'block' : 'none';
+  const pill = document.getElementById('email-resend-pill');
+  if (pill) pill.textContent = hasKey ? '✓ Key configured' : 'Not configured';
+  if (from) { const f = document.getElementById('email-resend-from'); if(f && !f.value) f.value = from; }
+}
+
+async function setEmailProvider(provider) {
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/email/provider', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    _setEmailProviderUI(provider, !!document.getElementById('email-resend-key')?.value, null);
+    showToast('Email provider set to ' + provider);
+  } catch(err) { showToast('Failed: ' + err.message, true); }
+}
+
+async function saveEmailProvider() {
+  const key  = document.getElementById('email-resend-key')?.value?.trim();
+  const from = document.getElementById('email-resend-from')?.value?.trim();
+  if (!key) { showToast('API key required', true); return; }
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/email/provider', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: 'resend', resend_api_key: key, resend_from: from }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    _setEmailProviderUI('resend', true, from);
+    document.getElementById('email-resend-key').value = '';
+    showToast('✅ Resend credentials saved');
+  } catch(err) { showToast('Failed: ' + err.message, true); }
+}
+
+async function sendTestEmail() {
+  const to    = document.getElementById('email-test-addr')?.value?.trim();
+  const event = document.getElementById('email-test-event')?.value;
+  if (!to) { showToast('Enter a test email address', true); return; }
+  const st = document.getElementById('email-provider-status');
+  if (st) { st.style.display='block'; st.style.background='rgba(160,154,245,.08)'; st.style.color='var(--periwinkle)'; st.textContent='Sending test…'; }
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/email/test', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, event }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    if (st) { st.style.background='rgba(29,233,198,.08)'; st.style.color='var(--teal)'; st.textContent = data.skipped ? '⏸ Provider is Manual — test skipped' : '✅ Test email sent to ' + to; }
+  } catch(err) {
+    if (st) { st.style.background='rgba(255,107,138,.08)'; st.style.color='var(--coral)'; st.textContent='❌ ' + err.message; }
+  }
+}
+
+/* ── EMAIL TEMPLATES ─────────────────────────────────────────────────────────── */
+
+const _emailTemplateEventLabels = {
+  loan_approved:    { label:'Loan Approved',      icon:'✅', color:'var(--teal)' },
+  loan_declined:    { label:'Loan Declined',       icon:'🚫', color:'var(--coral)' },
+  nsf_triggered:    { label:'NSF Triggered',       icon:'⚠️', color:'var(--gold)' },
+  disbursement_sent:{ label:'Disbursement Sent',   icon:'💸', color:'var(--periwinkle)' },
+};
+
+async function loadEmailTemplates() {
+  const container = document.getElementById('email-templates-list');
+  if (!container) return;
+  container.innerHTML = '<div class="empty"><div class="spinner"></div><br>Loading…</div>';
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/email/templates');
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    container.innerHTML = data.templates.map(t => renderEmailTemplateCard(t)).join('');
+  } catch(err) {
+    container.innerHTML = `<div class="empty" style="color:var(--coral)">Failed to load templates: ${err.message}</div>`;
+  }
+}
+
+function renderEmailTemplateCard(t) {
+  const meta = _emailTemplateEventLabels[t.event] || { label: t.event, icon:'📧', color:'var(--muted)' };
+  const updated = t.updated_at ? new Date(t.updated_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}) : null;
+  return `
+  <div style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.1rem">${meta.icon}</span>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:${meta.color}">${meta.label}</div>
+          <div style="font-size:.65rem;color:var(--muted)">${t.event}${updated?' · Last saved '+updated:' · Using default'}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);cursor:pointer">
+          <input type="checkbox" id="tpl-enabled-${t.event}" ${t.enabled?'checked':''} onchange="toggleTemplateEnabled('${t.event}')">
+          Enabled
+        </label>
+        ${!t.is_default?`<button onclick="resetTemplate('${t.event}')" style="padding:4px 9px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:5px;color:var(--coral);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer">↩ Reset</button>`:''}
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Subject Line</div>
+      <input id="tpl-subject-${t.event}" type="text" value="${escHtml(t.subject)}"
+        style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.82rem;outline:none;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">HTML Body</div>
+        <button onclick="previewTemplate('${t.event}')" style="padding:3px 8px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.2);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">👁 Preview</button>
+      </div>
+      <textarea id="tpl-body-${t.event}" rows="6"
+        style="width:100%;padding:8px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:monospace;font-size:.72rem;outline:none;resize:vertical;box-sizing:border-box">${escHtml(t.body_html)}</textarea>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button onclick="saveTemplate('${t.event}')" style="padding:7px 16px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer">💾 Save Template</button>
+      <div id="tpl-status-${t.event}" style="font-size:.72rem;color:var(--muted)"></div>
+    </div>
+  </div>`;
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function saveTemplate(event) {
+  const subject  = document.getElementById('tpl-subject-' + event)?.value?.trim();
+  const body_html= document.getElementById('tpl-body-'    + event)?.value?.trim();
+  const enabled  = document.getElementById('tpl-enabled-' + event)?.checked;
+  const st       = document.getElementById('tpl-status-'  + event);
+  if (!subject || !body_html) { if(st) { st.style.color='var(--coral)'; st.textContent='Subject and body required'; } return; }
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/email/templates/${event}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ subject, body_html, enabled }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    if (st) { st.style.color='var(--teal)'; st.textContent='✅ Saved'; setTimeout(()=>{ if(st) st.textContent=''; },3000); }
+  } catch(err) {
+    if (st) { st.style.color='var(--coral)'; st.textContent='❌ ' + err.message; }
+  }
+}
+
+async function toggleTemplateEnabled(event) {
+  const enabled  = document.getElementById('tpl-enabled-' + event)?.checked;
+  const subject  = document.getElementById('tpl-subject-' + event)?.value?.trim();
+  const body_html= document.getElementById('tpl-body-'    + event)?.value?.trim();
+  if (!subject || !body_html) return;
+  await fetch(`${RAILWAY_URL}/api/email/templates/${event}`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ subject, body_html, enabled }),
+  });
+}
+
+async function resetTemplate(event) {
+  if (!confirm(`Reset "${event}" template to default?\n\nThis removes your customizations.`)) return;
+  try {
+    // Delete from DB by saving with a flag isn't supported — just reload defaults from server
+    // Re-fetch defaults by calling GET and repopulating the card
+    const resp = await fetch(RAILWAY_URL + '/api/email/templates');
+    const data = await resp.json();
+    const tpl  = data.templates.find(t => t.event === event);
+    if (!tpl) return;
+    const subjectEl  = document.getElementById('tpl-subject-'  + event);
+    const bodyEl     = document.getElementById('tpl-body-'     + event);
+    if (subjectEl)  subjectEl.value  = tpl.subject;
+    if (bodyEl)     bodyEl.value     = tpl.body_html;
+    const st = document.getElementById('tpl-status-' + event);
+    if (st) { st.style.color='var(--gold)'; st.textContent='↩ Defaults restored — click Save to persist'; }
+  } catch(err) { showToast('Reset failed: ' + err.message, true); }
+}
+
+function previewTemplate(event) {
+  const body = document.getElementById('tpl-body-' + event)?.value || '';
+  const win  = window.open('', '_blank');
+  win.document.write(body);
+  win.document.close();
 }
 
 /* ── OPTIONAL FEES CONFIG ────────────────────────────────────────────────────── */
@@ -4241,6 +4545,100 @@ async function drdConfirm(){
   } catch(err){
     showToast('Confirm failed: ' + err.message, true);
   }
+}
+
+/* ── CLIENT EMAIL LOG ────────────────────────────────────────────────────────── */
+
+async function loadClientEmailLog(clientId) {
+  const container = document.getElementById('email-log-' + clientId);
+  if (!container) return;
+  container.innerHTML = '<div class="empty"><div class="spinner"></div><br>Loading…</div>';
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/email/log?clientId=${clientId}&limit=50`);
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    const logs = data.logs || [];
+    if (!logs.length) {
+      container.innerHTML = '<div class="empty" style="font-size:.78rem">No emails sent yet.</div>';
+      return;
+    }
+    const eventLabels = {
+      loan_approved:'Loan Approved', loan_declined:'Loan Declined',
+      nsf_triggered:'NSF Triggered', disbursement_sent:'Disbursement Sent',
+    };
+    const statusColor = { sent:'var(--teal)', failed:'var(--coral)', skipped:'var(--muted)' };
+    const statusIcon  = { sent:'✓', failed:'✗', skipped:'⏸' };
+    container.innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.73rem">
+        <thead>
+          <tr style="background:rgba(30,25,70,.8)">
+            ${['Date','Event','To','Subject','Provider','Status',''].map(h=>`<th style="padding:7px 10px;text-align:left;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${logs.map(log => {
+            const date   = log.sent_at ? new Date(log.sent_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+            const evLbl  = eventLabels[log.event] || log.event || '—';
+            const stColor= statusColor[log.status] || 'var(--muted)';
+            const stIcon = statusIcon[log.status]  || '?';
+            return `<tr style="border-bottom:1px solid rgba(160,154,245,.06)">
+              <td style="padding:7px 10px;color:var(--muted);white-space:nowrap;font-size:.68rem">${date}</td>
+              <td style="padding:7px 10px;color:var(--white);font-weight:600">${evLbl}</td>
+              <td style="padding:7px 10px;color:var(--muted);font-size:.68rem">${log.to_email||'—'}</td>
+              <td style="padding:7px 10px;color:var(--muted);font-size:.68rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${log.subject||'—'}</td>
+              <td style="padding:7px 10px;color:var(--muted);font-size:.65rem;text-transform:uppercase">${log.provider||'—'}</td>
+              <td style="padding:7px 10px">
+                <span style="font-size:.68rem;font-weight:700;color:${stColor}">${stIcon} ${log.status||'—'}</span>
+                ${log.error ? `<div style="font-size:.6rem;color:var(--coral);margin-top:2px">${log.error}</div>` : ''}
+              </td>
+              <td style="padding:7px 10px">
+                ${log.status==='failed' ? `<button onclick="resendEmail('${log.event}','${log.to_email||''}','${clientId}')" style="padding:3px 8px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.2);border-radius:5px;color:var(--periwinkle);font-family:var(--font);font-size:.62rem;font-weight:700;cursor:pointer">↻ Retry</button>` : ''}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  } catch(err) {
+    container.innerHTML = `<div class="empty" style="color:var(--coral)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+async function sendManualEmail(clientId, toEmail) {
+  const eventEl = document.getElementById('manual-email-event-' + clientId);
+  const event   = eventEl?.value;
+  if (!toEmail) { showToast('Client has no email address on file', true); return; }
+  if (!event)   { showToast('Select an email template', true); return; }
+  if (!confirm(`Send "${event}" email to ${toEmail}?`)) return;
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/email/test`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: toEmail, event }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    if (data.skipped) {
+      showToast('⏸ Email provider is Manual — no email sent');
+    } else {
+      showToast(`✅ Email sent to ${toEmail}`);
+      setTimeout(() => loadClientEmailLog(clientId), 1000);
+    }
+  } catch(err) { showToast('Send failed: ' + err.message, true); }
+}
+
+async function resendEmail(event, toEmail, clientId) {
+  if (!confirm(`Retry sending "${event}" to ${toEmail}?`)) return;
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/email/test`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: toEmail, event }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    showToast(`✅ Retry sent to ${toEmail}`);
+    setTimeout(() => loadClientEmailLog(clientId), 1000);
+  } catch(err) { showToast('Retry failed: ' + err.message, true); }
 }
 
 /* ── PAD PREVIEW + CONFIRM ── */
