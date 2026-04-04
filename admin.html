@@ -577,32 +577,13 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="qtitle">System Config</div>
       </div>
 
-      <!-- Section tabs -->
-      <div style="display:flex;gap:2px;margin-bottom:20px;background:rgba(8,6,20,.6);border:1px solid var(--border);border-radius:10px;padding:4px">
-        <button id="cfg-tab-integrations" onclick="switchCfgTab('integrations')"
-          style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:linear-gradient(135deg,var(--royal),var(--iris));color:var(--white)">
-          ⚙ Integrations
-        </button>
-        <button id="cfg-tab-pricing" onclick="switchCfgTab('pricing')"
-          style="flex:1;padding:8px 12px;border:none;border-radius:7px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--muted)">
-          💰 Pricing & Fees
-        </button>
-      </div>
-
-      <!-- INTEGRATIONS SECTION -->
-      <div id="cfg-section-integrations">
-
-      <!-- Section label -->
-      <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Toggle Integrations</div>
-
-      <!-- 3-column toggle row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px">
-
       <!-- Payment Processor Selector -->
-      <div id="proc-selector" style="padding:16px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:12px">Payment Processor</div>
-        <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px">
-          <div style="display:none">
+      <div id="proc-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Payment Processor</div>
+            <div style="font-size:.82rem;color:var(--muted)">Controls how loan disbursements and PAD collections are processed</div>
+          </div>
           <div style="display:flex;gap:8px">
             <button id="proc-btn-manual" onclick="setProcessor('manual')"
               style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
@@ -625,10 +606,12 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
       </div>
 
       <!-- IBV Provider Selector -->
-      <div id="ibv-selector" style="padding:16px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:12px">Bank Verification (IBV)</div>
-        <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px">
-          <div style="display:none">
+      <div id="ibv-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Bank Verification (IBV)</div>
+            <div style="font-size:.82rem;color:var(--muted)">Controls which provider verifies borrower bank accounts in the apply funnel</div>
+          </div>
           <div style="display:flex;gap:8px">
             <button id="ibv-btn-flinks" onclick="setIBV('flinks')"
               style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
@@ -650,9 +633,12 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
       </div>
 
       <!-- KYC/AML Compliance Selector -->
-      <div id="kyc-selector" style="padding:16px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-        <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--iris);margin-bottom:12px">KYC / AML</div>
-        <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px">
+      <div id="kyc-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">KYC / AML Compliance Screening</div>
+            <div style="font-size:.82rem;color:var(--muted)">PEP · Sanctions · Adverse Media — runs automatically on every approved application</div>
+          </div>
           <div style="display:flex;gap:8px;align-items:center">
             <button id="kyc-btn-off" onclick="setKYC(false)"
               style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:120px">
@@ -678,15 +664,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div id="kyc-status-bar" style="margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px"></div>
         <div id="kyc-bulk-results" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(8,6,20,.4);border:1px solid var(--border);border-radius:8px;font-size:.72rem"></div>
       </div>
-
-      </div><!-- /3-col toggle grid -->
-      </div><!-- /cfg-section-integrations -->
-
-      <!-- PRICING & FEES SECTION -->
-      <div id="cfg-section-pricing" style="display:none">
-
-      <!-- Section label -->
-      <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Funding & Fee Configuration</div>
 
       <!-- Payment Methods Configurator -->
       <div id="pmethods-selector" style="margin-bottom:16px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
@@ -735,8 +712,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         </div>
         <div id="ofees-status" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.72rem"></div>
       </div>
-
-      </div><!-- /cfg-section-pricing -->
 
     </div>
 
@@ -1223,7 +1198,7 @@ function switchTab(tab){
   document.getElementById('reporting-view').style.display='none';
   document.getElementById('client-page').style.display='none';
   if(tab==='health')         { document.getElementById('health-view').style.display='block'; initProcessor(); }
-  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); switchCfgTab('integrations'); }
+  else if(tab==='config')    { document.getElementById('config-view').style.display='block'; initProcessor(); }
   else if(tab==='reporting') { document.getElementById('reporting-view').style.display='block'; renderReports(); }
   else                       { document.getElementById('list-view').style.display='block'; renderList(); }
 }
@@ -2959,20 +2934,6 @@ function updateSummaryHealth(){
   hs('hs-sum-clients','hs-ok',allClients.length);
   hs('hs-sum-loans',active>0?'hs-ok':'hs-chk',active);
   hs('hs-sum-pending',pend===0?'hs-ok':pend<5?'hs-warn':'hs-err',pend);
-}
-
-function switchCfgTab(tab) {
-  // Update tab buttons
-  const tabs = ['integrations', 'pricing'];
-  tabs.forEach(t => {
-    const btn = document.getElementById('cfg-tab-' + t);
-    const sec = document.getElementById('cfg-section-' + t);
-    if (!btn || !sec) return;
-    const active = t === tab;
-    btn.style.background = active ? 'linear-gradient(135deg,var(--royal),var(--iris))' : 'transparent';
-    btn.style.color      = active ? 'var(--white)' : 'var(--muted)';
-    sec.style.display    = active ? 'block' : 'none';
-  });
 }
 
 /* ── OPTIONAL FEES CONFIG ────────────────────────────────────────────────────── */
