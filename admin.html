@@ -174,7 +174,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .ls-defaulted{background:rgba(255,107,138,.12);border:1px solid rgba(255,107,138,.3);color:#FF6B8A;}
 
 /* HEALTH */
-.hgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:900px;}
+.hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .hcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
 .hcard-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .hcard-title{font-size:.85rem;font-weight:800;}
@@ -419,7 +419,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
   .stats-row{grid-template-columns:repeat(3,1fr);}
   .arow,.col-head{grid-template-columns:90px 1fr 70px 80px 100px;}
   .arow>*:nth-child(6),.arow>*:nth-child(7),.col-head>*:nth-child(6),.col-head>*:nth-child(7){display:none;}
-  .hgrid,.crm-row{grid-template-columns:1fr;}
+  .hgrid{grid-template-columns:1fr 1fr;} .crm-row{grid-template-columns:1fr;}
   .sig-grid,.contract-grid{grid-template-columns:1fr 1fr;}
   .sw{flex:0 0 180px;}
   .client-hero{grid-template-columns:1fr;}
@@ -518,29 +518,6 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
       <div class="qhdr">
         <div class="qtitle">System Health</div>
         <button class="qrefresh" onclick="runHealthChecks()">↻ Refresh</button>
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Clients</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--periwinkle)" id="hsum-clients">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Active Loans</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--teal)" id="hsum-loans">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Review Queue</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-queue">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">NSF Outstanding</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--coral)" id="hsum-nsf">—</div>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Pending Disburse</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--gold)" id="hsum-disburse">—</div>
-        </div>
       </div>
 
       <div class="hgrid">
