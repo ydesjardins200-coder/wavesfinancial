@@ -80,7 +80,7 @@ async function seed(){
     const selectedFees = getFeesForProvince(optionalFees, province);
     const payload={
       type:'new',
-      loan:{amount:AMOUNTS[i],fundMethod:'etransfer',optionalFees:selectedFees},
+      loan:{amount:AMOUNTS[i],fundMethod:i%2===0?'etransfer':'direct',optionalFees:selectedFees},
       personal:{firstName:fn,lastName:ln,email:em(fn,ln),homePhone:ph(),cellPhone:ph(),dob:dob(),sin:sinFn(),address:`${ri(100,9999)} ${rand(STREETS)}`,city:loc[0],province:loc[1],postal:loc[2],bankruptNow:'no',bankruptPast:'no',sex:rand(['male','female'])},
       employment:{incomeSource:'employed',employer:rand(EMPLOYERS),jobDesc:rand(JOBS),workPhone:ph(),supervisor:`${rand(FIRST)} ${rand(LAST)}`,hireDate:hireD(),paidBy:'direct',payFrequency:freq,monthlyIncome:ri(2200,5500),payFreq:freq,nextPay:nextPay()},
       banking:{flinksLoginId:sbToken(tier),institution:rand(BANKS),transitNumber:String(ri(10000,99999)),institutionNumber:String(ri(100,999)),accountNumber:String(ri(1000000,9999999)),sandbox:true},
