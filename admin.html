@@ -865,6 +865,22 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <!-- Province toggles -->
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
           <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px">Served Provinces — Borrowers in disabled provinces cannot apply</div>
+
+          <!-- Canada Map Visual -->
+          <div style="margin-bottom:16px;padding:16px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Coverage Map</div>
+              <div style="display:flex;gap:12px">
+                <div style="display:flex;align-items:center;gap:5px;font-size:.65rem;color:var(--teal)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(29,233,198,.7)"></div>Accepting</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:.65rem;color:var(--coral)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,107,138,.7)"></div>Disabled</div>
+              </div>
+            </div>
+            <!-- Schematic province grid — not geographic but clear and readable -->
+            <div id="province-map" style="display:flex;flex-direction:column;gap:4px">
+              <!-- Populated by renderProvinceMap() -->
+            </div>
+          </div>
+
           <div id="ls-provinces" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
             <!-- Populated by initLoanSettings() -->
           </div>
@@ -3851,10 +3867,77 @@ async function initLoanSettings() {
           </div>
         </label>`;
       }).join('');
+      renderProvinceMap();
     }
   } catch(err) {
     console.warn('[loanSettings] load failed:', err.message);
   }
+}
+
+// Canada province layout — schematic West→East, territories on top
+const PROVINCE_MAP_LAYOUT = [
+  // Row 1: Territories
+  [
+    {code:'YT', name:'YT', w:2},
+    {code:'NT', name:'NT', w:3},
+    {code:'NU', name:'NU', w:3},
+    {code:null, w:4}, // Quebec/Labrador top area spacer
+  ],
+  // Row 2: Western + Central provinces
+  [
+    {code:'BC', name:'BC', w:2},
+    {code:'AB', name:'AB', w:2},
+    {code:'SK', name:'SK', w:2},
+    {code:'MB', name:'MB', w:2},
+    {code:'ON', name:'ON', w:2},
+    {code:'QC', name:'QC', w:2},
+  ],
+  // Row 3: Atlantic
+  [
+    {code:null, w:8}, // spacer
+    {code:'NB', name:'NB', w:1},
+    {code:'NS', name:'NS', w:1},
+    {code:'PE', name:'PE', w:1},
+    {code:'NL', name:'NL', w:1},
+  ],
+];
+
+function renderProvinceMap() {
+  const container = document.getElementById('province-map');
+  if (!container) return;
+
+  // Get current enabled provinces from toggles
+  const enabled = new Set(
+    ALL_PROVINCES
+      .filter(p => document.getElementById('prov-toggle-'+p.code)?.style.background === 'var(--teal)')
+      .map(p => p.code)
+  );
+
+  const PROVINCE_NAMES = {
+    BC:'British Columbia', AB:'Alberta', SK:'Saskatchewan', MB:'Manitoba',
+    ON:'Ontario', QC:'Quebec', NB:'New Brunswick', NS:'Nova Scotia',
+    PE:'P.E.I.', NL:'Newfoundland & Lab.', YT:'Yukon', NT:'NW Territories', NU:'Nunavut',
+  };
+
+  container.innerHTML = PROVINCE_MAP_LAYOUT.map(row => {
+    const cells = row.map(cell => {
+      if (!cell.code) {
+        return `<div style="flex:${cell.w}"></div>`;
+      }
+      const isOn = enabled.has(cell.code);
+      const bg    = isOn ? 'rgba(29,233,198,.15)'  : 'rgba(255,107,138,.1)';
+      const border= isOn ? 'rgba(29,233,198,.4)'   : 'rgba(255,107,138,.35)';
+      const color = isOn ? 'var(--teal)'            : 'var(--coral)';
+      const icon  = isOn ? '✓' : '✗';
+      return `<div title="${PROVINCE_NAMES[cell.code]||cell.code}: ${isOn?'Accepting':'Disabled'}"
+        style="flex:${cell.w};padding:8px 4px;background:${bg};border:1px solid ${border};border-radius:6px;text-align:center;cursor:pointer;transition:all .2s"
+        onclick="toggleProvince('${cell.code}');renderProvinceMap()">
+        <div style="font-size:.75rem;font-weight:800;color:${color}">${cell.code}</div>
+        <div style="font-size:.55rem;color:${color};margin-top:1px">${icon}</div>
+      </div>`;
+    }).join('');
+    return `<div style="display:flex;gap:4px">${cells}</div>`;
+  }).join('');
 }
 
 function toggleProvince(code) {
@@ -3870,6 +3953,7 @@ function toggleProvince(code) {
   if (label)  { label.style.background  = newOn ? 'rgba(29,233,198,.06)' : 'rgba(255,255,255,.02)'; label.style.borderColor = newOn ? 'rgba(29,233,198,.2)' : 'rgba(255,255,255,.08)'; }
   if (name)   { name.style.color   = newOn ? 'var(--white)' : 'var(--muted)'; }
   if (status) { status.style.color = newOn ? 'var(--teal)' : 'var(--muted)'; status.textContent = newOn ? '✓ Accepting applications' : '✗ Disabled'; }
+  renderProvinceMap();
 }
 
 function getServedProvinces() {
