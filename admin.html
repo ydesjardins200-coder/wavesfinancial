@@ -641,23 +641,17 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             <button id="kyc-btn-off" onclick="setKYC(false)"
-              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:120px">
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
               <span style="font-size:1.3rem">⏸</span>
               <span style="font-size:.8rem;font-weight:700">Off</span>
               <span style="font-size:.6rem">Manual review only</span>
             </button>
             <button id="kyc-btn-on" onclick="setKYC(true)"
-              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:120px">
+              style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 20px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-family:var(--font);transition:all .2s;min-width:140px">
               <span style="font-size:1.3rem">🛡️</span>
               <span style="font-size:.8rem;font-weight:700">KYC2020</span>
               <span style="font-size:.6rem">Auto PEP + Sanctions</span>
               <span style="font-size:.58rem;margin-top:2px" id="kyc-status-pill">Credentials pending</span>
-            </button>
-            <div style="width:1px;height:40px;background:var(--border)"></div>
-            <button onclick="kycBulkScreen()"
-              id="kyc-bulk-btn"
-              style="padding:10px 16px;background:rgba(162,155,254,.08);border:1px solid rgba(162,155,254,.2);border-radius:10px;color:var(--periwinkle);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s">
-              🔍 Screen All Unscreened
             </button>
           </div>
         </div>
