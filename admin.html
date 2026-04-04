@@ -4324,38 +4324,54 @@ async function renderReports(){
       </div>
     </div>`;
 
-  // SVG bar chart — always shows all months, handles zeros cleanly
-  const svgBarChart = (months, dataFn, colorFn, labelFn, height=90) => {
-    const vals   = months.map(dataFn);
-    const mx     = Math.max(...vals, 1);
-    const W      = 100 / months.length;
-    const bars   = months.map((m, i) => {
-      const v    = vals[i];
-      const h    = v > 0 ? Math.max(4, Math.round((v / mx) * height)) : 0;
-      const x    = i * W;
+  // SVG bar chart — pixel-based, proper label rendering
+  const svgBarChart = (months, dataFn, colorFn, labelFn, height=100) => {
+    const vals      = months.map(dataFn);
+    const mx        = Math.max(...vals, 1);
+    const padL      = 4;
+    const padR      = 4;
+    const padTop    = 20;
+    const padBot    = 28;
+    const barW      = 28;
+    const barGap    = 6;
+    const totalW    = padL + months.length * (barW + barGap) - barGap + padR;
+    const chartH    = height;
+    const svgH      = chartH + padTop + padBot;
+    const curMonth  = now.toISOString().slice(0,7);
+
+    const bars = months.map((m, i) => {
+      const v     = vals[i];
+      const bh    = v > 0 ? Math.max(4, Math.round((v / mx) * chartH)) : 0;
+      const x     = padL + i * (barW + barGap);
+      const y     = padTop + chartH - bh;
       const color = colorFn(v, mx);
-      const lbl  = m.slice(5); // MM
+      const isCur = m === curMonth;
+      const lbl   = m.slice(5) + '/' + m.slice(2,4);
       const valStr = v > 0 ? labelFn(v) : '';
-      const isCurrentMonth = m === now.toISOString().slice(0,7);
+
       return `<g>
         <title>${m}: ${v > 0 ? labelFn(v) : 'No data'}</title>
-        <rect x="${x + W * .15}%" y="${height - h + 4}" width="${W * .7}%"
-          height="${Math.max(h, 0)}" fill="${v > 0 ? color : 'rgba(255,255,255,.04)'}"
-          rx="2" opacity="${v > 0 ? '.88' : '1'}"/>
-        ${isCurrentMonth ? `<rect x="${x + W * .15}%" y="${height + 16}" width="${W * .7}%" height="2" fill="${color}" rx="1" opacity=".5"/>` : ''}
-        <text x="${x + W / 2}%" y="${height + 13}" text-anchor="middle"
-          font-size="7.5" fill="${isCurrentMonth ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.3)'}"
-          font-weight="${isCurrentMonth ? '700' : '400'}">${m.slice(5) + '/' + m.slice(2,4)}</text>
-        ${valStr ? `<text x="${x + W / 2}%" y="${height - h}" text-anchor="middle"
-          font-size="7" fill="${color}" font-weight="700" dy="-2">${valStr}</text>` : ''}
+        <rect x="${x}" y="${padTop + chartH - Math.max(bh,0)}" width="${barW}" height="${Math.max(bh,0)}"
+          fill="${v > 0 ? color : 'rgba(255,255,255,.05)'}" rx="3"/>
+        ${isCur ? `<rect x="${x}" y="${padTop + chartH + 18}" width="${barW}" height="2" fill="${color}" rx="1" opacity=".6"/>` : ''}
+        <text x="${x + barW/2}" y="${padTop + chartH + 12}" text-anchor="middle"
+          font-size="9" fill="${isCur ? 'rgba(255,255,255,.8)' : 'rgba(255,255,255,.35)'}">
+          ${lbl}
+        </text>
+        ${valStr ? `<text x="${x + barW/2}" y="${y - 4}" text-anchor="middle"
+          font-size="9" fill="${color}" font-weight="700">${valStr}</text>` : ''}
       </g>`;
     }).join('');
-    return `<div class="rpt-chart-wrap">
-      <svg viewBox="0 0 100 ${height + 28}" xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none" style="width:100%;height:${height + 28}px;display:block">
-        <!-- Grid lines -->
-        ${[.25,.5,.75,1].map(f => `<line x1="0" y1="${height - Math.round(f*height) + 4}" x2="100%" y2="${height - Math.round(f*height) + 4}" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>`).join('')}
-        ${bars}
+
+    // Grid lines
+    const grids = [.25,.5,.75,1].map(f =>
+      `<line x1="${padL}" y1="${padTop + chartH - Math.round(f*chartH)}" x2="${totalW - padR}" y2="${padTop + chartH - Math.round(f*chartH)}" stroke="rgba(255,255,255,.05)" stroke-width="1"/>`
+    ).join('');
+
+    return `<div style="overflow-x:auto;overflow-y:hidden">
+      <svg viewBox="0 0 ${totalW} ${svgH}" xmlns="http://www.w3.org/2000/svg"
+        style="width:${totalW}px;height:${svgH}px;min-width:100%;display:block">
+        ${grids}${bars}
       </svg>
     </div>`;
   };
