@@ -4230,12 +4230,68 @@ async function renderReports(){
   const topProvinces=Object.entries(byProvince).sort((a,b)=>b[1]-a[1]);
 
   // Monthly trend (last 12 months)
-  const monthlyData={};
-  allApps.forEach(a=>{ const m=a.submitted_at?.slice(0,7); if(m) monthlyData[m]=(monthlyData[m]||{apps:0,revenue:0}),monthlyData[m].apps++; });
-  allLoans.forEach(l=>{ const m=l.created_at?.slice(0,7); if(m&&l.total_paid>0){ monthlyData[m]=monthlyData[m]||{apps:0,revenue:0}; monthlyData[m].revenue=(monthlyData[m].revenue||0)+Math.max(0,parseFloat(l.total_paid||0)-parseFloat(l.principal||0)); }});
-  const trendMonths=Object.keys(monthlyData).sort().slice(-12);
-  const trendMaxApps=Math.max(...trendMonths.map(m=>monthlyData[m]?.apps||0),1);
-  const trendMaxRev =Math.max(...trendMonths.map(m=>monthlyData[m]?.revenue||0),1);
+  // Build last 12 calendar months always (even if empty)
+  const last12Months = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    last12Months.push(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'));
+  }
+
+  // Monthly applications — keyed by submitted_at month
+  const monthlyApps = {};
+  allApps.forEach(a => {
+    const m = a.submitted_at?.slice(0,7);
+    if (m) monthlyApps[m] = (monthlyApps[m] || 0) + 1;
+  });
+
+  // Monthly profit — sum of:
+  //   1. Interest collected: paid schedule payments (scheduled_amount) minus the principal portion
+  //      We approximate: total paid on schedule / total_repayable * (total_repayable - principal) per loan
+  //   2. Optional fees collected: from loan.optional_fees JSON, when loan is active or paid_off, credited in the month the loan was created
+  //   3. NSF fees collected: from allNSF where status='collected', by created_at month
+  const monthlyProfit = {};
+  last12Months.forEach(m => { monthlyProfit[m] = 0; });
+
+  // Interest from paid schedule payments — estimate interest portion per payment
+  // Interest per payment = (total_repayable - principal) / payment_count
+  const loanInterestPerPayment = {};
+  allLoans.forEach(l => {
+    const principal   = parseFloat(l.principal || 0);
+    const repayable   = parseFloat(l.total_repayable || 0);
+    const count       = parseInt(l.payment_count || 8);
+    loanInterestPerPayment[l.id] = count > 0 ? Math.max(0, (repayable - principal) / count) : 0;
+  });
+
+  allSched.filter(p => p.status === 'paid' && p.paid_at).forEach(p => {
+    const m = p.paid_at?.slice(0,7);
+    if (!m || !last12Months.includes(m)) return;
+    const interestPortion = loanInterestPerPayment[p.loan_id] || 0;
+    monthlyProfit[m] = (monthlyProfit[m] || 0) + interestPortion;
+  });
+
+  // Optional fees — credit in month loan was created (fee is collected upfront via schedule)
+  allLoans.filter(l => l.optional_fees && (l.status === 'active' || l.status === 'paid_off')).forEach(l => {
+    const m = l.created_at?.slice(0,7);
+    if (!m || !last12Months.includes(m)) return;
+    try {
+      const fees = JSON.parse(l.optional_fees);
+      if (Array.isArray(fees)) {
+        const total = fees.reduce((s, f) => s + parseFloat(f.fee || 0), 0);
+        monthlyProfit[m] = (monthlyProfit[m] || 0) + total;
+      }
+    } catch { /* skip */ }
+  });
+
+  // NSF fees collected — by created_at month
+  allNSF.filter(n => n.status === 'collected').forEach(n => {
+    const m = n.created_at?.slice(0,7);
+    if (!m || !last12Months.includes(m)) return;
+    monthlyProfit[m] = (monthlyProfit[m] || 0) + parseFloat(n.amount || 45);
+  });
+
+  const trendMonths = last12Months;
+  const trendMaxApps = Math.max(...trendMonths.map(m => monthlyApps[m] || 0), 1);
+  const trendMaxProfit = Math.max(...trendMonths.map(m => monthlyProfit[m] || 0), 1);
 
   // Helpers
   const $=(v,d=2)=>'$'+parseFloat(v||0).toLocaleString('en-CA',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -4268,26 +4324,40 @@ async function renderReports(){
       </div>
     </div>`;
 
-  // SVG bar chart helper
-  const svgBarChart=(months,dataFn,colorFn,labelFn,height=80)=>{
-    if(!months.length) return '<div style="font-size:.72rem;color:var(--muted);padding:20px 0;text-align:center">No data yet</div>';
-    const vals=months.map(dataFn);
-    const mx=Math.max(...vals,1);
-    const W=100/months.length;
-    const bars=months.map((m,i)=>{
-      const h=Math.round((vals[i]/mx)*height);
-      const x=i*W;
-      const color=colorFn(vals[i],mx);
-      const lbl=m.slice(5);
-      const valStr=labelFn(vals[i]);
+  // SVG bar chart — always shows all months, handles zeros cleanly
+  const svgBarChart = (months, dataFn, colorFn, labelFn, height=90) => {
+    const vals   = months.map(dataFn);
+    const mx     = Math.max(...vals, 1);
+    const W      = 100 / months.length;
+    const bars   = months.map((m, i) => {
+      const v    = vals[i];
+      const h    = v > 0 ? Math.max(4, Math.round((v / mx) * height)) : 0;
+      const x    = i * W;
+      const color = colorFn(v, mx);
+      const lbl  = m.slice(5); // MM
+      const valStr = v > 0 ? labelFn(v) : '';
+      const isCurrentMonth = m === now.toISOString().slice(0,7);
       return `<g>
-        <title>${m}: ${valStr}</title>
-        <rect x="${x+W*.1}%" y="${height-h}" width="${W*.8}%" height="${h}" fill="${color}" rx="2" opacity=".85"/>
-        <text x="${x+W/2}%" y="${height+12}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)">${lbl}</text>
-        ${vals[i]>0?`<text x="${x+W/2}%" y="${height-h-3}" text-anchor="middle" font-size="7.5" fill="${color}" font-weight="700">${valStr}</text>`:''}
+        <title>${m}: ${v > 0 ? labelFn(v) : 'No data'}</title>
+        <rect x="${x + W * .15}%" y="${height - h + 4}" width="${W * .7}%"
+          height="${Math.max(h, 0)}" fill="${v > 0 ? color : 'rgba(255,255,255,.04)'}"
+          rx="2" opacity="${v > 0 ? '.88' : '1'}"/>
+        ${isCurrentMonth ? `<rect x="${x + W * .15}%" y="${height + 16}" width="${W * .7}%" height="2" fill="${color}" rx="1" opacity=".5"/>` : ''}
+        <text x="${x + W / 2}%" y="${height + 13}" text-anchor="middle"
+          font-size="7.5" fill="${isCurrentMonth ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.3)'}"
+          font-weight="${isCurrentMonth ? '700' : '400'}">${lbl}</text>
+        ${valStr ? `<text x="${x + W / 2}%" y="${height - h}" text-anchor="middle"
+          font-size="7" fill="${color}" font-weight="700" dy="-2">${valStr}</text>` : ''}
       </g>`;
     }).join('');
-    return `<div class="rpt-chart-wrap"><svg viewBox="0 0 100 ${height+20}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;height:${height+20}px">${bars}</svg></div>`;
+    return `<div class="rpt-chart-wrap">
+      <svg viewBox="0 0 100 ${height + 22}" xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none" style="width:100%;height:${height + 22}px;display:block">
+        <!-- Grid lines -->
+        ${[.25,.5,.75,1].map(f => `<line x1="0" y1="${height - Math.round(f*height) + 4}" x2="100%" y2="${height - Math.round(f*height) + 4}" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>`).join('')}
+        ${bars}
+      </svg>
+    </div>`;
   };
 
   // Donut chart helper
@@ -4353,18 +4423,27 @@ async function renderReports(){
       ${kpi('Overdue','$'+Math.round(overdueAmount).toLocaleString(),overduePayments.length+' payments',overdueAmount>0?'var(--coral)':'var(--teal)','rgba(255,107,138,.04)')}
     </div>
 
-    <!-- Full-width: Monthly Application & Revenue Chart -->
+    <!-- Full-width: Monthly Trend Charts -->
     <div class="rpt-grid-full">
       <div class="rpt-section">
-        <div class="rpt-section-title">📈 Monthly Trend — Applications & Revenue (Last 12 Months)</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div class="rpt-section-title" style="margin:0">📈 Monthly Trend — Last 12 Months</div>
+          <div style="font-size:.65rem;color:var(--muted)">Current month <span style="color:var(--periwinkle);font-weight:700">underlined</span> · Empty bars = no activity</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
           <div>
-            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Applications per Month</div>
-            ${svgBarChart(trendMonths,m=>monthlyData[m]?.apps||0,(v,mx)=>{const p=v/mx;return p>.7?'var(--teal)':p>.4?'var(--blue)':'var(--periwinkle)';},v=>v,80)}
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+              <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Applications</div>
+              <div style="font-size:.72rem;font-weight:700;color:var(--periwinkle)">${trendMonths.reduce((s,m)=>s+(monthlyApps[m]||0),0)} total</div>
+            </div>
+            ${svgBarChart(trendMonths, m=>monthlyApps[m]||0, (v,mx)=>{ const p=v/mx; return p>.7?'var(--teal)':p>.4?'var(--blue)':'var(--periwinkle)'; }, v=>String(v), 90)}
           </div>
           <div>
-            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Interest Revenue per Month ($)</div>
-            ${svgBarChart(trendMonths,m=>monthlyData[m]?.revenue||0,()=>'var(--gold)',v=>v>0?'$'+Math.round(v):'0',80)}
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+              <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Total Profit (Interest + Fees + NSF)</div>
+              <div style="font-size:.72rem;font-weight:700;color:var(--gold)">$${Math.round(trendMonths.reduce((s,m)=>s+(monthlyProfit[m]||0),0)).toLocaleString()} total</div>
+            </div>
+            ${svgBarChart(trendMonths, m=>monthlyProfit[m]||0, ()=>'var(--gold)', v=>v>0?'$'+Math.round(v).toLocaleString():'', 90)}
           </div>
         </div>
       </div>
