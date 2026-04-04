@@ -529,6 +529,12 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚡</div><div><div class="hitem-name">Response Time</div><div class="hitem-detail" id="hd-latency">—</div></div></div><div class="hstatus hs-chk" id="hs-latency"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔧</div><div><div class="hitem-name">Environment</div><div class="hitem-detail" id="hd-env">—</div></div></div><div class="hstatus hs-chk" id="hs-env"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏦</div><div><div class="hitem-name">Equifax Token</div><div class="hitem-detail" id="hd-efx">—</div></div></div><div class="hstatus hs-chk" id="hs-efx"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏧</div><div><div class="hitem-name">Payment Processor</div><div class="hitem-detail" id="hd-processor">—</div></div></div><div class="hstatus hs-chk" id="hs-processor"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔗</div><div><div class="hitem-name">IBV Provider</div><div class="hitem-detail" id="hd-ibv">—</div></div></div><div class="hstatus hs-chk" id="hs-ibv"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🛡️</div><div><div class="hitem-name">KYC / AML</div><div class="hitem-detail" id="hd-kyc">—</div></div></div><div class="hstatus hs-chk" id="hs-kyc"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📄</div><div><div class="hitem-name">PDF Generator</div><div class="hitem-detail">/api/pdf/contract</div></div></div><div class="hstatus hs-chk" id="hs-pdf"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📥</div><div><div class="hitem-name">Apply Endpoint</div><div class="hitem-detail">/api/apply/new · /api/apply/renewal</div></div></div><div class="hstatus hs-chk" id="hs-apply-ep"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">✅</div><div><div class="hitem-name">Approve / Decline</div><div class="hitem-detail">/api/approve · /api/decline</div></div></div><div class="hstatus hs-chk" id="hs-approve-ep"><div class="hsdot"></div>—</div></div>
         </div>
 
         <!-- Supabase -->
@@ -540,12 +546,15 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Loans</div><div class="hitem-detail" id="hd-loans-count">—</div></div></div><div class="hstatus hs-chk" id="hs-loans-tbl"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📅</div><div><div class="hitem-name">Repayment Schedule</div><div class="hitem-detail" id="hd-sched-count">—</div></div></div><div class="hstatus hs-chk" id="hs-sched-tbl"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚠️</div><div><div class="hitem-name">NSF Fees</div><div class="hitem-detail" id="hd-nsf-count">—</div></div></div><div class="hstatus hs-chk" id="hs-nsf-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">⚙️</div><div><div class="hitem-name">System Settings</div><div class="hitem-detail" id="hd-settings-count">—</div></div></div><div class="hstatus hs-chk" id="hs-settings-tbl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Contracts</div><div class="hitem-detail" id="hd-contracts-count">—</div></div></div><div class="hstatus hs-chk" id="hs-contracts-tbl"><div class="hsdot"></div>—</div></div>
         </div>
 
         <!-- EFT Endpoints -->
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🏛️ EFT System</div><div class="hcard-time" id="htime-eft">—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💸</div><div><div class="hitem-name">DRD Disbursements</div><div class="hitem-detail">/api/eft/drd</div></div></div><div class="hstatus hs-chk" id="hs-drd"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💸</div><div><div class="hitem-name">Pending Disbursements</div><div class="hitem-detail">/api/eft/pending</div></div></div><div class="hstatus hs-chk" id="hs-drd"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📁</div><div><div class="hitem-name">DRD File Gen</div><div class="hitem-detail">/api/eft/drd</div></div></div><div class="hstatus hs-chk" id="hs-drd-gen"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📤</div><div><div class="hitem-name">PAD Preview</div><div class="hitem-detail">/api/eft/pads/preview</div></div></div><div class="hstatus hs-chk" id="hs-pad"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">↩️</div><div><div class="hitem-name">Returns Processor</div><div class="hitem-detail">/api/eft/returns</div></div></div><div class="hstatus hs-chk" id="hs-ret"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔄</div><div><div class="hitem-name">NSF Retry Queue</div><div class="hitem-detail">/api/eft/retries/preview</div></div></div><div class="hstatus hs-chk" id="hs-retry"><div class="hsdot"></div>—</div></div>
@@ -556,9 +565,12 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
         <div class="hcard">
           <div class="hcard-hdr"><div class="hcard-title">🌍 Frontend & Apply</div><div class="hcard-time" id="htime-dns">—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🏠</div><div><div class="hitem-name">wavesfinancial.ca</div><div class="hitem-detail">Netlify CDN</div></div></div><div class="hstatus hs-chk" id="hs-site"><div class="hsdot"></div>Checking…</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply</div></div></div><div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div></div>
-          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👤</div><div><div class="hitem-name">Client Portal</div><div class="hitem-detail">wavesfinancial.ca/client</div></div></div><div class="hstatus hs-chk" id="hs-client-portal"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">📝</div><div><div class="hitem-name">Apply Funnel</div><div class="hitem-detail">wavesfinancial.ca/apply.html</div></div></div><div class="hstatus hs-chk" id="hs-apply"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">👤</div><div><div class="hitem-name">Client Portal</div><div class="hitem-detail">wavesfinancial.ca/client.html</div></div></div><div class="hstatus hs-chk" id="hs-client-portal"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔐</div><div><div class="hitem-name">Admin Panel</div><div class="hitem-detail">wavesfinancial.ca/admin.html</div></div></div><div class="hstatus hs-chk" id="hs-admin"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔒</div><div><div class="hitem-name">SSL Certificate</div><div class="hitem-detail">HTTPS / TLS</div></div></div><div class="hstatus hs-chk" id="hs-ssl"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">💳</div><div><div class="hitem-name">Payment Methods Config</div><div class="hitem-detail">/api/config/payment-methods</div></div></div><div class="hstatus hs-chk" id="hs-pmethods"><div class="hsdot"></div>—</div></div>
+          <div class="hitem"><div class="hitem-l"><div class="hitem-icon">➕</div><div><div class="hitem-name">Optional Fees Config</div><div class="hitem-detail">/api/config/optional-fees</div></div></div><div class="hstatus hs-chk" id="hs-ofees"><div class="hsdot"></div>—</div></div>
           <div class="hitem"><div class="hitem-l"><div class="hitem-icon">🔗</div><div><div class="hitem-name">Flinks IBV</div><div class="hitem-detail">Sandbox active · Prod pending</div></div></div><div class="hstatus hs-warn" id="hs-flinks"><div class="hsdot"></div>Sandbox</div></div>
         </div>
 
@@ -2720,28 +2732,79 @@ async function checkRailway(){
     } else { setHS('hs-api','err','HTTP '+res.status); setDot('dot-railway','err'); }
   } catch { setHS('hs-api','err','Unreachable'); setHS('hs-latency','err','timeout'); setDot('dot-railway','err'); }
 
-  // Equifax token check
+  // Equifax token
   setHS('hs-efx','chk','Checking…');
   try{
     const res=await fetch(RAILWAY_URL+'/api/credit/token-test',{signal:AbortSignal.timeout(8000)});
     const data=await res.json();
-    if(data.ok){
-      setHS('hs-efx','ok',data.mode==='sandbox-static'?'Sandbox ✓':'OAuth ✓', data.message||'—');
-    } else {
-      setHS('hs-efx','warn','Token expired — refresh in Railway','Update EQUIFAX_STATIC_TOKEN');
-    }
+    if(data.ok){ setHS('hs-efx','ok',data.mode==='sandbox-static'?'Sandbox ✓':'OAuth ✓',data.message||'—'); }
+    else { setHS('hs-efx','warn','Token expired','Update EQUIFAX_STATIC_TOKEN in Railway'); }
   } catch { setHS('hs-efx','err','Unreachable'); }
+
+  // Payment processor
+  setHS('hs-processor','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/processor/status',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    const proc=data.processor||'unknown';
+    setHS('hs-processor',proc==='vopay'?'ok':'warn',proc==='vopay'?'VoPay API':'Manual EFT',proc);
+    const el=document.getElementById('hd-processor'); if(el) el.textContent=proc;
+  } catch { setHS('hs-processor','err','Unreachable'); }
+
+  // IBV provider
+  setHS('hs-ibv','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/ibv/status',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    const prov=data.provider||'unknown';
+    setHS('hs-ibv',prov==='vopay'?'ok':'warn',prov==='vopay'?'VoPay iQ11':prov==='flinks'?'Flinks (sandbox)':'Unknown',prov);
+    const el=document.getElementById('hd-ibv'); if(el) el.textContent=prov;
+  } catch { setHS('hs-ibv','err','Unreachable'); }
+
+  // KYC status
+  setHS('hs-kyc','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/kyc/status',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    const enabled=data.enabled||data.kyc_enabled;
+    setHS('hs-kyc',enabled?'ok':'warn',enabled?'KYC2020 Active':'Disabled',enabled?'Active':'Off');
+    const el=document.getElementById('hd-kyc'); if(el) el.textContent=enabled?'KYC2020 enabled':'Disabled';
+  } catch { setHS('hs-kyc','err','Unreachable'); }
+
+  // PDF generator — check health endpoint reports pdf capability
+  setHS('hs-pdf','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/health',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    setHS('hs-pdf',res.ok?'ok':'err',res.ok?'Available':'Error');
+  } catch { setHS('hs-pdf','err','Unreachable'); }
+
+  // Apply endpoints reachability (OPTIONS preflight)
+  setHS('hs-apply-ep','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/apply/new',{method:'OPTIONS',signal:AbortSignal.timeout(6000)});
+    setHS('hs-apply-ep',res.ok||res.status===204?'ok':'warn',res.ok||res.status===204?'Ready':'HTTP '+res.status);
+  } catch { setHS('hs-apply-ep','err','Unreachable'); }
+
+  // Approve/decline endpoints
+  setHS('hs-approve-ep','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/approve',{method:'OPTIONS',signal:AbortSignal.timeout(6000)});
+    setHS('hs-approve-ep',res.ok||res.status===204?'ok':'warn',res.ok||res.status===204?'Ready':'HTTP '+res.status);
+  } catch { setHS('hs-approve-ep','err','Unreachable'); }
 }
 
 async function checkSupabase(){
   setHS('hs-db','chk','Checking…');
   try{
-    const [c1,c2,c3,c4,c5]=await Promise.all([
+    const [c1,c2,c3,c4,c5,c6,c7]=await Promise.all([
       sb.from('clients').select('id',{count:'exact',head:true}),
       sb.from('loan_applications').select('id',{count:'exact',head:true}),
       sb.from('loans').select('id',{count:'exact',head:true}),
       sb.from('repayment_schedule').select('id',{count:'exact',head:true}),
       sb.from('nsf_fees').select('id',{count:'exact',head:true}),
+      sb.from('system_settings').select('key',{count:'exact',head:true}),
+      sb.from('contracts').select('id',{count:'exact',head:true}),
     ]);
     if(c1.error) throw c1.error;
     setHS('hs-db','ok','Connected'); setDot('dot-supabase','ok');
@@ -2751,18 +2814,29 @@ async function checkSupabase(){
     setHS('hs-sched-tbl','ok',(c4.count||0)+' records',(c4.count||0)+' payments scheduled');
     const nsfOut=(await sb.from('nsf_fees').select('id',{count:'exact',head:true}).eq('status','outstanding')).count||0;
     setHS('hs-nsf-tbl',nsfOut>0?'warn':'ok',(c5.count||0)+' total · '+nsfOut+' outstanding',(c5.count||0)+' NSF fees');
+    setHS('hs-settings-tbl',c6.count>0?'ok':'warn',(c6.count||0)+' keys',(c6.count||0)+' settings');
+    const el6=document.getElementById('hd-settings-count'); if(el6) el6.textContent=(c6.count||0)+' keys';
+    setHS('hs-contracts-tbl','ok',(c7.count||0)+' records',(c7.count||0)+' contracts');
+    const el7=document.getElementById('hd-contracts-count'); if(el7) el7.textContent=(c7.count||0)+' total';
   } catch(e){ setHS('hs-db','err',e.message||'Error'); setDot('dot-supabase','err'); }
 }
 
 async function checkEFT(){
-  // DRD
+  // Pending disbursements
   setHS('hs-drd','chk','Checking…');
   try{
     const res=await fetch(RAILWAY_URL+'/api/eft/pending',{signal:AbortSignal.timeout(8000)});
     const data=await res.json();
     const count=Array.isArray(data)?data.length:(data.loans?.length||0);
-    setHS('hs-drd','ok',count+' pending disbursement'+(count!==1?'s':''));
+    setHS('hs-drd',count>0?'warn':'ok',count+' pending disbursement'+(count!==1?'s':''));
   } catch { setHS('hs-drd','err','Unreachable'); }
+
+  // DRD file gen endpoint
+  setHS('hs-drd-gen','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/eft/drd',{method:'OPTIONS',signal:AbortSignal.timeout(6000)});
+    setHS('hs-drd-gen',res.ok||res.status===204?'ok':'warn',res.ok||res.status===204?'Ready':'HTTP '+res.status);
+  } catch { setHS('hs-drd-gen','err','Unreachable'); }
 
   // PAD preview
   setHS('hs-pad','chk','Checking…');
@@ -2773,7 +2847,7 @@ async function checkEFT(){
     setHS('hs-pad','ok',count+' payment'+(count!==1?'s':'')+' in next 14 days');
   } catch { setHS('hs-pad','err','Unreachable'); }
 
-  // Returns processor — check via retries/preview (GET) instead of POSTing to returns
+  // Returns processor
   setHS('hs-ret','chk','Checking…');
   try{
     const res=await fetch(RAILWAY_URL+'/api/eft/retries/preview',{signal:AbortSignal.timeout(8000)});
@@ -2800,13 +2874,51 @@ async function checkEFT(){
 }
 
 async function checkDNS(){
+  // Main site
   setHS('hs-site','chk','Checking…');
   try{
     await fetch('https://wavesfinancial.ca/',{mode:'no-cors',signal:AbortSignal.timeout(8000)});
-    setHS('hs-site','ok','Online'); setHS('hs-apply','ok','Reachable');
-    setHS('hs-client-portal','ok','Reachable'); setHS('hs-ssl','ok','Valid');
-    setDot('dot-dns','ok');
-  } catch { setHS('hs-site','err','Unreachable'); setHS('hs-apply','err','—'); setHS('hs-ssl','warn','Unknown'); setDot('dot-dns','err'); }
+    setHS('hs-site','ok','Online'); setHS('hs-ssl','ok','Valid'); setDot('dot-dns','ok');
+  } catch { setHS('hs-site','err','Unreachable'); setHS('hs-ssl','warn','Unknown'); setDot('dot-dns','err'); }
+
+  // Apply funnel
+  setHS('hs-apply','chk','—');
+  try{
+    await fetch('https://wavesfinancial.ca/apply.html',{mode:'no-cors',signal:AbortSignal.timeout(8000)});
+    setHS('hs-apply','ok','Reachable');
+  } catch { setHS('hs-apply','err','Unreachable'); }
+
+  // Client portal
+  setHS('hs-client-portal','chk','—');
+  try{
+    await fetch('https://wavesfinancial.ca/client.html',{mode:'no-cors',signal:AbortSignal.timeout(8000)});
+    setHS('hs-client-portal','ok','Reachable');
+  } catch { setHS('hs-client-portal','err','Unreachable'); }
+
+  // Admin panel
+  setHS('hs-admin','chk','—');
+  try{
+    await fetch('https://wavesfinancial.ca/admin.html',{mode:'no-cors',signal:AbortSignal.timeout(8000)});
+    setHS('hs-admin','ok','Reachable');
+  } catch { setHS('hs-admin','err','Unreachable'); }
+
+  // Payment methods config
+  setHS('hs-pmethods','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/config/payment-methods',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    const count=(data.methods||[]).length;
+    setHS('hs-pmethods',count>0?'ok':'warn',count+' method'+(count!==1?'s':'')+' configured');
+  } catch { setHS('hs-pmethods','err','Unreachable'); }
+
+  // Optional fees config
+  setHS('hs-ofees','chk','—');
+  try{
+    const res=await fetch(RAILWAY_URL+'/api/config/optional-fees',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    const count=(data.fees||[]).length;
+    setHS('hs-ofees','ok',count>0?count+' fee'+(count!==1?'s':'')+' configured':'None configured');
+  } catch { setHS('hs-ofees','err','Unreachable'); }
 }
 
 function updateSummaryHealth(){
