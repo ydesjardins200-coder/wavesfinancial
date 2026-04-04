@@ -314,57 +314,34 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 .sidebar-send:hover{opacity:.9;}
 
 /* ── PAYMENT PROCESSOR SELECTOR ── */
-#proc-btn-manual.proc-active{
-  background:rgba(26,111,255,.1);
-  border-color:var(--blue);
-  color:var(--white);
-}
-#proc-btn-manual:not(.proc-active){
-  background:rgba(255,255,255,.03);
-  border-color:var(--border);
-  color:var(--muted);
-}
-#proc-btn-manual:not(.proc-active):hover{
-  background:rgba(255,255,255,.06);
-  border-color:rgba(160,154,245,.3);
-  color:var(--white);
-}
-#proc-btn-vopay.proc-active{
-  background:rgba(0,212,170,.1);
-  border-color:var(--teal);
-  color:var(--white);
-}
-#proc-btn-vopay:not(.proc-active){
-  background:rgba(255,255,255,.03);
-  border-color:var(--border);
-  color:var(--muted);
-}
-#proc-btn-vopay:not(.proc-active):hover{
-  background:rgba(255,255,255,.06);
-  border-color:rgba(0,212,170,.3);
-  color:var(--white);
-}
-#ibv-btn-flinks.proc-active{background:rgba(26,111,255,.1);border-color:var(--blue);color:var(--white);}
-#ibv-btn-flinks:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
-#ibv-btn-flinks:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
-#ibv-btn-vopay.proc-active{background:rgba(0,212,170,.1);border-color:var(--teal);color:var(--white);}
-#ibv-btn-vopay:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
-#ibv-btn-vopay:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(0,212,170,.3);color:var(--white);}
-#ibv-btn-vopay.proc-disabled{opacity:.45;cursor:not-allowed !important;}
+#proc-btn-manual.proc-active{background:rgba(26,111,255,.18);border-color:var(--blue);color:var(--white);box-shadow:0 0 0 1px rgba(26,111,255,.3),inset 0 0 20px rgba(26,111,255,.06);}
+#proc-btn-manual:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#proc-btn-manual:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);opacity:1;}
+#proc-btn-vopay.proc-active{background:rgba(0,212,170,.18);border-color:var(--teal);color:var(--white);box-shadow:0 0 0 1px rgba(0,212,170,.3),inset 0 0 20px rgba(0,212,170,.06);}
+#proc-btn-vopay:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#proc-btn-vopay:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(0,212,170,.3);color:var(--white);opacity:1;}
+#ibv-btn-flinks.proc-active{background:rgba(26,111,255,.18);border-color:var(--blue);color:var(--white);box-shadow:0 0 0 1px rgba(26,111,255,.3),inset 0 0 20px rgba(26,111,255,.06);}
+#ibv-btn-flinks:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#ibv-btn-flinks:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);opacity:1;}
+#ibv-btn-vopay.proc-active{background:rgba(0,212,170,.18);border-color:var(--teal);color:var(--white);box-shadow:0 0 0 1px rgba(0,212,170,.3),inset 0 0 20px rgba(0,212,170,.06);}
+#ibv-btn-vopay:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#ibv-btn-vopay:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(0,212,170,.3);color:var(--white);opacity:1;}
+#ibv-btn-vopay.proc-disabled{opacity:.25;cursor:not-allowed !important;}
 
 /* ── KYC TOGGLE ── */
-#email-btn-manual.proc-active{background:rgba(107,125,179,.12);border-color:#6b7db3;color:var(--white);}
-#email-btn-manual:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
-#email-btn-manual:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
-#email-btn-resend.proc-active{background:rgba(162,155,254,.12);border-color:var(--periwinkle);color:var(--white);}
-#email-btn-resend:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
-#email-btn-resend:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(162,155,254,.3);color:var(--white);}
-#kyc-btn-off:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
-#kyc-btn-off:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);}
-#kyc-btn-on.proc-active{background:rgba(162,155,254,.12);border-color:var(--periwinkle);color:var(--white);}
-#kyc-btn-on:not(.proc-active){background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted);}
-#kyc-btn-on:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(162,155,254,.3);color:var(--white);}
-#kyc-btn-on.proc-disabled{opacity:.45;cursor:not-allowed !important;}
+#email-btn-manual.proc-active{background:rgba(107,125,179,.22);border-color:#6b7db3;color:var(--white);box-shadow:0 0 0 1px rgba(107,125,179,.3),inset 0 0 20px rgba(107,125,179,.06);}
+#email-btn-manual:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#email-btn-manual:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);opacity:1;}
+#email-btn-resend.proc-active{background:rgba(162,155,254,.2);border-color:var(--periwinkle);color:var(--white);box-shadow:0 0 0 1px rgba(162,155,254,.3),inset 0 0 20px rgba(162,155,254,.06);}
+#email-btn-resend:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#email-btn-resend:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(162,155,254,.3);color:var(--white);opacity:1;}
+#kyc-btn-off.proc-active{background:rgba(107,125,179,.22);border-color:#6b7db3;color:var(--white);box-shadow:0 0 0 1px rgba(107,125,179,.3),inset 0 0 20px rgba(107,125,179,.06);}
+#kyc-btn-off:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#kyc-btn-off:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(160,154,245,.3);color:var(--white);opacity:1;}
+#kyc-btn-on.proc-active{background:rgba(162,155,254,.2);border-color:var(--periwinkle);color:var(--white);box-shadow:0 0 0 1px rgba(162,155,254,.3),inset 0 0 20px rgba(162,155,254,.06);}
+#kyc-btn-on:not(.proc-active){background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);color:var(--muted);opacity:.55;}
+#kyc-btn-on:not(.proc-active):hover{background:rgba(255,255,255,.06);border-color:rgba(162,155,254,.3);color:var(--white);opacity:1;}
+#kyc-btn-on.proc-disabled{opacity:.25;cursor:not-allowed !important;}
 
 /* ── KYC STATUS BADGES (in application rows) ── */
 .kyc-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:100px;font-size:.58rem;font-weight:700;white-space:nowrap;}
@@ -3230,6 +3207,7 @@ function _setEmailProviderUI(provider, hasKey, from) {
     const btn = document.getElementById('email-btn-' + p);
     if (btn) btn.classList.toggle('proc-active', p === provider);
   });
+  _markActivePill('email-btn-' + provider, ['email-btn-manual','email-btn-resend']);
   const fields = document.getElementById('email-resend-fields');
   if (fields) fields.style.display = provider === 'resend' ? 'block' : 'none';
   const pill = document.getElementById('email-resend-pill');
@@ -3889,6 +3867,7 @@ function renderKYCUI(){
   if(!offBtn||!onBtn||!bar) return;
   offBtn.classList.toggle('proc-active', !kycEnabled);
   onBtn.classList.toggle('proc-active',  kycEnabled);
+  _markActivePill(kycEnabled ? 'kyc-btn-on' : 'kyc-btn-off', ['kyc-btn-off','kyc-btn-on']);
 
   if(kycEnabled){
     bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(162,155,254,.06);border:1px solid rgba(162,155,254,.15)';
@@ -4006,6 +3985,7 @@ function renderIBVUI(){
   if(!flBtn||!vpBtn||!bar) return;
   flBtn.classList.toggle('proc-active', activeIBV==='flinks');
   vpBtn.classList.toggle('proc-active', activeIBV==='vopay');
+  _markActivePill(activeIBV==='flinks'?'ibv-btn-flinks':'ibv-btn-vopay', ['ibv-btn-flinks','ibv-btn-vopay']);
   if(activeIBV==='flinks'){
     bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15)';
     bar.innerHTML=`<span>🔗</span><span style="color:var(--blue);font-weight:700">Flinks Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">Bank connection via Flinks Open Banking · loginId token per application</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);border-radius:100px;color:var(--blue)">● Active</span>`;
@@ -4065,6 +4045,25 @@ function setProcessor(proc){
     .catch(err=>showToast('Processor switch failed: '+err.message, true));
 }
 
+function _markActivePill(activeId, allIds) {
+  allIds.forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    let pill = btn.querySelector('.active-pill');
+    if (id === activeId) {
+      if (!pill) {
+        pill = document.createElement('span');
+        pill.className = 'active-pill';
+        pill.style.cssText = 'font-size:.58rem;font-weight:800;margin-top:3px;padding:1px 7px;border-radius:100px;background:rgba(255,255,255,.15);color:var(--white);letter-spacing:.04em';
+        btn.appendChild(pill);
+      }
+      pill.textContent = '✓ Active';
+    } else {
+      if (pill) pill.remove();
+    }
+  });
+}
+
 function renderProcessorUI(){
   const manualBtn = document.getElementById('proc-btn-manual');
   const vopayBtn  = document.getElementById('proc-btn-vopay');
@@ -4072,6 +4071,7 @@ function renderProcessorUI(){
   if(!manualBtn||!vopayBtn||!bar) return;
   manualBtn.classList.toggle('proc-active', activeProcessor==='manual');
   vopayBtn.classList.toggle('proc-active',  activeProcessor==='vopay');
+  _markActivePill(activeProcessor==='manual'?'proc-btn-manual':'proc-btn-vopay', ['proc-btn-manual','proc-btn-vopay']);
   if(activeProcessor==='manual'){
     bar.style.cssText='margin-top:12px;padding:8px 14px;border-radius:8px;font-size:.75rem;display:flex;align-items:center;gap:8px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15)';
     bar.innerHTML=`<span>📁</span><span style="color:var(--blue);font-weight:700">Manual EFT Active</span><span style="color:var(--muted)">—</span><span style="color:var(--muted)">Disbursements via DRD file · Collections via PAD file · Submitted manually to Desjardins</span><span style="margin-left:auto;font-size:.65rem;padding:2px 8px;background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);border-radius:100px;color:var(--blue);white-space:nowrap">● Active</span>`;
