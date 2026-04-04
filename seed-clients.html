@@ -92,10 +92,11 @@ async function seed(){
       const data=await resp.json();
       if(!resp.ok) throw new Error((data.error||'failed')+' — '+(data.details||[]).join(', ')||JSON.stringify(data).slice(0,120));
       const feeStr = selectedFees.length ? ` fees:$${selectedFees.reduce((s,f)=>s+f.fee,0)}` : '';
-      const isDeclined = data.decision === 'auto_declined' || data.tier?.toLowerCase() === 'red';
-      const icon = isDeclined ? '🚫' : '✅';
-      const cls  = isDeclined ? 'err' : 'ok';
-      const decLabel = isDeclined ? ' — AUTO-DECLINED' : '';
+      const isDeclined   = data.decision === 'auto_declined' || data.tier?.toLowerCase() === 'red';
+      const isAutoApproved = data.decision === 'auto_approved' || data.tier?.toLowerCase() === 'gold';
+      const icon    = isDeclined ? '🚫' : '✅';
+      const cls     = isDeclined ? 'err' : 'ok';
+      const decLabel = isDeclined ? ' — AUTO-DECLINED' : isAutoApproved ? ' — AUTO-APPROVED' : '';
       log(`  ${icon} ${fn} ${ln} (${province}) — ${data.ref||'ok'} — tier:${data.tier||'?'} score:${data.score??'?'}${feeStr}${decLabel}`,cls);
       if (isDeclined) declined++; else ok++;
     }catch(err){
