@@ -1124,11 +1124,65 @@ function renderList(){
     document.getElementById('col-head').style.gridTemplateColumns=cols;
 
     if(isCompletedTab){
-      document.getElementById('col-head').innerHTML=th('Ref')+th('Client')+th('Type','type')+th('Principal','amount')+th('Total Repaid','amount')+th('Status')+th('Completed','date')+th('Duration');
       const completed = allLoans.filter(l=>l.status==='paid_off'||l.status==='defaulted'||l.status==='cancelled');
-      document.getElementById('qtitle').textContent='Completed Loans ('+completed.length+')';
 
-      let items = sortItems(completed,'created_at').filter(l=>{
+      // Summary stats
+      const paidOff   = completed.filter(l=>l.status==='paid_off');
+      const defaulted = completed.filter(l=>l.status==='defaulted');
+      const cancelled = completed.filter(l=>l.status==='cancelled');
+      const totalPrincipal = completed.reduce((s,l)=>s+parseFloat(l.principal||0),0);
+      const totalRepaid    = paidOff.reduce((s,l)=>s+parseFloat(l.total_paid||0),0);
+      const totalInterest  = paidOff.reduce((s,l)=>s+(parseFloat(l.total_paid||0)-parseFloat(l.principal||0)),0);
+      const defaultRate    = completed.length ? Math.round((defaulted.length/completed.length)*100) : 0;
+
+      // Status filter buttons
+      const activeFilter = window._completedFilter || 'all';
+      const filterBar = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          ${[
+            ['all',      'All',        completed.length,    'var(--muted)'],
+            ['paid_off', '✓ Paid Off', paidOff.length,     'var(--teal)'],
+            ['defaulted','✗ Defaulted',defaulted.length,   'var(--coral)'],
+            ['cancelled','Cancelled',  cancelled.length,   'rgba(160,154,245,.6)'],
+          ].map(([val,lbl,cnt,col])=>`
+            <button onclick="setCompletedFilter('${val}')"
+              style="padding:5px 12px;border-radius:20px;border:1px solid ${activeFilter===val?col:'rgba(255,255,255,.1)'};background:${activeFilter===val?`rgba(${col==='var(--teal)'?'29,233,198':col==='var(--coral)'?'255,107,138':'160,154,245'},.12)`:'rgba(255,255,255,.03)'};color:${activeFilter===val?col:'var(--muted)'};font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s">
+              ${lbl} <span style="font-size:.65rem;opacity:.75">${cnt}</span>
+            </button>`).join('')}
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+            <button onclick="promptMarkPaidOff()"
+              style="padding:5px 14px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.2);border-radius:20px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+              + Mark Loan Paid Off
+            </button>
+            <button onclick="promptMarkDefaulted()"
+              style="padding:5px 14px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.2);border-radius:20px;color:var(--coral);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+              ✗ Mark Defaulted
+            </button>
+          </div>
+        </div>`;
+
+      // Summary cards
+      const summaryBar = `
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+          ${[
+            ['Total Completed', completed.length,                              'var(--white)',    ''],
+            ['Total Disbursed', '$'+totalPrincipal.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}), 'var(--periwinkle)', ''],
+            ['Interest Earned', '$'+Math.max(0,totalInterest).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}), 'var(--teal)', ''],
+            ['Default Rate',    defaultRate+'%',                               defaultRate>10?'var(--coral)':'var(--teal)', ''],
+          ].map(([lbl,val,col])=>`
+            <div style="padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px">
+              <div style="font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">${lbl}</div>
+              <div style="font-size:1.3rem;font-weight:800;color:${col}">${val}</div>
+            </div>`).join('')}
+        </div>`;
+
+      document.getElementById('col-head').innerHTML = th('Ref')+th('Client')+th('Type','type')+th('Tier')+th('Principal','amount')+th('Repaid','amount')+th('Interest')+th('Status')+th('Completed','date')+th('Days');
+      const extCols = '100px 1fr 80px 70px 90px 90px 90px 100px 110px 60px';
+      document.getElementById('col-head').style.gridTemplateColumns = extCols;
+      document.getElementById('qtitle').textContent = 'Completed Loans ('+completed.length+')';
+
+      let items = sortItems(completed,'updated_at').filter(l=>{
+        if(activeFilter !== 'all' && l.status !== activeFilter) return false;
         const cl=allClients.find(x=>x.id===l.client_id);
         if(filterSearch){
           const name=((cl?.first_name||'')+' '+(cl?.last_name||'')).toLowerCase();
@@ -1139,24 +1193,39 @@ function renderList(){
         return true;
       });
 
-      if(!items.length){document.getElementById('app-list').innerHTML='<div class="empty">No completed loans.</div>';return;}
-      document.getElementById('app-list').innerHTML=items.map(l=>{
-        const cl=allClients.find(x=>x.id===l.client_id);
-        const name=cl?((cl.first_name||'')+' '+(cl.last_name||'')).trim():'—';
-        const lsCls=l.status==='paid_off'?'ls-paid-off':l.status==='defaulted'?'ls-defaulted':'ls-pending';
-        const statusLabel=l.status==='paid_off'?'✓ Paid Off':l.status==='defaulted'?'✗ Defaulted':l.status.replace(/_/g,' ');
-        const completedDate=l.updated_at?new Date(l.updated_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}):'—';
-        // Duration in days
-        const start=l.created_at?new Date(l.created_at):null;
-        const end=l.updated_at?new Date(l.updated_at):null;
-        const days=start&&end?Math.round((end-start)/(86400000)):null;
-        return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClient('${l.client_id}')">
+      if(!items.length){
+        document.getElementById('app-list').innerHTML = summaryBar + filterBar + '<div class="empty">No loans match this filter.</div>';
+        return;
+      }
+
+      document.getElementById('app-list').innerHTML = summaryBar + filterBar + items.map(l=>{
+        const cl   = allClients.find(x=>x.id===l.client_id);
+        const name = cl ? ((cl.first_name||'')+' '+(cl.last_name||'')).trim() : '—';
+        const tc   = 't-'+(cl?.latest_tier||'green').toLowerCase();
+
+        const statusCls   = {paid_off:'ls-paid-off',defaulted:'ls-defaulted',cancelled:'ls-pending'}[l.status]||'ls-pending';
+        const statusLabel = {paid_off:'✓ Paid Off',defaulted:'✗ Defaulted',cancelled:'Cancelled'}[l.status]||l.status;
+
+        const completedDate = l.updated_at ? new Date(l.updated_at).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}) : '—';
+        const start = l.created_at ? new Date(l.created_at) : null;
+        const end   = l.updated_at ? new Date(l.updated_at) : null;
+        const days  = start&&end ? Math.round((end-start)/86400000) : null;
+
+        const principal = parseFloat(l.principal||0);
+        const repaid    = parseFloat(l.total_paid||0);
+        const interest  = l.status==='paid_off' ? Math.max(0,repaid-principal) : 0;
+
+        return `<div class="arow" style="grid-template-columns:${extCols}" onclick="openClient('${l.client_id}')">
           <div class="aref">${l.ref||'—'}</div>
           <div><div class="aname">${name}</div><div class="aemail">${cl?.email||''}</div></div>
           <div>${loanTypeBadge(l.ref)}</div>
-          <div style="font-size:.85rem;font-weight:800">$${Number(l.principal||0).toLocaleString()}</div>
-          <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${Number(l.total_paid||0).toLocaleString()}</div>
-          <div><span class="loan-status ${lsCls}" style="white-space:nowrap;font-size:.6rem">${statusLabel}</span></div>
+          <div>${cl?.latest_tier?`<span class="tb ${tc}">${cl.latest_tier}</span>`:'—'}</div>
+          <div style="font-size:.85rem;font-weight:800">$${principal.toLocaleString()}</div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--teal)">$${repaid.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+          <div style="font-size:.78rem;font-weight:700;color:${interest>0?'var(--periwinkle)':'var(--muted)'}">
+            ${interest>0?'$'+interest.toFixed(2):'—'}
+          </div>
+          <div><span class="loan-status ${statusCls}" style="white-space:nowrap;font-size:.6rem">${statusLabel}</span></div>
           <div style="font-size:.72rem;color:var(--muted)">${completedDate}</div>
           <div style="font-size:.72rem;color:var(--muted)">${days!==null?days+'d':'—'}</div>
         </div>`;
@@ -4684,6 +4753,51 @@ async function resendEmail(event, toEmail, clientId) {
 }
 
 /* ── PAD PREVIEW + CONFIRM ── */
+/* ── COMPLETED LOANS ─────────────────────────────────────────────────────────── */
+
+function setCompletedFilter(val) {
+  window._completedFilter = val;
+  renderList();
+}
+
+async function promptMarkPaidOff() {
+  const ref = prompt('Enter loan reference to mark as Paid Off (e.g. WF-ABC123):');
+  if (!ref) return;
+  const loan = allLoans.find(l => l.ref?.toUpperCase() === ref.trim().toUpperCase());
+  if (!loan) { showToast('Loan not found: ' + ref, true); return; }
+  if (loan.status === 'paid_off') { showToast('Loan is already marked paid off.'); return; }
+  if (!confirm(`Mark ${loan.ref} as Paid Off?\n\nThis will set status to paid_off and log a note.`)) return;
+  await _updateLoanStatus(loan.id, loan.ref, 'paid_off');
+}
+
+async function promptMarkDefaulted() {
+  const ref = prompt('Enter loan reference to mark as Defaulted (e.g. WF-ABC123):');
+  if (!ref) return;
+  const loan = allLoans.find(l => l.ref?.toUpperCase() === ref.trim().toUpperCase());
+  if (!loan) { showToast('Loan not found: ' + ref, true); return; }
+  if (loan.status === 'defaulted') { showToast('Loan is already marked defaulted.'); return; }
+  const note = prompt(`Optional note for ${loan.ref} default (or leave blank):`);
+  if (!confirm(`Mark ${loan.ref} as Defaulted?\n\nThis cannot be easily undone.`)) return;
+  await _updateLoanStatus(loan.id, loan.ref, 'defaulted', note);
+}
+
+async function _updateLoanStatus(loanId, loanRef, newStatus, note = '') {
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/loans/${loanId}/status`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ status: newStatus, note, confirmedBy: 'analyst' }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Update failed');
+    const icon = newStatus === 'paid_off' ? '🎉' : '✗';
+    showToast(`${icon} ${loanRef} marked ${newStatus.replace('_',' ')}`);
+    setTimeout(loadData, 600);
+  } catch(err) {
+    showToast('Failed: ' + err.message, true);
+  }
+}
+
 async function previewPAD(days){
   const box=document.getElementById('pad-preview-box');
   if(!box) return;
