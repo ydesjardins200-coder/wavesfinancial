@@ -2893,11 +2893,13 @@ async function checkEFT(){
   // PAD preview
   setHS('hs-pad','chk','Checking…');
   try{
-    const res=await fetch(RAILWAY_URL+'/api/eft/pads/preview?days=14',{signal:AbortSignal.timeout(8000)});
+    const res=await fetch(RAILWAY_URL+'/api/eft/pads/preview?days=1',{signal:AbortSignal.timeout(15000)});
+    if(!res.ok){ setHS('hs-pad','warn','HTTP '+res.status); return; }
     const data=await res.json();
     const count=Array.isArray(data?.payments)?data.payments.length:0;
-    setHS('hs-pad','ok',count+' payment'+(count!==1?'s':'')+' in next 14 days');
-  } catch { setHS('hs-pad','err','Unreachable'); }
+    const warn=data?.warning||'';
+    setHS('hs-pad','ok',warn?warn:(count+' payment'+(count!==1?'s':'')+' due today'));
+  } catch(e){ setHS('hs-pad','warn','Slow / no active loans'); }
 
   // Returns processor
   setHS('hs-ret','chk','Checking…');
