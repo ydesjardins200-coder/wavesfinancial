@@ -467,7 +467,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
   <div class="main">
     <div class="tabs">
       <button class="tab active" onclick="switchTab('queue')" id="tab-queue">Review Queue <span class="tcnt" id="qcnt">0</span></button>
-      <button class="tab" onclick="switchTab('all')" id="tab-all">All Applications</button>
+      <button class="tab" onclick="switchTab('all')" id="tab-all">Applications</button>
       <button class="tab" onclick="switchTab('clients')" id="tab-clients">Clients</button>
       <button class="tab" onclick="switchTab('loans')" id="tab-loans">Active Loans</button>
       <button class="tab" onclick="switchTab('completed')" id="tab-completed">Completed Loans</button>
@@ -829,7 +829,8 @@ async function loadData(){
 
 /* ── STATS ── */
 function renderStats(){
-  const rev  = allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at).length;
+  const activeLoanRefs = new Set(allLoans.map(l=>l.ref).filter(Boolean));
+  const rev  = allApps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at&&!activeLoanRefs.has(a.ref)).length;
   const loans     = allLoans.filter(l=>l.status==='active'||l.status==='pending_disbursement').length;
   const completed = allLoans.filter(l=>l.status==='paid_off').length;
   const sc   = allApps.filter(a=>a.risk_score!=null).map(a=>a.risk_score);
@@ -1136,8 +1137,20 @@ function renderList(){
   document.getElementById('col-head').style.gridTemplateColumns=cols;
   document.getElementById('col-head').innerHTML=th('Ref')+th('Applicant','name')+th('Type','type')+th('Amount','amount')+th('Score','score')+th('Tier','tier')+th('Submitted','date')+th('KYC')+th('Decision');
 
+  // Build a fast lookup: refs that have a loan record
+  const loanRefs = new Set(allLoans.map(l => l.ref).filter(Boolean));
+
   let apps=[...allApps];
-  if(currentTab==='queue')    apps=apps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at);
+  if(currentTab==='queue') apps=apps.filter(a=>a.decision==='manual_review'&&!a.reviewed_at);
+
+  // Applications tab: show only apps without a loan (pending decision)
+  // PLUS always show declined apps (with badge) so history is visible
+  if(currentTab==='all') apps=apps.filter(a=>{
+    const isDeclined = a.final_decision==='declined' || a.decision==='auto_declined';
+    const hasLoan    = loanRefs.has(a.ref);
+    return !hasLoan || isDeclined;
+  });
+
   if(currentTab==='approved') apps=apps.filter(a=>a.decision==='auto_approved');
   if(currentTab==='declined') apps=apps.filter(a=>a.decision==='auto_declined');
   if(currentTab==='queue'){const p={green:1,blue:2,yellow:3,orange:4};apps.sort((a,b)=>(p[a.tier]||9)-(p[b.tier]||9)||new Date(a.submitted_at)-new Date(b.submitted_at));}
@@ -1149,7 +1162,7 @@ function renderList(){
   });
   if(currentTab!=='queue') apps=sortItems(apps,'submitted_at');
 
-  const titles={queue:'Review Queue',all:'All Applications',approved:'Approved',declined:'Declined'};
+  const titles={queue:'Review Queue',all:'Applications',approved:'Approved',declined:'Declined'};
   document.getElementById('qtitle').textContent=(titles[currentTab]||'')+' ('+apps.length+')';
   if(!apps.length){document.getElementById('app-list').innerHTML='<div class="empty">Nothing matches filters.</div>';return;}
 
@@ -1158,9 +1171,20 @@ function renderList(){
     const name=c?((c.first_name||'')+' '+(c.last_name||'')).trim():((a.first_name||'')+' '+(a.last_name||'')).trim()||'—';
     const email=c?.email||a.email||'';
     const tc='t-'+(a.tier||'green');
-    const resolved=a.reviewed_at&&a.final_decision?a.final_decision:a.decision;
-    const dc=resolved==='approved'||resolved==='auto_approved'?'d-approved':resolved==='declined'||resolved==='auto_declined'?'d-declined':'d-review';
-    const dl=resolved==='approved'?'✓ Approved':resolved==='auto_approved'?'✓ Auto-Approved':resolved==='declined'?'✗ Declined':resolved==='auto_declined'?'✗ Auto-Declined':a.reviewed_at?'✓ Reviewed':'🔍 Pending Review';
+    const isDeclined   = a.final_decision==='declined'||a.decision==='auto_declined';
+    const hasLoan      = loanRefs.has(a.ref);
+    const resolved     = a.reviewed_at&&a.final_decision?a.final_decision:a.decision;
+    const dc = isDeclined ? 'd-declined'
+             : hasLoan    ? 'd-approved'
+             : resolved==='auto_approved' ? 'd-approved'
+             : 'd-review';
+    const dl = isDeclined                           ? '✗ Declined'
+             : hasLoan                              ? '✓ Active Loan'
+             : resolved==='approved'                ? '✓ Approved'
+             : resolved==='auto_approved'           ? '✓ Auto-Approved'
+             : resolved==='manual_review'           ? '⏳ Manual Review'
+             : a.reviewed_at                        ? '✓ Reviewed'
+             :                                        '🔍 Pending';
     return `<div class="arow" style="grid-template-columns:${cols}" onclick="openClientByAppId('${a.id}')">
       <div class="aref">${a.ref||'—'}</div>
       <div><div class="aname">${name}</div><div class="aemail">${email}</div></div>
