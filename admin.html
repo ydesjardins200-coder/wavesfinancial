@@ -3342,6 +3342,14 @@ async function loadEmailTemplates() {
       </div>
       ${internal.map(t => renderEmailTemplateCard(t)).join('')}
     `;
+
+    // Populate subject + body values safely via JS (avoids backtick/backslash injection)
+    for (const t of data.templates) {
+      const subjectEl = document.getElementById('tpl-subject-' + t.event);
+      const bodyEl    = document.getElementById('tpl-body-'    + t.event);
+      if (subjectEl)  subjectEl.value = t.subject   || '';
+      if (bodyEl)     bodyEl.value    = t.body_html || '';
+    }
   } catch(err) {
     container.innerHTML = `
       <div style="padding:16px;background:rgba(255,107,138,.05);border:1px solid rgba(255,107,138,.2);border-radius:10px;font-size:.78rem;color:var(--coral)">
@@ -3379,13 +3387,13 @@ function renderEmailTemplateCard(t) {
     </div>
     <div style="margin-bottom:8px">
       <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">Subject</div>
-      <input id="tpl-subject-${t.event}" type="text" value="${escHtml(t.subject)}"
+      <input id="tpl-subject-${t.event}" type="text"
         style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:var(--font);font-size:.82rem;outline:none;box-sizing:border-box">
     </div>
     <div style="margin-bottom:10px">
       <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px">HTML Body</div>
       <textarea id="tpl-body-${t.event}" rows="5"
-        style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:monospace;font-size:.7rem;outline:none;resize:vertical;box-sizing:border-box">${escHtml(t.body_html)}</textarea>
+        style="width:100%;padding:7px 10px;background:rgba(8,6,20,.7);border:1px solid rgba(160,154,245,.2);border-radius:7px;color:var(--white);font-family:monospace;font-size:.7rem;outline:none;resize:vertical;box-sizing:border-box"></textarea>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <button onclick="saveTemplate('${t.event}')" style="padding:6px 14px;background:linear-gradient(135deg,var(--royal),var(--iris));border:none;border-radius:7px;color:var(--white);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">💾 Save</button>
