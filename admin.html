@@ -354,18 +354,22 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
 
 /* ── REPORTING ENGINE ── */
 .rpt-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
-.rpt-kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;transition:border-color .18s;}
+.rpt-kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;transition:border-color .18s;position:relative;overflow:hidden;}
 .rpt-kpi:hover{border-color:rgba(160,154,245,.3);}
-.rpt-kpi-val{font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:4px;}
+.rpt-kpi-val{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:4px;letter-spacing:-.02em;}
 .rpt-kpi-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
 .rpt-kpi-sub{font-size:.65rem;color:var(--muted);margin-top:3px;}
-.rpt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+.rpt-kpi-delta{font-size:.65rem;font-weight:700;margin-top:4px;}
+.rpt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.rpt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.rpt-grid-full{margin-bottom:16px;}
 .rpt-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
 .rpt-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
 .rpt-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03);}
 .rpt-row:last-child{border-bottom:none;}
 .rpt-row-label{font-size:.72rem;color:var(--muted);}
 .rpt-row-val{font-size:.78rem;text-align:right;}
+.rpt-chart-wrap{width:100%;overflow:hidden;border-radius:8px;}
 
 @media(max-width:1000px){
   .cp-layout{grid-template-columns:1fr;}
@@ -889,6 +893,7 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
             <option value="all">All time</option>
           </select>
           <button class="qrefresh" onclick="renderReports()">↻ Refresh</button>
+          <button onclick="exportReportCSV()" style="padding:6px 12px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.2);border-radius:8px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">⬇ Export CSV</button>
         </div>
       </div>
       <div id="reporting-body">
@@ -4157,197 +4162,226 @@ async function renderReports(){
   if(!body) return;
   body.innerHTML = '<div class="empty"><div class="spinner"></div><br>Building report…</div>';
 
-  // ── Date window ──────────────────────────────────────────────────────────────
   const periodVal = document.getElementById('rpt-period')?.value || '30';
   const now       = new Date();
-
   let cutoff, periodLabel;
-  if (periodVal === 'all') {
-    cutoff      = new Date('2000-01-01');
-    periodLabel = 'All Time';
-  } else if (periodVal === 'today') {
-    cutoff      = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // midnight today
-    periodLabel = 'Today';
-  } else if (periodVal === 'week') {
-    const day   = now.getDay(); // 0=Sun, 1=Mon…
-    const diff  = day === 0 ? 6 : day - 1; // days since Monday
-    cutoff      = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diff);
-    periodLabel = 'This Week';
-  } else {
-    cutoff      = new Date(now - periodVal * 86400000);
-    periodLabel = `Last ${periodVal} days`;
-  }
+  if(periodVal==='all'){ cutoff=new Date('2000-01-01'); periodLabel='All Time'; }
+  else if(periodVal==='today'){ cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()); periodLabel='Today'; }
+  else if(periodVal==='week'){ const d=now.getDay(); cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()-(d===0?6:d-1)); periodLabel='This Week'; }
+  else { cutoff=new Date(now-periodVal*86400000); periodLabel=`Last ${periodVal} days`; }
+  const cutoffStr=cutoff.toISOString();
 
-  const cutoffStr = cutoff.toISOString();
-
-  // ── Fetch supplementary data (schedules + NSF) ───────────────────────────────
-  const [schedRes, nsfRes] = await Promise.all([
+  const [schedRes,nsfRes]=await Promise.all([
     sb.from('repayment_schedule').select('*').order('due_date',{ascending:true}),
     sb.from('nsf_fees').select('*').order('created_at',{ascending:false}),
   ]);
-  const allSched = schedRes.data || [];
-  const allNSF   = nsfRes.data   || [];
+  const allSched=schedRes.data||[];
+  const allNSF  =nsfRes.data||[];
 
-  // ── Filter to period ─────────────────────────────────────────────────────────
-  const apps    = allApps.filter(a   => a.submitted_at  >= cutoffStr);
-  const loans   = allLoans.filter(l  => l.created_at    >= cutoffStr);
-  const sched   = allSched.filter(p  => p.due_date      >= cutoff.toISOString().slice(0,10));
-  const nsf     = allNSF.filter(n    => n.created_at    >= cutoffStr);
-  const clients = allClients.filter(c=> c.created_at    >= cutoffStr);
+  const apps    = allApps.filter(a=>a.submitted_at>=cutoffStr);
+  const loans   = allLoans.filter(l=>l.created_at>=cutoffStr);
+  const nsf     = allNSF.filter(n=>n.created_at>=cutoffStr);
+  const clients = allClients.filter(c=>c.created_at>=cutoffStr);
 
-  // All schedules for active/completed loans (regardless of period) for cash flow
-  const allActivesSched = allSched.filter(p => {
-    const loan = allLoans.find(l=>l.id===p.loan_id);
-    return loan && (loan.status==='active'||loan.status==='paid_off');
-  });
+  const allActivesSched = allSched.filter(p=>{ const l=allLoans.find(x=>x.id===p.loan_id); return l&&(l.status==='active'||l.status==='paid_off'); });
 
-  // ── KPIs ─────────────────────────────────────────────────────────────────────
-  const totalApps       = apps.length;
-  const autoApproved    = apps.filter(a=>a.decision==='auto_approved').length;
-  const manualReview    = apps.filter(a=>a.decision==='manual_review').length;
-  const autoDeclined    = apps.filter(a=>a.decision==='auto_declined').length;
-  const approvalRate    = totalApps ? Math.round((autoApproved/totalApps)*100) : 0;
+  // KPIs
+  const totalApps      = apps.length;
+  const autoApproved   = apps.filter(a=>a.decision==='auto_approved').length;
+  const manualReview   = apps.filter(a=>a.decision==='manual_review').length;
+  const autoDeclined   = apps.filter(a=>a.decision==='auto_declined').length;
+  const approvalRate   = totalApps?Math.round(autoApproved/totalApps*100):0;
+  const newLoans       = loans.filter(l=>!l.ref?.includes('-R-'));
+  const renewalLoans   = loans.filter(l=>l.ref?.includes('-R-'));
+  const totalPrincipal = loans.reduce((s,l)=>s+parseFloat(l.principal||0),0);
+  const totalRepaid    = allLoans.reduce((s,l)=>s+parseFloat(l.total_paid||0),0);
+  const activeLoans    = allLoans.filter(l=>l.status==='active');
+  const paidOffLoans   = allLoans.filter(l=>l.status==='paid_off');
+  const defaultedLoans = allLoans.filter(l=>l.status==='defaulted');
+  const outstandingBal = activeLoans.reduce((s,l)=>s+parseFloat(l.remaining_balance||0),0);
+  const paidPayments   = allActivesSched.filter(p=>p.status==='paid');
+  const totalCollected = paidPayments.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
+  const pendingPayments= allActivesSched.filter(p=>p.status==='scheduled'&&p.due_date>=now.toISOString().slice(0,10));
+  const expectedIncoming=pendingPayments.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
+  const overduePayments= allActivesSched.filter(p=>p.status==='scheduled'&&p.due_date<now.toISOString().slice(0,10));
+  const overdueAmount  = overduePayments.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
+  const nsfTotal       = allNSF.length;
+  const nsfOutstanding = allNSF.filter(n=>n.status==='outstanding');
+  const nsfCollected   = allNSF.filter(n=>n.status==='collected');
+  const nsfOutstandingAmt=nsfOutstanding.reduce((s,n)=>s+parseFloat(n.amount||45),0);
+  const nsfCollectedAmt  =nsfCollected.reduce((s,n)=>s+parseFloat(n.amount||45),0);
+  const totalAllPrincipal=allLoans.reduce((s,l)=>s+parseFloat(l.principal||0),0);
+  const netInterest    = Math.max(0,totalRepaid-totalAllPrincipal);
+  const totalRevenue   = netInterest+nsfCollectedAmt;
+  const defaultRate    = allLoans.length?Math.round(defaultedLoans.length/allLoans.length*100):0;
+  const renewalRate    = allLoans.length?Math.round(renewalLoans.length/allLoans.length*100):0;
+  const avgLoanSize    = loans.length?Math.round(totalPrincipal/loans.length):0;
+  const onTimePaid     = allSched.filter(p=>p.status==='paid').length;
+  const attempted      = allSched.filter(p=>['paid','missed','failed'].includes(p.status)).length;
+  const onTimeRate     = attempted?Math.round(onTimePaid/attempted*100):100;
 
-  const newLoans        = loans.filter(l=>!l.ref?.includes('-R-'));
-  const renewalLoans    = loans.filter(l=>l.ref?.includes('-R-'));
-  const totalPrincipal  = loans.reduce((s,l)=>s+parseFloat(l.principal||0),0);
-  const totalRepaid     = allLoans.reduce((s,l)=>s+parseFloat(l.total_paid||0),0);
-  const activeLoans     = allLoans.filter(l=>l.status==='active');
-  const paidOffLoans    = allLoans.filter(l=>l.status==='paid_off');
-  const outstandingBal  = activeLoans.reduce((s,l)=>s+parseFloat(l.remaining_balance||0),0);
-
-  // Cash flow
-  const paidPayments    = allActivesSched.filter(p=>p.status==='paid');
-  const totalCollected  = paidPayments.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
-  const pendingPayments = allActivesSched.filter(p=>p.status==='scheduled'&&p.due_date>=now.toISOString().slice(0,10));
-  const expectedIncoming= pendingPayments.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
-  const overduePayments = allActivesSched.filter(p=>p.status==='scheduled'&&p.due_date<now.toISOString().slice(0,10));
-  const overdueAmount   = overduePayments.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0);
-
-  // NSF
-  const nsfTotal        = allNSF.length;
-  const nsfOutstanding  = allNSF.filter(n=>n.status==='outstanding');
-  const nsfCollected    = allNSF.filter(n=>n.status==='collected');
-  const nsfOutstandingAmt = nsfOutstanding.reduce((s,n)=>s+parseFloat(n.amount||45),0);
-  const nsfCollectedAmt   = nsfCollected.reduce((s,n)=>s+parseFloat(n.amount||45),0);
-
-  // Risk
-  const scores = apps.filter(a=>a.risk_score!=null).map(a=>a.risk_score);
-  const avgScore = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
-  const tierCounts = {gold:0,green:0,blue:0,yellow:0,orange:0,red:0};
+  const scores=apps.filter(a=>a.risk_score!=null).map(a=>a.risk_score);
+  const avgScore=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+  const tierCounts={gold:0,green:0,blue:0,yellow:0,orange:0,red:0};
   apps.forEach(a=>{ if(a.tier&&tierCounts[a.tier]!==undefined) tierCounts[a.tier]++; });
 
-  // Province breakdown
-  const byProvince = {};
+  const byProvince={};
   apps.forEach(a=>{ const p=a.province||'—'; byProvince[p]=(byProvince[p]||0)+1; });
-  const topProvinces = Object.entries(byProvince).sort((a,b)=>b[1]-a[1]);
+  const topProvinces=Object.entries(byProvince).sort((a,b)=>b[1]-a[1]);
 
-  // Monthly applications trend (last 6 months)
-  const monthlyApps = {};
-  allApps.forEach(a=>{
-    const m = a.submitted_at?.slice(0,7);
-    if(m) monthlyApps[m]=(monthlyApps[m]||0)+1;
-  });
-  const trendMonths = Object.keys(monthlyApps).sort().slice(-6);
-  const trendMax    = Math.max(...trendMonths.map(m=>monthlyApps[m]),1);
+  // Monthly trend (last 12 months)
+  const monthlyData={};
+  allApps.forEach(a=>{ const m=a.submitted_at?.slice(0,7); if(m) monthlyData[m]=(monthlyData[m]||{apps:0,revenue:0}),monthlyData[m].apps++; });
+  allLoans.forEach(l=>{ const m=l.created_at?.slice(0,7); if(m&&l.total_paid>0){ monthlyData[m]=monthlyData[m]||{apps:0,revenue:0}; monthlyData[m].revenue=(monthlyData[m].revenue||0)+Math.max(0,parseFloat(l.total_paid||0)-parseFloat(l.principal||0)); }});
+  const trendMonths=Object.keys(monthlyData).sort().slice(-12);
+  const trendMaxApps=Math.max(...trendMonths.map(m=>monthlyData[m]?.apps||0),1);
+  const trendMaxRev =Math.max(...trendMonths.map(m=>monthlyData[m]?.revenue||0),1);
 
-  // Renewal rate
-  const totalLoanCount   = allLoans.length;
-  const renewalLoanCount = allLoans.filter(l=>l.ref?.includes('-R-')).length;
-  const renewalRate      = totalLoanCount ? Math.round(renewalLoanCount/totalLoanCount*100) : 0;
-
-  // Average loan size
-  const avgLoanSize = loans.length ? Math.round(totalPrincipal/loans.length) : 0;
-
-  // DTI average from scoring signals
-  const dtiVals = apps.filter(a=>a.scoring_signals?.dti!=null).map(a=>a.scoring_signals.dti);
-  const avgDTI  = dtiVals.length ? Math.round(dtiVals.reduce((a,b)=>a+b,0)/dtiVals.length) : null;
-
-  // ── Helpers ───────────────────────────────────────────────────────────────────
-  const $   = (v,d=2)=>'$'+parseFloat(v).toLocaleString('en-CA',{minimumFractionDigits:d,maximumFractionDigits:d});
-  const pct = v=>v+'%';
-  const kpi = (label,value,sub='',color='var(--white)',clickTab='')=>`
-    <div class="rpt-kpi" ${clickTab?`onclick="switchTab('${clickTab}')" style="cursor:pointer"`:''}">
+  // Helpers
+  const $=(v,d=2)=>'$'+parseFloat(v||0).toLocaleString('en-CA',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const pct=v=>v+'%';
+  const kpi=(label,value,sub='',color='var(--white)',accent='rgba(160,154,245,.06)')=>`
+    <div class="rpt-kpi" style="border-top:3px solid ${color};background:${accent}">
       <div class="rpt-kpi-val" style="color:${color}">${value}</div>
       <div class="rpt-kpi-label">${label}</div>
       ${sub?`<div class="rpt-kpi-sub">${sub}</div>`:''}
     </div>`;
-  const section = (title,icon,content)=>`
+  const section=(title,icon,content,fullWidth=false)=>`
     <div class="rpt-section">
-      <div class="rpt-section-title"><span>${icon}</span> ${title}</div>
+      <div class="rpt-section-title"><span>${icon}</span>${title}</div>
       ${content}
     </div>`;
-  const row = (label,value,color='',bold=false,sub='')=>`
+  const row=(label,value,color='',bold=false,sub='')=>`
     <div class="rpt-row">
       <div class="rpt-row-label">${label}</div>
       <div class="rpt-row-val" style="color:${color||'var(--white)'};font-weight:${bold?700:500}">${value}${sub?`<div style="font-size:.62rem;color:var(--muted);font-weight:400">${sub}</div>`:''}</div>
     </div>`;
-  const divider = `<div style="height:1px;background:var(--border);margin:8px 0"></div>`;
-  const barRow = (label,val,max,color='var(--blue)')=>`
+  const divider=`<div style="height:1px;background:var(--border);margin:8px 0"></div>`;
+  const barRow=(label,val,max,color='var(--blue)',fmt=v=>v)=>`
     <div style="margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px">
         <span style="color:var(--muted)">${label}</span>
-        <span style="color:var(--white);font-weight:600">${val}</span>
+        <span style="color:var(--white);font-weight:600">${fmt(val)}</span>
       </div>
       <div style="height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
         <div style="height:100%;width:${max?Math.round(val/max*100):0}%;background:${color};border-radius:3px;transition:width .8s ease"></div>
       </div>
     </div>`;
 
-  // ── Trend sparkline (ASCII bars) ──────────────────────────────────────────────
-  const sparkline = trendMonths.map(m=>{
-    const h = Math.round((monthlyApps[m]/trendMax)*6);
-    const bars = ['▁','▂','▃','▄','▅','▆','▇'][Math.min(h,6)];
-    return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1">
-      <span style="font-size:1rem;color:var(--blue)">${bars}</span>
-      <span style="font-size:.55rem;color:var(--muted)">${m.slice(5)}</span>
-      <span style="font-size:.6rem;color:var(--white)">${monthlyApps[m]}</span>
+  // SVG bar chart helper
+  const svgBarChart=(months,dataFn,colorFn,labelFn,height=80)=>{
+    if(!months.length) return '<div style="font-size:.72rem;color:var(--muted);padding:20px 0;text-align:center">No data yet</div>';
+    const vals=months.map(dataFn);
+    const mx=Math.max(...vals,1);
+    const W=100/months.length;
+    const bars=months.map((m,i)=>{
+      const h=Math.round((vals[i]/mx)*height);
+      const x=i*W;
+      const color=colorFn(vals[i],mx);
+      const lbl=m.slice(5);
+      const valStr=labelFn(vals[i]);
+      return `<g>
+        <title>${m}: ${valStr}</title>
+        <rect x="${x+W*.1}%" y="${height-h}" width="${W*.8}%" height="${h}" fill="${color}" rx="2" opacity=".85"/>
+        <text x="${x+W/2}%" y="${height+12}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)">${lbl}</text>
+        ${vals[i]>0?`<text x="${x+W/2}%" y="${height-h-3}" text-anchor="middle" font-size="7.5" fill="${color}" font-weight="700">${valStr}</text>`:''}
+      </g>`;
+    }).join('');
+    return `<div class="rpt-chart-wrap"><svg viewBox="0 0 100 ${height+20}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;height:${height+20}px">${bars}</svg></div>`;
+  };
+
+  // Donut chart helper
+  const donutChart=(segments,size=100)=>{
+    const total=segments.reduce((s,x)=>s+x.val,0);
+    if(!total) return '<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:20px">No data</div>';
+    const r=35,cx=50,cy=50;
+    const circ=2*Math.PI*r;
+    let offset=0;
+    const arcs=segments.map(({val,color,label})=>{
+      const pct=val/total;
+      const dash=circ*pct;
+      const arc=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="14"
+        stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}" opacity=".85" transform="rotate(-90 ${cx} ${cy})">
+        <title>${label}: ${val} (${Math.round(pct*100)}%)</title>
+      </circle>`;
+      offset+=dash;
+      return arc;
+    }).join('');
+    const legend=segments.map(({val,color,label})=>`
+      <div style="display:flex;align-items:center;gap:5px;font-size:.68rem">
+        <div style="width:8px;height:8px;border-radius:2px;background:${color};flex-shrink:0"></div>
+        <span style="color:var(--muted)">${label}</span>
+        <span style="color:var(--white);font-weight:700;margin-left:auto">${val}</span>
+      </div>`).join('');
+    return `<div style="display:flex;align-items:center;gap:16px">
+      <svg viewBox="0 0 100 100" style="width:90px;height:90px;flex-shrink:0">
+        <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="14"/>
+        ${arcs}
+        <text x="50" y="47" text-anchor="middle" font-size="14" font-weight="700" fill="white">${total}</text>
+        <text x="50" y="57" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.4)">TOTAL</text>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:5px;flex:1">${legend}</div>
     </div>`;
-  }).join('');
+  };
 
-  // ── BUILD HTML ───────────────────────────────────────────────────────────────
+  // Store for export
+  window._rptSnapshot = { periodLabel, now, totalApps, autoApproved, approvalRate, totalPrincipal, totalRevenue, netInterest, nsfCollectedAmt, outstandingBal, activeLoans:activeLoans.length, defaultRate, renewalRate, onTimeRate };
+
   body.innerHTML = `
-
-    <!-- Period banner -->
+    <!-- Header bar -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15);border-radius:10px">
-      <span style="font-size:.75rem;color:var(--muted)">Reporting period:</span>
+      <span style="font-size:.75rem;color:var(--muted)">Period:</span>
       <span style="font-size:.78rem;font-weight:700;color:var(--blue)">${periodLabel}</span>
       <span style="font-size:.72rem;color:var(--muted);margin-left:auto">Generated ${now.toLocaleString('en-CA',{dateStyle:'medium',timeStyle:'short'})}</span>
     </div>
 
     <!-- KPI Row 1: Volume -->
-    <div class="rpt-kpi-grid" style="margin-bottom:14px">
-      ${kpi('Applications',totalApps,'in period','var(--periwinkle)')}
-      ${kpi('Auto-Approved',autoApproved,pct(approvalRate)+' approval rate','var(--teal)')}
-      ${kpi('Manual Review',manualReview,'pending or reviewed','var(--gold)')}
-      ${kpi('Auto-Declined',autoDeclined,'','var(--coral)')}
-      ${kpi('New Clients',clients.length,'in period','var(--blue)')}
+    <div class="rpt-kpi-grid" style="margin-bottom:12px">
+      ${kpi('Applications',totalApps,'this period','var(--periwinkle)','rgba(160,154,245,.06)')}
+      ${kpi('Approval Rate',pct(approvalRate),autoApproved+' auto-approved',approvalRate>=60?'var(--teal)':approvalRate>=40?'var(--gold)':'var(--coral)','rgba(29,233,198,.04)')}
+      ${kpi('Loans Originated',loans.length,'new + renewals','var(--blue)','rgba(26,111,255,.05)')}
+      ${kpi('New Clients',clients.length,'in period','var(--periwinkle)','rgba(160,154,245,.05)')}
+      ${kpi('Default Rate',pct(defaultRate),'all time',defaultRate<=5?'var(--teal)':defaultRate<=15?'var(--gold)':'var(--coral)','rgba(255,107,138,.04)')}
     </div>
 
     <!-- KPI Row 2: Money -->
     <div class="rpt-kpi-grid" style="margin-bottom:20px">
-      ${kpi('Loans Originated',$(totalPrincipal,0),loans.length+' loans in period','var(--teal)')}
-      ${kpi('Outstanding Balance',$(outstandingBal,0),activeLoans.length+' active loans','var(--gold)')}
-      ${kpi('Total Collected',$(totalCollected,0),'all time','var(--teal)')}
-      ${kpi('Overdue',$(overdueAmount,0),overduePayments.length+' payments','var(--coral)')}
-      ${kpi('NSF Outstanding',$(nsfOutstandingAmt,0),nsfOutstanding.length+' fees','var(--coral)')}
+      ${kpi('Principal Disbursed','$'+Math.round(totalPrincipal).toLocaleString(),loans.length+' loans','var(--teal)','rgba(29,233,198,.04)')}
+      ${kpi('Outstanding','$'+Math.round(outstandingBal).toLocaleString(),activeLoans.length+' active loans','var(--gold)','rgba(255,209,102,.04)')}
+      ${kpi('Total Collected','$'+Math.round(totalCollected).toLocaleString(),'all payments received','var(--teal)','rgba(29,233,198,.04)')}
+      ${kpi('Interest Earned','$'+Math.round(netInterest).toLocaleString(),'net of principal','var(--periwinkle)','rgba(160,154,245,.05)')}
+      ${kpi('Overdue','$'+Math.round(overdueAmount).toLocaleString(),overduePayments.length+' payments',overdueAmount>0?'var(--coral)':'var(--teal)','rgba(255,107,138,.04)')}
+    </div>
+
+    <!-- Full-width: Monthly Application & Revenue Chart -->
+    <div class="rpt-grid-full">
+      <div class="rpt-section">
+        <div class="rpt-section-title">📈 Monthly Trend — Applications & Revenue (Last 12 Months)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Applications per Month</div>
+            ${svgBarChart(trendMonths,m=>monthlyData[m]?.apps||0,(v,mx)=>{const p=v/mx;return p>.7?'var(--teal)':p>.4?'var(--blue)':'var(--periwinkle)';},v=>v,80)}
+          </div>
+          <div>
+            <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Interest Revenue per Month ($)</div>
+            ${svgBarChart(trendMonths,m=>monthlyData[m]?.revenue||0,()=>'var(--gold)',v=>v>0?'$'+Math.round(v):'0',80)}
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="rpt-grid">
 
-      <!-- Applications -->
+      <!-- Applications & Funnel -->
       ${section('Applications & Funnel','📋',`
         ${row('Total Applications',totalApps)}
-        ${row('Auto-Approved',autoApproved,autoApproved?'var(--teal)':'',true,pct(approvalRate)+' of total')}
-        ${row('Manual Review',manualReview,'var(--gold)',false)}
-        ${row('Auto-Declined',autoDeclined,'var(--coral)',false,pct(totalApps?Math.round(autoDeclined/totalApps*100):0)+' decline rate')}
+        ${row('Auto-Approved',autoApproved,'var(--teal)',true,pct(approvalRate)+' rate')}
+        ${row('Manual Review',manualReview,'var(--gold)')}
+        ${row('Auto-Declined',autoDeclined,'var(--coral)',false,pct(totalApps?Math.round(autoDeclined/totalApps*100):0)+' rate')}
         ${divider}
-        ${row('Avg Risk Score',avgScore??'—',avgScore<40?'var(--teal)':avgScore<70?'var(--gold)':'var(--coral)',true)}
-        ${row('New Loan Apps',newLoans.length,'')}
-        ${row('Renewal Apps',renewalLoanCount,'')}
-        ${row('Renewal Rate',pct(renewalRate),'var(--teal)',true)}
+        ${row('Avg Risk Score',avgScore??'—',avgScore!=null?(avgScore<30?'var(--teal)':avgScore<60?'var(--gold)':'var(--coral)'):'',true)}
         ${divider}
-        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Risk Tier Breakdown</div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 8px">Risk Tier Breakdown</div>
         ${barRow('Gold (0–15)',tierCounts.gold,totalApps,'#FFD700')}
         ${barRow('Green (15–30)',tierCounts.green,totalApps,'var(--teal)')}
         ${barRow('Blue (30–50)',tierCounts.blue,totalApps,'var(--blue)')}
@@ -4356,21 +4390,39 @@ async function renderReports(){
         ${barRow('Red (90–100)',tierCounts.red,totalApps,'var(--coral)')}
       `)}
 
+      <!-- Loan Portfolio -->
+      ${section('Loan Portfolio Status','📊',`
+        ${donutChart([
+          {val:activeLoans.length,         color:'var(--teal)',      label:'Active'},
+          {val:allLoans.filter(l=>l.status==='pending_disbursement').length, color:'var(--gold)', label:'Pending Disburse'},
+          {val:paidOffLoans.length,         color:'var(--periwinkle)',label:'Paid Off'},
+          {val:defaultedLoans.length,       color:'var(--coral)',     label:'Defaulted'},
+          {val:allLoans.filter(l=>l.status==='cancelled').length, color:'rgba(255,255,255,.2)', label:'Cancelled'},
+        ].filter(s=>s.val>0))}
+        ${divider}
+        ${row('New Loans',allLoans.filter(l=>!l.ref?.includes('-R-')).length)}
+        ${row('Renewals',renewalLoans.length,'var(--periwinkle)')}
+        ${row('Renewal Rate',pct(renewalRate),'var(--teal)',true)}
+        ${row('Avg Loan Size','$'+avgLoanSize.toLocaleString())}
+        ${divider}
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 8px">Province Breakdown</div>
+        ${topProvinces.slice(0,6).map(([p,n])=>barRow(p,n,totalApps,'var(--periwinkle)')).join('')}
+      `)}
+
       <!-- Cash Flow -->
       ${section('Cash Flow','💰',`
-        ${row('Loans Originated',$(totalPrincipal,0),'var(--teal)',true,loans.length+' loans')}
-        ${row('Avg Loan Size',$(avgLoanSize,0))}
-        ${divider}
-        ${row('Total Collected (All Time)',$(totalCollected,0),'var(--teal)',true,paidPayments.length+' payments')}
+        ${row('Loans Originated',$( totalPrincipal,0),'var(--teal)',true,loans.length+' loans')}
+        ${row('Total Collected',$(totalCollected,0),'var(--teal)',true,paidPayments.length+' payments')}
         ${row('Outstanding Balance',$(outstandingBal,0),'var(--gold)',true,activeLoans.length+' loans')}
-        ${row('Expected Incoming',$(expectedIncoming,0),'',false,pendingPayments.length+' scheduled payments')}
+        ${row('Expected Incoming',$(expectedIncoming,0),'',false,pendingPayments.length+' scheduled')}
         ${divider}
         ${row('Overdue Payments',overduePayments.length,overduePayments.length?'var(--coral)':'var(--teal)',true)}
         ${row('Overdue Amount',$(overdueAmount,0),overdueAmount>0?'var(--coral)':'')}
         ${divider}
-        ${row('Paid-Off Loans',paidOffLoans.length,'var(--teal)',true)}
-        ${row('Total Repaid (All Loans)',$(totalRepaid,0),'var(--teal)',true)}
-        ${row('Net Interest Earned',$(Math.max(0,totalRepaid-allLoans.reduce((s,l)=>s+parseFloat(l.principal||0),0)),0),'var(--teal)',true)}
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 8px">Revenue Summary</div>
+        ${row('Interest Earned',$(netInterest,0),'var(--periwinkle)',true)}
+        ${row('NSF Fees Collected',$(nsfCollectedAmt),'var(--teal)')}
+        ${row('Total Revenue (Est.)',$(totalRevenue,0),'var(--teal)',true)}
       `)}
 
       <!-- NSF & Collections -->
@@ -4380,13 +4432,11 @@ async function renderReports(){
         ${divider}
         ${row('Outstanding Fees',nsfOutstanding.length,'var(--coral)',true)}
         ${row('Outstanding Amount',$(nsfOutstandingAmt,0),'var(--coral)',true)}
-        ${divider}
         ${row('Collected Fees',nsfCollected.length,'var(--teal)',true)}
         ${row('Collected Amount',$(nsfCollectedAmt,0),'var(--teal)',true)}
         ${divider}
-        ${row('Avg Fee',$(nsfTotal?((nsfOutstandingAmt+nsfCollectedAmt)/nsfTotal):0))}
         ${nsfOutstanding.length?`
-        <div style="margin-top:10px;font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Outstanding NSF by Client</div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Top Outstanding NSF</div>
         ${nsfOutstanding.slice(0,5).map(n=>{
           const cl=allClients.find(x=>x.id===n.client_id);
           const name=cl?((cl.first_name||'')+' '+(cl.last_name||'')).trim():'—';
@@ -4397,59 +4447,68 @@ async function renderReports(){
         }).join('')}`:''}
       `)}
 
-      <!-- Loan Portfolio -->
-      ${section('Loan Portfolio','📊',`
-        ${row('Active Loans',activeLoans.length,'var(--teal)',true)}
-        ${row('Pending Disbursement',allLoans.filter(l=>l.status==='pending_disbursement').length,'var(--gold)')}
-        ${row('Paid Off',paidOffLoans.length,'var(--teal)')}
-        ${row('Defaulted',allLoans.filter(l=>l.status==='defaulted').length,'var(--coral)')}
+      <!-- Payment Health -->
+      ${section('Payment Health','🔧',`
+        ${row('On-Time Payment Rate',pct(onTimeRate),onTimeRate>=80?'var(--teal)':onTimeRate>=60?'var(--gold)':'var(--coral)',true)}
+        ${row('Payments Collected',allSched.filter(p=>p.status==='paid').length,'var(--teal)',true)}
+        ${row('Missed / Failed',allSched.filter(p=>['missed','failed'].includes(p.status)).length,'var(--coral)',true)}
+        ${row('Scheduled (Upcoming)',allSched.filter(p=>p.status==='scheduled').length,'var(--muted)')}
         ${divider}
-        ${row('New Loans',allLoans.filter(l=>!l.ref?.includes('-R-')).length)}
-        ${row('Renewals',allLoans.filter(l=>l.ref?.includes('-R-')).length,'var(--periwinkle)')}
-        ${row('Renewal Rate',pct(renewalRate),'var(--teal)',true)}
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 8px">Payment Status Breakdown</div>
+        ${[['Paid','paid','var(--teal)'],['Scheduled','scheduled','var(--blue)'],['Missed','missed','var(--coral)'],['Failed','failed','rgba(255,107,138,.7)']].map(([l,s,c])=>
+          barRow(l,allSched.filter(p=>p.status===s).length,allSched.length,c)).join('')}
         ${divider}
-        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Province Breakdown</div>
-        ${topProvinces.slice(0,6).map(([p,n])=>barRow(p,n,totalApps,'var(--periwinkle)')).join('')}
+        ${row('Pending Disbursement',allLoans.filter(l=>l.status==='pending_disbursement').length,'var(--gold)',true)}
+        ${row('Total Active Loans',activeLoans.length,'var(--teal)',true)}
       `)}
 
-      <!-- Trend -->
-      ${section('Monthly Application Trend','📈',`
-        <div style="display:flex;align-items:flex-end;gap:4px;padding:8px 0;margin-bottom:12px">
-          ${sparkline||'<div style="color:var(--muted);font-size:.78rem">No data yet</div>'}
-        </div>
-        ${divider}
-        ${row('Peak Month',trendMonths.length?`${trendMonths.reduce((a,b)=>monthlyApps[a]>=monthlyApps[b]?a:b,trendMonths[0])} (${monthlyApps[trendMonths.reduce((a,b)=>monthlyApps[a]>=monthlyApps[b]?a:b,trendMonths[0])]} apps)`:'—')}
-        ${row('Best Approval Month','—')}
-        ${divider}
-        ${row('Total Clients',allClients.length,'var(--periwinkle)',true)}
+      <!-- Client Overview -->
+      ${section('Client Overview','👥',`
+        ${row('Total Clients',allClients.length,'var(--white)',true)}
         ${row('New This Period',clients.length,'var(--blue)')}
         ${row('Repeat Borrowers',allClients.filter(c=>parseInt(c.total_loans||0)>1).length,'var(--teal)')}
-        ${avgDTI!=null?row('Avg DTI',pct(avgDTI),avgDTI>40?'var(--coral)':avgDTI>30?'var(--gold)':'var(--teal)',true):''}
-      `)}
-
-      <!-- Operational -->
-      ${section('Operational Summary','🔧',`
-        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Payment Schedule</div>
-        ${row('Total Scheduled',allSched.length)}
-        ${row('Paid On Time',allSched.filter(p=>p.status==='paid').length,'var(--teal)',true)}
-        ${row('Missed / Failed',allSched.filter(p=>p.status==='missed'||p.status==='failed').length,'var(--coral)',true)}
-        ${row('Overdue (Today)',overduePayments.length,'var(--coral)',true)}
-        ${row('On-Time Rate',pct(allSched.length?Math.round(allSched.filter(p=>p.status==='paid').length/Math.max(1,allSched.filter(p=>['paid','missed','failed'].includes(p.status)).length)*100):100),'var(--teal)',true)}
+        ${row('Repeat Rate',pct(allClients.length?Math.round(allClients.filter(c=>parseInt(c.total_loans||0)>1).length/allClients.length*100):0),'var(--teal)',true)}
         ${divider}
-        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">EFT Status</div>
-        ${row('Pending Disbursement',allLoans.filter(l=>l.status==='pending_disbursement').length,'var(--gold)',true)}
-        ${row('NSF Retries Due','Check EFT tab')}
-        ${row('Payments to Clear','Check EFT tab')}
-        ${divider}
-        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Revenue Estimate</div>
-        ${row('Interest Earned (Est.)',$(Math.max(0,totalRepaid-allLoans.reduce((s,l)=>s+parseFloat(l.principal||0),0)),0),'var(--teal)',true)}
-        ${row('NSF Fees Collected',$(nsfCollectedAmt),'var(--teal)')}
-        ${row('Total Revenue (Est.)',$(Math.max(0,totalRepaid-allLoans.reduce((s,l)=>s+parseFloat(l.principal||0),0))+nsfCollectedAmt),'var(--teal)',true)}
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:8px 0 8px">Clients by Province</div>
+        ${(()=>{const bp={};allClients.forEach(c=>{const p=c.province||'—';bp[p]=(bp[p]||0)+1;});return Object.entries(bp).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([p,n])=>barRow(p,n,allClients.length,'var(--blue)')).join('');})()}
       `)}
 
     </div>
   `;
 }
+
+function exportReportCSV() {
+  const s = window._rptSnapshot;
+  if (!s) { showToast('Run a report first', true); return; }
+  const rows = [
+    ['Metric','Value','Period'],
+    ['Period', s.periodLabel, s.now.toLocaleDateString('en-CA')],
+    ['Applications', s.totalApps, s.periodLabel],
+    ['Auto-Approved', s.autoApproved, s.periodLabel],
+    ['Approval Rate (%)', s.approvalRate, s.periodLabel],
+    ['Loans Originated ($)', s.totalPrincipal.toFixed(2), s.periodLabel],
+    ['Outstanding Balance ($)', s.outstandingBal.toFixed(2), 'Current'],
+    ['Total Collected ($)', '', 'All Time'],
+    ['Interest Earned ($)', s.netInterest.toFixed(2), 'All Time'],
+    ['NSF Fees Collected ($)', s.nsfCollectedAmt.toFixed(2), 'All Time'],
+    ['Total Revenue ($)', s.totalRevenue.toFixed(2), 'All Time'],
+    ['Active Loans', s.activeLoans, 'Current'],
+    ['Default Rate (%)', s.defaultRate, 'All Time'],
+    ['Renewal Rate (%)', s.renewalRate, 'All Time'],
+    ['On-Time Payment Rate (%)', s.onTimeRate, 'All Time'],
+    ['New Clients', '', s.periodLabel],
+  ];
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `waves-report-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ CSV exported');
+}
+
 
 /* ── HELPERS ── */
 function setHS(id,state,text,detail){
