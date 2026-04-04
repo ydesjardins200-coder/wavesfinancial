@@ -42,16 +42,45 @@ function sbToken(tier){
   return `sandbox-${tier.toLowerCase()}-seed${ri(100,999)}-${btoa(JSON.stringify(s[tier]||s.Green))}`;
 }
 function log(msg,cls=''){const el=document.getElementById('log');el.innerHTML+=`\n<span class="${cls}">${msg}</span>`;el.scrollTop=el.scrollHeight;}
+
+async function loadOptionalFees() {
+  try {
+    const res  = await fetch(RAILWAY + '/api/config/optional-fees');
+    const data = await res.json();
+    return data.fees || [];
+  } catch(err) {
+    log('  ⚠ Could not load optional fees config — seeding without fees', 'info');
+    return [];
+  }
+}
+
+function getFeesForProvince(fees, province) {
+  return fees.filter(f => {
+    if (!f.enabled) return false;
+    if (f.provinces?.length > 0) return !f.provinces.includes(province);
+    return true;
+  }).map(f => ({ id: f.id, label: f.label, fee: f.fee }));
+}
+
 async function seed(){
   const btn=document.getElementById('btn');
   btn.disabled=true;
-  document.getElementById('log').innerHTML='<span class="info">Posting 14 applications through Railway…</span>';
+  document.getElementById('log').innerHTML='<span class="info">Loading config from Railway…</span>';
+
+  const optionalFees = await loadOptionalFees();
+  if (optionalFees.length) {
+    log(`  ℹ Loaded ${optionalFees.length} optional fee(s): ${optionalFees.map(f=>f.label+' $'+f.fee).join(', ')}`, 'info');
+  }
+  log('Posting 14 applications…', 'info');
+
   let ok=0,fail=0;
   for(let i=0;i<14;i++){
     const fn=FIRST[i],ln=LAST[i],loc=CITIES[i],tier=TIERS[i],freq=rand(['weekly','biweekly','monthly']);
+    const province = loc[1];
+    const selectedFees = getFeesForProvince(optionalFees, province);
     const payload={
       type:'new',
-      loan:{amount:AMOUNTS[i],fundMethod:'interac'},
+      loan:{amount:AMOUNTS[i],fundMethod:'interac',optionalFees:selectedFees},
       personal:{firstName:fn,lastName:ln,email:em(fn,ln),homePhone:ph(),cellPhone:ph(),dob:dob(),sin:sinFn(),address:`${ri(100,9999)} ${rand(STREETS)}`,city:loc[0],province:loc[1],postal:loc[2],bankruptNow:'no',bankruptPast:'no',sex:rand(['male','female'])},
       employment:{incomeSource:'employed',employer:rand(EMPLOYERS),jobDesc:rand(JOBS),workPhone:ph(),supervisor:`${rand(FIRST)} ${rand(LAST)}`,hireDate:hireD(),paidBy:'direct',payFrequency:freq,monthlyIncome:ri(2200,5500),payFreq:freq,nextPay:nextPay()},
       banking:{flinksLoginId:sbToken(tier),institution:rand(BANKS),transitNumber:String(ri(10000,99999)),institutionNumber:String(ri(100,999)),accountNumber:String(ri(1000000,9999999)),sandbox:true},
@@ -63,7 +92,8 @@ async function seed(){
       const data=await resp.json();
       if(!resp.ok) throw new Error((data.error||'failed')+' — '+(data.details||[]).join(', ')||JSON.stringify(data).slice(0,120));
       ok++;
-      log(`  ✅ ${fn} ${ln} — ${data.ref||'ok'} — tier:${data.tier||'?'} score:${data.score??'?'}`,'ok');
+      const feeStr = selectedFees.length ? ` fees:$${selectedFees.reduce((s,f)=>s+f.fee,0)}` : '';
+      log(`  ✅ ${fn} ${ln} (${province}) — ${data.ref||'ok'} — tier:${data.tier||'?'} score:${data.score??'?'}${feeStr}`,'ok');
     }catch(err){
       fail++;
       log(`  ❌ ${fn} ${ln} — ${err.message}`,'err');
