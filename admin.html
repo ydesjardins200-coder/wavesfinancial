@@ -1147,8 +1147,10 @@ function renderList(){
 
           return html;
         })()}
-          <button onclick="previewPAD(5)" style="padding:7px 14px;background:rgba(29,233,198,.1);border:1px solid rgba(29,233,198,.3);border-radius:6px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 5 days</button>
-          <button onclick="previewPAD(14)" style="padding:7px 14px;background:rgba(160,154,245,.08);border:1px solid var(--border);border-radius:6px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">📋 Preview PAD — 14 days</button>
+          <div style="display:flex;align-items:center;gap:5px;flex-wrap:nowrap">
+            <span style="font-size:.62rem;font-weight:700;color:var(--muted);white-space:nowrap;margin-right:2px">📋 PAD Preview:</span>
+            ${[5,14,30,60,90].map((d,i)=>`<button onclick="previewPAD(${d})" style="padding:4px 9px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.2);border-radius:5px;color:var(--teal);font-family:var(--font);font-size:.65rem;font-weight:700;cursor:pointer;white-space:nowrap">${d}d</button>`).join('')}
+          </div>
         <div id="pad-preview-box" style="display:none;padding:14px;background:rgba(8,6,20,.5);border:1px solid var(--border);border-radius:8px"></div>
         `}
 
