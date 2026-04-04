@@ -449,6 +449,23 @@ html,body{height:100%;background:var(--deep);color:var(--white);font-family:var(
   <div class="topbar">
     <div class="tb-logo"><div class="tb-mark">🌊</div>Waves Financial</div>
     <div class="tb-spacer"></div>
+    <div style="display:flex;gap:6px;align-items:center;margin-right:10px">
+      <a href="https://wavesfinancial.ca" target="_blank"
+        style="display:flex;align-items:center;gap:5px;padding:6px 13px;background:rgba(29,233,198,.08);border:1px solid rgba(29,233,198,.25);border-radius:8px;color:var(--teal);font-family:var(--font);font-size:.72rem;font-weight:700;text-decoration:none;transition:all .2s"
+        onmouseover="this.style.background='rgba(29,233,198,.16)'" onmouseout="this.style.background='rgba(29,233,198,.08)'">
+        <span style="font-size:.85rem">🌐</span> Frontend
+      </a>
+      <a href="https://wavesfinancial.ca/client.html" target="_blank"
+        style="display:flex;align-items:center;gap:5px;padding:6px 13px;background:rgba(160,154,245,.08);border:1px solid rgba(160,154,245,.25);border-radius:8px;color:var(--periwinkle);font-family:var(--font);font-size:.72rem;font-weight:700;text-decoration:none;transition:all .2s"
+        onmouseover="this.style.background='rgba(160,154,245,.16)'" onmouseout="this.style.background='rgba(160,154,245,.08)'">
+        <span style="font-size:.85rem">👤</span> Client Area
+      </a>
+      <button onclick="confirmResetDatabase()"
+        style="display:flex;align-items:center;gap:5px;padding:6px 13px;background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.25);border-radius:8px;color:var(--coral);font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s"
+        onmouseover="this.style.background='rgba(255,107,138,.16)'" onmouseout="this.style.background='rgba(255,107,138,.08)'">
+        <span style="font-size:.85rem">🗑</span> Reset DB
+      </button>
+    </div>
     <div class="sw">
       <span class="sicon">🔍</span>
       <input class="si" type="text" id="search-input" placeholder="Search clients, ref, email…" oninput="onSearchInput()" onkeydown="onSearchKey(event)">
@@ -1247,6 +1264,27 @@ function renderList(){
 }
 
 /* ── TABS ── */
+async function confirmResetDatabase() {
+  const first = confirm('⚠️ RESET DATABASE\n\nThis will permanently delete ALL clients, applications, loans, schedules, contracts, and NSF fees from Supabase.\n\nThis cannot be undone.\n\nAre you sure?');
+  if (!first) return;
+  const second = prompt('Type RESET to confirm:');
+  if (second !== 'RESET') { showToast('Reset cancelled', true); return; }
+  try {
+    const resp = await fetch(RAILWAY_URL + '/api/admin/reset-db', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ confirm: 'RESET' }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Reset failed');
+    showToast('✅ Database reset — ' + (data.deleted || 'all records deleted'));
+    allApps = []; allClients = []; allLoans = [];
+    await loadData();
+  } catch(err) {
+    showToast('Reset failed: ' + err.message, true);
+  }
+}
+
 function switchTab(tab){
   currentTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
