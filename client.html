@@ -168,6 +168,33 @@ body::before{
 }
 .sec-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
 .sec-body{padding:18px;}
+.edit-btn{
+  padding:4px 12px;background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.25);
+  border-radius:6px;color:#6aadff;font-family:var(--font);font-size:.65rem;font-weight:700;
+  cursor:pointer;transition:background .15s;
+}
+.edit-btn:hover{background:rgba(26,111,255,.2);}
+.edit-input{
+  width:100%;padding:9px 12px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(100,160,255,.2);
+  border-radius:8px;color:var(--white);font-family:var(--font);font-size:.85rem;
+  outline:none;transition:border-color .2s;box-sizing:border-box;
+}
+.edit-input:focus{border-color:var(--blue);}
+.edit-input option{background:var(--deep);color:var(--white);}
+.save-btn{
+  padding:9px 20px;background:linear-gradient(135deg,var(--blue),#0052CC);
+  border:none;border-radius:8px;color:var(--white);font-family:var(--font);
+  font-size:.78rem;font-weight:700;cursor:pointer;transition:opacity .15s;
+}
+.save-btn:hover{opacity:.88;}
+.save-btn:disabled{opacity:.5;cursor:not-allowed;}
+.cancel-btn{
+  padding:9px 16px;background:transparent;border:1px solid var(--border);
+  border-radius:8px;color:var(--muted);font-family:var(--font);
+  font-size:.78rem;cursor:pointer;transition:border-color .15s;
+}
+.cancel-btn:hover{border-color:rgba(160,200,255,.3);color:var(--white);}
 
 /* ── INFO GRID ── */
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
@@ -436,18 +463,75 @@ body::before{
       <div class="sec">
         <div class="sec-hdr">
           <div class="sec-title">Personal Information</div>
+          <button class="edit-btn" onclick="startEdit('contact')">✏ Edit</button>
         </div>
         <div class="sec-body">
           <div class="info-grid" id="info-personal"></div>
+          <!-- Edit form — hidden by default -->
+          <div id="edit-contact-form" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div>
+                <label class="info-label" style="display:block;margin-bottom:4px">Cell Phone</label>
+                <input id="edit-cell" class="edit-input" type="tel" placeholder="(506) 555-0123">
+              </div>
+              <div>
+                <label class="info-label" style="display:block;margin-bottom:4px">Home Phone</label>
+                <input id="edit-home" class="edit-input" type="tel" placeholder="Optional">
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="info-label" style="display:block;margin-bottom:4px">Email Address</label>
+                <input id="edit-email" class="edit-input" type="email" placeholder="you@example.com">
+              </div>
+            </div>
+            <div id="edit-contact-err" style="display:none;font-size:.72rem;color:var(--coral);margin-bottom:10px;padding:8px 12px;background:rgba(255,92,115,.08);border-radius:6px;border:1px solid rgba(255,92,115,.2)"></div>
+            <div style="display:flex;gap:8px">
+              <button onclick="saveEdit('contact')" id="save-contact-btn" class="save-btn">Save Changes</button>
+              <button onclick="cancelEdit('contact')" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="sec">
         <div class="sec-hdr">
           <div class="sec-title">Address</div>
+          <button class="edit-btn" onclick="startEdit('address')">✏ Edit</button>
         </div>
         <div class="sec-body">
           <div class="info-grid" id="info-address"></div>
+          <!-- Edit form — hidden by default -->
+          <div id="edit-address-form" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div style="grid-column:1/-1">
+                <label class="info-label" style="display:block;margin-bottom:4px">Street Address</label>
+                <input id="edit-address" class="edit-input" type="text" placeholder="123 Main St">
+              </div>
+              <div>
+                <label class="info-label" style="display:block;margin-bottom:4px">Apt / Unit</label>
+                <input id="edit-apt" class="edit-input" type="text" placeholder="Optional">
+              </div>
+              <div>
+                <label class="info-label" style="display:block;margin-bottom:4px">City</label>
+                <input id="edit-city" class="edit-input" type="text" placeholder="Halifax">
+              </div>
+              <div>
+                <label class="info-label" style="display:block;margin-bottom:4px">Province</label>
+                <select id="edit-province" class="edit-input">
+                  <option value="">Select…</option>
+                  ${['BC','AB','SK','MB','ON','QC','NB','NS','PE','NL','YT','NT','NU'].map(p=>`<option value="${p}">${p}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="info-label" style="display:block;margin-bottom:4px">Postal Code</label>
+                <input id="edit-postal" class="edit-input" type="text" placeholder="B3J 1A1" maxlength="7">
+              </div>
+            </div>
+            <div id="edit-address-err" style="display:none;font-size:.72rem;color:var(--coral);margin-bottom:10px;padding:8px 12px;background:rgba(255,92,115,.08);border-radius:6px;border:1px solid rgba(255,92,115,.2)"></div>
+            <div style="display:flex;gap:8px">
+              <button onclick="saveEdit('address')" id="save-address-btn" class="save-btn">Save Changes</button>
+              <button onclick="cancelEdit('address')" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -467,7 +551,7 @@ body::before{
         <div class="sec-body">
           <div class="info-grid" id="info-banking"></div>
           <div style="margin-top:12px;padding:10px 14px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15);border-radius:8px;font-size:.72rem;color:var(--muted);">
-            🔒 To update your banking information, please contact us at <strong style="color:var(--white)">1-800-WAVES-01</strong>.
+            🔒 To update your banking information, please contact us at <strong style="color:var(--white)">support@wavesfinancial.ca</strong>.
           </div>
         </div>
       </div>
@@ -975,6 +1059,99 @@ function renderInfoTab(){
     infoField('Institution', c.bank_institution ? `(${c.bank_institution})` : null),
     infoField('Account', c.bank_account ? `••••••${c.bank_account.slice(-4)}` : null, true),
   ].join('');
+}
+
+// ── UPDATE CONTACT INFO ───────────────────────────────────────────────────────
+function startEdit(section) {
+  const c = currentClient;
+  cancelEdit('contact');
+  cancelEdit('address');
+
+  if (section === 'contact') {
+    document.getElementById('edit-cell').value  = c.cell_phone  || '';
+    document.getElementById('edit-home').value  = c.home_phone  || '';
+    document.getElementById('edit-email').value = c.email       || '';
+    document.getElementById('edit-contact-form').style.display = 'block';
+    document.getElementById('edit-cell').focus();
+  } else if (section === 'address') {
+    document.getElementById('edit-address').value  = c.address  || '';
+    document.getElementById('edit-apt').value      = c.apt      || '';
+    document.getElementById('edit-city').value     = c.city     || '';
+    document.getElementById('edit-province').value = c.province || '';
+    document.getElementById('edit-postal').value   = c.postal   || '';
+    document.getElementById('edit-address-form').style.display = 'block';
+    document.getElementById('edit-address').focus();
+  }
+}
+
+function cancelEdit(section) {
+  const form = document.getElementById(`edit-${section}-form`);
+  if (form) form.style.display = 'none';
+  const err = document.getElementById(`edit-${section}-err`);
+  if (err) err.style.display = 'none';
+}
+
+async function saveEdit(section) {
+  const btn = document.getElementById(`save-${section}-btn`);
+  const errEl = document.getElementById(`edit-${section}-err`);
+  const showErr = msg => {
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+  };
+
+  let updates = {};
+
+  if (section === 'contact') {
+    const cell  = document.getElementById('edit-cell').value.trim();
+    const home  = document.getElementById('edit-home').value.trim();
+    const email = document.getElementById('edit-email').value.trim();
+
+    if (!cell) return showErr('Cell phone is required.');
+    if (!/^[\d\s\(\)\-\+]{7,15}$/.test(cell)) return showErr('Please enter a valid phone number.');
+    if (!email) return showErr('Email address is required.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr('Please enter a valid email address.');
+
+    updates = { cell_phone: cell, home_phone: home || null, email };
+
+  } else if (section === 'address') {
+    const address  = document.getElementById('edit-address').value.trim();
+    const apt      = document.getElementById('edit-apt').value.trim();
+    const city     = document.getElementById('edit-city').value.trim();
+    const province = document.getElementById('edit-province').value;
+    const postal   = document.getElementById('edit-postal').value.trim().toUpperCase();
+
+    if (!address)  return showErr('Street address is required.');
+    if (!city)     return showErr('City is required.');
+    if (!province) return showErr('Province is required.');
+    if (!postal)   return showErr('Postal code is required.');
+    if (!/^[A-Z]\d[A-Z]\s?\d[A-Z]\d$/.test(postal)) return showErr('Please enter a valid Canadian postal code (e.g. B3J 1A1).');
+
+    updates = { address, apt: apt || null, city, province, postal };
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  if (errEl) errEl.style.display = 'none';
+
+  try {
+    const { error } = await sb
+      .from('clients')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', currentClient.id);
+
+    if (error) throw new Error(error.message);
+
+    // Update local cache
+    Object.assign(currentClient, updates);
+
+    cancelEdit(section);
+    renderInfoTab();
+    showToast('✓ Changes saved successfully');
+
+  } catch(err) {
+    showErr('Save failed: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Changes'; }
+  }
 }
 
 // ── LOANS TAB ─────────────────────────────────────────────────────────────────
