@@ -355,6 +355,20 @@ body::before{
     <button class="login-btn" onclick="doLogin()">Sign In to My Account</button>
     <div class="login-err" id="login-err"></div>
     <div class="login-footer">Need help? Call us at <strong>1-800-WAVES-01</strong></div>
+
+    <!-- DEV QUICK LOGIN — hidden in production -->
+    <div id="dev-panel" style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(245,166,35,.6)">⚡ Dev Quick Login</span>
+        <button onclick="loadDevClients()" id="dev-refresh-btn"
+          style="padding:2px 8px;background:transparent;border:1px solid rgba(245,166,35,.25);border-radius:5px;color:rgba(245,166,35,.6);font-family:var(--font);font-size:.6rem;cursor:pointer">
+          ↻ Refresh
+        </button>
+      </div>
+      <div id="dev-clients" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto">
+        <div style="font-size:.7rem;color:var(--muted);text-align:center;padding:8px">Loading clients…</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -567,6 +581,64 @@ const SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
 const RAILWAY_URL = 'https://web-production-31ce.up.railway.app';
 
 let sb, currentClient, clientLoans=[], clientSchedules={};
+
+// ── DEV QUICK LOGIN ──────────────────────────────────────────────────────────
+// Only visible on non-production domains (netlify preview, localhost, etc.)
+const IS_DEV = !['wavesfinancial.ca','www.wavesfinancial.ca'].includes(location.hostname);
+
+if (IS_DEV) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const panel = document.getElementById('dev-panel');
+    if (panel) { panel.style.display = 'block'; loadDevClients(); }
+  });
+}
+
+async function loadDevClients() {
+  const container = document.getElementById('dev-clients');
+  const btn = document.getElementById('dev-refresh-btn');
+  if (!container) return;
+  container.innerHTML = '<div style="font-size:.7rem;color:var(--muted);text-align:center;padding:8px">Loading…</div>';
+  if (btn) btn.disabled = true;
+
+  try {
+    // Fetch directly from Supabase — anon key has read access to clients
+    const res  = await fetch(`${SUPA_URL}/rest/v1/clients?select=id,first_name,last_name,email,dob&order=created_at.desc&limit=20`, {
+      headers: { 'apikey': SUPA_ANON, 'Authorization': 'Bearer ' + SUPA_ANON }
+    });
+    const data = await res.json();
+
+    if (!data?.length) {
+      container.innerHTML = '<div style="font-size:.7rem;color:var(--muted);text-align:center;padding:8px">No clients found — seed some first</div>';
+      return;
+    }
+
+    container.innerHTML = data.map(c => {
+      const dob     = c.dob ? c.dob.slice(0, 10) : '';
+      const initials= ((c.first_name||'').charAt(0) + (c.last_name||'').charAt(0)).toUpperCase();
+      const name    = `${c.first_name||''} ${c.last_name||''}`.trim();
+      return `<button onclick="devLogin('${c.email.replace(/'/g,"\\'")}','${dob}')"
+        style="display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:7px;cursor:pointer;text-align:left;transition:background .15s"
+        onmouseover="this.style.background='rgba(245,166,35,.08)'" onmouseout="this.style.background='rgba(255,255,255,.03)'">
+        <div style="width:26px;height:26px;border-radius:50%;background:rgba(26,111,255,.25);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#6aadff;flex-shrink:0">${initials}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.72rem;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+          <div style="font-size:.62rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.email}</div>
+        </div>
+        <div style="font-size:.6rem;color:rgba(245,166,35,.5);flex-shrink:0">→</div>
+      </button>`;
+    }).join('');
+  } catch(err) {
+    container.innerHTML = `<div style="font-size:.7rem;color:var(--coral);text-align:center;padding:8px">Error: ${err.message}</div>`;
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function devLogin(email, dob) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-dob').value   = dob;
+  doLogin();
+}
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function esc(v){ return v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
