@@ -131,7 +131,7 @@ body::before{
 }
 .stat-card{
   background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:16px 18px;
+  padding:16px 18px;transition:border-color .3s;
 }
 .stat-label{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 .stat-val{font-size:1.4rem;font-weight:700;font-family:var(--serif);}
@@ -396,10 +396,11 @@ body::before{
         <div class="stat-val" id="stat-balance" style="color:var(--gold)">—</div>
         <div class="stat-sub">remaining</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" id="stat-next-card">
         <div class="stat-label">Next Payment</div>
         <div class="stat-val" id="stat-next" style="font-size:1rem">—</div>
         <div class="stat-sub" id="stat-next-amt">—</div>
+        <div id="stat-next-days" style="display:none;margin-top:6px;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block"></div>
       </div>
     </div>
   </div>
@@ -537,6 +538,25 @@ body::before{
     </div><!-- /tab-budget -->
 
   </div><!-- /main -->
+
+  <!-- Trust footer -->
+  <div style="margin-top:auto;padding:20px 24px;border-top:1px solid var(--border);background:rgba(10,22,40,.6);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15);border-radius:8px">
+        <span style="font-size:.75rem">🔒</span>
+        <span style="font-size:.65rem;font-weight:600;color:var(--teal)">256-bit SSL Encrypted</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.15);border-radius:8px">
+        <span style="font-size:.75rem">🏛</span>
+        <span style="font-size:.65rem;font-weight:600;color:#6aadff">Licensed Canadian Lender</span>
+      </div>
+    </div>
+    <div style="font-size:.62rem;color:var(--muted);line-height:1.5;text-align:right">
+      Need help? <a href="mailto:support@wavesfinancial.ca" style="color:var(--teal);text-decoration:none">support@wavesfinancial.ca</a><br>
+      © 2025 Waves Financial. All rights reserved.
+    </div>
+  </div>
+
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
@@ -805,17 +825,46 @@ function renderHeroStats(){
 
   // Next payment across all active loans
   const allSched = clientLoans.flatMap(l=>clientSchedules[l.id]||[]);
+  const today    = new Date().toISOString().slice(0,10);
   const upcoming = allSched
-    .filter(p=>p.status==='scheduled'&&p.due_date>=new Date().toISOString().slice(0,10))
+    .filter(p=>p.status==='scheduled'&&p.due_date>=today)
     .sort((a,b)=>a.due_date.localeCompare(b.due_date));
 
+  const daysEl  = document.getElementById('stat-next-days');
+  const nextCard= document.getElementById('stat-next-card');
+
   if(upcoming.length){
-    const next=upcoming[0];
+    const next = upcoming[0];
+    const days = Math.round((new Date(next.due_date)-new Date())/(86400000));
     document.getElementById('stat-next').textContent = fmtDate(next.due_date);
-    document.getElementById('stat-next-amt').textContent = fmt(next.scheduled_amount);
+    document.getElementById('stat-next-amt').textContent = fmt(next.scheduled_amount)+' due';
+
+    if(daysEl){
+      daysEl.style.display='inline-block';
+      if(days<=0){
+        daysEl.textContent='⚠ Due today';
+        daysEl.style.background='rgba(255,92,115,.2)';
+        daysEl.style.color='var(--coral)';
+        if(nextCard) nextCard.style.borderColor='rgba(255,92,115,.4)';
+      } else if(days<=3){
+        daysEl.textContent=`⚠ ${days} day${days===1?'':'s'} away`;
+        daysEl.style.background='rgba(245,166,35,.2)';
+        daysEl.style.color='var(--gold)';
+        if(nextCard) nextCard.style.borderColor='rgba(245,166,35,.35)';
+      } else if(days<=7){
+        daysEl.textContent=`${days} days away`;
+        daysEl.style.background='rgba(245,166,35,.12)';
+        daysEl.style.color='var(--gold)';
+      } else {
+        daysEl.textContent=`${days} days away`;
+        daysEl.style.background='rgba(0,212,170,.12)';
+        daysEl.style.color='var(--teal)';
+      }
+    }
   } else {
     document.getElementById('stat-next').textContent='—';
     document.getElementById('stat-next-amt').textContent='no upcoming payments';
+    if(daysEl) daysEl.style.display='none';
   }
 }
 
@@ -869,65 +918,120 @@ function renderLoansTab(){
     return;
   }
 
-  container.innerHTML = clientLoans.map(loan=>{
-    const sched  = clientSchedules[loan.id]||[];
-    const pct    = loan.total_repayable?Math.round((loan.total_paid||0)/loan.total_repayable*100):0;
-    const today  = new Date().toISOString().slice(0,10);
-    const statusCls = loan.status==='active'?'ls-active':loan.status==='pending_disbursement'?'ls-pending':'ls-paidoff';
-    const statusLbl = loan.status==='active'?'Active':loan.status==='pending_disbursement'?'Pending Disbursement':loan.status==='paid_off'?'Paid Off':loan.status;
+  const today = new Date().toISOString().slice(0,10);
 
+  container.innerHTML = clientLoans.map(loan=>{
+    const sched     = clientSchedules[loan.id]||[];
+    const pct       = loan.total_repayable?Math.round((loan.total_paid||0)/loan.total_repayable*100):0;
+    const isActive  = loan.status==='active';
+    const isPending = loan.status==='pending_disbursement';
+    const isPaidOff = loan.status==='paid_off';
+    const statusCls = isActive?'ls-active':isPending?'ls-pending':'ls-paidoff';
+    const statusLbl = isActive?'Active':isPending?'Pending Disbursement':isPaidOff?'Paid Off':loan.status;
+
+    // Next scheduled payment
+    const nextPmt = sched.filter(p=>p.status==='scheduled'&&p.due_date>=today)
+      .sort((a,b)=>a.due_date.localeCompare(b.due_date))[0];
+    const overdue  = sched.filter(p=>p.status==='scheduled'&&p.due_date<today);
+    const daysUntil = nextPmt ? Math.round((new Date(nextPmt.due_date)-new Date())/86400000) : null;
+
+    // Fund method badge
+    const fundLabel = {direct:'Direct Deposit',etransfer:'Interac e-Transfer',interac:'Interac e-Transfer',instant:'Instant Deposit'}[loan.fund_method]||loan.fund_method||'';
+    const fundBadge = fundLabel ? `<span style="font-size:.62rem;padding:2px 8px;background:rgba(26,111,255,.12);border:1px solid rgba(26,111,255,.25);border-radius:100px;color:#6aadff">${fundLabel}</span>` : '';
+
+    // Overdue alert
+    const overdueAlert = overdue.length ? `
+      <div style="margin:0 0 12px;padding:10px 14px;background:rgba(255,92,115,.08);border:1px solid rgba(255,92,115,.3);border-radius:8px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:1rem">⚠️</span>
+        <div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--coral)">${overdue.length} overdue payment${overdue.length>1?'s':''}</div>
+          <div style="font-size:.68rem;color:rgba(255,92,115,.7)">Total: ${fmt(overdue.reduce((s,p)=>s+parseFloat(p.scheduled_amount||0),0))} — please contact us</div>
+        </div>
+      </div>` : '';
+
+    // Next payment box
+    const nextPmtBox = nextPmt && isActive ? `
+      <div style="margin:0 0 14px;padding:12px 16px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:3px">Next Payment</div>
+          <div style="font-size:1rem;font-weight:700;color:var(--white)">${fmt(nextPmt.scheduled_amount)}</div>
+          <div style="font-size:.72rem;color:var(--muted)">${fmtDate(nextPmt.due_date)} · Payment #${nextPmt.payment_number}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.68rem;font-weight:700;padding:4px 12px;border-radius:20px;${
+            daysUntil<=0?'background:rgba(255,92,115,.2);color:var(--coral)':
+            daysUntil<=3?'background:rgba(245,166,35,.2);color:var(--gold)':
+            daysUntil<=7?'background:rgba(245,166,35,.12);color:var(--gold)':
+                         'background:rgba(0,212,170,.12);color:var(--teal)'
+          }">${daysUntil<=0?'⚠ Due today':daysUntil===1?'Tomorrow':daysUntil+' days away'}</div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:4px">Auto-collected via PAD</div>
+        </div>
+      </div>` : '';
+
+    // Schedule rows
     const schedHtml = sched.map(p=>{
-      const isOverdue = p.status==='scheduled' && p.due_date < today;
-      const effStatus = isOverdue ? 'overdue' : p.status;
-      const psCls = {'paid':'ps-paid','missed':'ps-missed','overdue':'ps-overdue','partial':'ps-partial','waived':'ps-waived','scheduled':'ps-scheduled'}[effStatus]||'ps-scheduled';
-      const nsfBadge = p.nsf_fee_charged ? '<span class="nsf-badge">$45 NSF</span>' : '';
-      const retryBadge = p.return_code==='900' && p.eft_retry_at ? '<span class="nsf-badge" style="border-color:rgba(245,166,35,.3);color:var(--gold)">Retry sent</span>' : '';
+      const isOD = p.status==='scheduled' && p.due_date < today;
+      const eff  = isOD ? 'overdue' : p.status;
+      const psCls = {paid:'ps-paid',missed:'ps-missed',overdue:'ps-overdue',partial:'ps-partial',waived:'ps-waived',scheduled:'ps-scheduled',failed:'ps-missed'}[eff]||'ps-scheduled';
+      const icon  = {paid:'✓',missed:'✗',overdue:'⚠',scheduled:'·',waived:'~',partial:'½'}[eff]||'·';
+      const nsfBadge = p.nsf_fee_charged?`<span class="nsf-badge">NSF $${parseFloat(p.nsf_fee_charged||45).toFixed(2)}</span>`:'';
+      const retryBadge = p.eft_retry_at?`<span class="nsf-badge" style="border-color:rgba(245,166,35,.3);color:var(--gold)">Retry ${fmtDate(p.eft_retry_at)}</span>`:'';
       return `<tr>
-        <td style="color:var(--muted)">${p.payment_number}</td>
+        <td style="color:var(--muted)">#${p.payment_number}</td>
         <td>${fmtDate(p.due_date)}</td>
         <td style="font-weight:700">${fmt(p.scheduled_amount)}</td>
-        <td><span class="ps ${psCls}">${effStatus}</span>${nsfBadge}${retryBadge}</td>
+        <td><span class="ps ${psCls}">${icon} ${eff}</span>${nsfBadge}${retryBadge}</td>
         <td style="color:var(--muted)">${p.paid_at?fmtDate(p.paid_at):'—'}</td>
       </tr>`;
     }).join('');
 
-        const loanBodyId = `loan-body-${loan.id}`;
-    return `<div class="loan-card">
+    const loanBodyId = `loan-body-${loan.id}`;
+    return `<div class="loan-card" style="${overdue.length?'border-color:rgba(255,92,115,.3)':''}">
       <div class="loan-hdr" onclick="toggleLoanCard('${loanBodyId}')" style="cursor:pointer;user-select:none">
         <div>
-          <div class="loan-ref">${esc(loan.ref)}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+            <div class="loan-ref">${esc(loan.ref)}</div>${fundBadge}
+          </div>
           <div class="loan-amount">${fmt(loan.principal)}</div>
-          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${(loan.apr*100||23).toFixed(1)}% APR · ${loan.payment_count||8} payments</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${((loan.apr||0.23)*100).toFixed(1)}% APR · ${loan.payment_count||8} payments</div>
         </div>
         <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <div style="display:flex;align-items:center;gap:8px">
             <span class="loan-status ${statusCls}">${statusLbl}</span>
             <span id="chevron-${loanBodyId}" style="color:var(--muted);font-size:.75rem;transition:transform .25s;display:inline-block">▼</span>
           </div>
+          ${isActive||isPending?`
           <div style="font-size:.72rem;color:var(--muted)">Remaining</div>
           <div style="font-size:1.1rem;font-weight:700;color:var(--gold)">${fmt(loan.remaining_balance)}</div>
           <div style="font-size:.65rem;color:var(--muted)">${pct}% repaid</div>
+          `:`<div style="font-size:.78rem;color:var(--teal);font-weight:600">✓ Fully repaid</div>`}
         </div>
       </div>
 
       <div id="${loanBodyId}" style="overflow:hidden;max-height:0;transition:max-height .35s ease">
-        <div class="prog-wrap">
-          <div class="prog-labels">
-            <span>Paid ${fmt(loan.total_paid||0)}</span>
-            <span>${pct}% complete</span>
-            <span>Total ${fmt(loan.total_repayable)}</span>
+        <div style="padding:4px 0 4px">
+          ${overdueAlert}${nextPmtBox}
+          <div class="prog-wrap">
+            <div class="prog-labels">
+              <span>Paid ${fmt(loan.total_paid||0)}</span>
+              <span>${pct}% complete</span>
+              <span>Total ${fmt(loan.total_repayable)}</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
           </div>
-          <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap">
+            <button onclick="event.stopPropagation();downloadContract('${loan.id}','${esc(loan.ref)}')"
+              style="padding:7px 14px;background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.3);border-radius:8px;color:#6aadff;font-family:var(--font);font-size:.72rem;font-weight:700;cursor:pointer">
+              📄 Download Contract
+            </button>
+          </div>
+          ${sched.length?`<div class="sched-wrap">
+            <table class="sched-tbl">
+              <thead><tr><th>#</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Paid On</th></tr></thead>
+              <tbody>${schedHtml}</tbody>
+            </table>
+          </div>`:''}
         </div>
-        ${sched.length?`<div class="sched-wrap">
-          <table class="sched-tbl">
-            <thead><tr>
-              <th>#</th><th>Due Date</th><th>Amount</th>
-              <th>Status</th><th>Paid On</th>
-            </tr></thead>
-            <tbody>${schedHtml}</tbody>
-          </table>
-        </div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -1964,10 +2068,28 @@ function openRenewalFromBanner(){
   if(activeLoans.length){
     openRenewal(activeLoans[0].ref);
   } else {
-    // No active loan — open renewal modal with most recent loan ref, or generic
     const anyLoan = clientLoans[0];
     if(anyLoan) openRenewal(anyLoan.ref);
-    else showToast('Please contact us at 1-800-WAVES-01 to apply.');
+    else showToast('Please contact us at support@wavesfinancial.ca to apply.');
+  }
+}
+
+async function downloadContract(loanId, loanRef){
+  showToast('Preparing your contract PDF…');
+  try {
+    const resp = await fetch(`${RAILWAY_URL}/api/pdf/contract/${loanId}`);
+    if(!resp.ok) throw new Error('PDF unavailable');
+    const blob = await resp.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `waves-contract-${loanRef}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(err){
+    showToast('Could not load contract: ' + err.message, true);
   }
 }
 </script>
